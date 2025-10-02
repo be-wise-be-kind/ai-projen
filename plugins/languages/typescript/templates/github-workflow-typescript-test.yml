@@ -1,0 +1,56 @@
+# Purpose: TypeScript testing workflow
+# Scope: Unit and integration tests for TypeScript projects
+# Overview: Runs Vitest tests with coverage reporting on pull requests and pushes.
+#     Includes coverage thresholds and artifact uploads.
+# Dependencies: Node.js, npm, Vitest
+# Implementation: GitHub Actions workflow with test execution and coverage reporting
+
+name: TypeScript Tests
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  test:
+    name: TypeScript Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests with coverage
+        run: npm run test:coverage
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+
+      - name: Generate test summary
+        if: always()
+        run: |
+          echo "## 🧪 TypeScript Test Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ Tests Run:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Framework**: Vitest" >> $GITHUB_STEP_SUMMARY
+          echo "- **Coverage**: Report uploaded as artifact" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Download the coverage artifact to view detailed results." >> $GITHUB_STEP_SUMMARY

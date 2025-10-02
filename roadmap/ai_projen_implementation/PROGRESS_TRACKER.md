@@ -28,9 +28,10 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the AI-Projen 
 4. **Update this document** after completing each PR
 
 ## 📍 Current Status
-**Current PR**: PR4 Complete - Plugin template system created
-**Infrastructure State**: Phase 1 complete - Full plugin framework ready for reference implementations
-**Feature Target**: Modular AI-ready repository template framework
+**Current PR**: PR7.5 In Progress - Docker-first development pattern refactor
+**Infrastructure State**: PR5, PR6, PR7 completed by agents but need Docker-first updates before commit
+**Feature Target**: Modular AI-ready repository template framework with Docker-first development
+**Critical Decision**: All development should prioritize Docker > Isolated Env > Local Direct
 
 ## 📁 Required Documents Location
 ```
@@ -42,21 +43,45 @@ roadmap/ai_projen_implementation/
 
 ## 🎯 Next PR to Implement
 
-### ➡️ START HERE: PR5 - Python Language Plugin
+### ➡️ START HERE: PR7.5 - Docker-First Development Pattern
 
 **Quick Summary**:
-Create complete Python language plugin with Ruff/Pylint/Flake8 linters, Black formatter, pytest testing framework. Extract configurations from durable-code-test repository.
+Update Python plugin, TypeScript plugin, and documentation to enforce Docker-first development pattern. Docker is preferred, isolated environments (Poetry/venv) are fallback, direct local execution is last resort.
 
 **Pre-flight Checklist**:
-- ✅ Roadmap documents created (PR0 complete)
-- ✅ Git repository initialized
-- ✅ Repository structure and meta documentation (PR1 complete)
-- ✅ Foundation ai-folder plugin created (PR2 complete)
-- ✅ Plugin manifest created (PR3 complete)
-- ✅ Plugin templates created (PR4 complete)
-- ⬜ Access to durable-code-test repository for pattern extraction
+- ✅ PR5, PR6, PR7 completed by agents (not yet committed)
+- ✅ Access to durable-code-test for Docker patterns
+- ⬜ Understanding of development environment hierarchy
 
-**Prerequisites Complete**: Yes - PR0-PR4 complete, Phase 1 complete
+**Critical Issue Identified**:
+Current plugins assume direct local tool execution. Need to update to:
+1. **Docker** (preferred) - Consistent environments, no local pollution
+2. **Isolated environments** (fallback) - Poetry/venv for Python, npm for TypeScript
+3. **Direct local** (last resort) - Only if Docker unavailable
+
+**Files to Update**:
+
+Python Plugin:
+- AGENT_INSTRUCTIONS.md - Add Docker preference step
+- templates/makefile-python.mk - Docker-first targets with auto-detection
+- templates/Dockerfile.python - NEW
+- templates/docker-compose.python.yml - NEW
+- standards/python-standards.md - Emphasize Docker
+- README.md - Docker-first quick start
+
+TypeScript Plugin:
+- AGENT_INSTRUCTIONS.md - Add Docker preference step
+- templates/makefile-typescript.mk - Docker-first targets
+- templates/Dockerfile.typescript - NEW
+- templates/docker-compose.typescript.yml - NEW
+- standards/typescript-standards.md - Docker approach
+- README.md - Docker-first quick start
+
+Documentation:
+- .ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md - NEW: Explain hierarchy
+- .ai/howto/how-to-create-a-language-plugin.md - Add Docker-first section
+
+**Prerequisites Complete**: Yes - PR5, PR6, PR7 completed, awaiting Docker-first refactor
 
 ---
 

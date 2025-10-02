@@ -1,0 +1,54 @@
+# Purpose: TypeScript linting and type checking workflow
+# Scope: Code quality checks for TypeScript projects
+# Overview: Runs ESLint, Prettier, and TypeScript type checking on pull requests and pushes
+#     to ensure code quality and consistency. Includes caching for faster runs.
+# Dependencies: Node.js, npm, ESLint, Prettier, TypeScript
+# Implementation: GitHub Actions workflow with Node.js setup and dependency caching
+
+name: TypeScript Lint
+
+on:
+  pull_request:
+    branches: [main, develop]
+  push:
+    branches: [main]
+
+env:
+  NODE_VERSION: '20'
+
+jobs:
+  lint:
+    name: TypeScript Linting & Type Checking
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run TypeScript type checking
+        run: npm run typecheck
+
+      - name: Run ESLint
+        run: npm run lint
+
+      - name: Check Prettier formatting
+        run: npm run format:check
+
+      - name: Generate summary
+        if: always()
+        run: |
+          echo "## 🔍 TypeScript Linting Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ✅ Checks Run:" >> $GITHUB_STEP_SUMMARY
+          echo "- **TypeScript Type Checking**: \`npm run typecheck\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **ESLint**: \`npm run lint\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Prettier**: \`npm run format:check\`" >> $GITHUB_STEP_SUMMARY

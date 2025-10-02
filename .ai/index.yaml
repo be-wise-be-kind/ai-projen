@@ -44,7 +44,7 @@ structure:
     location: .ai/howto/
     files:
       - how-to-create-a-plugin.md (coming soon)
-      - how-to-create-a-language-plugin.md (coming soon)
+      - how-to-create-a-language-plugin.md
       - how-to-create-an-infrastructure-plugin.md (coming soon)
       - how-to-create-a-standards-plugin.md (coming soon)
 

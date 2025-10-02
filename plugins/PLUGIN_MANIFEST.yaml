@@ -20,31 +20,50 @@ foundation:
 languages:
   python:
     status: stable
-    description: Python development environment with linting, formatting, and testing
+    description: Python development environment with linting, formatting, type checking, security, and testing
     location: plugins/languages/python/
     dependencies:
       - foundation/ai-folder
 
     options:
-      linters:
-        available: [ruff, pylint, flake8]
+      linter_formatter:
+        available: [ruff]
         recommended: ruff
-        description: Code quality and style checking
+        description: Fast all-in-one linter and formatter (replaces Black, isort, flake8)
+        note: Ruff handles both linting AND formatting - no separate formatter needed
 
-      formatters:
-        available: [black, autopep8, yapf]
-        recommended: black
-        description: Automatic code formatting
+      type_checking:
+        available: [mypy, none]
+        recommended: mypy
+        description: Static type checking for catching type errors
+
+      security:
+        available: [bandit, none]
+        recommended: bandit
+        description: Security vulnerability scanning for Python code
 
       testing:
         available: [pytest, unittest]
         recommended: pytest
-        description: Testing framework
+        description: Testing framework with async support and coverage
 
-      type_checking:
-        available: [mypy, pyright, none]
-        recommended: mypy
-        description: Static type checking
+    tools_provided:
+      - name: Ruff
+        purpose: Linting and formatting
+        replaces: [Black, isort, flake8, parts of pylint]
+        speed: 10-100x faster than traditional tools
+
+      - name: MyPy
+        purpose: Static type checking
+        features: [PEP 484 compliance, gradual typing, strict mode]
+
+      - name: Bandit
+        purpose: Security scanning
+        detects: [hardcoded secrets, SQL injection, weak crypto, insecure deserialization]
+
+      - name: Pytest
+        purpose: Testing framework
+        features: [fixtures, parametrization, async support, coverage reporting]
 
     installation_guide: plugins/languages/python/AGENT_INSTRUCTIONS.md
 

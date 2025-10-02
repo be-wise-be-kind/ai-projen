@@ -1,0 +1,35 @@
+# Purpose: Bandit configuration for Python security scanning
+# Scope: Security vulnerability detection in Python code
+# Overview: Bandit scans Python code for common security issues like hardcoded passwords,
+#     SQL injection, insecure deserialization, and unsafe file operations.
+# Dependencies: bandit (install via pip/poetry)
+# Exports: Security scanning configuration
+# Related: Python security best practices, OWASP guidelines
+# Implementation: YAML-style configuration for Bandit
+
+# Exclude directories from scanning
+exclude_dirs:
+  - /tests/
+  - /test/
+  - /.venv/
+  - /venv/
+  - /.pytest_cache/
+  - /.mypy_cache/
+  - /.ruff_cache/
+  - /build/
+  - /dist/
+
+# Skip specific test IDs
+skips:
+  - B101  # assert_used - asserts are fine in test code and for internal checks
+
+# Tests to run (empty means run all)
+tests: []
+
+# Severity level filter (LOW, MEDIUM, HIGH)
+# Only report issues at or above this level
+level: LOW
+
+# Confidence level filter (LOW, MEDIUM, HIGH)
+# Only report issues with at or above this confidence
+confidence: MEDIUM
