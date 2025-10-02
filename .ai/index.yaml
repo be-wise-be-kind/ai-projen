@@ -38,6 +38,7 @@ structure:
       - PLUGIN_ARCHITECTURE.md
       - PLUGIN_DISCOVERY.md
       - MANIFEST_VALIDATION.md
+      - AGENTS_MD_EXTENSIBILITY.md
 
   howto:
     location: .ai/howto/
@@ -71,7 +72,8 @@ entry_points:
   add_capability: ADD-CAPABILITY.md (coming in PR19)
 
 key_files:
-  manifest: plugins/PLUGIN_MANIFEST.yaml (coming in PR3)
+  agents: agents.md (primary AI agent entry point)
+  manifest: plugins/PLUGIN_MANIFEST.yaml
   readme: README.md
   gitignore: .gitignore
   env: .env (local only, gitignored)

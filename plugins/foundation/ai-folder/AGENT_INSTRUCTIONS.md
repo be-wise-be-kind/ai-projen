@@ -33,6 +33,10 @@ Ask the user (or infer from context):
 1. **Project Name**: What is the name of this project?
 2. **Project Type**: What type of project is this? (python, typescript, go, rust, full-stack, etc.)
 3. **Project Purpose**: Brief description of what this project does
+4. **Project Status**: Current status (in-development, stable, experimental, etc.)
+5. **Source Directory**: Where is the source code? (default: src/)
+6. **Test Directory**: Where are the tests? (default: tests/)
+7. **Docs Directory**: Where is documentation? (default: docs/)
 
 ### Step 2: Create .ai Directory Structure
 
@@ -93,7 +97,23 @@ ai_navigation:
   templates: .ai/templates/
 ```
 
-### Step 5: Create Initial Documentation
+### Step 5: Create agents.md
+
+Copy `template/agents.md.template` to `agents.md` in the repository root and replace variables:
+
+**Variables to replace:**
+- `{{PROJECT_NAME}}` → Actual project name
+- `{{PROJECT_TYPE}}` → Actual project type
+- `{{PROJECT_PURPOSE}}` → Brief project description
+- `{{PROJECT_STATUS}}` → Current status (in-development, stable, etc.)
+- `{{SOURCE_DIR}}` → Source directory (e.g., src/)
+- `{{TEST_DIR}}` → Test directory (e.g., tests/)
+- `{{DOCS_DIR}}` → Documentation directory (e.g., docs/)
+- `{{LOG_DIR}}` → Log directory (e.g., logs/ or leave blank)
+
+**Important**: This file goes in the **repository root**, not in `.ai/`. It's the primary entry point for AI agents.
+
+### Step 6: Create Initial Documentation
 
 Create `.ai/docs/PROJECT_CONTEXT.md` with:
 
@@ -135,11 +155,12 @@ Create `.ai/docs/PROJECT_CONTEXT.md` with:
 
 Replace `{{PROJECT_NAME}}` with the actual project name and fill in the sections.
 
-### Step 6: Validate Installation
+### Step 7: Validate Installation
 
 Verify the following structure exists:
 
 ```
+agents.md              # Repository root - primary agent entry point
 .ai/
 ├── docs/
 │   └── PROJECT_CONTEXT.md
@@ -150,7 +171,7 @@ Verify the following structure exists:
 └── layout.yaml
 ```
 
-### Step 7: Verify YAML Files
+### Step 8: Verify YAML Files
 
 Ensure both YAML files parse correctly:
 
@@ -171,9 +192,10 @@ cat .ai/layout.yaml
 
 After successful installation:
 
-1. **Inform the user** that the .ai folder has been created
-2. **Explain the purpose** of each directory
-3. **Suggest next steps** (e.g., adding language plugins, infrastructure plugins)
+1. **Inform the user** that the .ai folder and agents.md have been created
+2. **Explain the purpose** of each directory and the agents.md file
+3. **Highlight agents.md** as the primary entry point for AI agents
+4. **Suggest next steps** (e.g., adding language plugins, infrastructure plugins)
 
 ## Integration with Other Plugins
 
@@ -183,6 +205,12 @@ This plugin is the foundation. Other plugins will:
 - Add templates to `.ai/templates/`
 - Update `index.yaml` with new resources
 - Update `layout.yaml` with new directory mappings
+- **Extend `agents.md`** by adding content between plugin extension markers:
+  - `### LANGUAGE_SPECIFIC_GUIDELINES` - Language-specific conventions
+  - `### INFRASTRUCTURE_COMMANDS` - Deployment/ops commands
+  - `### STANDARDS_CHECKLIST` - Compliance checklists
+
+**Example**: Python plugin would add linting commands and PEP 8 guidelines to agents.md between the LANGUAGE_SPECIFIC_GUIDELINES markers.
 
 ## Troubleshooting
 
@@ -212,9 +240,10 @@ This plugin works standalone without the orchestrator:
 ## Success Criteria
 
 Installation is successful when:
+- ✅ `agents.md` exists in repository root with project-specific content
 - ✅ `.ai/` directory exists
 - ✅ All subdirectories (docs, features, howto, templates) exist
 - ✅ `index.yaml` exists and parses correctly
 - ✅ `layout.yaml` exists and parses correctly
 - ✅ `PROJECT_CONTEXT.md` exists with project-specific content
-- ✅ User understands the purpose of the .ai folder
+- ✅ User understands the purpose of agents.md and the .ai folder

@@ -38,9 +38,10 @@ AI coding assistants work best when they have:
 
 The .ai folder provides all of this in a standardized format that any AI agent can understand.
 
-## Directory Structure Created
+## Files and Directories Created
 
 ```
+agents.md                   # Primary AI agent entry point (root)
 .ai/
 ├── docs/                    # Project documentation
 │   └── PROJECT_CONTEXT.md   # Main project context
@@ -51,7 +52,19 @@ The .ai folder provides all of this in a standardized format that any AI agent c
 └── layout.yaml             # Directory layout map
 ```
 
-### What Each Directory Contains
+### What Each File/Directory Contains
+
+#### `agents.md` (Repository Root)
+**Primary entry point for AI agents**:
+- Project overview and purpose
+- Navigation to .ai/ resources
+- Development guidelines and code style
+- Build, test, and deployment commands
+- Git workflow and commit conventions
+- Security considerations
+- Common tasks and troubleshooting
+
+**Extensibility**: Other plugins add their specific instructions to agents.md using extension markers (see `.ai/docs/AGENTS_MD_EXTENSIBILITY.md`)
 
 #### `.ai/docs/`
 Project documentation for AI understanding:

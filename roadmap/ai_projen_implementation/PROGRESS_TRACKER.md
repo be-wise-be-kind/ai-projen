@@ -28,8 +28,8 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the AI-Projen 
 4. **Update this document** after completing each PR
 
 ## 📍 Current Status
-**Current PR**: PR3 Complete - Plugin manifest and discovery engine created
-**Infrastructure State**: Manifest declares 9 stable + 8 planned plugins, validation documented
+**Current PR**: PR3.5 Complete - agents.md integration added
+**Infrastructure State**: agents.md as primary AI entry point, extensibility pattern documented
 **Feature Target**: Modular AI-ready repository template framework
 
 ## 📁 Required Documents Location
@@ -190,7 +190,8 @@ After completing each PR:
 4. Update the "Next PR to Implement" section
 5. Update overall progress percentage
 6. Update phase completion percentages
-7. Commit changes to the progress document
+7. Update `agents.md` if project capabilities changed
+8. Commit changes to the progress document
 
 ## 📝 Notes for AI Agents
 
@@ -209,6 +210,7 @@ After completing each PR:
 - Don't assume orchestrator is always used - standalone is critical
 - Don't forget to test in all three test repos
 - Don't merge to main without updating this PROGRESS_TRACKER.md
+- Don't add temporal/progress info to `agents.md` - it describes the project as-is, not development status
 
 ### Resources
 - Source repository: [durable-code-test](https://github.com/steve-e-jackson/durable-code-test)
