@@ -1,0 +1,37 @@
+# Purpose: Frontend-only Docker Compose configuration with hot reload support
+# Scope: Local frontend environment orchestration for development
+# Overview: Configures Docker service for local frontend development using multi-stage
+#     Dockerfile with the 'dev' target. Provides Hot Module Replacement (HMR) for instant
+#     UI updates. Volume mounts bind local source to container while preserving container's
+#     node_modules. Service auto-restarts unless explicitly stopped.
+# Dependencies: Docker, Docker Compose, multi-stage Dockerfile.frontend, local source code
+# Exports: Frontend service with HMR capability
+# Interfaces: Frontend on port ${FRONTEND_PORT:-5173} (Vite) or ${FRONTEND_PORT:-3000} (Next.js)
+# Implementation: Multi-stage Docker build with dev target, volume mounts for code
+
+services:
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: .docker/dockerfiles/Dockerfile.frontend
+      target: dev
+    container_name: ${PROJECT_NAME:-app}-frontend-${BRANCH_NAME:-main}-dev
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"  # Vite default, change to 3000 for Next.js
+    volumes:
+      # Mount source code for hot reload
+      - ./frontend:/app
+      # Exclude node_modules to use container's installed dependencies
+      - /app/node_modules
+    networks:
+      - frontend-network
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      # Update with your backend URL if needed
+      - VITE_API_URL=${BACKEND_URL:-http://localhost:8000}
+    # Command configured in Dockerfile (npm run dev)
+
+networks:
+  frontend-network:
+    driver: bridge

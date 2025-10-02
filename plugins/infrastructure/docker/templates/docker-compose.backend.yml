@@ -1,0 +1,49 @@
+# Purpose: Backend-only Docker Compose configuration with hot reload support
+# Scope: Local backend environment orchestration for development
+# Overview: Configures Docker service for local backend development using multi-stage
+#     Dockerfile with the 'dev' target. Provides automatic code reloading using framework-
+#     specific dev servers. Volume mounts bind local source to container enabling instant
+#     code updates without rebuilds. Service auto-restarts unless explicitly stopped.
+# Dependencies: Docker, Docker Compose, multi-stage Dockerfile.backend, local source code
+# Exports: Backend service with hot reload capability
+# Interfaces: Backend on port ${BACKEND_PORT:-8000}
+# Implementation: Multi-stage Docker build with dev target, volume mounts for code
+
+services:
+  backend-dev:
+    build:
+      context: .
+      dockerfile: .docker/dockerfiles/Dockerfile.backend
+      target: dev
+    container_name: ${PROJECT_NAME:-app}-backend-${BRANCH_NAME:-main}-dev
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - ENV=development
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount source code for hot reload
+      - ./app:/app/app
+      - ./src:/app/src
+      # Mount tests and tools if they exist
+      - ./test:/app/test
+      - ./tests:/app/tests
+      - ./tools:/app/tools
+      # Exclude Python cache to prevent permission issues
+      - /app/__pycache__
+      - /app/app/__pycache__
+      - /app/src/__pycache__
+    networks:
+      - backend-network
+    restart: unless-stopped
+    # Command configured in Dockerfile based on framework
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/health\")' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  backend-network:
+    driver: bridge

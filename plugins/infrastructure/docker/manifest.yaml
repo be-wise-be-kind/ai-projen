@@ -1,0 +1,251 @@
+version: "1.0"
+
+plugin:
+  name: docker
+  category: infrastructure
+  subcategory: containerization
+  type: infrastructure
+  status: stable
+  description: Complete containerization solution with multi-stage Dockerfiles and orchestration
+
+metadata:
+  version: 1.0.0
+  author: ai-projen
+  license: MIT
+  repository: https://github.com/ai-projen/ai-projen
+  documentation: README.md
+  agent_instructions: AGENT_INSTRUCTIONS.md
+
+dependencies:
+  required:
+    - plugin: foundation/ai-folder
+      reason: Requires .ai folder structure for documentation
+  recommended:
+    - plugin: languages/python
+      reason: Backend Dockerfile optimized for Python/FastAPI
+    - plugin: languages/typescript
+      reason: Frontend Dockerfile optimized for React/TypeScript
+  optional:
+    - plugin: infrastructure/ci-cd/github-actions
+      reason: Docker can be used in CI/CD pipelines
+
+system_requirements:
+  docker:
+    min_version: "20.10.0"
+    required: true
+    reason: Docker engine for building and running containers
+  docker_compose:
+    min_version: "2.0.0"
+    required: true
+    reason: Multi-container orchestration
+
+provides:
+  dockerfiles:
+    backend:
+      path: templates/Dockerfile.backend
+      description: Multi-stage Python backend (dev, lint, test, prod)
+      targets:
+        - dev
+        - lint
+        - test
+        - prod
+    frontend:
+      path: templates/Dockerfile.frontend
+      description: Multi-stage React frontend (dev, lint, test, prod)
+      targets:
+        - dev
+        - lint
+        - test
+        - prod
+
+  compose:
+    fullstack:
+      path: templates/docker-compose.yml
+      description: Full-stack orchestration with backend + frontend
+    backend_only:
+      path: templates/docker-compose.backend.yml
+      description: Backend-only orchestration
+    frontend_only:
+      path: templates/docker-compose.frontend.yml
+      description: Frontend-only orchestration
+
+  configuration:
+    - path: templates/.dockerignore
+      description: Build optimization and security
+    - path: templates/.env.example
+      description: Environment variable template
+
+  makefile:
+    path: templates/makefile-docker.mk
+    description: Common Docker operations
+    targets:
+      - docker-build
+      - docker-up
+      - docker-down
+      - docker-logs
+      - docker-shell-backend
+      - docker-shell-frontend
+      - docker-clean
+      - docker-rebuild
+
+documentation:
+  standards:
+    - path: standards/DOCKER_STANDARDS.md
+      title: Docker Infrastructure Standards
+      description: Multi-stage builds, orchestration, and best practices
+
+  howtos:
+    - path: howtos/how-to-add-a-service.md
+      title: How to Add a Service to docker-compose
+      difficulty: intermediate
+      time_minutes: 20
+    - path: howtos/how-to-create-multi-stage-dockerfile.md
+      title: How to Create Multi-Stage Dockerfile
+      difficulty: intermediate
+      time_minutes: 30
+    - path: howtos/how-to-add-volume.md
+      title: How to Add a Volume
+      difficulty: beginner
+      time_minutes: 15
+
+features:
+  multi_stage_builds:
+    enabled: true
+    description: Separate stages for dev, lint, test, and production
+  hot_reload:
+    enabled: true
+    description: Volume mounts for instant code updates
+  health_checks:
+    enabled: true
+    description: Container health monitoring
+  layer_caching:
+    enabled: true
+    description: Optimized build performance
+  non_root_user:
+    enabled: true
+    description: Security best practice
+
+configuration_options:
+  project_type:
+    type: choice
+    choices:
+      - backend_only
+      - frontend_only
+      - fullstack
+    default: fullstack
+    description: Type of application to containerize
+
+  backend_framework:
+    type: choice
+    choices:
+      - fastapi
+      - flask
+      - django
+    default: fastapi
+    description: Python backend framework
+
+  frontend_framework:
+    type: choice
+    choices:
+      - react_vite
+      - nextjs
+      - vue
+    default: react_vite
+    description: Frontend framework
+
+  backend_port:
+    type: integer
+    default: 8000
+    description: Backend service port
+
+  frontend_port:
+    type: integer
+    default: 5173
+    description: Frontend service port (Vite default)
+
+installation:
+  steps:
+    - name: Verify Docker installed
+      command: docker --version && docker compose version
+      required: true
+
+    - name: Create directory structure
+      command: mkdir -p .docker/dockerfiles
+      required: true
+
+    - name: Copy Dockerfiles
+      files:
+        - src: templates/Dockerfile.backend
+          dest: .docker/dockerfiles/Dockerfile.backend
+          condition: has_backend
+        - src: templates/Dockerfile.frontend
+          dest: .docker/dockerfiles/Dockerfile.frontend
+          condition: has_frontend
+
+    - name: Copy docker-compose
+      files:
+        - src: templates/docker-compose.yml
+          dest: docker-compose.yml
+          condition: fullstack
+        - src: templates/docker-compose.backend.yml
+          dest: docker-compose.yml
+          condition: backend_only
+        - src: templates/docker-compose.frontend.yml
+          dest: docker-compose.yml
+          condition: frontend_only
+
+    - name: Copy configuration
+      files:
+        - src: templates/.dockerignore
+          dest: .dockerignore
+        - src: templates/.env.example
+          dest: .env.example
+
+    - name: Add Makefile targets
+      command: cat templates/makefile-docker.mk >> Makefile
+
+    - name: Build images
+      command: make docker-build
+      optional: true
+
+    - name: Verify installation
+      command: docker compose config
+      required: true
+
+validation:
+  files_created:
+    - .docker/dockerfiles/Dockerfile.backend
+    - .docker/dockerfiles/Dockerfile.frontend
+    - docker-compose.yml
+    - .dockerignore
+
+  commands:
+    - command: docker --version
+      expected: "Docker version"
+    - command: docker compose version
+      expected: "Docker Compose version"
+    - command: docker compose config
+      expected: "services:"
+
+integration:
+  agents_md:
+    section: INFRASTRUCTURE_GUIDELINES
+    marker: "<!-- DOCKER_INTEGRATION -->"
+    template: templates/agents-md-extension.txt
+
+  index_yaml:
+    section: infrastructure
+    entry:
+      - path: docs/DOCKER_STANDARDS.md
+        title: Docker Infrastructure Standards
+
+tags:
+  - docker
+  - containerization
+  - multi-stage-builds
+  - docker-compose
+  - orchestration
+  - infrastructure
+  - devops
+  - hot-reload
+  - development
