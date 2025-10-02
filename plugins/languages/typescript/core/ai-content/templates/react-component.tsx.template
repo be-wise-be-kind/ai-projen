@@ -1,6 +1,40 @@
-// Purpose: {{COMPONENT_PURPOSE}} - React component
-// Scope: {{COMPONENT_SCOPE}}
-// Usage: Copy and replace {{PLACEHOLDERS}}
+/**
+ * Purpose: Template for basic React component - simple presentational component
+ *
+ * Scope: Reusable UI components without complex state management
+ *
+ * Overview: Generates a basic React functional component with TypeScript type definitions,
+ *     CSS Module integration, and props interface. Provides a foundation for presentational
+ *     components that receive data through props and render UI without complex state logic
+ *     or side effects. Includes TypeScript interface for component props with JSDoc comments,
+ *     proper prop destructuring with default values, CSS Module styling integration, and
+ *     usage example with JSDoc. The generated component follows React best practices with
+ *     functional component pattern, named and default exports for flexibility, proper
+ *     TypeScript typing for all props, and separation of concerns with external CSS Modules.
+ *     Suitable for building design system components, reusable UI elements, and presentational
+ *     components that compose into larger features.
+ *
+ * Dependencies: React 18+, CSS Modules support in bundler
+ *
+ * Exports: Component as named export and default export, Props interface for TypeScript consumers
+ *
+ * Placeholders:
+ *     - {{COMPONENT_PURPOSE}}: Brief component purpose (e.g., "Display user information")
+ *     - {{COMPONENT_SCOPE}}: Component usage scope (e.g., "User profile section")
+ *     - {{COMPONENT_NAME}}: Component name in PascalCase (e.g., "UserCard", "ProductCard")
+ *     - {{COMPONENT_DESCRIPTION}}: Detailed component description for JSDoc
+ *     - {{PROP_NAME}}: Main prop field name (e.g., "userId", "title", "data")
+ *     - {{PROP_TYPE}}: TypeScript type for main prop (e.g., "string", "number", "User")
+ *     - {{PROP_DESCRIPTION}}: Description of main prop's purpose
+ *     - {{EXAMPLE_VALUE}}: Example value for prop in JSDoc example
+ *     - {{COMPONENT_IMPLEMENTATION}}: Description of main implementation logic
+ *
+ * Usage: Copy template to component directory, replace all {{PLACEHOLDERS}}, add additional props and logic, create matching CSS Module file
+ *
+ * Related: react-component-with-hooks.tsx.template for stateful components, component.module.css.template for styling
+ *
+ * Implementation: Functional component with TypeScript, CSS Modules for scoping, named and default exports, JSDoc documentation
+ */
 
 import React from 'react';
 import styles from './{{COMPONENT_NAME}}.module.css';
@@ -54,21 +88,3 @@ export const {{COMPONENT_NAME}}: React.FC<{{COMPONENT_NAME}}Props> = ({
 
 export default {{COMPONENT_NAME}};
 
-// Template Placeholders:
-// {{COMPONENT_PURPOSE}} - Brief purpose of the component (e.g., "Display user information")
-// {{COMPONENT_SCOPE}} - Scope of the component (e.g., "User profile section")
-// {{COMPONENT_NAME}} - PascalCase component name (e.g., "UserCard")
-// {{COMPONENT_DESCRIPTION}} - Detailed description of what the component does
-// {{PROP_NAME}} - Name of the main prop (e.g., "userId", "title")
-// {{PROP_TYPE}} - TypeScript type (e.g., "string", "number", "User")
-// {{PROP_DESCRIPTION}} - Description of the prop's purpose
-// {{EXAMPLE_VALUE}} - Example value for the prop
-// {{COMPONENT_IMPLEMENTATION}} - Main implementation logic
-
-// Example usage after replacing placeholders:
-// 1. Copy this template to your component file
-// 2. Replace all {{PLACEHOLDERS}} with actual values
-// 3. Add additional props as needed
-// 4. Implement component logic
-// 5. Add corresponding CSS module
-// 6. Test with: make dev-typescript

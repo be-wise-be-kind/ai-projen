@@ -1,6 +1,41 @@
-// Purpose: {{PAGE_PURPOSE}} - Page component for routing
-// Scope: {{PAGE_SCOPE}}
-// Usage: Copy and replace {{PLACEHOLDERS}}
+/**
+ * Purpose: Template for React Router page component - routed page with navigation
+ *
+ * Scope: Full-page components integrated with React Router
+ *
+ * Overview: Generates a page-level React component with React Router integration for
+ *     building application routes. Provides access to route parameters, query parameters,
+ *     and programmatic navigation through React Router hooks. Includes TypeScript interface
+ *     for route parameters, useParams hook for extracting URL parameters, useNavigate hook
+ *     for navigation actions, useSearchParams hook for query string handling, and navigation
+ *     helper functions for back navigation and route changes. The generated page component
+ *     follows React Router v6 patterns with proper TypeScript typing for route params,
+ *     CSS Module integration for page styling, structured layout with header and content
+ *     sections, and navigation controls for user flow. Suitable for building application
+ *     pages, detail views, form pages, dashboard sections, and any routed view that needs
+ *     access to URL parameters and navigation capabilities.
+ *
+ * Dependencies: React 18+, React Router v6+, CSS Modules support in bundler
+ *
+ * Exports: Page component as named export and default export
+ *
+ * Placeholders:
+ *     - {{PAGE_PURPOSE}}: Page purpose (e.g., "Display user profile")
+ *     - {{PAGE_SCOPE}}: Page scope (e.g., "User management")
+ *     - {{PAGE_NAME}}: Page component name in PascalCase (e.g., "UserProfile", "ProductDetail")
+ *     - {{PAGE_DESCRIPTION}}: Detailed page description
+ *     - {{ROUTE_PATH}}: Route path pattern (e.g., "/users/:userId", "/products/:id/edit")
+ *     - {{PARAM_NAME}}: Route parameter name from path (e.g., "userId", "id")
+ *     - {{QUERY_PARAM}}: Query parameter name (e.g., "tab", "filter", "page")
+ *     - {{PAGE_TITLE}}: Page title to display in UI
+ *     - {{PAGE_CONTENT}}: Main content area description
+ *
+ * Usage: Copy template to pages directory, replace all {{PLACEHOLDERS}}, implement page content, configure route in router, create matching CSS Module
+ *
+ * Related: react-router-config.tsx.template for router setup, react-component-with-hooks.tsx.template for complex page logic
+ *
+ * Implementation: React Router v6 hooks for navigation, TypeScript for route params, CSS Modules for styling, structured page layout
+ */
 
 import React from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
@@ -59,13 +94,3 @@ export const {{PAGE_NAME}}: React.FC = () => {
 
 export default {{PAGE_NAME}};
 
-// Template Placeholders:
-// {{PAGE_PURPOSE}} - Page purpose (e.g., "Display user profile")
-// {{PAGE_SCOPE}} - Page scope (e.g., "User management")
-// {{PAGE_NAME}} - PascalCase page name (e.g., "UserProfile")
-// {{PAGE_DESCRIPTION}} - Detailed description
-// {{ROUTE_PATH}} - Route path (e.g., "/users/:userId")
-// {{PARAM_NAME}} - Route parameter name (e.g., "userId")
-// {{QUERY_PARAM}} - Query parameter name (e.g., "tab")
-// {{PAGE_TITLE}} - Page title to display
-// {{PAGE_CONTENT}} - Main content description

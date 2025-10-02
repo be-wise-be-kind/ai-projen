@@ -1,7 +1,30 @@
 """
-Common pytest fixtures and configuration.
+Purpose: Template for pytest conftest.py with shared fixtures, configuration, and custom markers
 
-Place this file in your tests/ directory to make fixtures available to all tests.
+Scope: Test infrastructure, shared test fixtures, pytest configuration
+
+Overview: Generates conftest.py file providing shared pytest fixtures and configuration for entire
+    test suite. Includes fixtures for database sessions (sync and async), FastAPI test clients
+    (TestClient and AsyncClient), authentication helpers with token generation, test data creation,
+    external API mocking, environment variable configuration, and event loop management. Provides
+    automatic test environment setup with autouse fixtures, custom pytest markers for test
+    categorization (slow, integration, unit), and cleanup patterns. Central configuration point
+    for all test dependencies and shared resources.
+
+Dependencies: Pytest (testing framework), SQLAlchemy (database), FastAPI TestClient, httpx
+    AsyncClient, asyncio for event loops, app.main.app and app.database modules
+
+Exports: Multiple fixture functions for database, API clients, authentication, mocks, and
+    environment setup, plus pytest configuration hooks for custom markers
+
+Placeholders: None - this is a reference template with example implementations
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: Pytest fixtures documentation, conftest.py patterns, FastAPI testing setup
+
+Implementation: Uses @pytest.fixture decorator with appropriate scopes, autouse for automatic
+    setup, monkeypatch for environment variables, pytest_configure hook for custom markers
 """
 import pytest
 import asyncio

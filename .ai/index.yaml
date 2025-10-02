@@ -48,6 +48,7 @@ structure:
   howto:
     location: .ai/howto/
     files:
+      - how-to-create-a-template.md
       - how-to-create-a-plugin.md (coming soon)
       - how-to-create-a-language-plugin.md
       - how-to-create-an-infrastructure-plugin.md (coming soon)
@@ -86,7 +87,31 @@ structure:
     location: .ai/templates/
     files:
       - HOW_TO_TEMPLATE.md (template for creating how-to guides)
-      - (additional code templates coming soon)
+      - TEMPLATE_FILE_TEMPLATE.md (meta-template for creating template files)
+
+    purpose: Reusable file templates for code generation and consistency
+
+    template_types:
+      how_to_guides: HOW_TO_TEMPLATE.md
+      template_creation: TEMPLATE_FILE_TEMPLATE.md
+
+    plugin_templates:
+      foundation: plugins/foundation/ai-folder/ai-content/templates/
+      languages: plugins/languages/*/templates/
+      infrastructure: plugins/infrastructure/*/*/templates/
+      standards: plugins/standards/*/templates/
+
+    template_standards:
+      header_requirements: .ai/docs/FILE_HEADER_STANDARDS.md (Template Files section)
+      creation_guide: .ai/howto/how-to-create-a-template.md
+      naming_convention: "*.{ext}.template"
+
+    placeholder_conventions:
+      snake_case: "{{VARIABLE_NAME}} - for file/module/variable names"
+      PascalCase: "{{ClassName}} - for class/component/type names"
+      camelCase: "{{functionName}} - for function/method/property names"
+      SCREAMING_SNAKE: "{{CONSTANT_NAME}} - for constants/env vars"
+      kebab-case: "{{file-name}} - for URLs/CSS/file paths"
 
   roadmap:
     location: roadmap/ai_projen_implementation/

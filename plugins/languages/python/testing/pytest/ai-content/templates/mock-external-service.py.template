@@ -1,7 +1,30 @@
 """
-Test template for mocking external services and dependencies.
+Purpose: Template for mocking external services including HTTP APIs, databases, and file systems
 
-Usage: Copy patterns for mocking APIs, databases, file systems, etc.
+Scope: Test mocking patterns, external dependency isolation, test doubles
+
+Overview: Generates comprehensive test module demonstrating mocking patterns for external services
+    and dependencies including HTTP requests (sync and async), database operations with SQLAlchemy,
+    file system operations, datetime and time functions, environment variables, and complex
+    side effects. Provides complete examples for isolating tests from external dependencies using
+    unittest.mock and pytest-mock, including Mock, AsyncMock, MagicMock, patch decorator, and
+    monkeypatch fixture. Covers mock assertions, side effect sequences, exception simulation,
+    and retry logic testing. Essential patterns for writing fast, reliable, isolated unit tests.
+
+Dependencies: Pytest (testing framework), pytest-mock (mocker fixture), unittest.mock (Mock,
+    AsyncMock, patch), httpx for HTTP examples
+
+Exports: Multiple test classes demonstrating mocking patterns - HTTP requests, database operations,
+    file system, time/dates, environment variables, side effects, and mock assertions
+
+Placeholders: None - this is a reference template with example implementations
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: Unittest.mock documentation, pytest-mock plugin, testing best practices
+
+Implementation: Uses mocker fixture from pytest-mock, Mock/AsyncMock for objects, patch for
+    module-level mocking, monkeypatch for environment variables, side_effect for sequences
 """
 import pytest
 from unittest.mock import Mock, AsyncMock, MagicMock, patch

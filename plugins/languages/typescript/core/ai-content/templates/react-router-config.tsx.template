@@ -1,6 +1,35 @@
-// Purpose: React Router configuration
-// Scope: Application routing setup
-// Usage: Copy and customize routes
+/**
+ * Purpose: Template for React Router configuration - application routing setup
+ *
+ * Scope: Client-side routing configuration for single-page applications
+ *
+ * Overview: Generates a React Router v6 configuration with route definitions, lazy loading
+ *     for code splitting, and loading fallbacks. Provides centralized routing setup with
+ *     BrowserRouter for history management, Routes component for route matching, lazy-loaded
+ *     page components for performance optimization, Suspense boundaries for loading states,
+ *     and fallback UI for async component loading. The generated router configuration follows
+ *     React Router v6 patterns with modern Route element syntax, code splitting through dynamic
+ *     imports, nested route support, and 404 catch-all route. Includes loading fallback component
+ *     for smooth user experience during page transitions. Suitable for single-page applications,
+ *     multi-page layouts, admin dashboards, and any React app requiring client-side routing
+ *     with performance optimization through code splitting.
+ *
+ * Dependencies: React 18+, React Router v6+
+ *
+ * Exports: AppRoutes component for rendering router configuration
+ *
+ * Placeholders:
+ *     - {{PAGE_NAME}}: Page component name in PascalCase (e.g., "UserProfile", "ProductList")
+ *     - {{ROUTE_PATH}}: Static route path without parameters (e.g., "/users", "/products")
+ *     - {{ROUTE_WITH_PARAM}}: Route path with parameter (e.g., "/users/:userId", "/products/:id")
+ *     - {{ROUTE_GROUP_NAME}}: Descriptive name for route group (e.g., "User management", "Product catalog")
+ *
+ * Usage: Copy template to router directory, replace all {{PLACEHOLDERS}}, add route definitions for all pages, integrate AppRoutes into application root
+ *
+ * Related: react-page-component.tsx.template for page components, App.tsx for router integration
+ *
+ * Implementation: React Router v6 with lazy loading, Suspense for loading states, BrowserRouter for history, catch-all route for 404 handling
+ */
 
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { lazy, Suspense } from 'react';
@@ -40,15 +69,3 @@ export function AppRoutes() {
   );
 }
 
-// Template Placeholders:
-// {{PAGE_NAME}} - Page component name (e.g., "UserProfile")
-// {{ROUTE_PATH}} - Route path (e.g., "/users")
-// {{ROUTE_WITH_PARAM}} - Route with parameter (e.g., "/users/:userId")
-// {{ROUTE_GROUP_NAME}} - Route group name (e.g., "User management")
-
-// Nested routes example:
-// <Route path="/users">
-//   <Route index element={<UsersList />} />
-//   <Route path=":userId" element={<UserProfile />} />
-//   <Route path=":userId/edit" element={<EditUser />} />
-// </Route>

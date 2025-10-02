@@ -1,7 +1,38 @@
-"""{{COMMAND_NAME}} CLI command.
+"""
+Purpose: Template for Typer CLI command with Rich formatting, type annotations, and error handling
 
-Purpose: {{PURPOSE}}
-Scope: Command-line interface for {{DESCRIPTION}}
+Scope: Modern command-line interface development, CLI tools with rich output, terminal applications
+
+Overview: Generates Python module for Typer-based command-line interface with modern CLI patterns
+    including annotated type hints for arguments and options, Rich library integration for
+    beautiful terminal output with colors and formatting, progress indicators, comprehensive
+    help text, and robust error handling. Provides structure for building production-ready CLI
+    commands with proper type validation, user-friendly output, and professional error messages.
+    Follows Typer best practices for creating intuitive and visually appealing command-line tools.
+
+Dependencies: Typer (modern CLI framework), Rich (terminal formatting), typing for annotations,
+    pathlib for path handling
+
+Exports: Typer app instance with command configuration, command function with Rich console output
+
+Placeholders:
+    - {{COMMAND_NAME}}: Name of the CLI command (e.g., "deploy", "build")
+    - {{PURPOSE}}: Brief purpose statement for the command
+    - {{DESCRIPTION}}: Description of what the command does
+    - {{FUNCTION_NAME}}: Python function name for command (e.g., "deploy_app", "build_project")
+    - {{PARAMETER_NAME}}: Name of command parameter (e.g., "target", "source")
+    - {{PARAMETER_TYPE}}: Python type for parameter (e.g., "str", "Path", "int")
+    - {{PARAMETER_DESCRIPTION}}: Description of what parameter does
+    - {{OPTION_DESCRIPTION}}: Description of what option controls
+    - {{COMMAND_DESCRIPTION}}: Full description shown in help text
+    - {{COMMAND_FULL_DESCRIPTION}}: Detailed description for docstring
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: Typer documentation, Rich library formatting, CLI design patterns
+
+Implementation: Uses Typer.Typer() app instance, Annotated type hints with Argument/Option,
+    Rich Console for formatted output, proper error handling with Exit codes
 """
 
 import typer

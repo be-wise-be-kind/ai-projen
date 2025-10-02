@@ -1,7 +1,34 @@
-"""Tests for {{MODULE_NAME}}.
+"""
+Purpose: Template for pytest test module with AAA pattern, parametrization, and fixtures
 
-Purpose: Test coverage for {{MODULE_DESCRIPTION}}
-Scope: {{SCOPE}}
+Scope: Unit testing, test organization, pytest test structure
+
+Overview: Generates Python test module following pytest best practices with comprehensive testing
+    patterns including AAA (Arrange-Act-Assert) structure for clear test organization, test
+    class organization for grouping related tests, parametrized tests for multiple input cases,
+    error handling tests with pytest.raises, and custom fixtures for test data. Provides
+    complete structure for writing maintainable and well-documented tests with proper setup,
+    execution, and verification phases. Includes examples for common testing scenarios.
+
+Dependencies: Pytest (testing framework), typing for type annotations
+
+Exports: Test class with multiple test methods, pytest fixtures for shared test data
+
+Placeholders:
+    - {{MODULE_NAME}}: Name of module being tested (e.g., "user_service", "data_processor")
+    - {{MODULE_DESCRIPTION}}: Description of module functionality
+    - {{SCOPE}}: Testing scope (e.g., "Unit tests", "Service layer tests")
+    - {{CLASS_NAME}}: Name of class being tested (e.g., "UserService", "DataProcessor")
+    - {{FUNCTION_NAME}}: Name of function being tested (e.g., "create_user", "process_data")
+    - {{FUNCTION_DESCRIPTION}}: Description of function behavior
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: Pytest documentation, AAA testing pattern, test fixture patterns
+
+Implementation: Uses pytest test classes for organization, AAA pattern comments for clarity,
+    @pytest.mark.parametrize for data-driven tests, pytest.raises for exception testing,
+    @pytest.fixture decorator for reusable test data
 """
 
 import pytest

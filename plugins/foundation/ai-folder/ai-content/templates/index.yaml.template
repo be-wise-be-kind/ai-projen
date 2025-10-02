@@ -1,7 +1,42 @@
-# Purpose: AI navigation index for {{PROJECT_NAME}}
-# Scope: Repository structure, available resources, commands, and documentation
-# Overview: Provides AI agents with a quick reference to navigate the repository structure,
-#     locate key files, understand available commands, and access documentation.
+# Purpose: Template for generating AI navigation index file (.ai/index.yaml)
+# Scope: Used by ai-folder plugin to create .ai/index.yaml during plugin installation
+# Overview: Generates the main navigation index that provides AI agents with quick reference
+#     to repository structure, key files, available commands, and documentation. The generated
+#     index.yaml serves as a central registry of project resources for AI agent navigation.
+#
+# Placeholders:
+#   {{PROJECT_NAME}}: Name of the project
+#     - Type: string
+#     - Example: "my-awesome-app"
+#     - Required: yes
+#
+#   {{PROJECT_TYPE}}: Type/category of the project
+#     - Type: string
+#     - Example: "full-stack", "python", "typescript", "microservices"
+#     - Required: yes
+#
+#   {{PROJECT_PURPOSE}}: Brief description of project purpose
+#     - Type: string (1-2 sentences)
+#     - Example: "E-commerce platform with React frontend and Python backend"
+#     - Required: yes
+#
+#   {{ARCHITECTURE_PATTERN}}: High-level architecture pattern used
+#     - Type: string
+#     - Example: "monorepo", "microservices", "monolithic", "serverless"
+#     - Required: yes
+#
+# Usage:
+#   1. Copy template to .ai directory:
+#      cp plugins/foundation/ai-folder/ai-content/templates/index.yaml.template .ai/index.yaml
+#
+#   2. Replace all placeholders with project-specific values
+#
+#   3. Remove this template header (lines 1-XX)
+#
+#   4. Validate YAML syntax:
+#      python -c "import yaml; yaml.safe_load(open('.ai/index.yaml'))"
+#
+# Related: FILE_HEADER_STANDARDS.md, .ai/layout.yaml, agents.md
 
 version: "1.0"
 project:

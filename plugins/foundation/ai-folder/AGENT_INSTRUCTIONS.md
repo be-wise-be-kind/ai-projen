@@ -197,6 +197,19 @@ After successful installation:
 3. **Highlight agents.md** as the primary entry point for AI agents
 4. **Suggest next steps** (e.g., adding language plugins, infrastructure plugins)
 
+## File Header Standards
+
+All files created by this plugin and subsequent plugins should follow the file header standards documented in:
+- **FILE_HEADER_STANDARDS.md**: Included in `.ai/docs/` (copied from ai-projen framework)
+- **Template Files Section**: Special requirements for template files with placeholders
+
+When creating files:
+1. Follow the header format appropriate for the file type (Markdown, YAML, etc.)
+2. Include mandatory fields: Purpose, Scope, Overview
+3. For templates: Add Placeholders and Usage fields
+4. Use atemporal language (no "currently", "now", "recently", etc.)
+5. Reference FILE_HEADER_STANDARDS.md for detailed guidelines
+
 ## Integration with Other Plugins
 
 This plugin is the foundation. Other plugins will:
@@ -211,6 +224,8 @@ This plugin is the foundation. Other plugins will:
   - `### STANDARDS_CHECKLIST` - Compliance checklists
 
 **Example**: Python plugin would add linting commands and PEP 8 guidelines to agents.md between the LANGUAGE_SPECIFIC_GUIDELINES markers.
+
+**Template Creation**: When plugins add templates, follow the template creation guide at `.ai/howto/how-to-create-a-template.md` and use `.ai/templates/TEMPLATE_FILE_TEMPLATE.md` as a reference.
 
 ## Troubleshooting
 

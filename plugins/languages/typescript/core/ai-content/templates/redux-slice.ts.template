@@ -1,6 +1,48 @@
-// Purpose: {{SLICE_PURPOSE}} - Redux Toolkit slice
-// Scope: {{SLICE_SCOPE}}
-// Usage: Copy and replace {{PLACEHOLDERS}}
+/**
+ * Purpose: Template for Redux Toolkit slice - state management with Redux
+ *
+ * Scope: Feature-based state management with Redux Toolkit
+ *
+ * Overview: Generates a Redux Toolkit slice with state definition, synchronous actions,
+ *     async thunks, and selectors. Provides complete Redux state management pattern using
+ *     Redux Toolkit's simplified API with automatic action creators and reducers. Includes
+ *     TypeScript interfaces for state shape, initial state configuration, synchronous
+ *     reducers for immediate state updates, async thunks for side effects and API calls,
+ *     extra reducers for handling async action lifecycle (pending/fulfilled/rejected),
+ *     and selector functions for accessing slice state. The generated slice follows Redux
+ *     Toolkit best practices with Immer for immutable updates, comprehensive loading and
+ *     error state handling, type-safe action creators, and centralized state logic. Suitable
+ *     for managing complex application state, API data caching, user preferences, form state,
+ *     and any feature requiring centralized state management with async operations.
+ *
+ * Dependencies: Redux Toolkit (@reduxjs/toolkit), React Redux for component integration
+ *
+ * Exports: Async thunks, action creators, slice reducer as default, selector functions
+ *
+ * Placeholders:
+ *     - {{SLICE_PURPOSE}}: Slice purpose (e.g., "User data management")
+ *     - {{SLICE_SCOPE}}: Slice scope (e.g., "User feature state")
+ *     - {{SLICE_NAME}}: Slice name in PascalCase (e.g., "User", "Products", "Auth")
+ *     - {{SLICE_NAME_LOWER}}: Slice name in camelCase (e.g., "user", "products", "auth")
+ *     - {{STATE_FIELD}}: State field name (e.g., "data", "users", "currentUser")
+ *     - {{STATE_TYPE}}: State field TypeScript type (e.g., "User[]", "User | null")
+ *     - {{INITIAL_VALUE}}: Initial value for state field (e.g., "null", "[]")
+ *     - {{ASYNC_ACTION_DESCRIPTION}}: Description of async action (e.g., "fetching user data")
+ *     - {{ASYNC_ACTION_NAME}}: Async action name (e.g., "fetchUser", "updateProfile")
+ *     - {{ASYNC_PARAM}}: Async action parameter name (e.g., "userId", "userData")
+ *     - {{ASYNC_PARAM_TYPE}}: Async action parameter type (e.g., "string", "UpdateUserRequest")
+ *     - {{ASYNC_LOGIC}}: Description of async operation
+ *     - {{API_CALL}}: Actual API call implementation (e.g., "api.users.fetch(userId)")
+ *     - {{ACTION_NAME}}: Synchronous action name (e.g., "setUser", "updateUser")
+ *     - {{ACTION_PAYLOAD_TYPE}}: Action payload type (e.g., "User", "string")
+ *     - {{ACTION_LOGIC}}: Description of action logic
+ *
+ * Usage: Copy template to store/slices directory, replace all {{PLACEHOLDERS}}, implement async operations, add slice to store configuration
+ *
+ * Related: Redux store configuration, React Redux hooks for component integration
+ *
+ * Implementation: Redux Toolkit with TypeScript, createSlice for reducers, createAsyncThunk for async operations, Immer for immutability, selector functions for state access
+ */
 
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 
@@ -95,20 +137,3 @@ export const select{{SLICE_NAME}}Loading = (state: { {{SLICE_NAME_LOWER}}: {{SLI
 export const select{{SLICE_NAME}}Error = (state: { {{SLICE_NAME_LOWER}}: {{SLICE_NAME}}State }) =>
   state.{{SLICE_NAME_LOWER}}.error;
 
-// Template Placeholders:
-// {{SLICE_PURPOSE}} - Slice purpose
-// {{SLICE_SCOPE}} - Slice scope
-// {{SLICE_NAME}} - PascalCase slice name (e.g., "User", "Products")
-// {{SLICE_NAME_LOWER}} - camelCase slice name (e.g., "user", "products")
-// {{STATE_FIELD}} - State field name
-// {{STATE_TYPE}} - State field type
-// {{INITIAL_VALUE}} - Initial value
-// {{ASYNC_ACTION_DESCRIPTION}} - Description of async action
-// {{ASYNC_ACTION_NAME}} - Async action name (e.g., "fetchUser")
-// {{ASYNC_PARAM}} - Async parameter name
-// {{ASYNC_PARAM_TYPE}} - Async parameter type
-// {{ASYNC_LOGIC}} - Async logic description
-// {{API_CALL}} - API call implementation
-// {{ACTION_NAME}} - Synchronous action name
-// {{ACTION_PAYLOAD_TYPE}} - Action payload type
-// {{ACTION_LOGIC}} - Action logic description

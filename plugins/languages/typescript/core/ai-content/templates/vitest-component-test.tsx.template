@@ -1,6 +1,48 @@
-// Purpose: {{TEST_PURPOSE}} - Component test
-// Scope: {{TEST_SCOPE}}
-// Usage: Copy and replace {{PLACEHOLDERS}}
+/**
+ * Purpose: Template for Vitest component test - comprehensive React component testing
+ *
+ * Scope: Unit and integration testing for React components with Testing Library
+ *
+ * Overview: Generates a comprehensive Vitest test suite for React components using React
+ *     Testing Library. Provides organized test structure covering rendering, user interactions,
+ *     conditional rendering, async behavior, and accessibility. Includes test setup with
+ *     beforeEach hooks, mock data and props, rendering tests for different prop combinations,
+ *     user interaction tests with userEvent API, conditional rendering tests for loading/error
+ *     states, async behavior tests with waitFor utilities, and accessibility tests for ARIA
+ *     attributes and keyboard navigation. The generated test suite follows testing best practices
+ *     with descriptive test organization, user-centric queries, proper async handling, and
+ *     accessibility validation. Demonstrates patterns for testing event handlers, form inputs,
+ *     loading states, error handling, and keyboard accessibility. Suitable for testing UI
+ *     components, forms, interactive elements, and any React component requiring comprehensive
+ *     test coverage.
+ *
+ * Dependencies: Vitest, React Testing Library (@testing-library/react), @testing-library/user-event
+ *
+ * Exports: Test suite with organized test blocks for component behavior validation
+ *
+ * Placeholders:
+ *     - {{TEST_PURPOSE}}: Test purpose (e.g., "Test UserCard component")
+ *     - {{TEST_SCOPE}}: Test scope (e.g., "UserCard component behavior")
+ *     - {{COMPONENT_NAME}}: Component name being tested (e.g., "UserCard", "LoginForm")
+ *     - {{PROP_NAME}}: First prop name (e.g., "userId", "onSubmit")
+ *     - {{PROP_VALUE}}: First prop mock value (e.g., "'123'", "mockHandler")
+ *     - {{PROP_NAME_2}}: Second prop name (e.g., "title")
+ *     - {{PROP_VALUE_2}}: Second prop mock value (e.g., "'Test Title'")
+ *     - {{EXPECTED_TEXT}}: Expected text to find in rendered output (e.g., "'Welcome'")
+ *     - {{OPTIONAL_PROP}}: Optional prop name (e.g., "className")
+ *     - {{OPTIONAL_VALUE}}: Optional prop value (e.g., "'custom-class'")
+ *     - {{ROLE}}: ARIA role for query (e.g., "button", "textbox", "heading")
+ *     - {{BUTTON_NAME}}: Button accessible name (e.g., "Submit", "Cancel")
+ *     - {{LABEL_TEXT}}: Input label text (e.g., "Email", "Password")
+ *     - {{CONDITION_PROP}}: Conditional prop name (e.g., "showDetails")
+ *     - {{ARIA_LABEL}}: ARIA label value (e.g., "'Close dialog'")
+ *
+ * Usage: Copy template to component test directory, replace all {{PLACEHOLDERS}}, implement component-specific test cases, run with 'npm test'
+ *
+ * Related: react-component.tsx.template for components under test, vitest-hook-test.tsx.template for hook testing
+ *
+ * Implementation: Vitest test framework, React Testing Library for rendering, userEvent for interactions, waitFor for async, accessibility-focused queries
+ */
 
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
@@ -133,19 +175,3 @@ describe('{{COMPONENT_NAME}}', () => {
   });
 });
 
-// Template Placeholders:
-// {{TEST_PURPOSE}} - Test purpose
-// {{TEST_SCOPE}} - Test scope
-// {{COMPONENT_NAME}} - Component name being tested
-// {{PROP_NAME}} - Prop name
-// {{PROP_VALUE}} - Prop value
-// {{PROP_NAME_2}} - Second prop name
-// {{PROP_VALUE_2}} - Second prop value
-// {{EXPECTED_TEXT}} - Expected text to find
-// {{OPTIONAL_PROP}} - Optional prop name
-// {{OPTIONAL_VALUE}} - Optional prop value
-// {{ROLE}} - ARIA role (e.g., "button", "textbox")
-// {{BUTTON_NAME}} - Button accessible name
-// {{LABEL_TEXT}} - Input label text
-// {{CONDITION_PROP}} - Conditional prop name
-// {{ARIA_LABEL}} - ARIA label value

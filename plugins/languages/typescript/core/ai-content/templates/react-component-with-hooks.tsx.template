@@ -1,6 +1,62 @@
-// Purpose: {{COMPONENT_PURPOSE}} - React component with hooks
-// Scope: {{COMPONENT_SCOPE}}
-// Usage: Copy and replace {{PLACEHOLDERS}}
+/**
+ * Purpose: Template for stateful React component - component with hooks for state and side effects
+ *
+ * Scope: Interactive UI components with state management, async operations, and side effects
+ *
+ * Overview: Generates a comprehensive React functional component with full state management
+ *     capabilities using React hooks. Provides patterns for local state with useState, memoized
+ *     computations with useMemo, event handlers with useCallback, and side effects with useEffect.
+ *     Includes proper TypeScript interfaces for props and state, loading and error state handling,
+ *     async operation patterns with cleanup, event handler implementations, and optimized
+ *     re-rendering with memoization. The generated component demonstrates best practices for
+ *     managing component lifecycle, handling async data fetching, preventing memory leaks with
+ *     cleanup functions, and optimizing performance with dependency arrays. Includes conditional
+ *     rendering for loading and error states with appropriate UI feedback. Suitable for building
+ *     data-fetching components, form handlers, real-time data displays, and interactive features
+ *     requiring state management.
+ *
+ * Dependencies: React 18+ with hooks, CSS Modules support in bundler
+ *
+ * Exports: Component as named export and default export, Props and State interfaces for TypeScript
+ *
+ * Placeholders:
+ *     - {{COMPONENT_PURPOSE}}: Brief purpose (e.g., "Fetch and display user data")
+ *     - {{COMPONENT_SCOPE}}: Usage scope (e.g., "User profile section")
+ *     - {{COMPONENT_NAME}}: Component name in PascalCase (e.g., "UserProfile")
+ *     - {{COMPONENT_DESCRIPTION}}: Detailed component description
+ *     - {{PROP_NAME}}: Main prop field name (e.g., "userId")
+ *     - {{PROP_TYPE}}: TypeScript type for prop (e.g., "string")
+ *     - {{PROP_DESCRIPTION}}: Prop description
+ *     - {{EVENT_HANDLER_NAME}}: Event handler prop name (e.g., "onUserSelect")
+ *     - {{EVENT_DESCRIPTION}}: Event trigger description (e.g., "user is selected")
+ *     - {{EVENT_PARAM}}: Event parameter name (e.g., "user")
+ *     - {{EVENT_PARAM_TYPE}}: Event parameter type (e.g., "User")
+ *     - {{STATE_DESCRIPTION}}: Component state description
+ *     - {{STATE_FIELD}}: State field name (e.g., "data", "users")
+ *     - {{STATE_TYPE}}: State field TypeScript type (e.g., "User[]")
+ *     - {{INITIAL_STATE_VALUE}}: Initial state value (e.g., "[]", "null")
+ *     - {{MEMOIZED_VALUE}}: Memoized value name (e.g., "sortedUsers")
+ *     - {{MEMOIZATION_LOGIC}}: Memoization logic description
+ *     - {{COMPUTED_VALUE}}: Result of memoization
+ *     - {{DEPENDENCIES}}: Dependency array for useMemo
+ *     - {{ACTION}}: Action name (e.g., "Click", "Submit")
+ *     - {{HANDLER_PARAM}}: Handler parameter name
+ *     - {{HANDLER_PARAM_TYPE}}: Handler parameter type
+ *     - {{HANDLER_LOGIC}}: Handler implementation logic
+ *     - {{DATA}}: Data being fetched (e.g., "User", "Products")
+ *     - {{ASYNC_LOGIC}}: Async operation description
+ *     - {{FETCH_LOGIC}}: Fetch implementation
+ *     - {{FEATURE_1}}: First feature description
+ *     - {{FEATURE_2}}: Second feature description
+ *     - {{EXAMPLE_VALUE}}: Example prop value
+ *     - {{COMPONENT_IMPLEMENTATION}}: Main implementation description
+ *
+ * Usage: Copy template to component directory, replace all {{PLACEHOLDERS}}, customize hooks and state logic, create matching CSS Module file
+ *
+ * Related: react-component.tsx.template for simpler components, react-hook.ts.template for extracting custom hooks, component.module.css.template for styling
+ *
+ * Implementation: Functional component with hooks, TypeScript for type safety, proper cleanup for async operations, memoization for performance, conditional rendering for states
+ */
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import styles from './{{COMPONENT_NAME}}.module.css';
@@ -165,42 +221,3 @@ export const {{COMPONENT_NAME}}: React.FC<{{COMPONENT_NAME}}Props> = ({
 
 export default {{COMPONENT_NAME}};
 
-// Template Placeholders:
-// {{COMPONENT_PURPOSE}} - Brief purpose (e.g., "Fetch and display user data")
-// {{COMPONENT_SCOPE}} - Scope (e.g., "User profile section")
-// {{COMPONENT_NAME}} - PascalCase component name (e.g., "UserProfile")
-// {{COMPONENT_DESCRIPTION}} - Detailed description
-// {{PROP_NAME}} - Main prop name (e.g., "userId")
-// {{PROP_TYPE}} - TypeScript type (e.g., "string")
-// {{PROP_DESCRIPTION}} - Prop description
-// {{EVENT_HANDLER_NAME}} - Event handler name (e.g., "onUserSelect")
-// {{EVENT_DESCRIPTION}} - What triggers the event (e.g., "user is selected")
-// {{EVENT_PARAM}} - Event parameter name (e.g., "user")
-// {{EVENT_PARAM_TYPE}} - Event parameter type (e.g., "User")
-// {{STATE_DESCRIPTION}} - Description of component state
-// {{STATE_FIELD}} - State field name (e.g., "data", "users")
-// {{STATE_TYPE}} - State field type (e.g., "User[]")
-// {{INITIAL_STATE_VALUE}} - Initial state value (e.g., "[]", "null")
-// {{MEMOIZED_VALUE}} - Name of memoized value (e.g., "sortedUsers")
-// {{MEMOIZATION_LOGIC}} - Logic for computing memoized value
-// {{COMPUTED_VALUE}} - Result of memoization
-// {{DEPENDENCIES}} - Dependency array for useMemo
-// {{ACTION}} - Action name (e.g., "Click", "Submit")
-// {{HANDLER_PARAM}} - Handler parameter name
-// {{HANDLER_PARAM_TYPE}} - Handler parameter type
-// {{HANDLER_LOGIC}} - Logic inside handler
-// {{DATA}} - Data being fetched (e.g., "User", "Products")
-// {{ASYNC_LOGIC}} - Async operation description
-// {{FETCH_LOGIC}} - Actual fetch implementation
-// {{FEATURE_1}} - First feature description
-// {{FEATURE_2}} - Second feature description
-// {{EXAMPLE_VALUE}} - Example prop value
-// {{COMPONENT_IMPLEMENTATION}} - Main implementation
-
-// Example usage:
-// 1. Copy this template
-// 2. Replace all {{PLACEHOLDERS}}
-// 3. Add/remove hooks as needed
-// 4. Implement async logic
-// 5. Add CSS module
-// 6. Test with: make dev-typescript

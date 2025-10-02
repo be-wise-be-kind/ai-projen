@@ -1,6 +1,58 @@
-// Purpose: {{HOOK_PURPOSE}} - Custom React hook
-// Scope: {{HOOK_SCOPE}}
-// Usage: Copy and replace {{PLACEHOLDERS}}
+/**
+ * Purpose: Template for custom React hook - reusable stateful logic extraction
+ *
+ * Scope: Encapsulated business logic and stateful behavior for components
+ *
+ * Overview: Generates a custom React hook for extracting and reusing stateful logic across
+ *     multiple components. Provides a pattern for encapsulating complex component logic,
+ *     side effects, and state management into a reusable hook function. Includes TypeScript
+ *     interfaces for hook options and return values, state management with useState, side
+ *     effects with useEffect including cleanup, and memoized callbacks with useCallback.
+ *     The generated hook follows React hooks rules and best practices with proper dependency
+ *     arrays, TypeScript typing for inputs and outputs, JSDoc documentation with usage
+ *     examples, and clear separation of concerns. Demonstrates cleanup patterns for
+ *     subscriptions and timers, callback memoization for performance, and flexible
+ *     configuration through options parameter. Suitable for extracting data fetching
+ *     logic, form handling, WebSocket connections, local storage sync, animation
+ *     controllers, and other reusable stateful behaviors.
+ *
+ * Dependencies: React 18+ with hooks
+ *
+ * Exports: Custom hook function, Options and Return type interfaces for TypeScript
+ *
+ * Placeholders:
+ *     - {{HOOK_PURPOSE}}: Hook purpose (e.g., "Manage local storage state")
+ *     - {{HOOK_SCOPE}}: Hook scope (e.g., "Persistent state management")
+ *     - {{HOOK_NAME}}: Hook name without 'use' prefix in PascalCase (e.g., "LocalStorage", "WindowSize")
+ *     - {{HOOK_DESCRIPTION}}: Detailed hook description
+ *     - {{OPTIONS_DESCRIPTION}}: Description of options interface
+ *     - {{OPTION_FIELD}}: Option field name (e.g., "key", "defaultValue")
+ *     - {{OPTION_TYPE}}: Option field type (e.g., "string", "number")
+ *     - {{RETURN_VALUE_DESCRIPTION}}: Description of return value
+ *     - {{RETURN_FIELD}}: Return field name (e.g., "value", "data", "isConnected")
+ *     - {{RETURN_TYPE}}: Return field type (e.g., "string", "T", "boolean")
+ *     - {{RETURN_FUNCTION_DESCRIPTION}}: Description of return function
+ *     - {{RETURN_FUNCTION}}: Return function name (e.g., "setValue", "fetch", "connect")
+ *     - {{PARAM}}: Function parameter name (e.g., "newValue", "url")
+ *     - {{PARAM_TYPE}}: Function parameter type (e.g., "string", "T")
+ *     - {{STATE_NAME}}: State variable name (e.g., "value", "data")
+ *     - {{STATE_TYPE}}: State TypeScript type (e.g., "string | null", "T[]")
+ *     - {{INITIAL_STATE}}: Initial state value (e.g., "null", "[]")
+ *     - {{EFFECT_LOGIC}}: useEffect logic description
+ *     - {{CLEANUP_LOGIC}}: Cleanup function logic description
+ *     - {{DEPENDENCIES}}: useEffect dependency array
+ *     - {{CALLBACK_NAME}}: Callback function name (e.g., "handleUpdate")
+ *     - {{CALLBACK_PARAM}}: Callback parameter name
+ *     - {{CALLBACK_PARAM_TYPE}}: Callback parameter type
+ *     - {{CALLBACK_LOGIC}}: Callback implementation description
+ *     - {{CALLBACK_DEPENDENCIES}}: useCallback dependency array
+ *
+ * Usage: Copy template to hooks directory, replace all {{PLACEHOLDERS}}, implement hook logic, use in components
+ *
+ * Related: react-component-with-hooks.tsx.template for components using hooks, react-hook-with-state.ts.template for async hooks
+ *
+ * Implementation: Custom hook following React hooks rules, TypeScript for type safety, proper cleanup in useEffect, memoized callbacks for performance
+ */
 
 import { useState, useEffect, useCallback } from 'react';
 
@@ -70,29 +122,3 @@ export function use{{HOOK_NAME}}(
   };
 }
 
-// Template Placeholders:
-// {{HOOK_PURPOSE}} - Purpose (e.g., "Manage local storage state")
-// {{HOOK_SCOPE}} - Scope (e.g., "Persistent state management")
-// {{HOOK_NAME}} - PascalCase hook name without 'use' prefix (e.g., "LocalStorage")
-// {{HOOK_DESCRIPTION}} - Detailed description
-// {{OPTIONS_DESCRIPTION}} - Description of options interface
-// {{OPTION_FIELD}} - Option field name
-// {{OPTION_TYPE}} - Option field type
-// {{RETURN_VALUE_DESCRIPTION}} - Description of return value
-// {{RETURN_FIELD}} - Return field name (e.g., "value", "data")
-// {{RETURN_TYPE}} - Return field type
-// {{RETURN_FUNCTION_DESCRIPTION}} - Description of return function
-// {{RETURN_FUNCTION}} - Return function name (e.g., "setValue", "fetch")
-// {{PARAM}} - Function parameter name
-// {{PARAM_TYPE}} - Function parameter type
-// {{STATE_NAME}} - State variable name
-// {{STATE_TYPE}} - State type
-// {{INITIAL_STATE}} - Initial state value
-// {{EFFECT_LOGIC}} - useEffect logic description
-// {{CLEANUP_LOGIC}} - Cleanup function logic
-// {{DEPENDENCIES}} - useEffect dependencies
-// {{CALLBACK_NAME}} - Callback function name
-// {{CALLBACK_PARAM}} - Callback parameter name
-// {{CALLBACK_PARAM_TYPE}} - Callback parameter type
-// {{CALLBACK_LOGIC}} - Callback implementation
-// {{CALLBACK_DEPENDENCIES}} - useCallback dependencies

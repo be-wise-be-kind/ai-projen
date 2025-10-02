@@ -1,6 +1,52 @@
-// Purpose: {{TEST_PURPOSE}} - Hook test
-// Scope: {{TEST_SCOPE}}
-// Usage: Copy and replace {{PLACEHOLDERS}}
+/**
+ * Purpose: Template for Vitest custom hook test - comprehensive React hook testing
+ *
+ * Scope: Unit testing for custom React hooks with renderHook utilities
+ *
+ * Overview: Generates a comprehensive Vitest test suite for custom React hooks using React
+ *     Testing Library's renderHook API. Provides organized test structure covering hook
+ *     initialization, state updates, side effects, async operations, and edge cases. Includes
+ *     test setup with beforeEach and afterEach hooks, initialization tests with different
+ *     parameters, state update tests using act() wrapper, side effect tests with dependency
+ *     tracking, async operation tests with waitFor utilities, cleanup verification, and edge
+ *     case handling for null/undefined values and rapid updates. The generated test suite
+ *     follows React hooks testing best practices with proper act() usage for state updates,
+ *     async handling for side effects, dependency change testing with rerender, and cleanup
+ *     validation. Demonstrates patterns for testing state management, async data fetching,
+ *     effect lifecycle, and error handling in custom hooks. Suitable for testing data
+ *     fetching hooks, form handling hooks, WebSocket hooks, and any custom React hook
+ *     requiring comprehensive test coverage.
+ *
+ * Dependencies: Vitest, React Testing Library (@testing-library/react) with renderHook
+ *
+ * Exports: Test suite with organized test blocks for hook behavior validation
+ *
+ * Placeholders:
+ *     - {{TEST_PURPOSE}}: Test purpose (e.g., "Test useUserData hook")
+ *     - {{TEST_SCOPE}}: Test scope (e.g., "useUserData hook behavior")
+ *     - {{HOOK_NAME}}: Hook name without 'use' prefix (e.g., "UserData", "LocalStorage")
+ *     - {{INITIAL_PARAM}}: Initial parameter value for hook (e.g., "'123'", "{ key: 'test' }")
+ *     - {{RETURN_VALUE}}: Returned value field name (e.g., "data", "value", "isConnected")
+ *     - {{EXPECTED_VALUE}}: Expected initial value (e.g., "null", "[]", "false")
+ *     - {{CUSTOM_PARAM}}: Custom parameter for initialization test (e.g., "{ key: 'custom' }")
+ *     - {{CUSTOM_EXPECTED}}: Expected value for custom parameter (e.g., "'custom-value'")
+ *     - {{UPDATE_FUNCTION}}: Function to update state (e.g., "setValue", "updateData")
+ *     - {{NEW_VALUE}}: New value to set (e.g., "'new-value'", "{ id: 1 }")
+ *     - {{UPDATE_LOGIC}}: Logic for functional update (e.g., "prev + 1")
+ *     - {{EXPECTED_AFTER_UPDATE}}: Expected value after update (e.g., "2", "'updated'")
+ *     - {{NEW_PARAM}}: New parameter for rerender test (e.g., "'456'")
+ *     - {{ASYNC_FUNCTION}}: Async function name (e.g., "fetch", "connect")
+ *     - {{ASYNC_PARAM}}: Async function parameter (e.g., "'endpoint'", "userId")
+ *     - {{ASYNC_RESULT}}: Expected async result (e.g., "{ id: 1 }", "'success'")
+ *     - {{INVALID_PARAM}}: Invalid parameter for error test (e.g., "'invalid-id'")
+ *     - {{VALUE_1}}, {{VALUE_2}}, {{VALUE_3}}: Values for rapid update test (e.g., "1", "2", "3")
+ *
+ * Usage: Copy template to hook test directory, replace all {{PLACEHOLDERS}}, implement hook-specific test cases, run with 'npm test'
+ *
+ * Related: react-hook.ts.template for hooks under test, vitest-component-test.tsx.template for component testing
+ *
+ * Implementation: Vitest test framework, renderHook for hook testing, act() for state updates, waitFor for async operations, proper cleanup testing
+ */
 
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { renderHook, act, waitFor } from '@testing-library/react';
@@ -154,22 +200,3 @@ describe('use{{HOOK_NAME}}', () => {
   });
 });
 
-// Template Placeholders:
-// {{TEST_PURPOSE}} - Test purpose
-// {{TEST_SCOPE}} - Test scope
-// {{HOOK_NAME}} - Hook name (without 'use' prefix)
-// {{INITIAL_PARAM}} - Initial parameter value
-// {{RETURN_VALUE}} - Returned value name
-// {{EXPECTED_VALUE}} - Expected initial value
-// {{CUSTOM_PARAM}} - Custom parameter
-// {{CUSTOM_EXPECTED}} - Expected value for custom param
-// {{UPDATE_FUNCTION}} - Function to update state
-// {{NEW_VALUE}} - New value to set
-// {{UPDATE_LOGIC}} - Logic for functional update
-// {{EXPECTED_AFTER_UPDATE}} - Expected value after update
-// {{NEW_PARAM}} - New parameter for rerender
-// {{ASYNC_FUNCTION}} - Async function name
-// {{ASYNC_PARAM}} - Async function parameter
-// {{ASYNC_RESULT}} - Expected async result
-// {{INVALID_PARAM}} - Invalid parameter for error test
-// {{VALUE_1}}, {{VALUE_2}}, {{VALUE_3}} - Values for rapid updates

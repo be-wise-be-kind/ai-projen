@@ -1,7 +1,34 @@
-"""{{MODEL_NAME}} database model.
+"""
+Purpose: Template for SQLAlchemy ORM model with relationships, timestamps, and constraints
 
-Purpose: {{PURPOSE}}
-Scope: Database persistence for {{DESCRIPTION}}
+Scope: Database models, ORM mapping, data persistence layer
+
+Overview: Generates Python module for SQLAlchemy database model with comprehensive ORM patterns
+    including column definitions with proper types and constraints, automatic timestamp fields
+    with server defaults, foreign key relationships with back_populates, model methods, and
+    table-level constraints. Provides complete structure for creating production-ready database
+    models with proper indexing, relationship configuration, and validation. Includes examples
+    for common field types, relationship patterns, and complex constraints like check constraints
+    and composite indexes.
+
+Dependencies: SQLAlchemy (ORM framework), backend.core.database.Base for declarative base,
+    datetime for timestamp fields
+
+Exports: SQLAlchemy model class inheriting from Base with table mapping
+
+Placeholders:
+    - {{MODEL_NAME}}: Name of the model class (e.g., "User", "Product", "Order")
+    - {{PURPOSE}}: Brief statement of model purpose
+    - {{DESCRIPTION}}: Description of what data this model represents
+    - {{TABLE_NAME}}: Database table name (lowercase, plural, e.g., "users", "products")
+    - {{FIELD_DESCRIPTIONS}}: Documentation for model fields
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: SQLAlchemy documentation, database design patterns, ORM relationship configuration
+
+Implementation: Uses SQLAlchemy declarative base, Column with type definitions, automatic
+    timestamps with server defaults, relationship() with back_populates, __repr__ method
 """
 
 from sqlalchemy import Column, Integer, String, Boolean, DateTime, Text, ForeignKey

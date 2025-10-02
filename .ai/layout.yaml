@@ -50,6 +50,61 @@ ai_guidance:
     templates_scattered: "Don't scatter templates - use templates/ directories"
     orchestrators_in_plugins: "Don't put CREATE/UPGRADE/ADD in plugins/"
 
+  template_structure:
+    universal_templates:
+      location: ".ai/templates/"
+      purpose: "Project-wide templates available to all plugins and projects"
+      naming: "*.{ext}.template (e.g., component.tsx.template, module.py.template)"
+      files:
+        - HOW_TO_TEMPLATE.md (template for creating how-to guides)
+        - TEMPLATE_FILE_TEMPLATE.md (meta-template for creating templates)
+
+    plugin_templates:
+      foundation:
+        location: "plugins/foundation/ai-folder/ai-content/templates/"
+        files:
+          - agents.md.template (AI agent entry point)
+          - index.yaml.template (navigation index)
+          - layout.yaml.template (directory layout)
+
+      languages:
+        location: "plugins/languages/{language}/templates/"
+        pattern: "Language-specific code templates"
+        examples:
+          - "plugins/languages/python/templates/module.py.template"
+          - "plugins/languages/typescript/templates/component.tsx.template"
+
+      infrastructure:
+        location: "plugins/infrastructure/{category}/{tool}/templates/"
+        pattern: "Infrastructure configuration templates"
+        examples:
+          - "plugins/infrastructure/containerization/docker/templates/dockerfile.template"
+          - "plugins/infrastructure/ci-cd/github-actions/templates/workflow.yaml.template"
+
+      standards:
+        location: "plugins/standards/{standard}/templates/"
+        pattern: "Standards configuration and documentation templates"
+
+    template_naming:
+      extension: ".template (always add to end of filename)"
+      format: "{name}.{target-ext}.template"
+      examples:
+        - "user-service.py.template → generates user-service.py"
+        - "api-config.yaml.template → generates api-config.yaml"
+        - "component.tsx.template → generates component.tsx"
+
+    template_standards:
+      header_requirements: ".ai/docs/FILE_HEADER_STANDARDS.md (Template Files section)"
+      creation_guide: ".ai/howto/how-to-create-a-template.md"
+      meta_template_reference: ".ai/templates/TEMPLATE_FILE_TEMPLATE.md"
+
+    placeholder_conventions:
+      snake_case: "{{VARIABLE_NAME}} - for file/module/variable names"
+      PascalCase: "{{ClassName}} - for class/component/type names"
+      camelCase: "{{functionName}} - for function/method/property names"
+      SCREAMING_SNAKE: "{{CONSTANT_NAME}} - for constants/environment variables"
+      kebab-case: "{{file-name}} - for URLs/CSS classes/file paths"
+
 linter_rules:
   description: "Machine-readable rules for file placement validation"
 

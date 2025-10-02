@@ -1,4 +1,15 @@
 {
+  "_header": {
+    "purpose": "Template for React component library package.json - npm package configuration",
+    "scope": "Component library package configuration and publishing setup",
+    "overview": "Generates a comprehensive package.json configuration for a publishable React component library. Defines package metadata, module resolution strategy with dual ESM/CommonJS support, TypeScript type definitions, build scripts, peer dependencies, development tooling, and npm publishing settings. Configures modern JavaScript bundling with tsup, TypeScript type checking, ESLint for code quality, and Vitest for testing. Establishes proper exports mapping for deep imports and package subpath exports. Includes repository links, keywords for npm discoverability, and license information. Supports both development and production build workflows with watch mode for iterative development.",
+    "dependencies": "React 18+, TypeScript 5+, tsup for bundling, ESLint for linting, Vitest for testing",
+    "exports": "Package metadata, build configuration, npm scripts, dependency declarations, and publishing settings",
+    "placeholders": "{{ORG_NAME}}: npm organization/scope name (e.g., 'mycompany'), {{LIBRARY_NAME}}: library package name (e.g., 'ui-components'), {{LIBRARY_DESCRIPTION}}: brief package description, {{LIBRARY_KEYWORD}}: additional keyword for npm search, {{AUTHOR_NAME}}: package author name, {{REPOSITORY_URL}}: git repository URL",
+    "usage": "Copy template to library root as package.json, replace all {{PLACEHOLDERS}}, adjust dependencies and scripts as needed",
+    "related": "component-library-tsconfig.json.template for TypeScript configuration, component-library-index.ts.template for library entry point",
+    "implementation": "Uses tsup for zero-config TypeScript bundling, dual module format for broad compatibility, exports field for package subpath patterns, peer dependencies to avoid React duplication"
+  },
   "name": "@{{ORG_NAME}}/{{LIBRARY_NAME}}",
   "version": "1.0.0",
   "description": "{{LIBRARY_DESCRIPTION}}",

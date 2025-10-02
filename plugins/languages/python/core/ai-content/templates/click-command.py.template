@@ -1,7 +1,35 @@
-"""{{COMMAND_NAME}} CLI command.
+"""
+Purpose: Template for Click CLI command with arguments, options, and error handling
 
-Purpose: {{PURPOSE}}
-Scope: Command-line interface for {{DESCRIPTION}}
+Scope: Command-line interface development, CLI tools, terminal applications
+
+Overview: Generates Python module for Click-based command-line interface with comprehensive
+    CLI patterns including argument parsing, option handling, verbose output control, and
+    user-friendly error messages. Provides structure for building production-ready CLI commands
+    with proper argument validation, help text, colored output, and exception handling. Includes
+    examples and documentation formatting for command usage. Follows Click best practices for
+    creating intuitive command-line tools.
+
+Dependencies: Click (CLI framework), typing for type annotations
+
+Exports: Click command function decorated with @click.command(), executable as script
+
+Placeholders:
+    - {{COMMAND_NAME}}: Name of the CLI command (e.g., "deploy", "build")
+    - {{PURPOSE}}: Brief purpose statement for the command
+    - {{DESCRIPTION}}: Description of what the command does
+    - {{ARGUMENT_NAME}}: Name of required command argument (e.g., "filename", "target")
+    - {{ARGUMENT_TYPE}}: Python type for the argument (e.g., "str", "int", "Path")
+    - {{OPTION_DESCRIPTION}}: Description of what the option controls
+    - {{FUNCTION_NAME}}: Python function name for command (e.g., "deploy_app", "build_project")
+    - {{COMMAND_DESCRIPTION}}: Full description shown in help text
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: Click documentation, CLI design patterns, command-line tool best practices
+
+Implementation: Uses Click decorators for arguments and options, provides verbose flag,
+    implements colored output for success/error states, includes proper error handling
 """
 
 import click

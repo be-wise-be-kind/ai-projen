@@ -1,7 +1,34 @@
-"""{{MODULE_NAME}} background tasks.
+"""
+Purpose: Template for Celery background task implementation with retry logic and progress tracking
 
-Purpose: Async task processing for {{DESCRIPTION}}
-Scope: Background job execution
+Scope: Asynchronous task processing, background job execution, distributed task queuing
+
+Overview: Generates Python module for Celery distributed task processing with comprehensive
+    patterns for task execution, error handling, and monitoring. Provides three task variants:
+    standard task with manual retry logic and error handling, progress-tracking task with
+    state updates for long-running operations, and auto-retry task with exponential backoff
+    for resilient operations. Each task includes logging, result handling, and configurable
+    retry policies. Follows Celery best practices for distributed task execution.
+
+Dependencies: Celery (distributed task queue), celery.utils.log for task logging
+
+Exports: Three task function variants - basic task with manual retry, progress-tracking task,
+    and auto-retry task with exponential backoff
+
+Placeholders:
+    - {{MODULE_NAME}}: Name of the module containing tasks (e.g., "notifications", "email")
+    - {{DESCRIPTION}}: Brief description of what tasks in module handle
+    - {{TASK_NAME}}: Base name for task functions (e.g., "send_email", "process_data")
+    - {{TASK_DESCRIPTION}}: Description of what the task does
+    - {{PARAMETERS}}: Task function parameters (e.g., "user_id: int, data: dict")
+    - {{PARAMETER_DESCRIPTIONS}}: Documentation for each parameter
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: Celery documentation, distributed task queue patterns, async processing best practices
+
+Implementation: Uses Celery shared_task decorator, implements retry policies, progress tracking
+    with state updates, automatic retry with exponential backoff and jitter, comprehensive logging
 """
 
 from celery import shared_task

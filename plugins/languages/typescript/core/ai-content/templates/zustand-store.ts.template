@@ -1,6 +1,54 @@
-// Purpose: {{STORE_PURPOSE}} - Zustand store
-// Scope: {{STORE_SCOPE}}
-// Usage: Copy and replace {{PLACEHOLDERS}}
+/**
+ * Purpose: Template for Zustand store - lightweight state management with Zustand
+ *
+ * Scope: Application or feature-level state management with Zustand
+ *
+ * Overview: Generates a Zustand store with state definition, actions, async operations,
+ *     middleware integration, and optional persistence. Provides simplified state management
+ *     alternative to Redux with minimal boilerplate and direct state updates. Includes
+ *     TypeScript interface for store shape combining state and actions, synchronous actions
+ *     for immediate state updates, async actions with loading and error handling, reset
+ *     function to clear state, devtools middleware for Redux DevTools integration, and
+ *     persist middleware for localStorage/sessionStorage persistence with selective field
+ *     configuration. The generated store follows Zustand patterns with immutable state
+ *     updates through set function, get function for accessing state within actions,
+ *     comprehensive error handling for async operations, and optional selector functions
+ *     for optimized component subscriptions. Suitable for managing application state,
+ *     user preferences, UI state, data caching, and any state that needs to be shared
+ *     across components without Redux complexity.
+ *
+ * Dependencies: Zustand, zustand/middleware for devtools and persistence
+ *
+ * Exports: Custom hook for store access (use[StoreName]Store), optional selector functions
+ *
+ * Placeholders:
+ *     - {{STORE_PURPOSE}}: Store purpose (e.g., "User authentication state")
+ *     - {{STORE_SCOPE}}: Store scope (e.g., "Global auth state")
+ *     - {{STORE_NAME}}: Store name in PascalCase (e.g., "Auth", "User", "Theme")
+ *     - {{STORE_NAME_LOWER}}: Store name in camelCase (e.g., "auth", "user", "theme")
+ *     - {{STORE_DESCRIPTION}}: Detailed store description
+ *     - {{STATE_FIELD}}: First state field name (e.g., "user", "theme", "data")
+ *     - {{STATE_TYPE}}: First state field type (e.g., "User | null", "ThemeMode", "Product[]")
+ *     - {{STATE_FIELD_2}}: Second state field name (e.g., "preferences", "settings")
+ *     - {{STATE_TYPE_2}}: Second state field type (e.g., "UserPreferences", "AppSettings")
+ *     - {{INITIAL_VALUE}}: Initial value for first field (e.g., "null", "'light'", "[]")
+ *     - {{INITIAL_VALUE_2}}: Initial value for second field (e.g., "{}", "defaultSettings")
+ *     - {{ACTION_NAME}}: Synchronous action name (e.g., "setUser", "setTheme", "addItem")
+ *     - {{ACTION_PARAM}}: Action parameter name (e.g., "user", "theme", "item")
+ *     - {{ACTION_PARAM_TYPE}}: Action parameter type (e.g., "User", "ThemeMode", "Product")
+ *     - {{ACTION_LOGIC}}: Action implementation logic (e.g., "action.payload", "newValue")
+ *     - {{ASYNC_ACTION_NAME}}: Async action name (e.g., "fetchUser", "login", "loadData")
+ *     - {{ASYNC_PARAM}}: Async parameter name (e.g., "userId", "credentials")
+ *     - {{ASYNC_PARAM_TYPE}}: Async parameter type (e.g., "string", "LoginRequest")
+ *     - {{ASYNC_LOGIC}}: Description of async operation
+ *     - {{API_CALL}}: Actual API call implementation (e.g., "api.users.fetch(userId)")
+ *
+ * Usage: Copy template to stores directory, replace all {{PLACEHOLDERS}}, implement actions and async operations, use hook in components
+ *
+ * Related: react-component-with-hooks.tsx.template for consuming store, react-context.tsx.template for alternative state management
+ *
+ * Implementation: Zustand with TypeScript, devtools middleware for debugging, persist middleware for storage, loading and error states for async, selector functions for performance
+ */
 
 import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
@@ -93,24 +141,3 @@ export const select{{STATE_FIELD}} = (state: {{STORE_NAME}}Store) => state.{{STA
 export const selectIsLoading = (state: {{STORE_NAME}}Store) => state.isLoading;
 export const selectError = (state: {{STORE_NAME}}Store) => state.error;
 
-// Template Placeholders:
-// {{STORE_PURPOSE}} - Store purpose
-// {{STORE_SCOPE}} - Store scope
-// {{STORE_NAME}} - PascalCase store name (e.g., "Auth", "User")
-// {{STORE_NAME_LOWER}} - camelCase store name (e.g., "auth", "user")
-// {{STORE_DESCRIPTION}} - Detailed description
-// {{STATE_FIELD}} - State field name
-// {{STATE_TYPE}} - State field type
-// {{STATE_FIELD_2}} - Second state field
-// {{STATE_TYPE_2}} - Second field type
-// {{INITIAL_VALUE}} - Initial value for first field
-// {{INITIAL_VALUE_2}} - Initial value for second field
-// {{ACTION_NAME}} - Action function name
-// {{ACTION_PARAM}} - Action parameter name
-// {{ACTION_PARAM_TYPE}} - Action parameter type
-// {{ACTION_LOGIC}} - Action logic implementation
-// {{ASYNC_ACTION_NAME}} - Async action name
-// {{ASYNC_PARAM}} - Async parameter name
-// {{ASYNC_PARAM_TYPE}} - Async parameter type
-// {{ASYNC_LOGIC}} - Async logic description
-// {{API_CALL}} - API call implementation

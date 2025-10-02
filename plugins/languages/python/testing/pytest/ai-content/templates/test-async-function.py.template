@@ -1,7 +1,30 @@
 """
-Test template for async functions and async code patterns.
+Purpose: Template for testing async functions with concurrency, timeouts, and error handling
 
-Usage: Copy patterns from this template for testing async operations.
+Scope: Async testing, concurrent operation testing, asyncio patterns
+
+Overview: Generates comprehensive test module for asynchronous Python code with patterns for
+    testing async functions, concurrent operations with asyncio.gather and tasks, timeout
+    handling with asyncio.wait_for, error handling and retry logic, async mocking with
+    AsyncMock, and async context managers. Provides complete examples for all common async
+    testing scenarios including basic async functions, concurrent execution, timeout scenarios,
+    exception handling, HTTP client mocking, and async fixtures. Includes pytest-asyncio
+    integration patterns for proper async test execution.
+
+Dependencies: Pytest (testing framework), pytest-asyncio (async test support), asyncio
+    (async operations), unittest.mock.AsyncMock (async mocking)
+
+Exports: Multiple test classes for async patterns - basic functions, concurrency, timeouts,
+    error handling, mocking, context managers, plus async fixture examples
+
+Placeholders: None - this is a reference template with example implementations
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: Pytest-asyncio documentation, asyncio testing patterns, AsyncMock usage
+
+Implementation: Uses @pytest.mark.asyncio decorator, asyncio.gather for concurrency,
+    asyncio.wait_for for timeouts, AsyncMock for mocking, async fixtures with yield
 """
 import pytest
 import asyncio

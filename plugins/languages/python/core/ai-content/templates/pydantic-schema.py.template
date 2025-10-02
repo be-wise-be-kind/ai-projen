@@ -1,7 +1,28 @@
-"""{{MODEL_NAME}} Pydantic schemas.
+"""
+Purpose: Template for Pydantic schema models with validation for API request/response handling
 
-Purpose: Request/response validation for {{MODEL_NAME}} API
-Scope: API serialization and validation
+Scope: API data validation, request/response serialization, data transformation
+
+Overview: Generates Python module containing Pydantic schema classes for comprehensive API
+    data validation and serialization. Provides complete schema hierarchy including base schema
+    with common fields, creation schema for POST requests, update schema for PATCH/PUT with
+    optional fields, response schema with database-generated fields, and paginated list schema.
+    Each schema includes proper type annotations, field validation, example data for API docs,
+    and configuration for ORM integration. Follows Pydantic V2 patterns with ConfigDict.
+
+Dependencies: Pydantic V2 (data validation), datetime for timestamps, typing for type hints
+
+Exports: Five Pydantic model classes - Base, Create, Update, Response, and List schemas
+
+Placeholders:
+    - {{MODEL_NAME}}: Name of the data model (e.g., "User", "Product", "Order")
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: Pydantic V2 documentation, FastAPI validation patterns, OpenAPI schema generation
+
+Implementation: Uses Pydantic BaseModel with ConfigDict, Field descriptions for API docs,
+    schema inheritance pattern, from_attributes for ORM compatibility, json_schema_extra examples
 """
 
 from pydantic import BaseModel, ConfigDict, Field

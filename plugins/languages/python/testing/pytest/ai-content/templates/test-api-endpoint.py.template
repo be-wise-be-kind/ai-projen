@@ -1,7 +1,30 @@
 """
-Test template for FastAPI endpoint testing.
+Purpose: Template for FastAPI endpoint testing with authentication, validation, and async patterns
 
-Usage: Copy this template and modify for your specific endpoint tests.
+Scope: API testing, HTTP endpoint validation, integration testing
+
+Overview: Generates comprehensive test module for FastAPI endpoints covering all HTTP methods
+    and scenarios including CRUD operations (GET, POST, PUT, DELETE), authentication and
+    authorization testing with token handling, input validation with Pydantic error checking,
+    error handling with proper status codes, async endpoint testing with AsyncClient, and
+    dependency injection mocking. Provides complete patterns for synchronous and asynchronous
+    endpoint testing, protected route validation, and API contract verification. Includes
+    examples for both authenticated and unauthenticated endpoints.
+
+Dependencies: Pytest (testing framework), FastAPI TestClient (sync testing), httpx AsyncClient
+    (async testing), app.main.app (FastAPI application instance)
+
+Exports: Multiple test classes for endpoint categories - basic endpoints, authenticated endpoints,
+    async endpoints, plus utility functions for dependency mocking
+
+Placeholders: None - this is a reference template with example implementations
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: FastAPI testing documentation, pytest-asyncio, HTTP testing patterns
+
+Implementation: Uses TestClient for sync tests, AsyncClient for async tests, test classes for
+    organization, dependency_overrides for mocking, proper status code assertions
 """
 import pytest
 from fastapi.testclient import TestClient

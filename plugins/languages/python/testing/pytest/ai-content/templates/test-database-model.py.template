@@ -1,7 +1,30 @@
 """
-Test template for database models and operations.
+Purpose: Template for testing SQLAlchemy models with CRUD operations, relationships, and async support
 
-Usage: Copy and adapt for your SQLAlchemy models.
+Scope: Database model testing, ORM testing, data persistence validation
+
+Overview: Generates comprehensive test module for SQLAlchemy database models covering CRUD
+    operations (create, read, update, delete), relationship loading and validation, constraint
+    checking (unique, foreign key, check constraints), query patterns, and both synchronous
+    and asynchronous database sessions. Provides complete patterns for testing ORM models with
+    in-memory SQLite databases for fast isolated tests, proper session management with fixtures,
+    relationship integrity verification, and async database operations with SQLAlchemy async
+    engine. Includes examples for all common database testing scenarios.
+
+Dependencies: Pytest (testing framework), SQLAlchemy (ORM), in-memory SQLite for test database,
+    SQLAlchemy async extensions for async tests, app.database.Base and app.models
+
+Exports: Test class for model CRUD operations, fixtures for database sessions (sync and async),
+    async test examples with pytest.mark.asyncio
+
+Placeholders: None - this is a reference template with example implementations
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: SQLAlchemy testing documentation, pytest fixtures, async SQLAlchemy patterns
+
+Implementation: Uses pytest fixtures with function scope, create_engine with SQLite memory,
+    Base.metadata for schema creation/teardown, async_sessionmaker for async tests
 """
 import pytest
 from sqlalchemy import create_engine

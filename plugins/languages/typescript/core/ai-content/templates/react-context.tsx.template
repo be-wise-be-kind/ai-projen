@@ -1,6 +1,47 @@
-// Purpose: {{CONTEXT_PURPOSE}} - React Context for state management
-// Scope: {{CONTEXT_SCOPE}}
-// Usage: Copy and replace {{PLACEHOLDERS}}
+/**
+ * Purpose: Template for React Context - global state management with Context API
+ *
+ * Scope: Application-wide or feature-wide shared state management
+ *
+ * Overview: Generates a React Context provider with state management capabilities using
+ *     the Context API pattern. Provides centralized state management for sharing data
+ *     across component trees without prop drilling. Includes TypeScript interfaces for
+ *     state shape and context value, provider component with state initialization,
+ *     action methods for state updates, and custom hook for consuming context with
+ *     error checking. The generated context follows React best practices with proper
+ *     TypeScript typing, memoized action callbacks to prevent unnecessary re-renders,
+ *     initial state support for testing and SSR, and runtime validation to ensure
+ *     hook usage within provider. Suitable for managing authentication state, theme
+ *     preferences, user settings, feature flags, and other application-wide state
+ *     that multiple components need to access and modify.
+ *
+ * Dependencies: React 18+ with Context API and hooks
+ *
+ * Exports: Provider component, custom hook for consuming context, context interfaces
+ *
+ * Placeholders:
+ *     - {{CONTEXT_PURPOSE}}: Context purpose (e.g., "User authentication state")
+ *     - {{CONTEXT_SCOPE}}: Context scope (e.g., "Global authentication")
+ *     - {{CONTEXT_NAME}}: Context name in PascalCase (e.g., "Auth", "Theme", "UserSettings")
+ *     - {{CONTEXT_DESCRIPTION}}: Detailed context description
+ *     - {{STATE_FIELD}}: First state field name (e.g., "user", "theme", "isAuthenticated")
+ *     - {{STATE_TYPE}}: First state field TypeScript type (e.g., "User | null", "ThemeMode")
+ *     - {{STATE_FIELD_2}}: Second state field name (e.g., "isLoading", "preferences")
+ *     - {{STATE_TYPE_2}}: Second state field type (e.g., "boolean", "UserPreferences")
+ *     - {{ACTION_NAME}}: First action function name (e.g., "login", "setTheme", "updateUser")
+ *     - {{ACTION_PARAM}}: Action parameter name (e.g., "credentials", "theme", "userData")
+ *     - {{ACTION_PARAM_TYPE}}: Action parameter type (e.g., "LoginCredentials", "ThemeMode")
+ *     - {{ACTION_NAME_2}}: Second action name (e.g., "logout", "reset", "clearUser")
+ *     - {{DEFAULT_VALUE}}: Default value for first state field (e.g., "null", "'light'")
+ *     - {{DEFAULT_VALUE_2}}: Default value for second state field (e.g., "false", "{}")
+ *     - {{ACTION_LOGIC}}: Logic for action implementation (e.g., "action.payload", "newValue")
+ *
+ * Usage: Copy template to context directory, replace all {{PLACEHOLDERS}}, add additional state fields and actions, wrap application or feature tree with Provider
+ *
+ * Related: react-component-with-hooks.tsx.template for consuming context in components, zustand-store.ts.template for alternative state management
+ *
+ * Implementation: Context API with TypeScript, custom hook with runtime validation, memoized actions for performance, initial state support for flexibility
+ */
 
 import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
 
@@ -100,19 +141,3 @@ export const use{{CONTEXT_NAME}} = (): {{CONTEXT_NAME}}ContextType => {
   return context;
 };
 
-// Template Placeholders:
-// {{CONTEXT_PURPOSE}} - Purpose (e.g., "User authentication state")
-// {{CONTEXT_SCOPE}} - Scope (e.g., "Global authentication")
-// {{CONTEXT_NAME}} - PascalCase context name (e.g., "Auth", "Theme")
-// {{CONTEXT_DESCRIPTION}} - Detailed description
-// {{STATE_FIELD}} - State field name (e.g., "user", "theme")
-// {{STATE_TYPE}} - State field type
-// {{STATE_FIELD_2}} - Second state field
-// {{STATE_TYPE_2}} - Second field type
-// {{ACTION_NAME}} - Action function name (e.g., "login", "setTheme")
-// {{ACTION_PARAM}} - Action parameter name
-// {{ACTION_PARAM_TYPE}} - Action parameter type
-// {{ACTION_NAME_2}} - Second action name (e.g., "logout", "reset")
-// {{DEFAULT_VALUE}} - Default value for first field
-// {{DEFAULT_VALUE_2}} - Default value for second field
-// {{ACTION_LOGIC}} - Logic for action implementation

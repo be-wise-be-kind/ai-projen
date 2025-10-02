@@ -291,153 +291,58 @@ For JSON files without comment support, place header in adjacent README or docum
 
 ### Template Files (.template)
 
-Template files require special headers that document placeholders and usage instructions. Templates are used to generate new files with consistent structure and variable substitution.
+Template files require special headers that explain their purpose, usage, and placeholder conventions:
 
-**For Markdown Templates** (use HTML comments):
-```markdown
-<!--
-Purpose: Brief description of what this template generates
-Scope: Where/when this template should be used (e.g., "All new Python modules")
-Overview: Detailed explanation of the template's purpose, structure, and what the generated
-    file will contain. Should include information about when to use this template, what it
-    provides, and how it fits into the project structure.
-
-Placeholders:
-  {{VARIABLE_NAME}}: Description of what this should be replaced with
-    - Type: string | number | boolean | path | url
-    - Example: "user_service" or "/api/v1/users"
-    - Required: yes | no
-    - Default: value (if optional)
-
-  {{ANOTHER_VAR}}: Description of another placeholder
-    - Type: string
-    - Example: "Handles user authentication"
-    - Required: yes
-
-Usage:
-  1. Copy template to destination:
-     cp .ai/templates/template-name.md.template path/to/destination.md
-
-  2. Replace all placeholders with actual values:
-     - {{VARIABLE_NAME}}: Replace with X
-     - {{ANOTHER_VAR}}: Replace with Y
-
-  3. Remove this template header
-
-  4. Validate generated file:
-     markdownlint path/to/destination.md
-
-Related: Links to documentation, standards, or examples
--->
-
-# {{DOCUMENT_TITLE}}
-
-Template content with {{PLACEHOLDERS}} starts here...
-```
-
-**For Code Templates** (Python, TypeScript, etc. - use language comments):
+**For code templates (.py.template, .tsx.template, etc.):**
 ```python
 """
-Purpose: Brief description of what this template generates
-Scope: Where/when this template should be used
-Overview: Detailed explanation of the template's purpose and generated file structure.
+Purpose: Template for [what this generates] - [brief description]
 
-Placeholders:
-  {{MODULE_NAME}}: Python module name in snake_case
-    - Type: string (valid Python identifier)
-    - Example: "user_service"
-    - Required: yes
+Scope: [What type of code/functionality this template covers]
 
-  {{ClassName}}: Class name in PascalCase
-    - Type: string (valid Python class name)
-    - Example: "UserService"
-    - Required: no
+Overview: [Comprehensive explanation of template purpose, what code it generates,
+    when to use it, key features provided, and how it fits into project structure.
+    Should help developers understand template value without reading all code.]
 
-Usage:
-  1. Copy: cp template.py.template src/{{MODULE_NAME}}.py
-  2. Replace placeholders with actual values
-  3. Remove this header
-  4. Validate: python -m py_compile src/{{MODULE_NAME}}.py
+Dependencies: [Required packages, frameworks, or configurations needed]
 
-Related: FILE_HEADER_STANDARDS.md, Python plugin docs
+Exports: [What the generated file will provide - classes, functions, components]
+
+Placeholders: [List of {{PLACEHOLDERS}} requiring replacement with descriptions:
+    - {{PLACEHOLDER_NAME}}: Description of what to replace with
+    - {{ANOTHER_PLACEHOLDER}}: Description of what to replace with]
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: [Links to related templates, documentation, or how-to guides]
+
+Implementation: [Key patterns, architectural decisions, or conventions used]
 """
-
-# Template content with {{PLACEHOLDERS}}
 ```
 
-**For YAML/Config Templates** (use # comments):
+**For config templates (.yaml.template, .json.template, etc.):**
 ```yaml
-# Purpose: Brief description of what this template generates
-# Scope: Where/when this template should be used
-# Overview: Detailed explanation of template purpose and configuration structure.
-#
-# Placeholders:
-#   {{CONFIG_NAME}}: Name of the configuration
-#     - Type: string
-#     - Example: "production-settings"
-#     - Required: yes
-#
-#   {{SETTING_VALUE}}: Configuration value
-#     - Type: string | number | boolean
-#     - Example: 100 or "high"
-#     - Required: yes
-#
-# Usage:
-#   1. Copy: cp template.yaml.template config/{{CONFIG_NAME}}.yaml
-#   2. Replace all placeholders
-#   3. Remove header (lines 1-XX)
-#   4. Validate: yamllint config/{{CONFIG_NAME}}.yaml
-#
-# Related: Configuration standards, related templates
-
-{{CONFIG_SECTION}}:
-  {{SETTING_KEY}}: {{SETTING_VALUE}}
+# Purpose: Template for [what this configures] - [brief description]
+# Scope: [What this configuration applies to]
+# Overview: [Comprehensive explanation of template purpose, configuration structure,
+#     what it controls, integration points, and customization options]
+# Dependencies: [Tools, services, or other configs this depends on]
+# Exports: [Configuration sections or settings this provides]
+# Placeholders: [List of {{PLACEHOLDERS}} requiring replacement with descriptions:
+#     - {{PLACEHOLDER_NAME}}: Description of what to replace with
+#     - {{ANOTHER_PLACEHOLDER}}: Description of what to replace with]
+# Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize values
+# Related: [Links to related templates, documentation, or how-to guides]
+# Implementation: [Configuration patterns, validation rules, or conventions used]
 ```
 
-**Template Header Requirements:**
-
-1. **Mandatory Fields for Templates:**
-   - **Purpose**: What this template generates (not what it is)
-   - **Scope**: When/where to use this template
-   - **Overview**: Detailed explanation of template and generated output
-   - **Placeholders**: Complete list of all placeholders with:
-     - Description
-     - Type (string, number, boolean, path, etc.)
-     - Example value
-     - Required/optional status
-     - Default value (if optional)
-   - **Usage**: Step-by-step instructions including:
-     - Copy command with paths
-     - Placeholder replacement steps
-     - Header removal instruction
-     - Validation command
-   - **Related**: Links to relevant docs
-
-2. **Placeholder Naming Conventions:**
-   - `{{SNAKE_CASE}}` - File names, module names, variables
-   - `{{PascalCase}}` - Class names, component names, types
-   - `{{camelCase}}` - Function names, methods, properties
-   - `{{SCREAMING_SNAKE_CASE}}` - Constants, environment variables
-   - `{{kebab-case}}` - URLs, CSS classes, file paths
-
-3. **Placeholder Documentation Format:**
-   ```
-   {{PLACEHOLDER_NAME}}: Clear description
-     - Type: expected value type
-     - Example: concrete example
-     - Required: yes/no
-     - Default: value (if optional)
-   ```
-
-4. **Template Validation:**
-   - All placeholders in template body must be documented in header
-   - Usage instructions must include validation command
-   - Template must generate syntactically valid files
-   - Template file must have `.template` extension
-
-**Template Examples:**
-
-See `.ai/templates/TEMPLATE_FILE_TEMPLATE.md` for complete template examples and `.ai/howto/how-to-create-a-template.md` for template creation guide.
+**Template-Specific Requirements:**
+- **Placeholders field is mandatory** - must list all {{VARIABLES}} used in the template
+- **Usage field is mandatory** - must explain how to use the template
+- Use consistent placeholder naming conventions ({{SNAKE_CASE}}, {{PascalCase}}, {{camelCase}})
+- Include example values or descriptions for each placeholder
+- Document what the generated file will do/provide in the Overview
+- Templates generate files, so describe the generated output, not the template itself
 
 ## Line Break and Formatting Guidelines
 
@@ -516,6 +421,10 @@ Exports: Main classes, functions, or constants this module provides
 - **Exports**: Main classes, functions, components, or constants this file provides
 - **Interfaces/Props**: Key APIs, interfaces, or props this file exposes or accepts
 
+### Template Files Additional Fields
+- **Placeholders**: Complete list of all {{PLACEHOLDERS}} with descriptions (MANDATORY)
+- **Usage**: Step-by-step instructions for using the template (MANDATORY)
+
 ### Recommended Fields (Code Files)
 - **Implementation**: Notable algorithms, patterns, or architectural decisions
 - **State/Behavior**: Important state management or behavioral patterns used
@@ -532,6 +441,7 @@ Exports: Main classes, functions, or constants this module provides
 - **Code files**: Header as the first comment block (after shebang if present)
 - **HTML**: Header in HTML comment after DOCTYPE
 - **Configuration**: Header as comment at top of file
+- **Templates**: Header in appropriate comment format for template's target language
 
 ### 2. Content Guidelines
 - Keep Purpose field concise but descriptive (1-3 sentences)
@@ -539,6 +449,7 @@ Exports: Main classes, functions, or constants this module provides
 - Include key dependencies that aren't obvious from imports
 - Mention any special considerations or operational notes
 - **Use atemporal language**: Describe current capabilities without referencing time or changes
+- **For templates**: Clearly list all placeholders and explain how to use the template
 
 ### 3. Automated Validation
 The header linter tool validates:
@@ -547,15 +458,16 @@ The header linter tool validates:
 - Field completeness and format
 - Consistent formatting across file types
 - Absence of temporal language patterns (dates, "currently", "now", "replaces", etc.)
+- For templates: Presence of Placeholders and Usage fields
 
 ## Examples
 
-### Good Header Example (Python Linter)
+### Good Header Example (Python Module)
 ```python
 """
 Purpose: Validates file placement according to project structure standards
 Scope: Project-wide file organization enforcement across all directories
-Overview: This linter analyzes Python, HTML, TypeScript, and configuration files to ensure
+Overview: This module analyzes Python, HTML, TypeScript, and configuration files to ensure
     they are located in appropriate directories as defined in STANDARDS.md. It enforces
     project organization rules by checking files against configurable placement rules,
     detecting violations, and providing suggested corrections. The linter supports multiple
@@ -584,22 +496,38 @@ Implementation: Uses rule-based pattern matching with configurable directory all
  */
 ```
 
-### Good Header Example (API Service)
-```typescript
-/**
- * Purpose: Handles all HTTP requests to the backend API with authentication
- * Scope: Frontend API integration layer, used by all components needing backend data
- * Overview: Provides typed interfaces for user management, data fetching, and file uploads.
- *     Implements automatic authentication token handling, request/response interceptors,
- *     error normalization, and retry logic for failed requests. Centralizes all backend
- *     communication to ensure consistent error handling, loading states, and data formatting
- *     across the application. Supports file uploads with progress tracking and CRUD operations
- *     for all major entities.
- * Dependencies: axios for HTTP requests, jwt-decode for token handling, custom types from @/types
- * Exports: ApiService class, apiClient instance, ApiError class, RequestConfig type
- * Interfaces: CRUD operations for User, Project, File entities; uploadFile(), downloadFile()
- * Implementation: Uses axios interceptors for auth tokens, implements retry logic and error normalization
- */
+### Good Header Example (Template File)
+```python
+"""
+Purpose: Template for FastAPI router with authentication and CRUD operations
+
+Scope: API endpoint creation for resource management in FastAPI applications
+
+Overview: Generates a complete FastAPI router module with standard CRUD operations,
+    authentication integration, request/response models, and error handling. Provides
+    structure for creating new API endpoints following project conventions with proper
+    dependency injection, database session management, and user authentication patterns.
+
+Dependencies: FastAPI, SQLAlchemy, Pydantic, project authentication utilities
+
+Exports: APIRouter instance with GET, POST, PUT, DELETE endpoints for resource management
+
+Placeholders:
+    - {{MODULE_NAME}}: Snake_case name for the module (e.g., user_management, products)
+    - {{MODEL_NAME}}: PascalCase name for database model (e.g., User, Product)
+    - {{RESOURCE_NAME}}: Snake_case resource name for URLs (e.g., user, product)
+    - {{PURPOSE}}: Brief description of router's purpose
+    - {{SCOPE}}: What this router handles
+    - {{FEATURE_DESCRIPTION}}: Detailed feature description
+
+Usage: Copy to backend/routers/, replace all {{PLACEHOLDERS}}, implement TODO sections,
+    add router to main application, customize endpoints as needed
+
+Related: sqlalchemy-model.py.template, pydantic-schema.py.template, how-to-create-fastapi-endpoint.md
+
+Implementation: Follows FastAPI dependency injection patterns, includes async support,
+    implements standard error responses, uses type hints throughout
+"""
 ```
 
 ### Good Header Example (Markdown)
@@ -625,7 +553,8 @@ This file does stuff with files.
 1. Add headers to all existing documentation files in `.ai/docs`
 2. Update core configuration files (YAML, Terraform)
 3. Update plugin AGENT_INSTRUCTIONS.md and README.md files
-4. Ensure all mandatory Purpose fields are present and descriptive
+4. Update all template files with proper headers including Placeholders and Usage fields
+5. Ensure all mandatory Purpose fields are present and descriptive
 
 ### Phase 2: Implement Enhanced Linter
 1. Create automated header validation tool
@@ -642,7 +571,7 @@ This file does stuff with files.
 ### Header Linter
 - Location: `/tools/design_linters/header_linter.py` (to be created)
 - Usage: `python tools/design_linters/header_linter.py --path .`
-- Validates: Purpose field presence, header structure, formatting
+- Validates: Purpose field presence, header structure, formatting, template-specific fields
 - Exit codes: 0 (pass), 1 (warnings), 2 (failures)
 
 ### Pre-commit Integration
@@ -653,7 +582,7 @@ This file does stuff with files.
       name: Check file headers
       entry: python tools/design_linters/header_linter.py
       language: system
-      files: \.(md|py|ts|tsx|js|jsx|html|yml|yaml)$
+      files: \.(md|py|ts|tsx|js|jsx|html|yml|yaml|template)$
 ```
 
 ## Benefits
@@ -663,12 +592,14 @@ This file does stuff with files.
 3. **Onboarding**: New developers can quickly understand file purposes and dependencies
 4. **Documentation**: Headers serve as minimal, always-current documentation
 5. **Git Integration**: No redundant metadata that git already tracks
+6. **Template Usability**: Clear instructions and placeholder documentation make templates easy to use
 
 ## Exceptions
 
 Files that may not need headers:
 - Auto-generated files (clearly marked as such)
 - Very small configuration files (<10 lines)
-- Template files used by generators
 - Third-party files (should be clearly identified)
 - Test fixture files that only contain data
+
+**Note**: Template files always require comprehensive headers including Placeholders and Usage fields.

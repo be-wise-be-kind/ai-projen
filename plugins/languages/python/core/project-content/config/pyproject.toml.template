@@ -1,13 +1,24 @@
-# Purpose: Comprehensive Python project configuration template with all production-grade tooling
-# Scope: Project metadata, dependencies, and tool configurations for linting, type checking, security, testing, and complexity analysis
-# Overview: Complete pyproject.toml template with Poetry package management and comprehensive
-#     development tooling including: mypy (type checking), bandit/safety/pip-audit (security),
-#     pylint/flake8+plugins (linting), radon/xenon (complexity), ruff (fast linting/formatting),
-#     and pytest (testing). Based on durable-code-test reference implementation.
-# Dependencies: Python 3.11+, Poetry (recommended) or pip
-# Exports: Project configuration, dependency management, tool configurations
-# Related: Python development standards, production-ready tooling
-# Implementation: Poetry-based pyproject.toml with comprehensive tool configuration sections
+# Purpose: Template for comprehensive Python project configuration with production-grade tooling
+# Scope: Project metadata, dependencies, tool configurations for linting, type checking, security, testing, complexity analysis
+# Overview: Generates complete pyproject.toml with Poetry package management and comprehensive
+#     development tooling suite including: mypy for static type checking, bandit/safety/pip-audit
+#     for security scanning, pylint/flake8 with plugins for code quality, radon/xenon for
+#     complexity analysis, ruff for fast linting and formatting, and pytest for testing with
+#     coverage. Provides production-ready configuration with strict quality gates, complexity
+#     enforcement (Radon A grade), comprehensive linting rules, and proper test organization.
+#     Based on durable-code-test reference implementation patterns.
+# Dependencies: Python 3.11+, Poetry for package management (recommended) or pip
+# Exports: Project configuration sections, dependency specifications, tool configurations
+# Placeholders:
+#     - {{PROJECT_NAME}}: Name of the Python project (e.g., "my-api", "data-processor")
+#     - {{PROJECT_DESCRIPTION}}: Brief description of project purpose
+#     - {{AUTHOR_NAME}}: Project author full name
+#     - {{AUTHOR_EMAIL}}: Project author email address
+#     - {{PACKAGE_NAME}}: Python package name (e.g., "my_api", "data_processor")
+# Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+# Related: Poetry documentation, Python packaging standards, production tooling best practices
+# Implementation: Poetry-based structure with tool.* configuration sections for all development
+#     tools, comprehensive linting rules, strict type checking, security scanning, complexity limits
 
 [tool.poetry]
 name = "{{PROJECT_NAME}}"

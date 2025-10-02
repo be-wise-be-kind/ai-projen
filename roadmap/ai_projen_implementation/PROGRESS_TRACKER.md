@@ -363,11 +363,72 @@ This PR makes plugins truly AI-agent-friendly by providing actionable guides for
 
 ---
 
+### ✅ COMPLETED: PR7.8 - Template File Header Standardization
+
+**Status**: ✅ Complete
+
+**Quick Summary**:
+Standardize all template file headers across the repository to comply with FILE_HEADER_STANDARDS.md, create comprehensive template creation documentation, and integrate template standards into the foundation plugin so every new project starts with proper standards.
+
+**Problem Identified**:
+- 59 template files across repository lacked proper comprehensive headers
+- No standardized guidance for creating new template files
+- Template files had minimal 2-3 line headers instead of comprehensive documentation
+- FILE_HEADER_STANDARDS.md not included in foundation plugin for distribution to new projects
+- Templates needed special header format explaining placeholders and usage
+
+**What Was Done**:
+
+1. **Foundation Plugin Integration** (NEW):
+   - Created `plugins/foundation/ai-folder/ai-content/templates/docs/FILE_HEADER_STANDARDS.md`
+   - Every project initialized with ai-folder now gets comprehensive file header standards
+   - Includes complete Template Files section with requirements and examples
+
+2. **Template Documentation Created** (3 NEW files):
+   - `.ai/howto/how-to-create-a-template.md` - Comprehensive template creation guide
+   - `.ai/templates/TEMPLATE_FILE_TEMPLATE.md` - Meta-template for creating templates
+   - Updated `.ai/docs/FILE_HEADER_STANDARDS.md` - Added Template Files section
+
+3. **Template Headers Fixed** (33 files):
+   - **Foundation plugin templates** (3 files): agents.md.template, index.yaml.template, layout.yaml.template
+   - **Python plugin templates** (14 files): All Python and pytest templates with comprehensive headers
+   - **TypeScript plugin templates** (16 files): All React/TypeScript templates with comprehensive headers
+   - All templates now include: Purpose, Scope, Overview, **Placeholders**, **Usage**, Related, Implementation
+
+4. **Documentation Updates** (4 files):
+   - `.ai/index.yaml` - Added template resources section
+   - `.ai/layout.yaml` - Added template structure documentation
+   - `plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md` - Added File Header Standards section
+   - `roadmap/ai_projen_implementation/AI_CONTEXT.md` - Added Template Creation Standards section
+
+**Template Header Requirements Established**:
+- **Mandatory Fields**: Purpose, Scope, Overview, **Placeholders** (with type/example/required), **Usage** (step-by-step)
+- **Placeholder Naming**: `{{SNAKE_CASE}}`, `{{PascalCase}}`, `{{camelCase}}`, `{{SCREAMING_SNAKE_CASE}}`, `{{kebab-case}}`
+- **Documentation Format**: Every placeholder must be documented with description, type, example, required status
+- **Usage Instructions**: Copy command, replacement steps, header removal, validation command
+
+**Placeholder Conventions**:
+- `{{SNAKE_CASE}}` - File names, module names, variables
+- `{{PascalCase}}` - Class names, component names, types
+- `{{camelCase}}` - Function names, methods, properties
+- `{{SCREAMING_SNAKE_CASE}}` - Constants, environment variables
+- `{{kebab-case}}` - URLs, CSS classes, file paths
+
+**Files Created/Modified**:
+- 3 new files (FILE_HEADER_STANDARDS.md in foundation, how-to guide, meta-template)
+- 33 template files updated with comprehensive headers
+- 6 documentation files updated (index.yaml, layout.yaml, AGENT_INSTRUCTIONS.md, AI_CONTEXT.md, FILE_HEADER_STANDARDS.md)
+
+**Impact**:
+This PR ensures all templates are properly documented with comprehensive headers, establishes template creation standards, and integrates FILE_HEADER_STANDARDS.md into the foundation plugin so every new project gets proper standards from the start. Makes template files self-documenting and easy to understand for both AI agents and human developers.
+
+---
+
 ## Overall Progress
-**Total Completion**: 62% (15/24 PRs completed)
+**Total Completion**: 64% (16/25 PRs completed)
 
 ```
-[██████████████░░░░░░] 62% Complete
+[███████████████░░░░░] 64% Complete
 ```
 
 ---
@@ -388,6 +449,7 @@ This PR makes plugins truly AI-agent-friendly by providing actionable guides for
 | PR7.5 | Docker-First Development Pattern | 🟢 | 100% | Medium | P1 | Complete - Python plugin Docker-first |
 | PR7.6 | Comprehensive Python Tooling | 🟢 | 100% | High | P1 | Complete - mypy/bandit/pylint/flake8/radon |
 | PR7.7 | How-To Template System & Plugin Integration | 🟢 | 100% | High | P1 | Complete - howto framework formalized |
+| PR7.8 | Template File Header Standardization | 🟢 | 100% | Medium | P1 | Complete - 33 templates + docs |
 | PR8 | Test Language Plugins | 🔴 | 0% | Medium | P1 | Validation |
 | PR9 | Docker Infrastructure Plugin | 🟢 | 100% | High | P1 | Complete - Multi-stage Dockerfiles |
 | PR10 | GitHub Actions CI/CD Plugin | 🟢 | 100% | Medium | P1 | Complete - 6 workflow templates |

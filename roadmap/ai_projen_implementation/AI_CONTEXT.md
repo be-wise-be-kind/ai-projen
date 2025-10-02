@@ -442,6 +442,46 @@ Discovery → Roadmap → PR1 (foundation) → PR2-N (plugins) → Integration T
 Read PROGRESS_TRACKER.md → Find last completed PR → Continue with next PR
 ```
 
+### Template Creation Standards
+
+When creating or modifying template files in plugins:
+
+#### Template File Requirements
+1. **File Extension**: Always use `.template` extension (e.g., `component.tsx.template`, `module.py.template`)
+2. **Comprehensive Headers**: Follow FILE_HEADER_STANDARDS.md Template Files section
+3. **Mandatory Fields**: Purpose, Scope, Overview, **Placeholders**, **Usage**, Related, Implementation
+4. **Placeholder Documentation**: List ALL {{PLACEHOLDERS}} with:
+   - Clear description
+   - Type (string, number, boolean, path, etc.)
+   - Example value
+   - Required/optional status
+   - Default value (if optional)
+
+#### Placeholder Naming Conventions
+- `{{SNAKE_CASE}}` - File names, module names, variables
+- `{{PascalCase}}` - Class names, component names, types
+- `{{camelCase}}` - Function names, methods, properties
+- `{{SCREAMING_SNAKE_CASE}}` - Constants, environment variables
+- `{{kebab-case}}` - URLs, CSS classes, file paths
+
+#### Usage Instructions Format
+Each template must include:
+1. Copy command with source and destination paths
+2. Placeholder replacement steps
+3. Header removal instruction
+4. Validation command for generated file
+
+#### Template Documentation Resources
+- **Header Standards**: `.ai/docs/FILE_HEADER_STANDARDS.md` (Template Files section)
+- **Creation Guide**: `.ai/howto/how-to-create-a-template.md`
+- **Meta-Template**: `.ai/templates/TEMPLATE_FILE_TEMPLATE.md`
+- **Examples**: See Python and TypeScript plugin templates
+
+#### Integration with Foundation Plugin
+- FILE_HEADER_STANDARDS.md is included in `plugins/foundation/ai-folder/ai-content/templates/docs/`
+- Every project initialized with ai-folder gets comprehensive file header standards
+- Template standards are part of foundational project setup
+
 ## Risk Mitigation
 
 ### Risk 1: Plugin Conflicts

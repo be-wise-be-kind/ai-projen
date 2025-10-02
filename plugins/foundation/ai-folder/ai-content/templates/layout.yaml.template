@@ -1,7 +1,36 @@
-# Purpose: Directory layout mapping for {{PROJECT_NAME}}
-# Scope: Defines where different types of files are located in the repository
-# Overview: Provides AI agents with a clear map of the repository structure, including source code,
-#     tests, documentation, configuration, and build artifacts locations.
+# Purpose: Template for generating directory layout mapping file (.ai/layout.yaml)
+# Scope: Used by ai-folder plugin to create .ai/layout.yaml during plugin installation
+# Overview: Generates the directory layout mapping that provides AI agents with a clear map
+#     of repository structure including source code, tests, documentation, configuration, and
+#     build artifacts locations. The generated layout.yaml serves as the authoritative reference
+#     for file organization and placement rules in the project.
+#
+# Placeholders:
+#   {{PROJECT_NAME}}: Name of the project
+#     - Type: string
+#     - Example: "my-awesome-app"
+#     - Required: yes
+#
+#   {{PROJECT_TYPE}}: Type/category of the project
+#     - Type: string
+#     - Example: "python", "typescript", "full-stack"
+#     - Required: yes
+#     - Note: Determines which language-specific sections to uncomment
+#
+# Usage:
+#   1. Copy template to .ai directory:
+#      cp plugins/foundation/ai-folder/ai-content/templates/layout.yaml.template .ai/layout.yaml
+#
+#   2. Replace all placeholders with project-specific values
+#
+#   3. Remove this template header (lines 1-XX)
+#
+#   4. Uncomment language-specific sections based on {{PROJECT_TYPE}}
+#
+#   5. Validate YAML syntax:
+#      python -c "import yaml; yaml.safe_load(open('.ai/layout.yaml'))"
+#
+# Related: FILE_HEADER_STANDARDS.md, .ai/index.yaml
 
 version: "1.0"
 

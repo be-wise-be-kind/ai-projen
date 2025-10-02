@@ -1,4 +1,15 @@
 {
+  "_header": {
+    "purpose": "Template for React component library TypeScript configuration - compiler settings",
+    "scope": "TypeScript compilation and type checking for component library packages",
+    "overview": "Generates TypeScript compiler configuration optimized for React component library development and publishing. Configures strict type checking, module resolution for modern bundlers, JSX transformation, declaration file generation with source maps, and library-specific compiler options. Enables all strict type checking flags for maximum type safety. Sets up ESNext module system with bundler resolution for optimal tree-shaking and code splitting. Configures React JSX transformation, DOM type definitions, and proper interop with CommonJS modules. Generates declaration files with source maps for enhanced IDE support. Excludes test files from build output while including all source files. Strips internal types from public API while preserving JSDoc comments for better documentation.",
+    "dependencies": "TypeScript 5+, React 18+ type definitions",
+    "exports": "TypeScript compiler configuration for library build and development",
+    "placeholders": "This template contains no placeholders - it provides a complete, ready-to-use TypeScript configuration",
+    "usage": "Copy template to library root as tsconfig.json, customize compiler options if needed for specific library requirements",
+    "related": "component-library-package.json.template for package configuration, component-library-index.ts.template for entry point",
+    "implementation": "Uses strict type checking for quality, bundler module resolution for modern tooling, declaration generation for TypeScript consumers, source maps for debugging"
+  },
   "compilerOptions": {
     /* Build Output */
     "outDir": "./dist",

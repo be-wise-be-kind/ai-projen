@@ -1,9 +1,35 @@
-"""{{MODULE_NAME}} API router.
+"""
+Purpose: Template for FastAPI router with CRUD endpoints and Pydantic request/response models
 
-Purpose: {{PURPOSE}}
-Scope: {{SCOPE}}
+Scope: REST API development, HTTP endpoints, API route organization
 
-This module provides API endpoints for {{FEATURE_DESCRIPTION}}.
+Overview: Generates Python module for FastAPI router implementing RESTful CRUD operations
+    with proper request validation, response serialization, database integration, and
+    authentication. Provides complete structure for API endpoint development including
+    Pydantic schemas for request/response validation, dependency injection for database
+    sessions and authentication, standardized error handling with HTTP status codes, and
+    pagination support. Follows REST API best practices and OpenAPI documentation standards.
+
+Dependencies: FastAPI (web framework), Pydantic (validation), SQLAlchemy (database ORM),
+    backend.core.database and backend.core.dependencies modules
+
+Exports: APIRouter instance with configured prefix and tags, Pydantic request/response models,
+    CRUD endpoint functions (create, read, list)
+
+Placeholders:
+    - {{MODULE_NAME}}: Name of the API module/resource (e.g., "users", "products")
+    - {{PURPOSE}}: Brief statement of router purpose
+    - {{SCOPE}}: What area this router covers
+    - {{FEATURE_DESCRIPTION}}: Description of feature/functionality provided
+    - {{MODEL_NAME}}: Name of Pydantic model class (e.g., "User", "Product")
+    - {{RESOURCE_NAME}}: Singular lowercase resource name (e.g., "user", "product")
+
+Usage: Copy template to target location, replace all {{PLACEHOLDERS}}, customize implementation
+
+Related: FastAPI documentation, REST API design patterns, Pydantic validation
+
+Implementation: Uses APIRouter with prefix/tags, Pydantic BaseModel with Config.from_attributes,
+    FastAPI dependency injection, HTTP status codes, authentication via get_current_user
 """
 
 from fastapi import APIRouter, Depends, HTTPException, status

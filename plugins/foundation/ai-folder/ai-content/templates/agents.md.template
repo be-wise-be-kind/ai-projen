@@ -1,3 +1,69 @@
+<!--
+Purpose: Template for generating the primary AI agent entry point file (agents.md)
+
+Scope: Used by ai-folder plugin to create agents.md in repository root during plugin installation
+
+Overview: Generates the main agents.md file that serves as the primary entry point for AI agents
+    working on a project. The generated file provides project overview, navigation guidance,
+    development guidelines, build commands, and best practices. This template ensures consistent
+    AI agent onboarding across all ai-projen managed repositories.
+
+Placeholders:
+  {{PROJECT_NAME}}: Name of the project
+    - Type: string
+    - Example: "my-awesome-app"
+    - Required: yes
+
+  {{PROJECT_PURPOSE}}: Brief description of what the project does
+    - Type: string (1-2 sentences)
+    - Example: "E-commerce platform with React frontend and Python backend"
+    - Required: yes
+
+  {{PROJECT_TYPE}}: Type/category of the project
+    - Type: string
+    - Example: "full-stack", "python", "typescript", "microservices"
+    - Required: yes
+
+  {{PROJECT_STATUS}}: Current development status
+    - Type: string
+    - Example: "in-development", "stable", "experimental"
+    - Required: yes
+
+  {{SOURCE_DIR}}: Directory containing source code
+    - Type: string (path)
+    - Example: "src/", "app/", "lib/"
+    - Required: yes
+
+  {{TEST_DIR}}: Directory containing tests
+    - Type: string (path)
+    - Example: "tests/", "test/", "specs/"
+    - Required: yes
+
+  {{DOCS_DIR}}: Directory containing documentation
+    - Type: string (path)
+    - Example: "docs/", "documentation/"
+    - Required: yes
+
+  {{LOG_DIR}}: Directory for log files (optional)
+    - Type: string (path)
+    - Example: "logs/", "var/log/"
+    - Required: no
+    - Default: Leave as "{{LOG_DIR}}" placeholder for user to fill in
+
+Usage:
+  1. Copy template to repository root:
+     cp plugins/foundation/ai-folder/ai-content/templates/agents.md.template agents.md
+
+  2. Replace all placeholders with project-specific values
+
+  3. Remove this template header (HTML comment block)
+
+  4. Verify markdown syntax:
+     markdownlint agents.md
+
+Related: FILE_HEADER_STANDARDS.md, ai-folder plugin documentation, .ai/index.yaml
+-->
+
 # AI Agent Guide for {{PROJECT_NAME}}
 
 **Purpose**: Primary entry point for AI agents working on this project

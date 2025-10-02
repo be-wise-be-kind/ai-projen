@@ -1,6 +1,42 @@
-// Purpose: {{HOOK_PURPOSE}} - Stateful custom React hook
-// Scope: {{HOOK_SCOPE}}
-// Usage: Copy and replace {{PLACEHOLDERS}}
+/**
+ * Purpose: Template for async React hook - custom hook with loading and error states
+ *
+ * Scope: Asynchronous operations with comprehensive state management
+ *
+ * Overview: Generates a custom React hook for managing async operations with built-in
+ *     loading, error, and data states. Provides a complete pattern for data fetching,
+ *     API calls, and other async operations with proper state tracking and error handling.
+ *     Includes TypeScript interface for state shape with data, loading, and error fields,
+ *     automatic execution on mount with dependency tracking, manual execution function for
+ *     triggered operations, reset function to clear state, and proper cleanup to prevent
+ *     memory leaks from unmounted components. The generated hook follows React async patterns
+ *     with mounted ref for cleanup safety, comprehensive error handling with type guards,
+ *     automatic state updates on success or failure, and flexible execution control. Suitable
+ *     for API data fetching, form submissions, file uploads, external service calls, and
+ *     any async operation requiring loading and error state management.
+ *
+ * Dependencies: React 18+ with hooks
+ *
+ * Exports: Custom hook function with async execution capabilities
+ *
+ * Placeholders:
+ *     - {{HOOK_PURPOSE}}: Hook purpose (e.g., "Fetch user data from API")
+ *     - {{HOOK_SCOPE}}: Hook scope (e.g., "User data management")
+ *     - {{HOOK_NAME}}: Hook name without 'use' prefix in PascalCase (e.g., "UserData", "ApiCall")
+ *     - {{HOOK_DESCRIPTION}}: Detailed hook description
+ *     - {{DATA_TYPE}}: TypeScript type for successful response data (e.g., "User", "Product[]")
+ *     - {{PARAM}}: Hook parameter name (e.g., "userId", "endpoint")
+ *     - {{PARAM_TYPE}}: Hook parameter type (e.g., "string", "RequestConfig")
+ *     - {{PARAM_DESCRIPTION}}: Description of hook parameter
+ *     - {{ASYNC_LOGIC}}: Description of async operation logic
+ *     - {{ASYNC_OPERATION}}: Actual async operation implementation (e.g., "fetchUser(userId)")
+ *
+ * Usage: Copy template to hooks directory, replace all {{PLACEHOLDERS}}, implement async operation, use in components for data fetching
+ *
+ * Related: react-hook.ts.template for simpler hooks, react-component-with-hooks.tsx.template for components using async hooks
+ *
+ * Implementation: Async hook with loading/error states, mounted ref for cleanup safety, automatic and manual execution, TypeScript for type safety
+ */
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 
@@ -72,7 +108,3 @@ export function use{{HOOK_NAME}}({{PARAM}}: {{PARAM_TYPE}}) {
   };
 }
 
-// Placeholders:
-// {{HOOK_PURPOSE}}, {{HOOK_SCOPE}}, {{HOOK_NAME}}, {{HOOK_DESCRIPTION}}
-// {{DATA_TYPE}}, {{PARAM}}, {{PARAM_TYPE}}, {{PARAM_DESCRIPTION}}
-// {{ASYNC_LOGIC}}, {{ASYNC_OPERATION}}

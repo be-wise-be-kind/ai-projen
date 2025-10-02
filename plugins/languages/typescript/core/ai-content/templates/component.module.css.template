@@ -1,6 +1,37 @@
-/* Purpose: Styles for {{COMPONENT_NAME}} component */
-/* Scope: {{COMPONENT_SCOPE}} */
-/* Usage: Import with: import styles from './{{COMPONENT_NAME}}.module.css' */
+/*
+Purpose: Template for React component CSS Module - scoped component styling
+
+Scope: Component-specific styles with CSS Modules for style encapsulation
+
+Overview: Generates a comprehensive CSS Module stylesheet for React components with scoped
+    class names, responsive design patterns, dark mode support, loading and error states,
+    and accessibility considerations. Provides base styling for common component elements
+    including container, content areas, headers, buttons, and state-specific styles. Includes
+    responsive breakpoints for mobile adaptation, dark mode media query support, smooth
+    transitions for interactive elements, and proper disabled state styling. Follows modern
+    CSS best practices with flexbox layouts, CSS custom properties for theming potential,
+    and proper focus states for keyboard accessibility. The generated styles integrate with
+    React components through CSS Modules for automatic class name scoping and collision prevention.
+
+Dependencies: CSS Modules support in bundler (Vite, webpack, etc.), modern browser CSS support
+
+Exports: Scoped CSS classes for container, content, header, title, button, loading, spinner,
+    error states, with responsive and dark mode variants
+
+Placeholders:
+    - {{COMPONENT_NAME}}: Component name in PascalCase for filename (e.g., "UserCard", "ProductList")
+    - {{COMPONENT_SCOPE}}: Brief description of component's UI scope (e.g., "User profile display", "Product listing")
+    - {{CONTAINER_DESCRIPTION}}: Description of main container element's purpose
+    - {{CONTENT_DESCRIPTION}}: Description of content area element's purpose
+    - {{HEADER_DESCRIPTION}}: Description of header section element's purpose
+    - {{BUTTON_DESCRIPTION}}: Description of button element's purpose
+
+Usage: Copy template to component directory as ComponentName.module.css, replace placeholders, customize styles, import in component with 'import styles from ./ComponentName.module.css'
+
+Related: react-component.tsx.template for basic components, react-component-with-hooks.tsx.template for stateful components
+
+Implementation: Uses CSS Modules for scoping, flexbox for layouts, media queries for responsive and dark mode, BEM-like naming within module scope
+*/
 
 .container {
   /* {{CONTAINER_DESCRIPTION}} */
@@ -149,19 +180,3 @@
   }
 }
 
-/* Template Placeholders:
- * {{COMPONENT_NAME}} - Component name in PascalCase (e.g., UserCard)
- * {{COMPONENT_SCOPE}} - Scope description (e.g., User profile display)
- * {{CONTAINER_DESCRIPTION}} - Container element description
- * {{CONTENT_DESCRIPTION}} - Content area description
- * {{HEADER_DESCRIPTION}} - Header section description
- * {{BUTTON_DESCRIPTION}} - Button element description
- *
- * Usage:
- * 1. Copy this template to your component directory
- * 2. Rename to match component: ComponentName.module.css
- * 3. Replace {{PLACEHOLDERS}} with actual values
- * 4. Add/remove styles as needed
- * 5. Import in component: import styles from './ComponentName.module.css'
- * 6. Use in JSX: <div className={styles.container}>
- */

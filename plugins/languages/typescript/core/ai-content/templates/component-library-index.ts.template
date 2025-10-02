@@ -1,6 +1,35 @@
-// {{LIBRARY_NAME}} - Main entry point
-// Purpose: Export all public components, hooks, and utilities
-// Usage: import { Component } from '@{{ORG_NAME}}/{{LIBRARY_NAME}}'
+/**
+ * Purpose: Template for React component library index file - exports all public API
+ *
+ * Scope: Component library main entry point and public API surface
+ *
+ * Overview: Generates the main entry point for a React component library package, providing
+ *     a centralized location for exporting all public components, hooks, utilities, and types.
+ *     The generated file establishes the library's public API surface with proper TypeScript
+ *     type exports and namespace organization. Supports component exports with their prop types,
+ *     custom hook exports with return types, utility function exports, and shared type definitions.
+ *     Includes version constant for library versioning. Follows best practices for tree-shaking
+ *     and module bundling optimization with explicit named exports.
+ *
+ * Dependencies: React components, hooks, utilities, and types defined within the library
+ *
+ * Exports: Components and their TypeScript types, custom hooks and their return types, utility
+ *     functions, shared type definitions, and library VERSION constant
+ *
+ * Placeholders:
+ *     - {{LIBRARY_NAME}}: Name of the component library (e.g., "ui-components")
+ *     - {{ORG_NAME}}: Organization or scope name for npm package (e.g., "mycompany")
+ *     - {{COMPONENT_NAME}}: First component name to export (e.g., "Button")
+ *     - {{COMPONENT_NAME_2}}: Second component name to export (e.g., "Card")
+ *     - {{HOOK_NAME}}: Custom hook name without 'use' prefix (e.g., "Theme")
+ *     - {{TYPE_NAME}}: Shared type definition name to export (e.g., "ThemeConfig")
+ *
+ * Usage: Copy template to library root as index.ts, replace all {{PLACEHOLDERS}}, add exports for all public components/hooks/utilities
+ *
+ * Related: component-library-package.json.template for package configuration, component-library-tsconfig.json.template for TypeScript setup
+ *
+ * Implementation: Uses named exports for tree-shaking optimization, separate type exports for TypeScript consumers, organized by category (components, hooks, utils, types)
+ */
 
 // Components
 export { {{COMPONENT_NAME}} } from './components/{{COMPONENT_NAME}}';
@@ -22,10 +51,3 @@ export type { {{TYPE_NAME}} } from './types';
 // Version
 export const VERSION = '1.0.0';
 
-// Template Placeholders:
-// {{LIBRARY_NAME}} - Library name
-// {{ORG_NAME}} - Organization/scope name
-// {{COMPONENT_NAME}} - First component name
-// {{COMPONENT_NAME_2}} - Second component name
-// {{HOOK_NAME}} - Hook name (without 'use')
-// {{TYPE_NAME}} - Exported type name
