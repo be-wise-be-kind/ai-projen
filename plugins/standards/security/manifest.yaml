@@ -1,0 +1,261 @@
+version: "1.0"
+
+plugin:
+  name: security
+  category: standards
+  subcategory: security
+  type: standards
+  status: stable
+  description: Comprehensive security standards for secrets management, dependency scanning, and code security
+
+metadata:
+  version: 1.0.0
+  author: ai-projen
+  license: MIT
+  repository: https://github.com/ai-projen/ai-projen
+  documentation: README.md
+  agent_instructions: AGENT_INSTRUCTIONS.md
+
+dependencies:
+  required:
+    - plugin: foundation/ai-folder
+      reason: Requires .ai folder structure for security documentation
+  recommended:
+    - plugin: infrastructure/ci-cd/github-actions
+      reason: Security scanning workflows via GitHub Actions
+    - plugin: languages/python
+      reason: Python-specific security scanning tools
+  optional:
+    - plugin: infrastructure/containerization/docker
+      reason: Container security best practices
+
+system_requirements:
+  git:
+    min_version: "2.30.0"
+    required: true
+    reason: Git hooks for secrets prevention
+  github_cli:
+    min_version: "2.0.0"
+    required: false
+    reason: GitHub security features integration
+
+provides:
+  standards:
+    - path: ai-content/standards/SECURITY_STANDARDS.md
+      title: Security Standards
+      description: Comprehensive security standards for secrets, dependencies, and code
+
+  documentation:
+    - path: ai-content/docs/secrets-management.md
+      title: Secrets Management
+      description: Strategies for preventing secrets in repositories
+    - path: ai-content/docs/dependency-scanning.md
+      title: Dependency Scanning
+      description: Automated vulnerability detection in dependencies
+    - path: ai-content/docs/code-scanning.md
+      title: Code Scanning
+      description: Static analysis and security code review automation
+
+  howtos:
+    - path: ai-content/howtos/how-to-prevent-secrets-in-git.md
+      title: How to Prevent Secrets in Git
+      difficulty: intermediate
+      time_minutes: 30
+      description: Implement pre-commit hooks and scanning for secrets prevention
+    - path: ai-content/howtos/how-to-setup-dependency-scanning.md
+      title: How to Setup Dependency Scanning
+      difficulty: intermediate
+      time_minutes: 25
+      description: Configure automated dependency vulnerability scanning
+    - path: ai-content/howtos/how-to-configure-code-scanning.md
+      title: How to Configure Code Scanning
+      difficulty: advanced
+      time_minutes: 45
+      description: Setup static analysis and automated security reviews
+
+  templates:
+    gitignore_security:
+      path: ai-content/templates/.gitignore.security.template
+      description: Security-focused .gitignore patterns
+      category: configuration
+      placeholders:
+        - PROJECT_NAME
+        - FRAMEWORK
+
+    env_example:
+      path: ai-content/templates/.env.example.template
+      description: Secure environment variable template
+      category: configuration
+      placeholders:
+        - PROJECT_NAME
+        - DATABASE_TYPE
+        - CACHE_TYPE
+        - API_SERVICES
+
+    security_workflow:
+      path: ai-content/templates/github-workflow-security.yml.template
+      description: GitHub Actions security scanning workflow
+      category: ci-cd
+      placeholders:
+        - PROJECT_NAME
+        - LANGUAGE
+        - PACKAGE_MANAGER
+        - SECURITY_TOOLS
+
+features:
+  secrets_prevention:
+    enabled: true
+    description: Pre-commit hooks and scanning to prevent secrets in commits
+    tools:
+      - gitleaks
+      - detect-secrets
+      - git-secrets
+
+  dependency_scanning:
+    enabled: true
+    description: Automated vulnerability detection in dependencies
+    tools:
+      - dependabot
+      - snyk
+      - safety
+      - npm-audit
+
+  code_scanning:
+    enabled: true
+    description: Static analysis and security code review
+    tools:
+      - codeql
+      - semgrep
+      - bandit
+      - eslint-security
+
+  secure_configuration:
+    enabled: true
+    description: Secure environment variable and secrets management patterns
+
+configuration_options:
+  secrets_scanning_tool:
+    type: choice
+    choices:
+      - gitleaks
+      - detect-secrets
+      - git-secrets
+    default: gitleaks
+    description: Tool for detecting secrets in commits
+
+  dependency_scanner:
+    type: choice
+    choices:
+      - dependabot
+      - snyk
+      - safety
+    default: dependabot
+    description: Dependency vulnerability scanning tool
+
+  code_scanner:
+    type: choice
+    choices:
+      - codeql
+      - semgrep
+      - sonarqube
+    default: codeql
+    description: Static analysis security scanning tool
+
+  enable_github_security:
+    type: boolean
+    default: true
+    description: Enable GitHub Advanced Security features
+
+installation:
+  steps:
+    - name: Create security documentation structure
+      command: mkdir -p .ai/docs/security .ai/howtos/security
+      required: true
+
+    - name: Copy security standards
+      files:
+        - src: ai-content/standards/SECURITY_STANDARDS.md
+          dest: .ai/docs/SECURITY_STANDARDS.md
+      required: true
+
+    - name: Copy security documentation
+      files:
+        - src: ai-content/docs/secrets-management.md
+          dest: .ai/docs/security/secrets-management.md
+        - src: ai-content/docs/dependency-scanning.md
+          dest: .ai/docs/security/dependency-scanning.md
+        - src: ai-content/docs/code-scanning.md
+          dest: .ai/docs/security/code-scanning.md
+
+    - name: Copy how-to guides
+      files:
+        - src: ai-content/howtos/how-to-prevent-secrets-in-git.md
+          dest: .ai/howtos/security/how-to-prevent-secrets-in-git.md
+        - src: ai-content/howtos/how-to-setup-dependency-scanning.md
+          dest: .ai/howtos/security/how-to-setup-dependency-scanning.md
+        - src: ai-content/howtos/how-to-configure-code-scanning.md
+          dest: .ai/howtos/security/how-to-configure-code-scanning.md
+
+    - name: Copy templates
+      files:
+        - src: ai-content/templates/.gitignore.security.template
+          dest: .ai/templates/security/.gitignore.security.template
+        - src: ai-content/templates/.env.example.template
+          dest: .ai/templates/security/.env.example.template
+        - src: ai-content/templates/github-workflow-security.yml.template
+          dest: .ai/templates/security/github-workflow-security.yml.template
+
+    - name: Setup pre-commit hooks
+      command: pip install pre-commit gitleaks detect-secrets
+      optional: true
+
+    - name: Initialize security scanning
+      command: pre-commit install
+      optional: true
+
+validation:
+  files_created:
+    - .ai/docs/SECURITY_STANDARDS.md
+    - .ai/docs/security/secrets-management.md
+    - .ai/docs/security/dependency-scanning.md
+    - .ai/docs/security/code-scanning.md
+    - .ai/howtos/security/how-to-prevent-secrets-in-git.md
+    - .ai/templates/security/.gitignore.security.template
+
+  security_checks:
+    - check: secrets_in_repo
+      description: Verify no secrets in repository history
+    - check: gitignore_patterns
+      description: Verify security patterns in .gitignore
+    - check: env_example_exists
+      description: Verify .env.example exists with placeholders
+
+integration:
+  agents_md:
+    section: SECURITY_GUIDELINES
+    marker: "<!-- SECURITY_INTEGRATION -->"
+    template: templates/agents-md-extension.txt
+
+  index_yaml:
+    section: standards
+    entry:
+      - path: docs/SECURITY_STANDARDS.md
+        title: Security Standards
+      - path: docs/security/secrets-management.md
+        title: Secrets Management
+      - path: docs/security/dependency-scanning.md
+        title: Dependency Scanning
+      - path: docs/security/code-scanning.md
+        title: Code Scanning
+
+tags:
+  - security
+  - secrets-management
+  - dependency-scanning
+  - code-scanning
+  - vulnerability-management
+  - static-analysis
+  - secure-coding
+  - devsecops
+  - github-security
+  - pre-commit-hooks

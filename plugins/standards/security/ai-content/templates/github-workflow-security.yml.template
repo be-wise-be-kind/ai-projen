@@ -1,0 +1,500 @@
+# Purpose: Template for comprehensive GitHub Actions security scanning workflow with secrets, dependencies, and code analysis
+# Scope: GitHub repositories requiring automated security scanning across all three security domains
+# Overview: Provides a production-ready GitHub Actions workflow that implements comprehensive security scanning
+#     including secrets detection with gitleaks, dependency scanning with Dependabot integration and package
+#     manager audits, and code scanning with CodeQL and Semgrep. Includes language-specific security linters,
+#     configurable severity thresholds, pull request commenting, and security gate enforcement. Supports multiple
+#     languages and package managers with smart conditional execution. Designed to run on pushes, pull requests,
+#     and scheduled scans for continuous security monitoring.
+# Dependencies: GitHub Actions, GitHub Advanced Security, gitleaks, CodeQL, Semgrep, language-specific linters
+# Exports: Complete security scanning workflow with secrets, dependency, and code analysis for CI/CD integration
+# Placeholders:
+#     - {{PROJECT_NAME}}: Name of the project for workflow identification
+#     - {{LANGUAGE}}: Primary programming language (javascript, python, java, go, ruby, etc.)
+#     - {{PACKAGE_MANAGER}}: Package manager (npm, pip, maven, gradle, bundler, etc.)
+#     - {{SECURITY_TOOLS}}: Additional security tools to enable (bandit, eslint, semgrep, etc.)
+# Usage: Copy to .github/workflows/security.yml, replace {{PLACEHOLDERS}}, customize for specific needs,
+#     enable GitHub Advanced Security if using private repository, commit and verify workflow execution
+# Related: how-to-configure-code-scanning.md, how-to-prevent-secrets-in-git.md, how-to-setup-dependency-scanning.md
+# Implementation: Comprehensive multi-stage security workflow with conditional execution based on detected languages
+
+# ========================================
+# {{PROJECT_NAME}} Security Scanning Workflow
+# ========================================
+#
+# This workflow implements comprehensive security scanning:
+# 1. Secrets Detection - Prevents credentials in commits
+# 2. Dependency Scanning - Detects vulnerable dependencies
+# 3. Code Scanning - Identifies security issues in code
+#
+# Language: {{LANGUAGE}}
+# Package Manager: {{PACKAGE_MANAGER}}
+# Security Tools: {{SECURITY_TOOLS}}
+#
+# Requirements:
+# - GitHub Advanced Security enabled (for CodeQL on private repos)
+# - Secrets: GITHUB_TOKEN (automatically provided)
+# - Optional: SLACK_WEBHOOK for notifications
+#
+# ========================================
+
+name: Security Scanning
+
+on:
+  # Run on pushes to main branches
+  push:
+    branches:
+      - main
+      - develop
+      - master
+
+  # Run on all pull requests
+  pull_request:
+    branches:
+      - main
+      - develop
+      - master
+
+  # Scheduled daily scan at 2 AM UTC
+  schedule:
+    - cron: '0 2 * * *'
+
+  # Allow manual workflow dispatch
+  workflow_dispatch:
+
+# Permissions required for security scanning
+permissions:
+  actions: read
+  contents: read
+  security-events: write
+  pull-requests: write
+
+jobs:
+  # ========================================
+  # Job 1: Secrets Detection
+  # ========================================
+  secrets-scan:
+    name: Scan for Secrets
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # Full history for thorough scanning
+
+      - name: Run Gitleaks
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload Gitleaks results
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: gitleaks-report
+          path: gitleaks-report.json
+          retention-days: 30
+
+  # ========================================
+  # Job 2: Dependency Scanning
+  # ========================================
+  dependency-scan:
+    name: Scan Dependencies
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Node.js / npm scanning
+      - name: Setup Node.js
+        if: hashFiles('package.json') != ''
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install npm dependencies
+        if: hashFiles('package.json') != ''
+        run: npm ci
+
+      - name: Run npm audit
+        if: hashFiles('package.json') != ''
+        run: |
+          npm audit --audit-level=moderate --json > npm-audit.json || true
+          npm audit --audit-level=moderate
+
+      - name: Upload npm audit results
+        if: hashFiles('package.json') != ''
+        uses: actions/upload-artifact@v3
+        with:
+          name: npm-audit-report
+          path: npm-audit.json
+          retention-days: 30
+
+      # Python / pip scanning
+      - name: Setup Python
+        if: hashFiles('requirements.txt', 'pyproject.toml', 'Pipfile') != ''
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Python dependencies
+        if: hashFiles('requirements.txt') != ''
+        run: |
+          pip install safety pip-audit
+          pip install -r requirements.txt
+
+      - name: Run Safety check
+        if: hashFiles('requirements.txt', 'pyproject.toml') != ''
+        run: |
+          safety check --json --output safety-report.json || true
+          safety check
+
+      - name: Run pip-audit
+        if: hashFiles('requirements.txt') != ''
+        run: |
+          pip-audit --format json --output pip-audit.json || true
+          pip-audit
+
+      - name: Upload Python security reports
+        if: hashFiles('requirements.txt', 'pyproject.toml') != ''
+        uses: actions/upload-artifact@v3
+        with:
+          name: python-security-reports
+          path: |
+            safety-report.json
+            pip-audit.json
+          retention-days: 30
+
+      # Java / Maven scanning
+      - name: Setup Java
+        if: hashFiles('pom.xml') != ''
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Run OWASP Dependency Check (Maven)
+        if: hashFiles('pom.xml') != ''
+        run: mvn org.owasp:dependency-check-maven:check
+
+      # Trivy scanning (multi-language)
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          severity: 'CRITICAL,HIGH'
+
+      - name: Upload Trivy results to GitHub Security
+        uses: github/codeql-action/upload-sarif@v2
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+  # ========================================
+  # Job 3: CodeQL Analysis
+  # ========================================
+  codeql-analyze:
+    name: CodeQL Analysis
+    runs-on: ubuntu-latest
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # Detect languages automatically or specify manually
+        language: ['{{LANGUAGE}}']
+        # Supported: cpp, csharp, go, java, javascript, python, ruby, typescript
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v2
+        with:
+          languages: ${{ matrix.language }}
+          # Query suites: default, security-extended, security-and-quality
+          queries: security-extended
+          # Custom config file (optional)
+          # config-file: ./.github/codeql/codeql-config.yml
+
+      # Autobuild for compiled languages
+      - name: Autobuild
+        uses: github/codeql-action/autobuild@v2
+
+      # Alternative: Custom build commands
+      # - name: Custom build
+      #   run: |
+      #     make bootstrap
+      #     make release
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v2
+        with:
+          category: "/language:${{ matrix.language }}"
+          upload: true
+
+  # ========================================
+  # Job 4: Semgrep Scanning
+  # ========================================
+  semgrep-scan:
+    name: Semgrep Analysis
+    runs-on: ubuntu-latest
+
+    container:
+      image: returntocorp/semgrep
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Run Semgrep
+        run: |
+          semgrep scan \
+            --config=auto \
+            --config=p/security-audit \
+            --config=p/owasp-top-ten \
+            --sarif \
+            --output=semgrep.sarif \
+            --error \
+            --verbose
+
+      - name: Upload Semgrep results
+        uses: github/codeql-action/upload-sarif@v2
+        if: always()
+        with:
+          sarif_file: semgrep.sarif
+
+  # ========================================
+  # Job 5: Language-Specific Security Linters
+  # ========================================
+  language-linters:
+    name: Language Security Linters
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Python: Bandit
+      - name: Setup Python for Bandit
+        if: hashFiles('**/*.py') != ''
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Bandit
+        if: hashFiles('**/*.py') != ''
+        run: pip install bandit[toml]
+
+      - name: Run Bandit
+        if: hashFiles('**/*.py') != ''
+        run: |
+          bandit -r . -f json -o bandit-report.json || true
+          bandit -r . -ll  # Fail on medium+ severity
+
+      - name: Upload Bandit report
+        if: hashFiles('**/*.py') != ''
+        uses: actions/upload-artifact@v3
+        with:
+          name: bandit-report
+          path: bandit-report.json
+          retention-days: 30
+
+      # JavaScript/TypeScript: ESLint Security
+      - name: Setup Node.js for ESLint
+        if: hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') != ''
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install ESLint dependencies
+        if: hashFiles('package.json') != ''
+        run: |
+          npm ci
+          npm install --save-dev eslint eslint-plugin-security eslint-plugin-no-secrets
+
+      - name: Run ESLint Security
+        if: hashFiles('package.json') != ''
+        run: npx eslint . --ext .js,.jsx,.ts,.tsx --format json --output-file eslint-report.json || true
+
+      - name: Upload ESLint report
+        if: hashFiles('package.json') != ''
+        uses: actions/upload-artifact@v3
+        with:
+          name: eslint-security-report
+          path: eslint-report.json
+          retention-days: 30
+
+      # Go: gosec
+      - name: Setup Go
+        if: hashFiles('**/*.go') != ''
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Run gosec
+        if: hashFiles('**/*.go') != ''
+        uses: securego/gosec@master
+        with:
+          args: '-fmt json -out gosec-report.json ./...'
+
+      # Ruby: Brakeman (for Rails)
+      - name: Setup Ruby
+        if: hashFiles('Gemfile') != ''
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+          bundler-cache: true
+
+      - name: Run Brakeman
+        if: hashFiles('Gemfile') != ''
+        run: |
+          gem install brakeman
+          brakeman -f json -o brakeman-report.json || true
+
+  # ========================================
+  # Job 6: Security Summary and PR Comment
+  # ========================================
+  security-summary:
+    name: Security Summary
+    runs-on: ubuntu-latest
+    needs: [secrets-scan, dependency-scan, codeql-analyze, semgrep-scan, language-linters]
+    if: always() && github.event_name == 'pull_request'
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+
+      - name: Generate security summary
+        id: summary
+        run: |
+          echo "## Security Scan Results" > summary.md
+          echo "" >> summary.md
+
+          # Check job statuses
+          if [ "${{ needs.secrets-scan.result }}" == "success" ]; then
+            echo "✅ **Secrets Scan**: Passed" >> summary.md
+          else
+            echo "❌ **Secrets Scan**: Failed - Secrets detected!" >> summary.md
+          fi
+
+          if [ "${{ needs.dependency-scan.result }}" == "success" ]; then
+            echo "✅ **Dependency Scan**: Passed" >> summary.md
+          else
+            echo "⚠️ **Dependency Scan**: Vulnerabilities found" >> summary.md
+          fi
+
+          if [ "${{ needs.codeql-analyze.result }}" == "success" ]; then
+            echo "✅ **CodeQL Analysis**: Passed" >> summary.md
+          else
+            echo "⚠️ **CodeQL Analysis**: Security issues found" >> summary.md
+          fi
+
+          if [ "${{ needs.semgrep-scan.result }}" == "success" ]; then
+            echo "✅ **Semgrep Scan**: Passed" >> summary.md
+          else
+            echo "⚠️ **Semgrep Scan**: Security issues found" >> summary.md
+          fi
+
+          echo "" >> summary.md
+          echo "**Please review all security findings before merging.**" >> summary.md
+          echo "" >> summary.md
+          echo "View detailed results in the [Security tab](https://github.com/${{ github.repository }}/security)." >> summary.md
+
+      - name: Comment on PR
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const fs = require('fs');
+            const summary = fs.readFileSync('summary.md', 'utf8');
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: summary
+            });
+
+  # ========================================
+  # Job 7: Security Gate (Fail on Critical Issues)
+  # ========================================
+  security-gate:
+    name: Security Gate
+    runs-on: ubuntu-latest
+    needs: [secrets-scan, dependency-scan, codeql-analyze, semgrep-scan]
+    if: always()
+
+    steps:
+      - name: Check for critical security failures
+        run: |
+          echo "Checking security scan results..."
+
+          # Fail if secrets were detected
+          if [ "${{ needs.secrets-scan.result }}" == "failure" ]; then
+            echo "❌ CRITICAL: Secrets detected in commits!"
+            exit 1
+          fi
+
+          # Fail if critical vulnerabilities found
+          if [ "${{ needs.dependency-scan.result }}" == "failure" ]; then
+            echo "⚠️ WARNING: Dependency vulnerabilities detected"
+            # Uncomment to block on dependency issues:
+            # exit 1
+          fi
+
+          # Fail if code scanning found critical issues
+          if [ "${{ needs.codeql-analyze.result }}" == "failure" ]; then
+            echo "⚠️ WARNING: Code scanning found security issues"
+            # Uncomment to block on code issues:
+            # exit 1
+          fi
+
+          echo "✅ Security gate passed"
+
+  # ========================================
+  # Job 8: Notifications (Optional)
+  # ========================================
+  notify:
+    name: Send Notifications
+    runs-on: ubuntu-latest
+    needs: [security-gate]
+    if: failure() && github.event_name == 'push'
+
+    steps:
+      - name: Send Slack notification
+        if: env.SLACK_WEBHOOK != ''
+        uses: 8398a7/action-slack@v3
+        with:
+          status: failure
+          text: |
+            Security scan failed for ${{ github.repository }}
+            Branch: ${{ github.ref }}
+            Commit: ${{ github.sha }}
+            Author: ${{ github.actor }}
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        env:
+          SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+
+# ========================================
+# Configuration Notes
+# ========================================
+#
+# 1. Customize language matrix in codeql-analyze job
+# 2. Enable/disable specific linters based on your stack
+# 3. Adjust severity thresholds in npm audit, Safety, etc.
+# 4. Configure branch protection to require these checks
+# 5. Add SLACK_WEBHOOK secret for notifications
+# 6. Review and customize .github/codeql/codeql-config.yml
+# 7. Add custom Semgrep rules in .semgrep.yml
+#
+# For more information, see:
+# - docs/security/code-scanning.md
+# - docs/security/dependency-scanning.md
+# - docs/security/secrets-management.md
+# - docs/howtos/how-to-configure-code-scanning.md

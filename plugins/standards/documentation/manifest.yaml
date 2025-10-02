@@ -1,0 +1,254 @@
+# Documentation Standards Plugin Manifest
+
+name: documentation
+version: 1.0.0
+type: standards
+description: Comprehensive documentation standards including file headers, README templates, and API documentation guidelines
+author: ai-projen framework
+last_updated: 2025-10-02
+
+# Plugin metadata
+metadata:
+  standards_version: "1.0"
+  applies_to:
+    - markdown
+    - python
+    - typescript
+    - javascript
+    - yaml
+    - terraform
+    - docker
+    - all_file_types
+  reference_implementation: "durable-code-test"
+
+# Documentation guides
+docs:
+  directory: ai-content/docs/
+  available:
+    - name: file-headers
+      file: file-headers.md
+      title: "File Header Standards"
+      description: "Comprehensive file header standards for all file types"
+
+    - name: readme-standards
+      file: readme-standards.md
+      title: "README Documentation Standards"
+      description: "Standards for creating effective README files"
+
+    - name: api-documentation
+      file: api-documentation.md
+      title: "API Documentation Standards"
+      description: "Standards for documenting APIs, endpoints, and interfaces"
+
+# How-to guides
+howtos:
+  directory: ai-content/howtos/
+  available:
+    - name: write-file-headers
+      file: how-to-write-file-headers.md
+      title: "How to: Write File Headers"
+      description: "Step-by-step guide for writing compliant file headers"
+      difficulty: beginner
+      estimated_time: 15-20 min
+      prerequisites:
+        - "Understanding of file types"
+      tags:
+        - documentation
+        - headers
+        - standards
+      templates_used:
+        - templates/file-header-markdown.template
+        - templates/file-header-python.template
+        - templates/file-header-typescript.template
+        - templates/file-header-yaml.template
+      related:
+        - create-readme
+        - document-api
+
+    - name: create-readme
+      file: how-to-create-readme.md
+      title: "How to: Create a README"
+      description: "Guide for creating comprehensive README documentation"
+      difficulty: intermediate
+      estimated_time: 30-45 min
+      prerequisites:
+        - "Project understanding"
+        - "Basic markdown"
+      tags:
+        - documentation
+        - readme
+        - onboarding
+      templates_used:
+        - templates/README.template
+      related:
+        - write-file-headers
+        - document-api
+
+    - name: document-api
+      file: how-to-document-api.md
+      title: "How to: Document an API"
+      description: "Best practices for documenting REST APIs and interfaces"
+      difficulty: intermediate
+      estimated_time: 45-60 min
+      prerequisites:
+        - "API development experience"
+        - "Understanding of HTTP methods"
+      tags:
+        - documentation
+        - api
+        - openapi
+        - swagger
+      templates_used:
+        - templates/file-header-python.template
+        - templates/file-header-typescript.template
+      related:
+        - write-file-headers
+        - create-readme
+
+# Templates
+templates:
+  directory: ai-content/templates/
+  available:
+    - name: file-header-markdown
+      file: file-header-markdown.template
+      description: "Standard markdown file header template"
+      category: headers
+      placeholders:
+        - DOCUMENT_TITLE
+        - PURPOSE
+        - SCOPE
+        - OVERVIEW
+        - DEPENDENCIES
+        - EXPORTS
+        - RELATED
+        - IMPLEMENTATION
+
+    - name: file-header-python
+      file: file-header-python.template
+      description: "Standard Python file header template"
+      category: headers
+      placeholders:
+        - MODULE_NAME
+        - PURPOSE
+        - SCOPE
+        - OVERVIEW
+        - DEPENDENCIES
+        - EXPORTS
+        - INTERFACES
+        - IMPLEMENTATION
+
+    - name: file-header-typescript
+      file: file-header-typescript.template
+      description: "Standard TypeScript/JavaScript file header template"
+      category: headers
+      placeholders:
+        - MODULE_NAME
+        - PURPOSE
+        - SCOPE
+        - OVERVIEW
+        - DEPENDENCIES
+        - EXPORTS
+        - PROPS_INTERFACES
+        - STATE_BEHAVIOR
+
+    - name: file-header-yaml
+      file: file-header-yaml.template
+      description: "Standard YAML configuration file header template"
+      category: headers
+      placeholders:
+        - CONFIG_NAME
+        - PURPOSE
+        - SCOPE
+        - OVERVIEW
+        - DEPENDENCIES
+        - EXPORTS
+        - ENVIRONMENT
+        - RELATED
+        - IMPLEMENTATION
+
+    - name: readme
+      file: README.template
+      description: "Comprehensive README template for projects"
+      category: documentation
+      placeholders:
+        - PROJECT_NAME
+        - PROJECT_DESCRIPTION
+        - TECH_STACK
+        - PREREQUISITES
+        - INSTALLATION_STEPS
+        - USAGE_EXAMPLES
+        - PROJECT_STRUCTURE
+        - DEVELOPMENT_GUIDELINES
+
+# Standards
+standards:
+  directory: ai-content/standards/
+  file: DOCUMENTATION_STANDARDS.md
+  highlights:
+    - "Atemporal documentation principle (no dates, temporal references)"
+    - "Mandatory fields: Purpose, Scope, Overview"
+    - "File-type specific formatting guidelines"
+    - "Template placeholder conventions"
+    - "README structure standards"
+    - "API documentation best practices"
+
+# Integration
+integrates_with:
+  - name: python
+    required: false
+    description: "Python file header standards"
+  - name: typescript
+    required: false
+    description: "TypeScript file header standards"
+  - name: docker
+    required: false
+    description: "Docker configuration file headers"
+  - name: terraform-aws
+    required: false
+    description: "Terraform file header standards"
+  - name: ai-folder
+    required: true
+    description: "Integrates with .ai folder structure"
+
+# Usage
+usage:
+  quick_start:
+    - "Review DOCUMENTATION_STANDARDS.md"
+    - "Copy relevant templates to .ai/templates/"
+    - "Use templates when creating new files"
+    - "Follow header standards for all file types"
+  common_patterns:
+    - pattern: "New markdown file"
+      description: "Use file-header-markdown.template"
+    - pattern: "New Python module"
+      description: "Use file-header-python.template"
+    - pattern: "New TypeScript component"
+      description: "Use file-header-typescript.template"
+    - pattern: "New project README"
+      description: "Use README.template"
+
+# Validation
+validation:
+  linter: "header_linter.py"
+  rules:
+    - "Purpose field is mandatory"
+    - "No temporal language (currently, now, recently, etc.)"
+    - "Proper formatting for file type"
+    - "All template placeholders documented"
+
+# References
+references:
+  documentation:
+    - name: "Plugin README"
+      file: README.md
+    - name: "Agent Instructions"
+      file: AGENT_INSTRUCTIONS.md
+    - name: "Documentation Standards"
+      file: ai-content/standards/DOCUMENTATION_STANDARDS.md
+  external:
+    - name: "File Header Standards Reference"
+      url: "internal:.ai/docs/FILE_HEADER_STANDARDS.md"
+    - name: "Markdown Guide"
+      url: "https://www.markdownguide.org/"
+    - name: "Google Developer Documentation Style Guide"
+      url: "https://developers.google.com/style"

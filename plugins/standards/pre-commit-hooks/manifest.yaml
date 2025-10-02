@@ -1,0 +1,186 @@
+# Pre-commit Hooks Plugin Manifest
+
+name: pre-commit-hooks
+version: 1.0.0
+type: standards
+description: Pre-commit hooks configuration with dynamic language detection for Docker-first development
+author: ai-projen framework
+last_updated: 2025-10-02
+
+# Plugin metadata
+metadata:
+  hook_framework: pre-commit
+  primary_features:
+    - branch_protection
+    - auto_fix
+    - language_detection
+    - docker_integration
+  supported_languages:
+    - python
+    - typescript
+    - javascript
+  security_features:
+    - secret_detection
+    - security_scanning
+    - complexity_analysis
+
+# How-to guides
+howtos:
+  directory: howtos/
+  available:
+    - name: install-pre-commit
+      file: how-to-install-pre-commit.md
+      title: "How to: Install Pre-commit Hooks"
+      description: "Install and configure pre-commit hooks framework with Docker integration"
+      difficulty: beginner
+      estimated_time: 15-20 min
+      prerequisites:
+        - "Git repository initialized"
+        - "Docker running"
+        - "Python or Node.js installed"
+      tags:
+        - pre-commit
+        - git-hooks
+        - setup
+        - docker
+      templates_used:
+        - templates/.pre-commit-config.yaml.template
+      related:
+        - add-custom-hook
+        - debug-failing-hooks
+
+    - name: add-custom-hook
+      file: how-to-add-custom-hook.md
+      title: "How to: Add a Custom Hook"
+      description: "Create and configure custom pre-commit hooks for project-specific checks"
+      difficulty: intermediate
+      estimated_time: 30-45 min
+      prerequisites:
+        - "Pre-commit installed"
+        - "Understanding of git hooks"
+        - "Basic shell scripting"
+      tags:
+        - pre-commit
+        - custom-hooks
+        - git-hooks
+        - docker
+      templates_used:
+        - templates/.pre-commit-config.yaml.template
+      related:
+        - install-pre-commit
+        - debug-failing-hooks
+
+    - name: debug-failing-hooks
+      file: how-to-debug-failing-hooks.md
+      title: "How to: Debug Failing Hooks"
+      description: "Troubleshoot and fix common pre-commit hook failures in Docker environments"
+      difficulty: intermediate
+      estimated_time: 20-30 min
+      prerequisites:
+        - "Pre-commit installed"
+        - "Docker running"
+        - "Basic debugging skills"
+      tags:
+        - pre-commit
+        - debugging
+        - troubleshooting
+        - docker
+      related:
+        - install-pre-commit
+        - add-custom-hook
+
+# Templates
+templates:
+  directory: templates/
+  available:
+    - name: pre-commit-config
+      file: .pre-commit-config.yaml.template
+      description: "Dynamic pre-commit configuration with language detection"
+      category: configuration
+      placeholders:
+        - BRANCH_NAME
+        - PYTHON_HOOKS
+        - TYPESCRIPT_HOOKS
+        - DOCKER_CONTAINER_SUFFIX
+
+# Standards
+standards:
+  directory: standards/
+  file: PRE_COMMIT_STANDARDS.md
+  highlights:
+    - "Branch protection (no direct commits to main)"
+    - "Auto-fix before linting"
+    - "Docker-first execution"
+    - "Language-specific hook detection"
+    - "Security scanning integration"
+
+# Docker support
+docker:
+  enabled: true
+  priority: primary
+  execution_mode: docker_exec
+  containers:
+    - python-linter
+    - js-linter
+  make_targets:
+    - lint-ensure-containers
+    - lint-fix
+    - lint-all
+
+# Dependencies
+dependencies:
+  required:
+    - git: ">=2.0"
+    - docker: ">=20.10"
+    - docker-compose: ">=2.0"
+  optional:
+    - pre-commit: ">=3.0"
+    - python: ">=3.11"
+    - node: ">=18.0"
+
+# Integration
+integrates_with:
+  - name: docker
+    required: true
+    description: "Executes hooks in Docker containers"
+  - name: python
+    required: false
+    description: "Python linting and security hooks"
+  - name: typescript
+    required: false
+    description: "TypeScript/JavaScript linting hooks"
+  - name: security
+    required: false
+    description: "Security scanning hooks"
+
+# Usage
+usage:
+  quick_start:
+    - "Copy .pre-commit-config.yaml.template to project root"
+    - "Install pre-commit: pip install pre-commit"
+    - "Install hooks: pre-commit install"
+    - "Install push hooks: pre-commit install --hook-type pre-push"
+  common_commands:
+    - command: "pre-commit install"
+      description: "Install pre-commit hooks"
+    - command: "pre-commit run --all-files"
+      description: "Run hooks on all files"
+    - command: "git commit"
+      description: "Hooks run automatically"
+    - command: "PRE_PUSH_SKIP=1 git push"
+      description: "Skip pre-push hooks (emergency only)"
+
+# References
+references:
+  documentation:
+    - name: "Plugin README"
+      file: README.md
+    - name: "Agent Instructions"
+      file: AGENT_INSTRUCTIONS.md
+    - name: "Pre-commit Standards"
+      file: standards/PRE_COMMIT_STANDARDS.md
+  external:
+    - name: "Pre-commit Framework"
+      url: "https://pre-commit.com/"
+    - name: "Git Hooks Documentation"
+      url: "https://git-scm.com/docs/githooks"
