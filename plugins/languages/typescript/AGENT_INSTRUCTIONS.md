@@ -17,13 +17,31 @@
 
 ---
 
+## Environment Strategy
+
+**IMPORTANT**: This plugin follows the Docker-first development hierarchy established in PR7.5:
+
+1. **Docker (Preferred)** - Use containers for consistency and isolation
+2. **npm/local node_modules (Fallback)** - Isolated when Docker unavailable
+3. **Direct global (Last Resort)** - Only when no other option
+
+**Benefits of Docker-First**:
+- Consistent development environments across all team members
+- Zero local environment pollution
+- Isolated dependencies prevent version conflicts
+- Works identically on macOS, Linux, and Windows
+- Easy cleanup with `make typescript-clean`
+
+**Automatic Detection**: The Makefile auto-detects your environment and uses the best available option.
+
 ## Prerequisites
 
 Before installing this plugin, ensure:
 - Git repository is initialized
 - foundation/ai-folder plugin is installed (agents.md and .ai/ exist)
-- Node.js (v18 or later) is installed
-- npm, yarn, or pnpm is available
+- **Docker & Docker Compose (recommended)** - For Docker-first development
+- **OR Node.js (v18 or later)** - For npm fallback
+- **OR npm, yarn, or pnpm** - For package management fallback
 
 ## Installation Steps
 
@@ -51,7 +69,21 @@ Ask the user (or use recommended defaults):
    - No (minimal setup only)
    - Default: No
 
-### Step 2: Initialize Package Manager
+### Step 2: Install Docker Templates (Docker-First Approach)
+
+**If Docker is available**, copy Docker templates to project root:
+
+```bash
+# Copy Dockerfile
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/Dockerfile.typescript Dockerfile
+
+# Copy docker-compose configuration
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/docker-compose.typescript.yml docker-compose.yml
+```
+
+**Note**: These templates support multi-stage builds for dev, lint, test, and production environments.
+
+### Step 3: Initialize Package Manager
 
 If `package.json` doesn't exist, create it:
 
@@ -66,13 +98,21 @@ Update `package.json` type to module:
 }
 ```
 
-### Step 3: Install TypeScript
+### Step 4: Install TypeScript
 
+**Docker-First (Recommended)**:
+```bash
+# TypeScript will be installed in the Docker image during build
+# Run initial build:
+make typescript-install
+```
+
+**npm Fallback**:
 ```bash
 npm install --save-dev typescript
 ```
 
-### Step 4: Install and Configure Linter (ESLint)
+### Step 5: Install and Configure Linter (ESLint)
 
 Follow instructions in: `plugins/languages/typescript/linters/eslint/AGENT_INSTRUCTIONS.md`
 
@@ -81,7 +121,7 @@ This will:
 2. Copy appropriate config (React or non-React)
 3. Add lint scripts to package.json
 
-### Step 5: Install and Configure Formatter (Prettier)
+### Step 6: Install and Configure Formatter (Prettier)
 
 Follow instructions in: `plugins/languages/typescript/formatters/prettier/AGENT_INSTRUCTIONS.md`
 
@@ -91,7 +131,7 @@ This will:
 3. Create `.prettierignore`
 4. Add format scripts to package.json
 
-### Step 6: Install and Configure Testing (Vitest)
+### Step 7: Install and Configure Testing (Vitest)
 
 Follow instructions in: `plugins/languages/typescript/testing/vitest/AGENT_INSTRUCTIONS.md`
 
@@ -101,7 +141,7 @@ This will:
 3. Create test setup file
 4. Add test scripts to package.json
 
-### Step 7: Create TypeScript Configuration
+### Step 8: Create TypeScript Configuration
 
 **For non-React projects**:
 ```bash
@@ -113,14 +153,14 @@ cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/
 cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/tsconfig.react.json tsconfig.json
 ```
 
-### Step 8: Add package.json Scripts
+### Step 9: Add package.json Scripts
 
 Ensure `package.json` has these scripts (should be added by sub-steps):
 
 ```json
 {
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "typecheck": "tsc --noEmit",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
@@ -135,9 +175,12 @@ Ensure `package.json` has these scripts (should be added by sub-steps):
 }
 ```
 
-**Note**: Adjust scripts based on project type (remove Vite scripts if not using Vite).
+**Note**:
+- The `--host 0.0.0.0` flag in `dev` script is required for Docker hot reload
+- Adjust scripts based on project type (remove Vite scripts if not using Vite)
+- These scripts work identically in both Docker and npm environments
 
-### Step 9: Create Makefile Targets
+### Step 10: Create Makefile Targets
 
 If Makefile doesn't exist, create it. Then append TypeScript targets:
 
@@ -147,7 +190,13 @@ cat /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates
 
 If Makefile already exists, manually merge the contents to avoid duplicates.
 
-### Step 10: Extend agents.md
+**The Makefile provides Docker-first targets with automatic fallback**:
+- Auto-detects Docker, Docker Compose, and npm availability
+- Prioritizes Docker for consistency
+- Falls back to npm gracefully when Docker unavailable
+- Color-coded output shows which environment is being used
+
+### Step 11: Extend agents.md
 
 1. Read `agents.md`
 2. Find the `### LANGUAGE_SPECIFIC_GUIDELINES` section
@@ -155,6 +204,12 @@ If Makefile already exists, manually merge the contents to avoid duplicates.
 
 ```markdown
 #### TypeScript (Airbnb Style Guide / Google TypeScript Style)
+
+**Environment Strategy** (Docker-First):
+- Development: `make dev-typescript` (Docker) or `npm run dev` (fallback)
+- Linting: `make lint-typescript` (Docker) or `npm run lint` (fallback)
+- Testing: `make test-typescript` (Docker) or `npm test` (fallback)
+- Type Checking: `make typecheck-typescript` (Docker) or `npm run typecheck` (fallback)
 
 **Type Safety**:
 - Enable strict mode in tsconfig.json
@@ -187,14 +242,16 @@ If Makefile already exists, manually merge the contents to avoid duplicates.
 - Custom hooks: start with 'use' prefix
 - Event handlers: camelCase with 'handle' prefix
 
-**Linting**: `make lint-ts` (runs ESLint)
-**Formatting**: `make format-ts` (runs Prettier + ESLint --fix)
-**Testing**: `make test-ts` (runs Vitest)
-**Type Checking**: `make typecheck-ts` (runs tsc --noEmit)
-**All Checks**: `make ts-check` (runs lint + typecheck + test)
+**Quick Commands**:
+- **All Checks**: `make typescript-check` (lint + typecheck + test)
+- **Development**: `make dev-typescript` (start dev server with hot reload)
+- **Linting**: `make lint-typescript` (ESLint)
+- **Formatting**: `make format-typescript` (Prettier + ESLint --fix)
+- **Testing**: `make test-typescript` (Vitest)
+- **Type Checking**: `make typecheck-typescript` (tsc --noEmit)
 ```
 
-### Step 11: Add .ai Documentation
+### Step 12: Add .ai Documentation
 
 Create `.ai/docs/TYPESCRIPT_STANDARDS.md`:
 
@@ -211,7 +268,7 @@ documentation:
     description: TypeScript development standards and best practices
 ```
 
-### Step 12: Add GitHub Actions Workflows (Optional)
+### Step 13: Add GitHub Actions Workflows (Optional)
 
 If `.github/workflows/` exists, add TypeScript workflows:
 
@@ -226,7 +283,7 @@ cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/
 cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/github-workflow-typescript-test.yml .github/workflows/typescript-test.yml
 ```
 
-### Step 13: Create Example Files (Optional)
+### Step 14: Create Example Files (Optional)
 
 If user requested example files (or project has no src/ directory):
 
@@ -236,10 +293,24 @@ cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/
 cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/example.test.ts src/example.test.ts
 ```
 
-### Step 14: Validate Installation
+### Step 15: Validate Installation
 
-Run these commands to verify everything works:
+**Docker-First Verification (Recommended)**:
+```bash
+# Build Docker images
+make typescript-install
 
+# Verify all tools work in Docker
+make typecheck-typescript
+make lint-typescript
+make format-check-typescript
+make test-typescript
+
+# Run all checks at once
+make typescript-check
+```
+
+**npm Fallback Verification**:
 ```bash
 # Verify TypeScript compiler
 npx tsc --version
@@ -249,15 +320,14 @@ npm run typecheck
 npm run lint
 npm run format:check
 npm run test:run
-
-# Or use Makefile
-make typecheck-ts
-make lint-ts
-make format-check-ts
-make test-ts
 ```
 
 All commands should run without errors (tests may fail if no tests exist yet).
+
+**What to Expect**:
+- Docker mode: Colored output showing "Docker" for each command
+- npm mode: Colored output showing "npm (Docker not available)"
+- All checks should pass or show expected failures only
 
 ## Post-Installation
 
@@ -268,8 +338,19 @@ After successful installation, inform the user:
 - ESLint (linting)
 - Prettier (formatting)
 - Vitest (testing)
+- Docker multi-stage build (dev, lint, test, prod)
 
-**Available Commands**:
+**Docker-First Commands** (Recommended):
+- `make dev-typescript` - Start development server with hot reload
+- `make lint-typescript` - Lint code with ESLint in Docker
+- `make format-typescript` - Format code with Prettier in Docker
+- `make test-typescript` - Run tests in Docker
+- `make typecheck-typescript` - Type check in Docker
+- `make typescript-check` - Run all checks in Docker
+- `make typescript-clean` - Clean Docker resources and build artifacts
+
+**npm Fallback Commands**:
+- `npm run dev` - Start development server
 - `npm run typecheck` - Type check TypeScript code
 - `npm run lint` - Lint code with ESLint
 - `npm run lint:fix` - Auto-fix linting issues
@@ -279,17 +360,18 @@ After successful installation, inform the user:
 - `npm run test:run` - Run tests once
 - `npm run test:coverage` - Run tests with coverage
 
-**Make Targets** (if Makefile present):
-- `make lint-ts` - Lint TypeScript
-- `make format-ts` - Format TypeScript
-- `make typecheck-ts` - Type check
-- `make test-ts` - Run tests
-- `make ts-check` - Run all checks
+**Environment Detection**:
+The Makefile automatically detects your environment:
+- If Docker is available: Uses Docker containers (preferred)
+- If only npm is available: Uses local npm (fallback)
+- Color-coded output shows which mode is active
 
 **Next Steps**:
 - Start writing TypeScript code in `src/`
-- Run `npm run typecheck` to verify types
-- Run `make ts-check` before committing
+- Use `make dev-typescript` to start development server
+- Run `make typescript-check` before committing
+- Docker workflow: Code changes trigger hot reload automatically
+- npm workflow: Same experience, just using local node_modules
 - Consider adding pre-commit hooks (see pre-commit-hooks plugin)
 
 ## Integration with Other Plugins
@@ -317,15 +399,19 @@ Add to `.pre-commit-config.yaml`:
 Workflows already created in Step 12 if GitHub Actions present.
 
 ### With Docker Plugin
-Consider adding Node.js to Dockerfile:
-```dockerfile
-FROM node:20-alpine
-WORKDIR /app
-COPY package*.json ./
-RUN npm ci
-COPY . .
-RUN npm run build
-```
+Docker templates are automatically included in Step 2 of installation.
+
+The provided `Dockerfile.typescript` includes:
+- Multi-stage build (base, dependencies, dev, lint, test, builder, prod)
+- Hot reload support for development
+- Optimized production nginx serving
+- Layer caching for fast rebuilds
+
+The `docker-compose.typescript.yml` provides:
+- Development service with volume mounts
+- Hot module replacement support
+- Optional linting service
+- Network isolation
 
 ## Troubleshooting
 

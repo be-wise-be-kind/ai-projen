@@ -1,0 +1,98 @@
+// Purpose: {{HOOK_PURPOSE}} - Custom React hook
+// Scope: {{HOOK_SCOPE}}
+// Usage: Copy and replace {{PLACEHOLDERS}}
+
+import { useState, useEffect, useCallback } from 'react';
+
+/**
+ * Options for {{HOOK_NAME}} hook
+ */
+interface Use{{HOOK_NAME}}Options {
+  /**
+   * {{OPTIONS_DESCRIPTION}}
+   */
+  {{OPTION_FIELD}}?: {{OPTION_TYPE}};
+}
+
+/**
+ * Return type for {{HOOK_NAME}} hook
+ */
+interface Use{{HOOK_NAME}}Return {
+  /**
+   * {{RETURN_VALUE_DESCRIPTION}}
+   */
+  {{RETURN_FIELD}}: {{RETURN_TYPE}};
+
+  /**
+   * {{RETURN_FUNCTION_DESCRIPTION}}
+   */
+  {{RETURN_FUNCTION}}: ({{PARAM}}: {{PARAM_TYPE}}) => void;
+}
+
+/**
+ * {{HOOK_NAME}} hook
+ *
+ * {{HOOK_DESCRIPTION}}
+ *
+ * @param options - Configuration options
+ * @returns {{HOOK_NAME}} state and methods
+ *
+ * @example
+ * ```tsx
+ * const { {{RETURN_FIELD}}, {{RETURN_FUNCTION}} } = use{{HOOK_NAME}}();
+ * ```
+ */
+export function use{{HOOK_NAME}}(
+  options?: Use{{HOOK_NAME}}Options
+): Use{{HOOK_NAME}}Return {
+  // State
+  const [{{STATE_NAME}}, set{{STATE_NAME}}] = useState<{{STATE_TYPE}}>(
+    {{INITIAL_STATE}}
+  );
+
+  // Effects
+  useEffect(() => {
+    // {{EFFECT_LOGIC}}
+
+    return () => {
+      // {{CLEANUP_LOGIC}}
+    };
+  }, [{{DEPENDENCIES}}]);
+
+  // Callbacks
+  const {{CALLBACK_NAME}} = useCallback(({{CALLBACK_PARAM}}: {{CALLBACK_PARAM_TYPE}}) => {
+    // {{CALLBACK_LOGIC}}
+  }, [{{CALLBACK_DEPENDENCIES}}]);
+
+  return {
+    {{RETURN_FIELD}}: {{STATE_NAME}},
+    {{RETURN_FUNCTION}}: {{CALLBACK_NAME}},
+  };
+}
+
+// Template Placeholders:
+// {{HOOK_PURPOSE}} - Purpose (e.g., "Manage local storage state")
+// {{HOOK_SCOPE}} - Scope (e.g., "Persistent state management")
+// {{HOOK_NAME}} - PascalCase hook name without 'use' prefix (e.g., "LocalStorage")
+// {{HOOK_DESCRIPTION}} - Detailed description
+// {{OPTIONS_DESCRIPTION}} - Description of options interface
+// {{OPTION_FIELD}} - Option field name
+// {{OPTION_TYPE}} - Option field type
+// {{RETURN_VALUE_DESCRIPTION}} - Description of return value
+// {{RETURN_FIELD}} - Return field name (e.g., "value", "data")
+// {{RETURN_TYPE}} - Return field type
+// {{RETURN_FUNCTION_DESCRIPTION}} - Description of return function
+// {{RETURN_FUNCTION}} - Return function name (e.g., "setValue", "fetch")
+// {{PARAM}} - Function parameter name
+// {{PARAM_TYPE}} - Function parameter type
+// {{STATE_NAME}} - State variable name
+// {{STATE_TYPE}} - State type
+// {{INITIAL_STATE}} - Initial state value
+// {{EFFECT_LOGIC}} - useEffect logic description
+// {{CLEANUP_LOGIC}} - Cleanup function logic
+// {{DEPENDENCIES}} - useEffect dependencies
+// {{CALLBACK_NAME}} - Callback function name
+// {{CALLBACK_PARAM}} - Callback parameter name
+// {{CALLBACK_PARAM_TYPE}} - Callback parameter type
+// {{CALLBACK_LOGIC}} - Callback implementation
+// {{CALLBACK_DEPENDENCIES}} - useCallback dependencies

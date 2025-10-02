@@ -11,68 +11,35 @@
 
 ---
 
+## Environment Strategy
+
+**IMPORTANT**: Follow the Docker-first development hierarchy:
+
+1. **Docker (Preferred)** 🐳
+   - Run MyPy in containers via `make typecheck` (auto-detects Docker)
+   - Consistent across all environments
+   - Zero local environment pollution
+   - See: `.ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
+
+2. **Poetry (Fallback)** 📦
+   - Use Poetry virtual environment when Docker unavailable
+   - Makefile automatically detects and uses Poetry
+   - Still provides project isolation
+
+3. **Direct Local (Last Resort)** ⚠️
+   - Only when Docker AND Poetry unavailable
+   - Risk of environment pollution
+   - Not recommended for team environments
+
+---
+
 ## Installation Steps
 
-### Step 1: Install MyPy
+### Step 1: Configure MyPy
 
-Add MyPy to your Python development dependencies:
+**Option A: pyproject.toml (Recommended - works in Docker and locally)**:
 
-**Using pip**:
-```bash
-pip install mypy
-```
-
-**Using poetry** (recommended):
-```bash
-poetry add --group dev mypy
-```
-
-**Using requirements-dev.txt**:
-```
-mypy>=1.18.1
-```
-
-### Step 2: Copy Configuration
-
-Copy the MyPy configuration to your project root:
-
-```bash
-cp plugins/languages/python/linters/mypy/config/mypy.ini ./mypy.ini
-```
-
-**Alternative**: If you prefer pyproject.toml configuration, you can add the equivalent
-settings to your `pyproject.toml` instead. See the configuration section below.
-
-### Step 3: Verify Installation
-
-Test that MyPy is working:
-
-```bash
-# Check version
-mypy --version
-
-# Run type checking on current directory
-mypy .
-
-# Run on specific directory
-mypy src/
-```
-
-## Configuration Options
-
-### Using mypy.ini (Recommended)
-
-The provided `mypy.ini` includes:
-- **Python version**: 3.11
-- **Strict checking**: Enabled for production quality
-- **Return types**: Warns about Any return types
-- **Untyped definitions**: Disallowed (requires type hints)
-- **Import checking**: Validates imported types
-- **Redundancy warnings**: Catches unnecessary casts and ignores
-
-### Using pyproject.toml (Alternative)
-
-If you prefer to keep configuration in `pyproject.toml`, add:
+Add MyPy configuration to `pyproject.toml`:
 
 ```toml
 [tool.mypy]
@@ -97,6 +64,79 @@ exclude = [
     '\.ruff_cache',
 ]
 ```
+
+**Option B: mypy.ini (Legacy)**:
+
+```bash
+cp plugins/languages/python/linters/mypy/config/mypy.ini ./mypy.ini
+```
+
+### Step 2: Install Based on Environment
+
+**Docker-First Approach (Recommended)**:
+
+```bash
+# Build Docker images with all Python tools including MyPy
+make python-install  # Builds Docker images
+
+# Run type checking in container (auto-detects environment)
+make typecheck       # Uses Docker if available
+```
+
+**Poetry Fallback** (if Docker unavailable):
+
+```bash
+poetry add --group dev mypy
+poetry run mypy .
+```
+
+**Direct Local** (if neither Docker nor Poetry available):
+
+```bash
+pip install mypy
+mypy .
+```
+
+### Step 3: Verify Installation
+
+**Docker Approach**:
+```bash
+# Verify Docker images built
+docker images | grep python-linter
+
+# Run type checking in container
+make typecheck
+```
+
+**Poetry Approach**:
+```bash
+# Check version
+poetry run mypy --version
+
+# Run type checking
+poetry run mypy .
+```
+
+**Direct Local Approach**:
+```bash
+# Check version
+mypy --version
+
+# Run type checking
+mypy .
+```
+
+## Configuration Options
+
+The provided configuration includes:
+- **Python version**: 3.11
+- **Strict checking**: Enabled for production quality
+- **Return types**: Warns about Any return types
+- **Untyped definitions**: Disallowed (requires type hints)
+- **Import checking**: Validates imported types
+- **Redundancy warnings**: Catches unnecessary casts and ignores
+
+**Note**: Configuration in `pyproject.toml` works identically in Docker, Poetry, and direct local environments.
 
 ## Type Checking Levels
 
@@ -139,16 +179,26 @@ mypy --show-error-codes .
 mypy --ignore-missing-imports .
 ```
 
-## Integration with Make
+## Makefile Integration
 
-Add to your Makefile:
+The Python plugin's Makefile (`makefile-python.mk`) includes automatic environment detection:
 
 ```makefile
-.PHONY: typecheck
+# From makefile-python.mk (already included in plugin)
+typecheck: ## Auto-detects Docker → Poetry → Direct
+	# Automatically uses best available environment
+	# Priority: Docker > Poetry > Direct local
 
-typecheck:
-	mypy .
+# Just run this - it works everywhere:
+make typecheck
 ```
+
+**How it works**:
+1. Checks if Docker is available → uses linting container
+2. Falls back to Poetry if Docker unavailable
+3. Falls back to direct `mypy` command if neither available
+
+No need to modify - the Makefile handles environment detection automatically!
 
 ## Common Type Hints
 
@@ -200,10 +250,12 @@ def some_function(arg: str) -> int: ...
 ## Success Criteria
 
 MyPy is successfully installed when:
-- ✅ `mypy --version` works
-- ✅ `mypy.ini` or `[tool.mypy]` configuration exists
-- ✅ `mypy .` runs without errors (or shows expected type violations)
-- ✅ Make target works (if Makefile integration completed)
+- ✅ `pyproject.toml` contains `[tool.mypy]` configuration (or mypy.ini exists)
+- ✅ `make typecheck` runs successfully (in any environment)
+- ✅ Docker approach (preferred): Type checking runs in container
+- ✅ Poetry approach (fallback): `poetry run mypy --version` works
+- ✅ Direct approach (last resort): `mypy --version` works
+- ✅ Configuration works in all three environments
 - ✅ Type hints are being validated during development
 
 ## Best Practices

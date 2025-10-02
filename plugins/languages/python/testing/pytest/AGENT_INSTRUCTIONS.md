@@ -11,38 +11,35 @@
 
 ---
 
+## Environment Strategy
+
+**IMPORTANT**: Follow the Docker-first development hierarchy:
+
+1. **Docker (Preferred)** 🐳
+   - Run pytest in containers via `make test-python` (auto-detects Docker)
+   - Consistent across all environments
+   - Zero local environment pollution
+   - See: `.ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
+
+2. **Poetry (Fallback)** 📦
+   - Use Poetry virtual environment when Docker unavailable
+   - Makefile automatically detects and uses Poetry
+   - Still provides project isolation
+
+3. **Direct Local (Last Resort)** ⚠️
+   - Only when Docker AND Poetry unavailable
+   - Risk of environment pollution
+   - Not recommended for team environments
+
+---
+
 ## Installation Steps
 
-### Step 1: Install Pytest and Plugins
+### Step 1: Configure Pytest
 
-Add pytest and common plugins to your Python development dependencies:
+**Option A: pyproject.toml (Recommended - works in Docker and locally)**:
 
-**Using pip**:
-```bash
-pip install pytest pytest-asyncio pytest-cov
-```
-
-**Using poetry** (recommended):
-```bash
-poetry add --group dev pytest pytest-asyncio pytest-cov
-```
-
-**Using requirements-dev.txt**:
-```
-pytest>=8.4.2
-pytest-asyncio>=0.23.0
-pytest-cov>=4.1.0
-```
-
-### Step 2: Copy Configuration
-
-Copy the pytest configuration to your project root:
-
-```bash
-cp plugins/languages/python/testing/pytest/config/pytest.ini ./pytest.ini
-```
-
-**Alternative**: You can also configure pytest in `pyproject.toml`:
+Add pytest configuration to `pyproject.toml`:
 
 ```toml
 [tool.pytest.ini_options]
@@ -58,7 +55,13 @@ markers = [
 ]
 ```
 
-### Step 3: Create Tests Directory
+**Option B: pytest.ini (Legacy)**:
+
+```bash
+cp plugins/languages/python/testing/pytest/config/pytest.ini ./pytest.ini
+```
+
+### Step 2: Create Tests Directory
 
 Create the tests directory structure:
 
@@ -67,18 +70,64 @@ mkdir -p tests
 touch tests/__init__.py
 ```
 
+### Step 3: Install Based on Environment
+
+**Docker-First Approach (Recommended)**:
+
+```bash
+# Build Docker images with all Python tools including pytest
+make python-install  # Builds Docker images
+
+# Run tests in container (auto-detects environment)
+make test-python     # Uses Docker if available
+```
+
+**Poetry Fallback** (if Docker unavailable):
+
+```bash
+poetry add --group dev pytest pytest-asyncio pytest-cov
+poetry run pytest
+```
+
+**Direct Local** (if neither Docker nor Poetry available):
+
+```bash
+pip install pytest pytest-asyncio pytest-cov
+pytest
+```
+
 ### Step 4: Verify Installation
 
-Test that pytest is working:
+**Docker Approach**:
+```bash
+# Verify Docker test images built
+docker images | grep python-test
 
+# Run tests in container
+make test-python
+
+# Run with coverage
+make test-coverage-python
+```
+
+**Poetry Approach**:
+```bash
+# Check version
+poetry run pytest --version
+
+# Run tests
+poetry run pytest -v
+
+# Run with coverage
+poetry run pytest --cov=src --cov-report=term
+```
+
+**Direct Local Approach**:
 ```bash
 # Check version
 pytest --version
 
-# Run all tests (will find no tests initially)
-pytest
-
-# Run with verbose output
+# Run tests
 pytest -v
 
 # Run specific test file
@@ -244,25 +293,31 @@ The provided configuration includes:
 - **Output**: Short tracebacks, verbose mode
 - **Cache**: Stored in `/tmp/.pytest_cache`
 
-## Integration with Make
+## Makefile Integration
 
-Add to your Makefile:
+The Python plugin's Makefile (`makefile-python.mk`) includes automatic environment detection:
 
 ```makefile
-.PHONY: test test-unit test-integration test-coverage
+# From makefile-python.mk (already included in plugin)
+test-python: ## Auto-detects Docker → Poetry → Direct
+	# Automatically uses best available environment
+	# Priority: Docker > Poetry > Direct local
 
-test:
-	pytest -v
+test-coverage-python: ## Run tests with coverage (environment-aware)
+test-unit-python: ## Run only unit tests (environment-aware)
+test-integration-python: ## Run only integration tests (environment-aware)
 
-test-unit:
-	pytest -v -m unit
-
-test-integration:
-	pytest -v -m integration
-
-test-coverage:
-	pytest --cov=src --cov-report=term --cov-report=html
+# Just run these - they work everywhere:
+make test-python
+make test-coverage-python
 ```
+
+**How it works**:
+1. Checks if Docker is available → uses test container
+2. Falls back to Poetry if Docker unavailable
+3. Falls back to direct `pytest` command if neither available
+
+No need to modify - the Makefile handles environment detection automatically!
 
 ## Pytest Plugins
 
@@ -340,13 +395,14 @@ def test_division_by_zero_raises_error():
 ## Success Criteria
 
 Pytest is successfully installed when:
-- ✅ `pytest --version` works
-- ✅ `pytest.ini` configuration exists
-- ✅ `tests/` directory exists
-- ✅ `pytest` command runs without errors
-- ✅ Can write and run tests successfully
-- ✅ Coverage reports work with `pytest --cov`
-- ✅ Make targets work (if Makefile integration completed)
+- ✅ `pyproject.toml` contains `[tool.pytest.ini_options]` configuration (or pytest.ini exists)
+- ✅ `tests/` directory exists with `__init__.py`
+- ✅ `make test-python` runs successfully (in any environment)
+- ✅ Docker approach (preferred): Tests run in dedicated container
+- ✅ Poetry approach (fallback): `poetry run pytest --version` works
+- ✅ Direct approach (last resort): `pytest --version` works
+- ✅ Configuration works in all three environments
+- ✅ Coverage reports work with `make test-coverage-python`
 
 ## Troubleshooting
 

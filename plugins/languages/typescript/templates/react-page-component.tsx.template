@@ -1,0 +1,71 @@
+// Purpose: {{PAGE_PURPOSE}} - Page component for routing
+// Scope: {{PAGE_SCOPE}}
+// Usage: Copy and replace {{PLACEHOLDERS}}
+
+import React from 'react';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import styles from './{{PAGE_NAME}}.module.css';
+
+/**
+ * Route parameters for {{PAGE_NAME}}
+ */
+interface {{PAGE_NAME}}Params {
+  {{PARAM_NAME}}: string;
+}
+
+/**
+ * {{PAGE_NAME}} page component
+ *
+ * {{PAGE_DESCRIPTION}}
+ *
+ * Route: {{ROUTE_PATH}}
+ */
+export const {{PAGE_NAME}}: React.FC = () => {
+  const params = useParams<{{PAGE_NAME}}Params>();
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+
+  // Extract route parameters
+  const {{PARAM_NAME}} = params.{{PARAM_NAME}};
+
+  // Extract query parameters
+  const {{QUERY_PARAM}} = searchParams.get('{{QUERY_PARAM}}');
+
+  // Navigation handlers
+  const handleBack = () => {
+    navigate(-1);
+  };
+
+  const handleNavigate = (path: string) => {
+    navigate(path);
+  };
+
+  return (
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <button onClick={handleBack} className={styles.backButton}>
+          ← Back
+        </button>
+        <h1 className={styles.title}>{{PAGE_TITLE}}</h1>
+      </div>
+
+      <main className={styles.content}>
+        {/* {{PAGE_CONTENT}} */}
+        <p>{{PARAM_NAME}}: {{{PARAM_NAME}}}</p>
+      </main>
+    </div>
+  );
+};
+
+export default {{PAGE_NAME}};
+
+// Template Placeholders:
+// {{PAGE_PURPOSE}} - Page purpose (e.g., "Display user profile")
+// {{PAGE_SCOPE}} - Page scope (e.g., "User management")
+// {{PAGE_NAME}} - PascalCase page name (e.g., "UserProfile")
+// {{PAGE_DESCRIPTION}} - Detailed description
+// {{ROUTE_PATH}} - Route path (e.g., "/users/:userId")
+// {{PARAM_NAME}} - Route parameter name (e.g., "userId")
+// {{QUERY_PARAM}} - Query parameter name (e.g., "tab")
+// {{PAGE_TITLE}} - Page title to display
+// {{PAGE_CONTENT}} - Main content description

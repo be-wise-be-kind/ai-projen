@@ -1,0 +1,328 @@
+# Python Language Plugin Manifest
+
+name: python
+version: 1.0.0
+type: language
+description: Complete Python development environment with linting, testing, and Docker-first development
+author: ai-projen framework
+last_updated: 2025-10-01
+
+# Plugin metadata
+metadata:
+  python_version: "3.11+"
+  package_manager: poetry
+  primary_framework: fastapi
+  test_framework: pytest
+  linter: ruff
+  type_checker: mypy
+  security_scanner: bandit
+
+# How-to guides
+howtos:
+  directory: howtos/
+  available:
+    - name: create-api-endpoint
+      file: how-to-create-an-api-endpoint.md
+      title: "How to: Create an API Endpoint"
+      description: "FastAPI endpoint creation with automatic documentation and Docker testing"
+      difficulty: intermediate
+      estimated_time: 30-45 min
+      prerequisites:
+        - "Python plugin installed"
+        - "Docker running"
+        - "FastAPI basics"
+      tags:
+        - api
+        - fastapi
+        - backend
+        - docker
+      templates_used:
+        - templates/fastapi-router.py.template
+        - templates/pydantic-schema.py.template
+      related:
+        - add-database-model
+        - handle-authentication
+        - write-a-test
+
+    - name: create-cli-command
+      file: how-to-create-a-cli-command.md
+      title: "How to: Create a CLI Command"
+      description: "Build command-line tools with Click or Typer in Docker"
+      difficulty: intermediate
+      estimated_time: 45-60 min
+      prerequisites:
+        - "Python plugin installed"
+        - "Docker running"
+        - "CLI design basics"
+      tags:
+        - cli
+        - click
+        - typer
+        - docker
+      templates_used:
+        - templates/click-command.py.template
+        - templates/typer-command.py.template
+      related:
+        - write-a-test
+
+    - name: add-database-model
+      file: how-to-add-database-model.md
+      title: "How to: Add a Database Model"
+      description: "Create SQLAlchemy models with Alembic migrations in Docker"
+      difficulty: advanced
+      estimated_time: 60-90 min
+      prerequisites:
+        - "Python plugin installed"
+        - "Docker running"
+        - "Database basics"
+        - "SQLAlchemy knowledge"
+      tags:
+        - database
+        - sqlalchemy
+        - alembic
+        - orm
+        - docker
+      templates_used:
+        - templates/sqlalchemy-model.py.template
+        - templates/pydantic-schema.py.template
+      related:
+        - create-api-endpoint
+        - write-a-test
+
+    - name: write-a-test
+      file: how-to-write-a-test.md
+      title: "How to: Write a Test"
+      description: "Create comprehensive tests with pytest and coverage in Docker"
+      difficulty: intermediate
+      estimated_time: 45-60 min
+      prerequisites:
+        - "Python plugin installed"
+        - "Docker running"
+        - "Testing concepts"
+      tags:
+        - testing
+        - pytest
+        - tdd
+        - docker
+      templates_used:
+        - templates/pytest-test.py.template
+      related:
+        - create-api-endpoint
+        - add-database-model
+        - add-background-job
+
+    - name: add-background-job
+      file: how-to-add-background-job.md
+      title: "How to: Add a Background Job"
+      description: "Implement async tasks with Celery or RQ in Docker with Redis"
+      difficulty: advanced
+      estimated_time: 60-90 min
+      prerequisites:
+        - "Python plugin installed"
+        - "Docker running"
+        - "Redis basics"
+        - "Async concepts"
+      tags:
+        - async
+        - celery
+        - rq
+        - redis
+        - background-jobs
+        - docker
+      templates_used:
+        - templates/celery-task.py.template
+      related:
+        - create-api-endpoint
+        - write-a-test
+
+    - name: handle-authentication
+      file: how-to-handle-authentication.md
+      title: "How to: Handle Authentication"
+      description: "Implement OAuth2/JWT authentication with secure password handling in Docker"
+      difficulty: advanced
+      estimated_time: 90-120 min
+      prerequisites:
+        - "Python plugin installed"
+        - "Docker running"
+        - "Security concepts"
+        - "User database model"
+      tags:
+        - security
+        - authentication
+        - jwt
+        - oauth2
+        - docker
+      templates_used:
+        - templates/fastapi-router.py.template
+      related:
+        - create-api-endpoint
+        - add-database-model
+        - write-a-test
+
+# Templates
+templates:
+  directory: templates/
+  available:
+    - name: fastapi-router
+      file: fastapi-router.py.template
+      description: "FastAPI router module with CRUD endpoints"
+      category: api
+      placeholders:
+        - MODULE_NAME
+        - PURPOSE
+        - SCOPE
+        - FEATURE_DESCRIPTION
+        - MODEL_NAME
+        - RESOURCE_NAME
+
+    - name: sqlalchemy-model
+      file: sqlalchemy-model.py.template
+      description: "SQLAlchemy ORM model with timestamps"
+      category: database
+      placeholders:
+        - MODEL_NAME
+        - PURPOSE
+        - DESCRIPTION
+        - TABLE_NAME
+        - FIELD_DESCRIPTIONS
+
+    - name: pydantic-schema
+      file: pydantic-schema.py.template
+      description: "Pydantic schemas for API validation"
+      category: api
+      placeholders:
+        - MODEL_NAME
+
+    - name: pytest-test
+      file: pytest-test.py.template
+      description: "pytest test file with AAA pattern"
+      category: testing
+      placeholders:
+        - MODULE_NAME
+        - MODULE_DESCRIPTION
+        - SCOPE
+        - CLASS_NAME
+        - FUNCTION_NAME
+        - FUNCTION_DESCRIPTION
+
+    - name: celery-task
+      file: celery-task.py.template
+      description: "Celery background task with retry logic"
+      category: async
+      placeholders:
+        - MODULE_NAME
+        - DESCRIPTION
+        - TASK_NAME
+        - PARAMETERS
+        - PARAMETER_DESCRIPTIONS
+        - TASK_DESCRIPTION
+
+    - name: click-command
+      file: click-command.py.template
+      description: "Click CLI command"
+      category: cli
+      placeholders:
+        - COMMAND_NAME
+        - PURPOSE
+        - DESCRIPTION
+        - FUNCTION_NAME
+        - ARGUMENT_NAME
+        - ARGUMENT_TYPE
+        - OPTION_DESCRIPTION
+        - COMMAND_DESCRIPTION
+
+    - name: typer-command
+      file: typer-command.py.template
+      description: "Typer CLI command with rich output"
+      category: cli
+      placeholders:
+        - COMMAND_NAME
+        - PURPOSE
+        - DESCRIPTION
+        - FUNCTION_NAME
+        - PARAMETER_NAME
+        - PARAMETER_TYPE
+        - PARAMETER_DESCRIPTION
+        - OPTION_DESCRIPTION
+        - COMMAND_DESCRIPTION
+        - COMMAND_FULL_DESCRIPTION
+
+# Standards
+standards:
+  directory: standards/
+  file: python-standards.md
+  highlights:
+    - "PEP 8 compliance with 120 character line length"
+    - "Type hints required for all function signatures"
+    - "Google-style docstrings"
+    - "Maximum complexity of 10 (McCabe)"
+    - "Security best practices (no hardcoded secrets)"
+
+# Docker support
+docker:
+  enabled: true
+  priority: primary
+  dockerfiles:
+    - templates/Dockerfile.python
+  compose_files:
+    - templates/docker-compose.python.yml
+  make_targets:
+    - templates/makefile-python.mk
+
+# Dependencies
+dependencies:
+  required:
+    - docker: ">=20.10"
+    - docker-compose: ">=2.0"
+    - python: ">=3.11"
+  optional:
+    - poetry: ">=1.5"
+
+# Integration
+integrates_with:
+  - name: docker
+    required: true
+    description: "Docker-first development pattern"
+  - name: github-actions
+    required: false
+    description: "CI/CD workflows"
+  - name: pre-commit
+    required: false
+    description: "Git hooks integration"
+
+# Usage
+usage:
+  quick_start:
+    - "Copy Docker templates to .docker/ directory"
+    - "Copy Makefile template"
+    - "Configure pyproject.toml"
+    - "Run: make python-install"
+    - "Run: make dev-python"
+  common_commands:
+    - command: "make dev-python"
+      description: "Start development environment"
+    - command: "make test-python"
+      description: "Run all tests"
+    - command: "make lint-python"
+      description: "Run linting"
+    - command: "make format-python"
+      description: "Format code"
+
+# References
+references:
+  documentation:
+    - name: "Plugin README"
+      file: README.md
+    - name: "Agent Instructions"
+      file: AGENT_INSTRUCTIONS.md
+    - name: "Python Standards"
+      file: standards/python-standards.md
+  external:
+    - name: "FastAPI"
+      url: "https://fastapi.tiangolo.com/"
+    - name: "SQLAlchemy"
+      url: "https://docs.sqlalchemy.org/"
+    - name: "pytest"
+      url: "https://docs.pytest.org/"
+    - name: "Celery"
+      url: "https://docs.celeryq.dev/"

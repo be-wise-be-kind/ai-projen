@@ -1,0 +1,151 @@
+// Purpose: {{TEST_PURPOSE}} - Component test
+// Scope: {{TEST_SCOPE}}
+// Usage: Copy and replace {{PLACEHOLDERS}}
+
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { {{COMPONENT_NAME}} } from './{{COMPONENT_NAME}}';
+
+describe('{{COMPONENT_NAME}}', () => {
+  // Test data
+  const mockProps = {
+    {{PROP_NAME}}: {{PROP_VALUE}},
+    {{PROP_NAME_2}}: {{PROP_VALUE_2}},
+  };
+
+  // Setup before each test
+  beforeEach(() => {
+    // Reset mocks, clear localStorage, etc.
+  });
+
+  describe('Rendering', () => {
+    it('renders correctly with required props', () => {
+      render(<{{COMPONENT_NAME}} {...mockProps} />);
+
+      expect(screen.getByText({{EXPECTED_TEXT}})).toBeInTheDocument();
+    });
+
+    it('renders with all props', () => {
+      render(
+        <{{COMPONENT_NAME}}
+          {...mockProps}
+          {{OPTIONAL_PROP}}={{OPTIONAL_VALUE}}
+        />
+      );
+
+      expect(screen.getByRole('{{ROLE}}')).toBeInTheDocument();
+    });
+
+    it('renders children when provided', () => {
+      render(
+        <{{COMPONENT_NAME}} {...mockProps}>
+          <div>Child content</div>
+        </{{COMPONENT_NAME}}>
+      );
+
+      expect(screen.getByText('Child content')).toBeInTheDocument();
+    });
+  });
+
+  describe('User Interactions', () => {
+    it('handles click events', async () => {
+      const user = userEvent.setup();
+      const handleClick = vi.fn();
+
+      render(<{{COMPONENT_NAME}} {...mockProps} onClick={handleClick} />);
+
+      const button = screen.getByRole('button', { name: /{{BUTTON_NAME}}/i });
+      await user.click(button);
+
+      expect(handleClick).toHaveBeenCalledTimes(1);
+    });
+
+    it('handles input changes', async () => {
+      const user = userEvent.setup();
+      const handleChange = vi.fn();
+
+      render(<{{COMPONENT_NAME}} {...mockProps} onChange={handleChange} />);
+
+      const input = screen.getByLabelText(/{{LABEL_TEXT}}/i);
+      await user.type(input, 'test input');
+
+      expect(input).toHaveValue('test input');
+      expect(handleChange).toHaveBeenCalled();
+    });
+  });
+
+  describe('Conditional Rendering', () => {
+    it('shows loading state', () => {
+      render(<{{COMPONENT_NAME}} {...mockProps} isLoading={true} />);
+
+      expect(screen.getByText(/loading/i)).toBeInTheDocument();
+    });
+
+    it('shows error state', () => {
+      const error = new Error('Test error');
+      render(<{{COMPONENT_NAME}} {...mockProps} error={error} />);
+
+      expect(screen.getByText(/test error/i)).toBeInTheDocument();
+    });
+
+    it('hides element when condition is false', () => {
+      render(<{{COMPONENT_NAME}} {...mockProps} {{CONDITION_PROP}}={false} />);
+
+      expect(screen.queryByRole('{{ROLE}}')).not.toBeInTheDocument();
+    });
+  });
+
+  describe('Async Behavior', () => {
+    it('loads and displays async data', async () => {
+      render(<{{COMPONENT_NAME}} {...mockProps} />);
+
+      // Wait for loading to finish
+      await waitFor(() => {
+        expect(screen.queryByText(/loading/i)).not.toBeInTheDocument();
+      });
+
+      // Check data is displayed
+      expect(screen.getByText({{EXPECTED_TEXT}})).toBeInTheDocument();
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('has proper ARIA attributes', () => {
+      render(<{{COMPONENT_NAME}} {...mockProps} />);
+
+      const element = screen.getByRole('{{ROLE}}');
+      expect(element).toHaveAttribute('aria-label', {{ARIA_LABEL}});
+    });
+
+    it('is keyboard accessible', async () => {
+      const user = userEvent.setup();
+      const handleAction = vi.fn();
+
+      render(<{{COMPONENT_NAME}} {...mockProps} onAction={handleAction} />);
+
+      const element = screen.getByRole('{{ROLE}}');
+      element.focus();
+      await user.keyboard('{Enter}');
+
+      expect(handleAction).toHaveBeenCalled();
+    });
+  });
+});
+
+// Template Placeholders:
+// {{TEST_PURPOSE}} - Test purpose
+// {{TEST_SCOPE}} - Test scope
+// {{COMPONENT_NAME}} - Component name being tested
+// {{PROP_NAME}} - Prop name
+// {{PROP_VALUE}} - Prop value
+// {{PROP_NAME_2}} - Second prop name
+// {{PROP_VALUE_2}} - Second prop value
+// {{EXPECTED_TEXT}} - Expected text to find
+// {{OPTIONAL_PROP}} - Optional prop name
+// {{OPTIONAL_VALUE}} - Optional prop value
+// {{ROLE}} - ARIA role (e.g., "button", "textbox")
+// {{BUTTON_NAME}} - Button accessible name
+// {{LABEL_TEXT}} - Input label text
+// {{CONDITION_PROP}} - Conditional prop name
+// {{ARIA_LABEL}} - ARIA label value

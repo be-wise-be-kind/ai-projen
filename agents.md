@@ -19,6 +19,7 @@ ai-projen is a plugin-based framework for creating AI-ready repositories. We're 
 - **Plugin Architecture**: `.ai/docs/PLUGIN_ARCHITECTURE.md` - How plugins work
 - **Plugin Discovery**: `.ai/docs/PLUGIN_DISCOVERY.md` - How orchestrators discover plugins
 - **Manifest Validation**: `.ai/docs/MANIFEST_VALIDATION.md` - Plugin manifest schema
+- **File Header Standards**: `.ai/docs/FILE_HEADER_STANDARDS.md` - File header documentation standards
 - **Index**: `.ai/index.yaml` - Repository structure and navigation
 - **Layout**: `.ai/layout.yaml` - Directory organization
 
@@ -102,18 +103,7 @@ make validate-manifest
 ## Code Style
 
 ### File Headers
-All documentation files should include:
-```markdown
-# Title
-
-**Purpose**: Brief description
-**Scope**: What this covers
-**Overview**: Detailed description
-**Dependencies**: External dependencies
-**Exports**: What this provides
-**Related**: Related files/docs
-**Implementation**: Key implementation details
-```
+All files must include comprehensive headers following `.ai/docs/FILE_HEADER_STANDARDS.md`
 
 ### YAML Conventions
 - Use spaces, not tabs (2-space indentation)

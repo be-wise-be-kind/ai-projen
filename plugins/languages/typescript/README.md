@@ -8,7 +8,7 @@
 
 ## What This Plugin Provides
 
-This plugin sets up a complete, production-ready TypeScript development environment including:
+This plugin sets up a complete, production-ready TypeScript development environment with **Docker-first development** including:
 
 ### Linting
 - **ESLint** with TypeScript support
@@ -36,8 +36,15 @@ This plugin sets up a complete, production-ready TypeScript development environm
 - Optional path aliases
 - React JSX support (if needed)
 
+### Docker-First Development
+- Multi-stage Dockerfile (dev, lint, test, prod)
+- Docker Compose for development orchestration
+- Hot module replacement in containers
+- Automatic fallback to npm when Docker unavailable
+- Zero local environment pollution
+
 ### Integration
-- Makefile targets for common tasks
+- Docker-first Makefile targets with auto-detection
 - GitHub Actions workflows for CI/CD
 - Pre-commit hook support
 - Comprehensive documentation
@@ -71,11 +78,21 @@ This plugin sets up a complete, production-ready TypeScript development environm
 
 See [AGENT_INSTRUCTIONS.md](./AGENT_INSTRUCTIONS.md) for complete installation guide.
 
-**Quick start**:
-1. Ensure Node.js v18+ is installed
+**Docker-First Quick Start** (Recommended):
+1. Ensure Docker and Docker Compose are installed
 2. Have an AI agent follow `AGENT_INSTRUCTIONS.md`
 3. Answer preference questions (React? Example files?)
-4. Verify installation with `npm run typecheck && npm run lint && npm test`
+4. Build Docker images: `make typescript-install`
+5. Start development: `make dev-typescript`
+6. Verify: `make typescript-check`
+
+**npm Fallback Quick Start**:
+1. Ensure Node.js v18+ is installed
+2. Have an AI agent follow `AGENT_INSTRUCTIONS.md`
+3. Install dependencies: `npm ci`
+4. Verify: `npm run typecheck && npm run lint && npm test`
+
+**Environment Auto-Detection**: The Makefile automatically detects and uses the best available option.
 
 ## Configuration Files
 
@@ -83,6 +100,8 @@ After installation, you'll have:
 
 ```
 project-root/
+├── Dockerfile                # Multi-stage TypeScript/React build
+├── docker-compose.yml        # Development orchestration
 ├── eslint.config.js          # ESLint configuration
 ├── .prettierrc               # Prettier configuration
 ├── .prettierignore           # Prettier ignore patterns
@@ -99,14 +118,46 @@ project-root/
 │   └── workflows/
 │       ├── typescript-lint.yml      # Linting workflow
 │       └── typescript-test.yml      # Testing workflow
-└── Makefile                  # Make targets for TypeScript
+└── Makefile                  # Docker-first Make targets
 ```
 
 ## Usage
 
-### Development Commands
+### Docker-First Commands (Recommended)
 
 ```bash
+# Development
+make dev-typescript              # Start dev server with hot reload
+make dev-typescript-stop         # Stop dev server
+make dev-typescript-logs         # View dev server logs
+
+# Linting & Formatting
+make lint-typescript             # Lint TypeScript code in Docker
+make lint-typescript-fix         # Auto-fix linting issues
+make format-typescript           # Format with Prettier + ESLint
+make format-check-typescript     # Check formatting without fixing
+
+# Testing
+make test-typescript             # Run tests once in Docker
+make test-coverage-typescript    # Run tests with coverage
+
+# Type Checking
+make typecheck-typescript        # Type check in Docker
+
+# Combined
+make typescript-check            # Run all checks (lint + typecheck + test)
+
+# Installation & Cleanup
+make typescript-install          # Build Docker images
+make typescript-clean            # Clean Docker resources and artifacts
+```
+
+### npm Fallback Commands
+
+```bash
+# Development
+npm run dev           # Start development server
+
 # Type checking
 npm run typecheck
 
@@ -125,17 +176,14 @@ npm run test:coverage # Run with coverage report
 npm run test:ui       # Interactive test UI
 ```
 
-### Make Targets
-
-If using Makefile:
+### Legacy Make Targets (Still Supported)
 
 ```bash
-make lint-ts          # Lint TypeScript code
-make format-ts        # Format TypeScript code
-make typecheck-ts     # Run type checking
-make test-ts          # Run tests
-make test-coverage-ts # Run tests with coverage
-make ts-check         # Run all checks (lint + typecheck + test)
+make lint-ts          # Alias for lint-typescript
+make format-ts        # Alias for format-typescript
+make typecheck-ts     # Alias for typecheck-typescript
+make test-ts          # Alias for test-typescript
+make ts-check         # Alias for typescript-check
 ```
 
 ## Standards and Conventions
@@ -175,6 +223,52 @@ When React mode is enabled, you get:
 - JSDOM environment for tests
 - React-specific TypeScript config
 
+## How-To Guides
+
+The TypeScript plugin includes comprehensive step-by-step guides for common development tasks. All guides emphasize Docker-first development and include code templates.
+
+### Component Development
+- **[Create a Component](howtos/how-to-create-a-component.md)** - React components with TypeScript and CSS Modules
+- **[Create a Component Library](howtos/how-to-create-a-component-library.md)** - Build reusable component libraries with proper packaging
+
+### Routing & Navigation
+- **[Add a Route](howtos/how-to-add-a-route.md)** - React Router setup with lazy loading and typed parameters
+
+### Custom Hooks
+- **[Create a Hook](howtos/how-to-create-a-hook.md)** - Build custom React hooks with proper TypeScript types
+
+### State Management
+- **[Add State Management](howtos/how-to-add-state-management.md)** - Implement global state with Context API, Redux, or Zustand
+
+### Testing
+- **[Write a Test](howtos/how-to-write-a-test.md)** - Comprehensive testing with Vitest and React Testing Library
+
+**See [howtos/README.md](howtos/README.md) for the complete guide index.**
+
+Each how-to includes:
+- Step-by-step instructions with code examples
+- Code templates you can copy and customize
+- Docker-first development workflow
+- Verification steps to confirm it works
+- Common issues and solutions
+- Best practices and tips
+
+**Quick workflow example**:
+```bash
+# 1. Create a new component
+cp templates/react-component.tsx.template src/components/Button/Button.tsx
+# Edit and replace {{PLACEHOLDERS}}
+
+# 2. Start development with hot reload
+make dev-typescript
+
+# 3. Write tests
+cp templates/vitest-component-test.tsx.template src/components/Button/Button.test.tsx
+
+# 4. Run tests
+make test-typescript
+```
+
 ## Customization
 
 All configurations are customizable:
@@ -200,7 +294,11 @@ This plugin integrates with the pre-commit-hooks plugin to run checks before com
 Includes GitHub Actions workflows for automated linting and testing.
 
 ### Docker
-Can be containerized with Node.js Docker images.
+Docker templates are included by default:
+- Multi-stage Dockerfile with dev, lint, test, and prod targets
+- Docker Compose configuration for development
+- Automatic hot reload support
+- Production-ready nginx serving
 
 ## Example Project Structure
 

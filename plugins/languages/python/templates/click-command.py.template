@@ -1,0 +1,54 @@
+"""{{COMMAND_NAME}} CLI command.
+
+Purpose: {{PURPOSE}}
+Scope: Command-line interface for {{DESCRIPTION}}
+"""
+
+import click
+from typing import Optional
+
+
+@click.command()
+@click.argument('{{ARGUMENT_NAME}}', type={{ARGUMENT_TYPE}})
+@click.option(
+    '--option',
+    '-o',
+    default='default',
+    help='{{OPTION_DESCRIPTION}}',
+    show_default=True
+)
+@click.option(
+    '--verbose',
+    '-v',
+    is_flag=True,
+    help='Enable verbose output'
+)
+def {{FUNCTION_NAME}}(
+    {{ARGUMENT_NAME}}: {{ARGUMENT_TYPE}},
+    option: str,
+    verbose: bool
+) -> None:
+    """{{COMMAND_DESCRIPTION}}.
+
+    Examples:
+        {{COMMAND_NAME}} {{ARGUMENT_NAME}} --option value
+        {{COMMAND_NAME}} {{ARGUMENT_NAME}} --verbose
+    """
+    if verbose:
+        click.echo(f"Running {{FUNCTION_NAME}} with {{{ARGUMENT_NAME}}}")
+
+    try:
+        # TODO: Implement command logic
+        click.secho(f"Processing {{{ARGUMENT_NAME}}}...", fg='green')
+
+        # Your logic here
+
+        click.secho("✓ Complete!", fg='green', bold=True)
+
+    except Exception as e:
+        click.secho(f"✗ Error: {e}", fg='red', err=True)
+        raise click.Abort()
+
+
+if __name__ == '__main__':
+    {{FUNCTION_NAME}}()

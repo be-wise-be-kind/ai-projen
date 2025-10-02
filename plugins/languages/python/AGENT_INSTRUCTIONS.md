@@ -26,6 +26,25 @@ Before installing this plugin, ensure:
 - ✅ Python 3.11+ runtime is installed (or will be installed)
 - ✅ Package manager (pip or poetry) is available
 
+## Environment Strategy
+
+**IMPORTANT**: Follow the Docker-first development hierarchy:
+
+1. **Docker (Preferred)** 🐳
+   - Use Docker containers for dev, lint, test, and prod
+   - Benefits: Consistent environments, zero local pollution, works everywhere
+   - See: `.ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
+
+2. **Isolated Environment (Fallback)** 📦
+   - Use Poetry virtual environments when Docker unavailable
+   - Still provides project isolation but platform-dependent
+
+3. **Direct Local (Last Resort)** ⚠️
+   - Only when Docker AND Poetry unavailable
+   - Risk of polluting global Python environment
+
+**This plugin provides templates for all three approaches with automatic detection in Makefiles.**
+
 ## Installation Steps
 
 ### Step 1: Gather User Preferences
@@ -391,27 +410,30 @@ repos:
 Workflow already created in Step 9 if GitHub Actions present.
 
 ### With Docker Plugin
-Add Python runtime to Dockerfile:
+The Python plugin includes complete Docker support with multi-stage builds:
 
-```dockerfile
-FROM python:3.11-slim
+1. **Copy Docker templates**:
+   ```bash
+   mkdir -p .docker/dockerfiles .docker/compose
+   cp plugins/languages/python/templates/Dockerfile.python .docker/dockerfiles/Dockerfile.backend
+   cp plugins/languages/python/templates/docker-compose.python.yml .docker/compose/app.yml
+   ```
 
-WORKDIR /app
+2. **Start development with hot reload**:
+   ```bash
+   make dev  # Uses Docker automatically if available
+   ```
 
-# Install poetry
-RUN pip install poetry
+3. **Run linting in containers**:
+   ```bash
+   make lint-all  # Runs in dedicated linting containers
+   ```
 
-# Copy dependency files
-COPY pyproject.toml poetry.lock ./
-
-# Install dependencies
-RUN poetry config virtualenvs.create false && poetry install --no-dev
-
-# Copy application code
-COPY . .
-
-CMD ["python", "src/main.py"]
-```
+The Dockerfile includes targets for:
+- `dev`: Development with hot reload
+- `lint`: All linting tools (Ruff, MyPy, Bandit, Pylint, etc.)
+- `test`: Test execution with coverage
+- `prod`: Minimal production image
 
 ## Troubleshooting
 

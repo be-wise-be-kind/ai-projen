@@ -1,0 +1,54 @@
+// Purpose: React Router configuration
+// Scope: Application routing setup
+// Usage: Copy and customize routes
+
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+
+// Lazy load page components
+const HomePage = lazy(() => import('./pages/Home'));
+const {{PAGE_NAME}} = lazy(() => import('./pages/{{PAGE_NAME}}'));
+const NotFoundPage = lazy(() => import('./pages/NotFound'));
+
+// Loading component
+const LoadingFallback = () => (
+  <div style={{ padding: '2rem', textAlign: 'center' }}>
+    <div>Loading...</div>
+  </div>
+);
+
+/**
+ * Application router configuration
+ */
+export function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <Suspense fallback={<LoadingFallback />}>
+        <Routes>
+          {/* Home route */}
+          <Route path="/" element={<HomePage />} />
+
+          {/* {{ROUTE_GROUP_NAME}} routes */}
+          <Route path="{{ROUTE_PATH}}" element={<{{PAGE_NAME}} />} />
+          <Route path="{{ROUTE_WITH_PARAM}}" element={<{{PAGE_NAME}} />} />
+
+          {/* 404 Not Found */}
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      </Suspense>
+    </BrowserRouter>
+  );
+}
+
+// Template Placeholders:
+// {{PAGE_NAME}} - Page component name (e.g., "UserProfile")
+// {{ROUTE_PATH}} - Route path (e.g., "/users")
+// {{ROUTE_WITH_PARAM}} - Route with parameter (e.g., "/users/:userId")
+// {{ROUTE_GROUP_NAME}} - Route group name (e.g., "User management")
+
+// Nested routes example:
+// <Route path="/users">
+//   <Route index element={<UsersList />} />
+//   <Route path=":userId" element={<UserProfile />} />
+//   <Route path=":userId/edit" element={<EditUser />} />
+// </Route>

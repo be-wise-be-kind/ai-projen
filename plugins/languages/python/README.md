@@ -59,73 +59,91 @@ python/
 
 ## Quick Start
 
+**IMPORTANT**: This plugin follows the Docker-first development pattern established in PR7.5.
+
+See `.ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md` for complete details.
+
+### Docker-First Approach (Recommended)
+
+1. **Copy Docker templates**:
+   ```bash
+   mkdir -p .docker/dockerfiles .docker/compose
+   cp plugins/languages/python/templates/Dockerfile.python .docker/dockerfiles/Dockerfile.backend
+   cp plugins/languages/python/templates/docker-compose.python.yml .docker/compose/app.yml
+   ```
+
+2. **Copy Makefile**:
+   ```bash
+   cp plugins/languages/python/templates/makefile-python.mk ./Makefile.python
+   echo "-include Makefile.python" >> Makefile
+   ```
+
+3. **Configure in pyproject.toml**:
+   ```bash
+   # Copy base configuration (or merge into existing pyproject.toml)
+   cp plugins/languages/python/linters/ruff/config/pyproject.toml ./
+   ```
+
+4. **Start developing**:
+   ```bash
+   make python-install  # Build Docker images
+   make dev-python      # Start development environment
+   make lint-python     # Lint in container
+   make test-python     # Test in container
+   ```
+
+### Poetry Fallback (When Docker Unavailable)
+
+1. **Install dependencies**:
+   ```bash
+   poetry add --group dev ruff mypy bandit pytest pytest-asyncio pytest-cov
+   ```
+
+2. **Copy configurations**:
+   ```bash
+   cp plugins/languages/python/linters/ruff/config/pyproject.toml ./
+   ```
+
+3. **Add Makefile**:
+   ```bash
+   cp plugins/languages/python/templates/makefile-python.mk ./Makefile.python
+   echo "-include Makefile.python" >> Makefile
+   ```
+
+4. **Run tools**:
+   ```bash
+   make lint-python     # Auto-uses Poetry if Docker unavailable
+   make test-python
+   ```
+
 ### For AI Agents
 
 Follow the comprehensive instructions in `AGENT_INSTRUCTIONS.md`:
 
 ```bash
-# AI agents should execute:
 cat plugins/languages/python/AGENT_INSTRUCTIONS.md
 # Then follow Steps 1-12
 ```
 
-### For Humans
-
-1. **Install dependencies**:
-   ```bash
-   # Using Poetry (recommended)
-   poetry add --group dev ruff mypy bandit pytest pytest-asyncio pytest-cov
-
-   # Or using pip
-   pip install ruff mypy bandit pytest pytest-asyncio pytest-cov
-   ```
-
-2. **Copy configurations**:
-   ```bash
-   # Copy all config files to project root
-   cp plugins/languages/python/linters/ruff/config/pyproject.toml ./
-   cp plugins/languages/python/linters/mypy/config/mypy.ini ./
-   cp plugins/languages/python/linters/bandit/config/.bandit ./
-   cp plugins/languages/python/testing/pytest/config/pytest.ini ./
-   ```
-
-3. **Add Makefile targets**:
-   ```bash
-   # Option 1: Include Python Makefile
-   echo "-include Makefile.python" >> Makefile
-   cp plugins/languages/python/templates/makefile-python.mk ./Makefile.python
-
-   # Option 2: Copy targets directly
-   cat plugins/languages/python/templates/makefile-python.mk >> Makefile
-   ```
-
-4. **Create tests directory**:
-   ```bash
-   mkdir -p tests
-   touch tests/__init__.py
-   ```
-
-5. **Verify installation**:
-   ```bash
-   make lint-python
-   make typecheck
-   make security-scan
-   make test-python
-   ```
-
 ## Available Commands
+
+All Make targets support automatic environment detection (Docker → Poetry → Direct).
 
 ### Make Targets
 
 ```bash
-# Quality checks
+# Development
+make dev-python               # Start dev environment (Docker-first)
+make dev-stop-python          # Stop dev environment
+
+# Quality checks (Docker-first with auto-detection)
 make lint-python              # Run Ruff linting
+make lint-fix-python          # Auto-fix linting issues
 make format-python            # Format code with Ruff
-make format-check-python      # Check formatting without changes
 make typecheck                # Run MyPy type checking
 make security-scan            # Run Bandit security scanner
 
-# Testing
+# Testing (Docker-first with auto-detection)
 make test-python              # Run all tests
 make test-coverage-python     # Run tests with coverage report
 make test-unit-python         # Run only unit tests
@@ -135,35 +153,107 @@ make test-integration-python  # Run only integration tests
 make python-check             # Run all checks (lint + type + security + test)
 
 # Utilities
-make python-install           # Install dependencies
-make clean-python             # Clean cache files
-make help-python              # Show Python-specific help
+make python-install           # Install/build dependencies (environment-aware)
+make clean-python             # Clean cache files and containers
+make help-python              # Show Python-specific help with environment info
 ```
 
-### Direct Tool Usage
+**Environment Auto-Detection**: All targets automatically detect and use:
+1. Docker (if available) - runs in containers
+2. Poetry (if Docker unavailable) - uses virtual environment
+3. Direct local (last resort) - direct tool execution
 
+### Direct Tool Usage (Not Recommended - Use Make Targets)
+
+If you must use tools directly, the Makefile auto-detection ensures consistency:
+
+**Docker Environment**:
 ```bash
-# Ruff
-ruff check .                  # Lint code
-ruff check --fix .            # Auto-fix issues
-ruff format .                 # Format code
-ruff format --check .         # Check formatting
-
-# MyPy
-mypy .                        # Type check all files
-mypy src/                     # Type check specific directory
-
-# Bandit
-bandit -r .                   # Security scan
-bandit -r . -ll              # Only high severity
-bandit -r . -q               # Quiet mode
-
-# Pytest
-pytest                        # Run all tests
-pytest -v                     # Verbose output
-pytest --cov=src             # With coverage
-pytest -m unit               # Only unit tests
+# Tools run in containers automatically via make targets
+make lint-python  # Runs: docker exec ... ruff check .
 ```
+
+**Poetry Environment**:
+```bash
+# Tools run via Poetry automatically via make targets
+make lint-python  # Runs: poetry run ruff check .
+```
+
+**Direct Local**:
+```bash
+# Only if Docker and Poetry unavailable
+ruff check .      # Direct execution
+mypy .
+bandit -r .
+pytest
+```
+
+**Recommendation**: Always use `make` targets for consistency across environments.
+
+## How-To Guides
+
+The Python plugin includes comprehensive step-by-step guides for common development tasks. All guides follow the Docker-first development pattern with automatic environment detection.
+
+### API Development
+- **[Create an API Endpoint](howtos/how-to-create-an-api-endpoint.md)** - FastAPI endpoints with automatic documentation and Docker testing (30-45 min, Intermediate)
+- **[Add Database Model](howtos/how-to-add-database-model.md)** - SQLAlchemy models with Alembic migrations in Docker (60-90 min, Advanced)
+- **[Handle Authentication](howtos/how-to-handle-authentication.md)** - OAuth2/JWT implementation with secure password handling (90-120 min, Advanced)
+
+### CLI Development
+- **[Create a CLI Command](howtos/how-to-create-a-cli-command.md)** - Click/Typer command-line tools with Docker execution (45-60 min, Intermediate)
+
+### Testing
+- **[Write a Test](howtos/how-to-write-a-test.md)** - pytest test cases with Docker support and coverage (45-60 min, Intermediate)
+
+### Background Jobs
+- **[Add Background Job](howtos/how-to-add-background-job.md)** - Celery/RQ async tasks with Redis and Docker (60-90 min, Advanced)
+
+### What's Included in Each Guide
+
+All how-tos include:
+- **Step-by-step instructions** - Clear, actionable steps from start to finish
+- **Code templates** - Ready-to-use templates with placeholders
+- **Docker-first examples** - Commands for Docker, Poetry, and direct execution
+- **Verification steps** - How to test that everything works
+- **Common issues and solutions** - Troubleshooting help
+- **Best practices** - Industry-standard patterns and security considerations
+- **Complete checklists** - Ensure nothing is missed
+
+See [howtos/README.md](howtos/README.md) for the complete guide index with quick reference by use case, difficulty, and time commitment.
+
+## Code Templates
+
+The plugin provides ready-to-use templates for common patterns:
+
+**API & Database**:
+- `templates/fastapi-router.py.template` - Complete FastAPI router module
+- `templates/sqlalchemy-model.py.template` - SQLAlchemy ORM model
+- `templates/pydantic-schema.py.template` - Pydantic validation schemas
+
+**CLI Tools**:
+- `templates/click-command.py.template` - Click CLI command
+- `templates/typer-command.py.template` - Typer CLI command with rich output
+
+**Testing**:
+- `templates/pytest-test.py.template` - pytest test file with AAA pattern
+
+**Background Jobs**:
+- `templates/celery-task.py.template` - Celery task with retry logic
+
+**Using Templates**:
+```bash
+# Copy template
+cp plugins/languages/python/templates/fastapi-router.py.template backend/app/your_module.py
+
+# Replace placeholders like {{MODULE_NAME}}, {{MODEL_NAME}}, etc.
+# Follow template comments for customization
+```
+
+All templates include:
+- Purpose and scope documentation
+- Placeholder variables for customization
+- Example code and comments
+- Type hints and proper structure
 
 ## Python Standards
 
@@ -210,35 +300,35 @@ See `templates/example.py` and `templates/test_example.py` for examples of:
 
 ## Integration with Other Plugins
 
-### Pre-commit Hooks
-Add to `.pre-commit-config.yaml`:
+### Docker Plugin (Included)
+This plugin includes complete Docker support:
+
+```bash
+# Docker templates already provided
+templates/Dockerfile.python              # Multi-stage build (dev, lint, test, prod)
+templates/docker-compose.python.yml      # Docker Compose configuration
+templates/makefile-python.mk             # Docker-first Makefile with auto-detection
+
+# Copy and use:
+make python-install  # Builds Docker images
+make dev-python      # Starts containers
+```
+
+### Pre-commit Hooks Plugin
+If using pre-commit, add to `.pre-commit-config.yaml`:
 ```yaml
 repos:
   - repo: local
     hooks:
       - id: ruff
         name: Ruff
-        entry: ruff check --fix
+        entry: make lint-python
         language: system
-        types: [python]
-      - id: mypy
-        name: MyPy
-        entry: mypy
-        language: system
-        types: [python]
-```
-
-### Docker
-Add to `Dockerfile`:
-```dockerfile
-FROM python:3.11-slim
-RUN pip install poetry
-COPY pyproject.toml poetry.lock ./
-RUN poetry install --no-dev
+        pass_filenames: false
 ```
 
 ### Security Plugin
-Bandit integrates with security scanning workflows
+Bandit integrates with security scanning workflows via `make security-scan`
 
 ## Why These Tools?
 

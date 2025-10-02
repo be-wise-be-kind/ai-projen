@@ -9,6 +9,21 @@
 
 ---
 
+## Development Environment
+
+**IMPORTANT**: This project follows a Docker-first development pattern.
+
+See `.ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md` for the complete philosophy.
+
+**Three-Tier Hierarchy**:
+1. **Docker (Preferred)** - Use `make dev-python`, `make lint-python`, `make test-python`
+2. **Poetry (Fallback)** - Use `poetry run` commands when Docker unavailable
+3. **Direct Local (Last Resort)** - Direct tool execution only when no other option
+
+All quality tools (Ruff, MyPy, Bandit, Pytest) work seamlessly across all three environments thanks to `pyproject.toml` configuration.
+
+---
+
 ## Code Style (PEP 8 Compliance)
 
 ### Line Length and Formatting
@@ -503,6 +518,7 @@ def read_large_file_bad(filename: str) -> list[str]:
 
 ## Summary Checklist
 
+### Code Quality
 - ✅ Follow PEP 8 style guide (120 char line length)
 - ✅ Use type hints for all function signatures
 - ✅ Write Google-style docstrings
@@ -515,3 +531,12 @@ def read_large_file_bad(filename: str) -> list[str]:
 - ✅ Use modern Python 3.11+ features
 - ✅ Handle errors with specific exceptions
 - ✅ Use context managers for resources
+
+### Development Environment (Docker-First)
+- ✅ Use `make dev-python` to start development environment
+- ✅ Use `make lint-python` for linting (auto-detects Docker/Poetry/Direct)
+- ✅ Use `make typecheck` for type checking
+- ✅ Use `make security-scan` for security scanning
+- ✅ Use `make test-python` for running tests
+- ✅ Use `make python-check` to run all quality checks
+- ✅ Configure all tools in `pyproject.toml` for environment consistency

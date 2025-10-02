@@ -4,9 +4,27 @@
 
 **Scope**: Fast unit testing framework for TypeScript/JavaScript
 
-**Dependencies**: Node.js, npm/yarn/pnpm
+**Dependencies**: Docker (preferred), Node.js, npm/yarn/pnpm
 
 ---
+
+## Environment Strategy
+
+**IMPORTANT**: Follow the Docker-first development hierarchy:
+
+1. **Docker (Preferred)** - `make test-typescript`
+   - Runs Vitest in isolated container
+   - Consistent test environment across all machines
+   - No local Node.js pollution
+
+2. **npm (Fallback)** - `npm test`
+   - Uses local node_modules
+   - Works when Docker unavailable
+   - Requires Node.js installed
+
+3. **Global (Last Resort)** - Not recommended
+   - Avoid `npm install -g vitest`
+   - Use project-local installation only
 
 ## Installation Steps
 
@@ -93,12 +111,31 @@ describe('Example Test Suite', () => {
 
 ### Step 7: Verify Installation
 
+**Docker-First (Recommended)**:
+```bash
+# Build Docker image with Vitest
+make typescript-install
+
+# Run tests in Docker
+make test-typescript
+
+# Run tests with coverage in Docker
+make test-coverage-typescript
+```
+
+**npm Fallback**:
 ```bash
 npm run test:run
 ```
 
 ## Usage
 
+**Docker-First (Recommended)**:
+- **Run tests once**: `make test-typescript`
+- **Run with coverage**: `make test-coverage-typescript`
+- **View results**: Check Docker output for test results
+
+**npm Fallback**:
 - **Run tests (watch mode)**: `npm test`
 - **Run tests once**: `npm run test:run`
 - **Run with coverage**: `npm run test:coverage`
@@ -106,17 +143,26 @@ npm run test:run
 
 ## Integration with Makefile
 
-If Makefile exists, add:
+The TypeScript Makefile (from `makefile-typescript.mk`) already includes Docker-first Vitest targets:
 
 ```makefile
-.PHONY: test-ts test-coverage-ts
+# Auto-detects Docker vs npm
+test-typescript:
+ifdef HAS_DOCKER
+	@docker compose run --rm frontend-dev npm run test:run
+else
+	@npm run test:run
+endif
 
-test-ts:
-	npm test
-
-test-coverage-ts:
-	npm run test:coverage
+test-coverage-typescript:
+ifdef HAS_DOCKER
+	@docker compose run --rm frontend-dev npm run test:coverage
+else
+	@npm run test:coverage
+endif
 ```
+
+**No manual Makefile edits needed** - the template handles everything.
 
 ## Test File Conventions
 

@@ -1,119 +1,310 @@
 # Purpose: Python-specific Makefile targets for linting, formatting, testing, and type checking
-# Scope: Python development workflow automation
+# Scope: Python development workflow automation with Docker-first approach
 # Overview: Provides standardized Make targets for Python projects including Ruff linting/formatting,
-#     MyPy type checking, Bandit security scanning, and pytest testing. Designed to be included
-#     in a project's main Makefile.
-# Dependencies: ruff, mypy, bandit, pytest (installed via pip/poetry)
-# Exports: Make targets for Python development tasks
-# Related: Python development workflow, CI/CD integration
-# Implementation: Makefile targets that can be included or copied to main Makefile
+#     MyPy type checking, Bandit security scanning, and pytest testing. Implements Docker-first
+#     development pattern with automatic fallback to isolated environments (Poetry) or direct local.
+#     Designed to be included in a project's main Makefile.
+# Dependencies: Docker (preferred), Poetry/pip (fallback), Python tools (ruff, mypy, bandit, pytest)
+# Exports: Make targets for Python development tasks with environment auto-detection
+# Related: Python development workflow, CI/CD integration, Docker multi-stage builds
+# Implementation: Makefile targets with three-tier environment hierarchy (Docker → Poetry → Direct)
 
 ################################################################################
-# Python Development Targets
+# Python Development Targets - Docker-First Pattern
 ################################################################################
 # Include this file in your main Makefile with: -include Makefile.python
 # Or copy these targets directly into your main Makefile
+#
+# Environment Hierarchy:
+# 1. Docker (Preferred) - Consistent, isolated, no local pollution
+# 2. Poetry (Fallback) - Project-isolated virtual environment
+# 3. Direct (Last Resort) - Direct local execution (not recommended)
 ################################################################################
 
-.PHONY: lint-python format-python format-check-python typecheck security-scan test-python test-coverage-python python-check python-install
+.PHONY: lint-python format-python format-check-python typecheck security-scan test-python test-coverage-python python-check python-install dev-python lint-start-python
 
 # Color codes for output
 PYTHON_CYAN := \033[0;36m
 PYTHON_GREEN := \033[0;32m
 PYTHON_YELLOW := \033[0;33m
+PYTHON_RED := \033[0;31m
 PYTHON_NC := \033[0m
 
 # Python source directories (customize for your project)
 PYTHON_SRC_DIRS := src app
 
 # Python test directory
-PYTHON_TEST_DIR := tests
+PYTHON_TEST_DIR := tests test
 
-# Linting with Ruff
-lint-python: ## Run Python linting (Ruff)
-	@echo "$(PYTHON_CYAN)Running Python linter (Ruff)...$(PYTHON_NC)"
+# Docker configuration
+DOCKER_COMPOSE := docker compose
+DOCKER_COMPOSE_APP := $(DOCKER_COMPOSE) -f .docker/compose/app.yml
+DOCKER_COMPOSE_LINT := $(DOCKER_COMPOSE) -f .docker/compose/lint.yml
+PROJECT_NAME ?= python-app
+BRANCH_NAME ?= $(shell git rev-parse --abbrev-ref HEAD 2>/dev/null | tr '/' '-' | tr '[:upper:]' '[:lower:]' || echo "main")
+BACKEND_PORT ?= 8000
+
+# Environment detection
+HAS_DOCKER := $(shell command -v docker 2>/dev/null)
+HAS_POETRY := $(shell command -v poetry 2>/dev/null)
+
+################################################################################
+# Development Environment
+################################################################################
+
+dev-python: ## Start Python development environment (Docker-first with auto-detection)
+ifdef HAS_DOCKER
+	@echo "$(PYTHON_CYAN)Starting Python development environment (Docker)...$(PYTHON_NC)"
+	@BRANCH_NAME=$(BRANCH_NAME) BACKEND_PORT=$(BACKEND_PORT) PROJECT_NAME=$(PROJECT_NAME) \
+		$(DOCKER_COMPOSE_APP) up -d
+	@echo "$(PYTHON_GREEN)✓ Development environment started!$(PYTHON_NC)"
+	@echo "$(PYTHON_YELLOW)Backend: http://localhost:$(BACKEND_PORT)$(PYTHON_NC)"
+	@echo "$(PYTHON_YELLOW)Logs: docker logs -f $(PROJECT_NAME)-backend-$(BRANCH_NAME)-dev$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@poetry install
+	@poetry run uvicorn app.main:app --host 0.0.0.0 --port $(BACKEND_PORT) --reload
+else
+	@echo "$(PYTHON_RED)⚠️  WARNING: Using direct local execution (not recommended)$(PYTHON_NC)"
+	@echo "$(PYTHON_YELLOW)Install Docker or Poetry for better isolation$(PYTHON_NC)"
+	@pip install -r requirements.txt 2>/dev/null || pip install -e .
+	@uvicorn app.main:app --host 0.0.0.0 --port $(BACKEND_PORT) --reload
+endif
+
+dev-stop-python: ## Stop Python development environment
+ifdef HAS_DOCKER
+	@echo "$(PYTHON_CYAN)Stopping Python development environment...$(PYTHON_NC)"
+	@BRANCH_NAME=$(BRANCH_NAME) PROJECT_NAME=$(PROJECT_NAME) $(DOCKER_COMPOSE_APP) down
+	@echo "$(PYTHON_GREEN)✓ Development environment stopped$(PYTHON_NC)"
+else
+	@echo "$(PYTHON_YELLOW)No Docker environment to stop$(PYTHON_NC)"
+endif
+
+################################################################################
+# Linting (Docker-First)
+################################################################################
+
+lint-start-python: ## Start dedicated linting containers
+ifdef HAS_DOCKER
+	@echo "$(PYTHON_CYAN)Starting Python linting containers...$(PYTHON_NC)"
+	@BRANCH_NAME=$(BRANCH_NAME) PROJECT_NAME=$(PROJECT_NAME) $(DOCKER_COMPOSE_LINT) up -d
+	@echo "$(PYTHON_GREEN)✓ Linting containers started$(PYTHON_NC)"
+else
+	@echo "$(PYTHON_YELLOW)Docker not available, linting will run locally$(PYTHON_NC)"
+endif
+
+lint-stop-python: ## Stop dedicated linting containers
+ifdef HAS_DOCKER
+	@echo "$(PYTHON_CYAN)Stopping Python linting containers...$(PYTHON_NC)"
+	@BRANCH_NAME=$(BRANCH_NAME) PROJECT_NAME=$(PROJECT_NAME) $(DOCKER_COMPOSE_LINT) down
+	@echo "$(PYTHON_GREEN)✓ Linting containers stopped$(PYTHON_NC)"
+endif
+
+lint-python: ## Run Python linting (Ruff) - Docker-first with auto-detection
+ifdef HAS_DOCKER
+	@if ! docker ps | grep -q "$(PROJECT_NAME)-python-linter-$(BRANCH_NAME)"; then \
+		$(MAKE) lint-start-python; \
+	fi
+	@echo "$(PYTHON_CYAN)Running Python linter (Ruff) in Docker...$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && \
+		ruff format --check $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR) && \
+		ruff check $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)"
+	@echo "$(PYTHON_GREEN)✓ Python linting complete$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@poetry run ruff format --check $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
+	@poetry run ruff check $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
+	@echo "$(PYTHON_GREEN)✓ Python linting complete$(PYTHON_NC)"
+else
+	@echo "$(PYTHON_RED)⚠️  Using direct local execution$(PYTHON_NC)"
+	@ruff format --check $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
 	@ruff check $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
 	@echo "$(PYTHON_GREEN)✓ Python linting complete$(PYTHON_NC)"
+endif
 
-# Auto-fix linting issues
-lint-fix-python: ## Auto-fix Python linting issues (Ruff)
-	@echo "$(PYTHON_CYAN)Auto-fixing Python linting issues...$(PYTHON_NC)"
+lint-fix-python: ## Auto-fix Python linting issues - Docker-first
+ifdef HAS_DOCKER
+	@if ! docker ps | grep -q "$(PROJECT_NAME)-python-linter-$(BRANCH_NAME)"; then \
+		$(MAKE) lint-start-python; \
+	fi
+	@echo "$(PYTHON_CYAN)Auto-fixing Python code in Docker...$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && \
+		ruff format $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR) && \
+		ruff check --fix $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)"
+	@echo "$(PYTHON_GREEN)✓ Python auto-fix complete$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@poetry run ruff format $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
+	@poetry run ruff check --fix $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
+	@echo "$(PYTHON_GREEN)✓ Python auto-fix complete$(PYTHON_NC)"
+else
+	@ruff format $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
 	@ruff check --fix $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
 	@echo "$(PYTHON_GREEN)✓ Python auto-fix complete$(PYTHON_NC)"
+endif
 
-# Format code with Ruff
-format-python: ## Format Python code (Ruff)
-	@echo "$(PYTHON_CYAN)Formatting Python code...$(PYTHON_NC)"
-	@ruff format $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
-	@echo "$(PYTHON_GREEN)✓ Python formatting complete$(PYTHON_NC)"
+format-python: lint-fix-python ## Alias for lint-fix-python
 
-# Check formatting without modifying files
-format-check-python: ## Check Python formatting (Ruff)
-	@echo "$(PYTHON_CYAN)Checking Python formatting...$(PYTHON_NC)"
+format-check-python: ## Check Python formatting - Docker-first
+ifdef HAS_DOCKER
+	@if ! docker ps | grep -q "$(PROJECT_NAME)-python-linter-$(BRANCH_NAME)"; then \
+		$(MAKE) lint-start-python; \
+	fi
+	@echo "$(PYTHON_CYAN)Checking Python formatting in Docker...$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && ruff format --check $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)"
+	@echo "$(PYTHON_GREEN)✓ Python format check complete$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@poetry run ruff format --check $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
+	@echo "$(PYTHON_GREEN)✓ Python format check complete$(PYTHON_NC)"
+else
 	@ruff format --check $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
 	@echo "$(PYTHON_GREEN)✓ Python format check complete$(PYTHON_NC)"
+endif
 
-# Type checking with MyPy
-typecheck: ## Run Python type checking (MyPy)
-	@echo "$(PYTHON_CYAN)Running Python type checker (MyPy)...$(PYTHON_NC)"
+################################################################################
+# Type Checking (Docker-First)
+################################################################################
+
+typecheck: ## Run Python type checking (MyPy) - Docker-first
+ifdef HAS_DOCKER
+	@if ! docker ps | grep -q "$(PROJECT_NAME)-python-linter-$(BRANCH_NAME)"; then \
+		$(MAKE) lint-start-python; \
+	fi
+	@echo "$(PYTHON_CYAN)Running Python type checker (MyPy) in Docker...$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && \
+		mkdir -p /tmp/.cache/mypy && \
+		MYPY_CACHE_DIR=/tmp/.cache/mypy mypy $(PYTHON_SRC_DIRS)"
+	@echo "$(PYTHON_GREEN)✓ Type checking complete$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@poetry run mypy $(PYTHON_SRC_DIRS)
+	@echo "$(PYTHON_GREEN)✓ Type checking complete$(PYTHON_NC)"
+else
 	@mypy $(PYTHON_SRC_DIRS)
 	@echo "$(PYTHON_GREEN)✓ Type checking complete$(PYTHON_NC)"
+endif
 
-# Security scanning with Bandit
-security-scan: ## Run Python security scanning (Bandit)
-	@echo "$(PYTHON_CYAN)Running Python security scanner (Bandit)...$(PYTHON_NC)"
+################################################################################
+# Security Scanning (Docker-First)
+################################################################################
+
+security-scan: ## Run Python security scanning (Bandit) - Docker-first
+ifdef HAS_DOCKER
+	@if ! docker ps | grep -q "$(PROJECT_NAME)-python-linter-$(BRANCH_NAME)"; then \
+		$(MAKE) lint-start-python; \
+	fi
+	@echo "$(PYTHON_CYAN)Running Python security scanner (Bandit) in Docker...$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && bandit -r $(PYTHON_SRC_DIRS) -q"
+	@echo "$(PYTHON_GREEN)✓ Security scan complete$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@poetry run bandit -r $(PYTHON_SRC_DIRS) -q
+	@echo "$(PYTHON_GREEN)✓ Security scan complete$(PYTHON_NC)"
+else
 	@bandit -r $(PYTHON_SRC_DIRS) -q
 	@echo "$(PYTHON_GREEN)✓ Security scan complete$(PYTHON_NC)"
+endif
 
-# Run all tests
-test-python: ## Run Python tests (pytest)
-	@echo "$(PYTHON_CYAN)Running Python tests...$(PYTHON_NC)"
+################################################################################
+# Testing (Docker-First)
+################################################################################
+
+test-python: ## Run Python tests (pytest) - Docker-first
+ifdef HAS_DOCKER
+	@echo "$(PYTHON_CYAN)Running Python tests in Docker...$(PYTHON_NC)"
+	@BRANCH_NAME=$(BRANCH_NAME) PROJECT_NAME=$(PROJECT_NAME) $(DOCKER_COMPOSE) \
+		-f .docker/compose/test.yml run --rm python-test
+	@echo "$(PYTHON_GREEN)✓ Python tests complete$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@poetry run pytest -v
+	@echo "$(PYTHON_GREEN)✓ Python tests complete$(PYTHON_NC)"
+else
 	@pytest -v
 	@echo "$(PYTHON_GREEN)✓ Python tests complete$(PYTHON_NC)"
+endif
 
-# Run tests with coverage
-test-coverage-python: ## Run Python tests with coverage (pytest + coverage)
-	@echo "$(PYTHON_CYAN)Running Python tests with coverage...$(PYTHON_NC)"
-	@pytest --cov=$(PYTHON_SRC_DIRS) --cov-report=term --cov-report=html
+test-coverage-python: ## Run Python tests with coverage - Docker-first
+ifdef HAS_DOCKER
+	@echo "$(PYTHON_CYAN)Running Python tests with coverage in Docker...$(PYTHON_NC)"
+	@BRANCH_NAME=$(BRANCH_NAME) PROJECT_NAME=$(PROJECT_NAME) $(DOCKER_COMPOSE) \
+		-f .docker/compose/test.yml run --rm python-test \
+		pytest --cov=$(PYTHON_SRC_DIRS) --cov-report=term --cov-report=html -v
 	@echo "$(PYTHON_GREEN)✓ Python tests with coverage complete$(PYTHON_NC)"
 	@echo "$(PYTHON_YELLOW)Coverage report: htmlcov/index.html$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@poetry run pytest --cov=$(PYTHON_SRC_DIRS) --cov-report=term --cov-report=html -v
+	@echo "$(PYTHON_GREEN)✓ Python tests with coverage complete$(PYTHON_NC)"
+	@echo "$(PYTHON_YELLOW)Coverage report: htmlcov/index.html$(PYTHON_NC)"
+else
+	@pytest --cov=$(PYTHON_SRC_DIRS) --cov-report=term --cov-report=html -v
+	@echo "$(PYTHON_GREEN)✓ Python tests with coverage complete$(PYTHON_NC)"
+	@echo "$(PYTHON_YELLOW)Coverage report: htmlcov/index.html$(PYTHON_NC)"
+endif
 
-# Run only unit tests
 test-unit-python: ## Run Python unit tests only
-	@echo "$(PYTHON_CYAN)Running Python unit tests...$(PYTHON_NC)"
+ifdef HAS_DOCKER
+	@BRANCH_NAME=$(BRANCH_NAME) PROJECT_NAME=$(PROJECT_NAME) $(DOCKER_COMPOSE) \
+		-f .docker/compose/test.yml run --rm python-test pytest -v -m unit
+else ifdef HAS_POETRY
+	@poetry run pytest -v -m unit
+else
 	@pytest -v -m unit
-	@echo "$(PYTHON_GREEN)✓ Python unit tests complete$(PYTHON_NC)"
+endif
 
-# Run only integration tests
 test-integration-python: ## Run Python integration tests only
-	@echo "$(PYTHON_CYAN)Running Python integration tests...$(PYTHON_NC)"
+ifdef HAS_DOCKER
+	@BRANCH_NAME=$(BRANCH_NAME) PROJECT_NAME=$(PROJECT_NAME) $(DOCKER_COMPOSE) \
+		-f .docker/compose/test.yml run --rm python-test pytest -v -m integration
+else ifdef HAS_POETRY
+	@poetry run pytest -v -m integration
+else
 	@pytest -v -m integration
-	@echo "$(PYTHON_GREEN)✓ Python integration tests complete$(PYTHON_NC)"
+endif
 
-# Run all Python quality checks
-python-check: lint-python typecheck security-scan test-python ## Run all Python checks (lint, type, security, test)
+################################################################################
+# Composite Targets
+################################################################################
+
+python-check: lint-python typecheck security-scan test-python ## Run all Python checks (Docker-first)
 	@echo "$(PYTHON_GREEN)✅ All Python checks passed!$(PYTHON_NC)"
 
-# Install Python dependencies
-python-install: ## Install Python dependencies (poetry or pip)
-	@echo "$(PYTHON_CYAN)Installing Python dependencies...$(PYTHON_NC)"
-	@if [ -f "pyproject.toml" ] && command -v poetry >/dev/null 2>&1; then \
-		echo "Using Poetry..."; \
-		poetry install; \
-	elif [ -f "requirements.txt" ]; then \
-		echo "Using pip..."; \
+python-install: ## Install Python dependencies - environment-aware
+ifdef HAS_DOCKER
+	@echo "$(PYTHON_CYAN)Building Docker images with dependencies...$(PYTHON_NC)"
+	@BRANCH_NAME=$(BRANCH_NAME) PROJECT_NAME=$(PROJECT_NAME) $(DOCKER_COMPOSE_APP) build
+	@echo "$(PYTHON_GREEN)✓ Docker images built$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_CYAN)Installing Python dependencies with Poetry...$(PYTHON_NC)"
+	@poetry install
+	@echo "$(PYTHON_GREEN)✓ Poetry dependencies installed$(PYTHON_NC)"
+else
+	@echo "$(PYTHON_CYAN)Installing Python dependencies with pip...$(PYTHON_NC)"
+	@if [ -f "requirements.txt" ]; then \
 		pip install -r requirements.txt; \
-		if [ -f "requirements-dev.txt" ]; then \
-			pip install -r requirements-dev.txt; \
-		fi; \
-	else \
-		echo "$(PYTHON_YELLOW)No dependency file found (pyproject.toml or requirements.txt)$(PYTHON_NC)"; \
 	fi
-	@echo "$(PYTHON_GREEN)✓ Python dependencies installed$(PYTHON_NC)"
+	@if [ -f "requirements-dev.txt" ]; then \
+		pip install -r requirements-dev.txt; \
+	fi
+	@echo "$(PYTHON_GREEN)✓ Dependencies installed$(PYTHON_NC)"
+endif
 
-# Clean Python cache files
-clean-python: ## Clean Python cache files and directories
-	@echo "$(PYTHON_CYAN)Cleaning Python cache files...$(PYTHON_NC)"
+################################################################################
+# Cleanup
+################################################################################
+
+clean-python: ## Clean Python cache files and containers
+	@echo "$(PYTHON_CYAN)Cleaning Python artifacts...$(PYTHON_NC)"
+ifdef HAS_DOCKER
+	@BRANCH_NAME=$(BRANCH_NAME) PROJECT_NAME=$(PROJECT_NAME) $(DOCKER_COMPOSE_APP) down -v 2>/dev/null || true
+	@BRANCH_NAME=$(BRANCH_NAME) PROJECT_NAME=$(PROJECT_NAME) $(DOCKER_COMPOSE_LINT) down -v 2>/dev/null || true
+endif
 	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
 	@find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
 	@find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
@@ -122,13 +313,30 @@ clean-python: ## Clean Python cache files and directories
 	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
 	@find . -type f -name "*.pyo" -delete 2>/dev/null || true
 	@rm -rf htmlcov/ .coverage 2>/dev/null || true
-	@echo "$(PYTHON_GREEN)✓ Python cache cleaned$(PYTHON_NC)"
+	@echo "$(PYTHON_GREEN)✓ Python artifacts cleaned$(PYTHON_NC)"
 
-# Help target for Python commands
+################################################################################
+# Help
+################################################################################
+
 help-python: ## Show Python-specific help
 	@echo "$(PYTHON_CYAN)╔════════════════════════════════════════════════════════════╗$(PYTHON_NC)"
-	@echo "$(PYTHON_CYAN)║              Python Development Commands                  ║$(PYTHON_NC)"
+	@echo "$(PYTHON_CYAN)║          Python Development Commands (Docker-First)       ║$(PYTHON_NC)"
 	@echo "$(PYTHON_CYAN)╚════════════════════════════════════════════════════════════╝$(PYTHON_NC)"
+	@echo ""
+ifdef HAS_DOCKER
+	@echo "$(PYTHON_GREEN)Environment: Docker (Preferred) 🐳$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Environment: Poetry (Fallback) 📦$(PYTHON_NC)"
+	@echo "$(PYTHON_YELLOW)⚠️  Consider installing Docker for better consistency$(PYTHON_NC)"
+else
+	@echo "$(PYTHON_RED)Environment: Direct Local (Last Resort) ⚠️$(PYTHON_NC)"
+	@echo "$(PYTHON_RED)⚠️  Install Docker or Poetry for better isolation!$(PYTHON_NC)"
+endif
+	@echo ""
+	@echo "$(PYTHON_GREEN)Development:$(PYTHON_NC)"
+	@echo "  $(PYTHON_YELLOW)make dev-python$(PYTHON_NC)               - Start development environment"
+	@echo "  $(PYTHON_YELLOW)make dev-stop-python$(PYTHON_NC)          - Stop development environment"
 	@echo ""
 	@echo "$(PYTHON_GREEN)Quality Checks:$(PYTHON_NC)"
 	@echo "  $(PYTHON_YELLOW)make lint-python$(PYTHON_NC)              - Run Ruff linter"
@@ -146,18 +354,26 @@ help-python: ## Show Python-specific help
 	@echo ""
 	@echo "$(PYTHON_GREEN)Utilities:$(PYTHON_NC)"
 	@echo "  $(PYTHON_YELLOW)make python-check$(PYTHON_NC)             - Run all checks"
-	@echo "  $(PYTHON_YELLOW)make python-install$(PYTHON_NC)           - Install dependencies"
-	@echo "  $(PYTHON_YELLOW)make clean-python$(PYTHON_NC)             - Clean cache files"
+	@echo "  $(PYTHON_YELLOW)make python-install$(PYTHON_NC)           - Install/build dependencies"
+	@echo "  $(PYTHON_YELLOW)make clean-python$(PYTHON_NC)             - Clean cache and containers"
 	@echo ""
 
 ################################################################################
 # Usage Examples:
 #
-# make lint-python              # Check code quality
-# make format-python            # Format code
-# make typecheck                # Check types
-# make security-scan            # Scan for security issues
-# make test-coverage-python     # Run tests with coverage
-# make python-check             # Run all quality checks
+# Docker-first development (recommended):
+#   make dev-python              # Start dev environment
+#   make lint-python             # Lint in container
+#   make test-coverage-python    # Test with coverage in container
+#   make python-check            # Run all checks in containers
+#
+# Poetry fallback (when Docker unavailable):
+#   make python-install          # Install with Poetry
+#   make lint-python             # Lint with Poetry
+#   make test-python             # Test with Poetry
+#
+# Direct local (last resort):
+#   make python-install          # Install with pip
+#   make lint-python             # Lint directly
 #
 ################################################################################

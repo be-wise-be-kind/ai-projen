@@ -4,9 +4,27 @@
 
 **Scope**: Automatic code formatting for TypeScript/JavaScript
 
-**Dependencies**: Node.js, npm/yarn/pnpm
+**Dependencies**: Docker (preferred), Node.js, npm/yarn/pnpm
 
 ---
+
+## Environment Strategy
+
+**IMPORTANT**: Follow the Docker-first development hierarchy:
+
+1. **Docker (Preferred)** - `make format-typescript`
+   - Runs Prettier in isolated container
+   - Consistent formatting across all environments
+   - No local Node.js pollution
+
+2. **npm (Fallback)** - `npm run format`
+   - Uses local node_modules
+   - Works when Docker unavailable
+   - Requires Node.js installed
+
+3. **Global (Last Resort)** - Not recommended
+   - Avoid `npm install -g prettier`
+   - Use project-local installation only
 
 ## Installation Steps
 
@@ -52,29 +70,58 @@ Add these scripts to `package.json`:
 
 ### Step 5: Verify Installation
 
+**Docker-First (Recommended)**:
+```bash
+# Build Docker image with Prettier
+make typescript-install
+
+# Check formatting in Docker
+make format-check-typescript
+
+# Auto-format with Docker
+make format-typescript
+```
+
+**npm Fallback**:
 ```bash
 npm run format:check
 ```
 
 ## Usage
 
+**Docker-First (Recommended)**:
+- **Format all files**: `make format-typescript`
+- **Check formatting**: `make format-check-typescript`
+- **Combined with linting**: `make format-typescript` (runs Prettier + ESLint fix)
+
+**npm Fallback**:
 - **Format all files**: `npm run format`
 - **Check formatting**: `npm run format:check`
 - **Format specific file**: `npx prettier --write src/file.ts`
 
 ## Integration with Makefile
 
-If Makefile exists, add:
+The TypeScript Makefile (from `makefile-typescript.mk`) already includes Docker-first Prettier targets:
 
 ```makefile
-.PHONY: format-ts
+# Auto-detects Docker vs npm
+format-typescript:
+ifdef HAS_DOCKER
+	@docker compose run --rm frontend-dev npm run format
+	@docker compose run --rm frontend-dev npm run lint:fix
+else
+	@npm run format && npm run lint:fix
+endif
 
-format-ts:
-	npm run format
-
-format-check-ts:
-	npm run format:check
+format-check-typescript:
+ifdef HAS_DOCKER
+	@docker compose run --rm frontend-dev npm run format:check
+else
+	@npm run format:check
+endif
 ```
+
+**No manual Makefile edits needed** - the template handles everything.
 
 ## Integration with ESLint
 

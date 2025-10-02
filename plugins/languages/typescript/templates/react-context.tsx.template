@@ -1,0 +1,118 @@
+// Purpose: {{CONTEXT_PURPOSE}} - React Context for state management
+// Scope: {{CONTEXT_SCOPE}}
+// Usage: Copy and replace {{PLACEHOLDERS}}
+
+import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+
+/**
+ * {{CONTEXT_NAME}} state interface
+ */
+interface {{CONTEXT_NAME}}State {
+  {{STATE_FIELD}}: {{STATE_TYPE}};
+  {{STATE_FIELD_2}}: {{STATE_TYPE_2}};
+}
+
+/**
+ * {{CONTEXT_NAME}} context type
+ */
+interface {{CONTEXT_NAME}}ContextType extends {{CONTEXT_NAME}}State {
+  {{ACTION_NAME}}: ({{ACTION_PARAM}}: {{ACTION_PARAM_TYPE}}) => void;
+  {{ACTION_NAME_2}}: () => void;
+}
+
+// Create context
+const {{CONTEXT_NAME}}Context = createContext<{{CONTEXT_NAME}}ContextType | undefined>(
+  undefined
+);
+
+/**
+ * {{CONTEXT_NAME}} Provider Props
+ */
+interface {{CONTEXT_NAME}}ProviderProps {
+  children: ReactNode;
+  initialState?: Partial<{{CONTEXT_NAME}}State>;
+}
+
+/**
+ * {{CONTEXT_NAME}} Provider Component
+ *
+ * {{CONTEXT_DESCRIPTION}}
+ *
+ * @example
+ * ```tsx
+ * <{{CONTEXT_NAME}}Provider>
+ *   <App />
+ * </{{CONTEXT_NAME}}Provider>
+ * ```
+ */
+export const {{CONTEXT_NAME}}Provider: React.FC<{{CONTEXT_NAME}}ProviderProps> = ({
+  children,
+  initialState = {},
+}) => {
+  const [state, setState] = useState<{{CONTEXT_NAME}}State>({
+    {{STATE_FIELD}}: {{DEFAULT_VALUE}},
+    {{STATE_FIELD_2}}: {{DEFAULT_VALUE_2}},
+    ...initialState,
+  });
+
+  // Actions
+  const {{ACTION_NAME}} = useCallback(({{ACTION_PARAM}}: {{ACTION_PARAM_TYPE}}) => {
+    setState(prev => ({
+      ...prev,
+      {{STATE_FIELD}}: {{ACTION_LOGIC}},
+    }));
+  }, []);
+
+  const {{ACTION_NAME_2}} = useCallback(() => {
+    setState({
+      {{STATE_FIELD}}: {{DEFAULT_VALUE}},
+      {{STATE_FIELD_2}}: {{DEFAULT_VALUE_2}},
+    });
+  }, []);
+
+  const value: {{CONTEXT_NAME}}ContextType = {
+    ...state,
+    {{ACTION_NAME}},
+    {{ACTION_NAME_2}},
+  };
+
+  return (
+    <{{CONTEXT_NAME}}Context.Provider value={value}>
+      {children}
+    </{{CONTEXT_NAME}}Context.Provider>
+  );
+};
+
+/**
+ * Hook to use {{CONTEXT_NAME}} context
+ *
+ * @throws Error if used outside {{CONTEXT_NAME}}Provider
+ */
+export const use{{CONTEXT_NAME}} = (): {{CONTEXT_NAME}}ContextType => {
+  const context = useContext({{CONTEXT_NAME}}Context);
+
+  if (!context) {
+    throw new Error(
+      'use{{CONTEXT_NAME}} must be used within a {{CONTEXT_NAME}}Provider'
+    );
+  }
+
+  return context;
+};
+
+// Template Placeholders:
+// {{CONTEXT_PURPOSE}} - Purpose (e.g., "User authentication state")
+// {{CONTEXT_SCOPE}} - Scope (e.g., "Global authentication")
+// {{CONTEXT_NAME}} - PascalCase context name (e.g., "Auth", "Theme")
+// {{CONTEXT_DESCRIPTION}} - Detailed description
+// {{STATE_FIELD}} - State field name (e.g., "user", "theme")
+// {{STATE_TYPE}} - State field type
+// {{STATE_FIELD_2}} - Second state field
+// {{STATE_TYPE_2}} - Second field type
+// {{ACTION_NAME}} - Action function name (e.g., "login", "setTheme")
+// {{ACTION_PARAM}} - Action parameter name
+// {{ACTION_PARAM_TYPE}} - Action parameter type
+// {{ACTION_NAME_2}} - Second action name (e.g., "logout", "reset")
+// {{DEFAULT_VALUE}} - Default value for first field
+// {{DEFAULT_VALUE_2}} - Default value for second field
+// {{ACTION_LOGIC}} - Logic for action implementation

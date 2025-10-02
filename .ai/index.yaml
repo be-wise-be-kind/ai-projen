@@ -39,6 +39,11 @@ structure:
       - PLUGIN_DISCOVERY.md
       - MANIFEST_VALIDATION.md
       - AGENTS_MD_EXTENSIBILITY.md
+      - DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md
+      - FILE_HEADER_STANDARDS.md
+      - HOWTO_STANDARDS.md
+      - HOWTO_INTEGRATION.md
+      - PR7.7_HOWTO_FRAMEWORK_SUMMARY.md
 
   howto:
     location: .ai/howto/
@@ -48,10 +53,40 @@ structure:
       - how-to-create-an-infrastructure-plugin.md (coming soon)
       - how-to-create-a-standards-plugin.md (coming soon)
 
+    framework:
+      standards: .ai/docs/HOWTO_STANDARDS.md
+      integration: .ai/docs/HOWTO_INTEGRATION.md
+      template: .ai/templates/HOW_TO_TEMPLATE.md
+      purpose: AI-agent-focused step-by-step guides for common tasks
+
+    plugin_howtos:
+      languages:
+        location: plugins/languages/[plugin]/howtos/
+        template: plugins/languages/_template/howtos/HOWTO_TEMPLATE.md
+        index: plugins/languages/_template/howtos/README.md
+
+      infrastructure:
+        location: plugins/infrastructure/[category]/[plugin]/howtos/
+        template: plugins/infrastructure/[category]/_template/howtos/HOWTO_TEMPLATE.md
+        index: plugins/infrastructure/[category]/_template/howtos/README.md
+
+      standards:
+        location: plugins/standards/[plugin]/howtos/
+        template: plugins/standards/_template/howtos/HOWTO_TEMPLATE.md
+        index: plugins/standards/_template/howtos/README.md
+
+    discovery:
+      # How AI agents discover available how-tos
+      - Check plugin manifest for howtos section
+      - Read plugin's howtos/README.md for index
+      - Search .ai/index.yaml for project-level how-tos
+      - Reference agents.md for categorized how-to links
+
   templates:
     location: .ai/templates/
     files:
-      - (coming soon - will contain reusable templates)
+      - HOW_TO_TEMPLATE.md (template for creating how-to guides)
+      - (additional code templates coming soon)
 
   roadmap:
     location: roadmap/ai_projen_implementation/
@@ -93,6 +128,7 @@ architecture:
     optional:
       - templates/
       - configs/
+      - howtos/
 
   orchestration:
     - Manifest-driven discovery

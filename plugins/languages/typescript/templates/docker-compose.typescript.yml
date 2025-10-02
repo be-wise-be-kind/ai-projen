@@ -1,0 +1,58 @@
+# Purpose: TypeScript application Docker Compose configuration with hot reload support
+# Scope: Local TypeScript/React development environment orchestration
+# Overview: Configures Docker services for local TypeScript development using multi-stage
+#     Dockerfiles with the 'dev' target. Provides automatic code reloading for Vite-based
+#     applications. Volume mounts bind local source directories to containers enabling
+#     instant code updates without rebuilds. Uses the efficient multi-stage build pattern
+#     for faster builds and better layer caching. Services auto-restart unless explicitly
+#     stopped.
+# Dependencies: Docker, Docker Compose, multi-stage Dockerfile, local source code
+# Exports: Development services with hot reload capabilities
+# Interfaces: Frontend on port ${FRONTEND_PORT:-5173}
+# Implementation: Multi-stage Docker builds with dev target, volume mounts for code
+
+services:
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: dev
+    container_name: ${PROJECT_NAME:-typescript-app}-frontend-dev
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    volumes:
+      - ./src:/app/src
+      - ./public:/app/public
+      - ./index.html:/app/index.html
+      - ./vite.config.ts:/app/vite.config.ts
+      - ./tsconfig.json:/app/tsconfig.json
+      - ./tsconfig.node.json:/app/tsconfig.node.json
+      # Prevent volume mount from overriding node_modules
+      - /app/node_modules
+    networks:
+      - typescript-network
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+    # Override CMD if needed for custom dev server
+    # command: npm run dev -- --host 0.0.0.0
+
+  # Optional: Dedicated linting service
+  # Uncomment to enable continuous linting during development
+  # frontend-linter:
+  #   build:
+  #     context: .
+  #     dockerfile: Dockerfile
+  #     target: lint
+  #   container_name: ${PROJECT_NAME:-typescript-app}-linter
+  #   volumes:
+  #     - .:/workspace
+  #     - /workspace/node_modules
+  #   networks:
+  #     - typescript-network
+  #   restart: unless-stopped
+  #   command: tail -f /dev/null
+
+networks:
+  typescript-network:
+    driver: bridge

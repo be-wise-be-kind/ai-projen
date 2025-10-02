@@ -1,0 +1,51 @@
+# Purpose: Python application Docker Compose configuration with hot reload support
+# Scope: Local Python environment orchestration for development
+# Overview: Configures Docker services for local Python development using multi-stage
+#     Dockerfiles with the 'dev' target. Provides automatic code reloading for backend
+#     applications using uvicorn --reload or similar. Volume mounts bind local source
+#     directories to containers enabling instant code updates without rebuilds. Uses the
+#     efficient multi-stage build pattern for faster builds and better layer caching.
+#     Services auto-restart unless explicitly stopped.
+# Dependencies: Docker, Docker Compose, multi-stage Dockerfile.python, local source code
+# Exports: Python services with hot reload capabilities
+# Interfaces: Backend on port ${BACKEND_PORT:-8000}
+# Implementation: Multi-stage Docker builds with dev target, volume mounts for code
+
+services:
+  backend-dev:
+    build:
+      context: .
+      dockerfile: .docker/dockerfiles/Dockerfile.backend
+      target: dev
+    container_name: ${PROJECT_NAME:-python-app}-backend-${BRANCH_NAME:-main}-dev
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - ENV=development
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount source code for hot reload
+      - ./app:/app/app
+      - ./src:/app/src
+      # Mount tests and tools if they exist
+      - ./test:/app/test
+      - ./tests:/app/tests
+      - ./tools:/app/tools
+      # Exclude Python cache to prevent permission issues
+      - /app/__pycache__
+      - /app/app/__pycache__
+      - /app/src/__pycache__
+    networks:
+      - python-dev-network
+    restart: unless-stopped
+    # Adjust command based on your framework
+    # FastAPI with uvicorn (default):
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    # Flask:
+    # command: flask run --host=0.0.0.0 --port=8000 --debug
+    # Django:
+    # command: python manage.py runserver 0.0.0.0:8000
+
+networks:
+  python-dev-network:
+    driver: bridge

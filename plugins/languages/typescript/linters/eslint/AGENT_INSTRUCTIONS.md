@@ -4,9 +4,27 @@
 
 **Scope**: TypeScript linting with optional React support
 
-**Dependencies**: Node.js, npm/yarn/pnpm
+**Dependencies**: Docker (preferred), Node.js, npm/yarn/pnpm
 
 ---
+
+## Environment Strategy
+
+**IMPORTANT**: Follow the Docker-first development hierarchy:
+
+1. **Docker (Preferred)** - `make lint-typescript`
+   - Runs ESLint in isolated container
+   - Consistent across all environments
+   - No local Node.js pollution
+
+2. **npm (Fallback)** - `npm run lint`
+   - Uses local node_modules
+   - Works when Docker unavailable
+   - Requires Node.js installed
+
+3. **Global (Last Resort)** - Not recommended
+   - Avoid `npm install -g eslint`
+   - Use project-local installation only
 
 ## Installation Steps
 
@@ -64,29 +82,57 @@ build
 
 ### Step 5: Verify Installation
 
+**Docker-First (Recommended)**:
+```bash
+# Build Docker image with ESLint
+make typescript-install
+
+# Run ESLint in Docker
+make lint-typescript
+
+# Auto-fix with Docker
+make lint-typescript-fix
+```
+
+**npm Fallback**:
 ```bash
 npm run lint
 ```
 
 ## Usage
 
+**Docker-First (Recommended)**:
+- **Lint code**: `make lint-typescript`
+- **Auto-fix issues**: `make lint-typescript-fix`
+- **View logs**: Check Docker output for detailed errors
+
+**npm Fallback**:
 - **Lint code**: `npm run lint`
 - **Auto-fix issues**: `npm run lint:fix`
 - **Lint specific file**: `npx eslint src/file.ts`
 
 ## Integration with Makefile
 
-If Makefile exists, add:
+The TypeScript Makefile (from `makefile-typescript.mk`) already includes Docker-first ESLint targets:
 
 ```makefile
-.PHONY: lint-ts format-ts
+# Auto-detects Docker vs npm
+lint-typescript:
+ifdef HAS_DOCKER
+	@docker compose run --rm frontend-dev npm run lint
+else
+	@npm run lint
+endif
 
-lint-ts:
-	npm run lint
-
-format-ts:
-	npm run lint:fix
+lint-typescript-fix:
+ifdef HAS_DOCKER
+	@docker compose run --rm frontend-dev npm run lint:fix
+else
+	@npm run lint:fix
+endif
 ```
+
+**No manual Makefile edits needed** - the template handles everything.
 
 ## Customization
 

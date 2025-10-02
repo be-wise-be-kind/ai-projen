@@ -11,36 +11,35 @@
 
 ---
 
+## Environment Strategy
+
+**IMPORTANT**: Follow the Docker-first development hierarchy:
+
+1. **Docker (Preferred)** 🐳
+   - Run Bandit in containers via `make security-scan` (auto-detects Docker)
+   - Consistent across all environments
+   - Zero local environment pollution
+   - See: `.ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
+
+2. **Poetry (Fallback)** 📦
+   - Use Poetry virtual environment when Docker unavailable
+   - Makefile automatically detects and uses Poetry
+   - Still provides project isolation
+
+3. **Direct Local (Last Resort)** ⚠️
+   - Only when Docker AND Poetry unavailable
+   - Risk of environment pollution
+   - Not recommended for team environments
+
+---
+
 ## Installation Steps
 
-### Step 1: Install Bandit
+### Step 1: Configure Bandit
 
-Add Bandit to your Python development dependencies:
+**Option A: pyproject.toml (Recommended - works in Docker and locally)**:
 
-**Using pip**:
-```bash
-pip install bandit
-```
-
-**Using poetry** (recommended):
-```bash
-poetry add --group dev bandit
-```
-
-**Using requirements-dev.txt**:
-```
-bandit>=1.7.5
-```
-
-### Step 2: Copy Configuration
-
-Copy the Bandit configuration to your project root:
-
-```bash
-cp plugins/languages/python/linters/bandit/config/.bandit ./.bandit
-```
-
-**Alternative**: You can also configure Bandit in `pyproject.toml`:
+Add Bandit configuration to `pyproject.toml`:
 
 ```toml
 [tool.bandit]
@@ -48,21 +47,64 @@ exclude_dirs = ["/tests/", "/test/", "/.venv/", "/venv/"]
 skips = ["B101"]  # Skip assert_used
 ```
 
+**Option B: .bandit file (Legacy)**:
+
+```bash
+cp plugins/languages/python/linters/bandit/config/.bandit ./.bandit
+```
+
+### Step 2: Install Based on Environment
+
+**Docker-First Approach (Recommended)**:
+
+```bash
+# Build Docker images with all Python tools including Bandit
+make python-install  # Builds Docker images
+
+# Run security scan in container (auto-detects environment)
+make security-scan   # Uses Docker if available
+```
+
+**Poetry Fallback** (if Docker unavailable):
+
+```bash
+poetry add --group dev bandit
+poetry run bandit -r .
+```
+
+**Direct Local** (if neither Docker nor Poetry available):
+
+```bash
+pip install bandit
+bandit -r .
+```
+
 ### Step 3: Verify Installation
 
-Test that Bandit is working:
+**Docker Approach**:
+```bash
+# Verify Docker images built
+docker images | grep python-linter
 
+# Run security scan in container
+make security-scan
+```
+
+**Poetry Approach**:
+```bash
+# Check version
+poetry run bandit --version
+
+# Run security scan
+poetry run bandit -r . -q
+```
+
+**Direct Local Approach**:
 ```bash
 # Check version
 bandit --version
 
 # Run security scan
-bandit -r .
-
-# Run with config file
-bandit -r . -c .bandit
-
-# Run quietly (only show issues)
 bandit -r . -q
 ```
 
@@ -130,16 +172,26 @@ bandit -r . -f json -o bandit-report.json
 bandit -r . -q
 ```
 
-## Integration with Make
+## Makefile Integration
 
-Add to your Makefile:
+The Python plugin's Makefile (`makefile-python.mk`) includes automatic environment detection:
 
 ```makefile
-.PHONY: security-scan
+# From makefile-python.mk (already included in plugin)
+security-scan: ## Auto-detects Docker → Poetry → Direct
+	# Automatically uses best available environment
+	# Priority: Docker > Poetry > Direct local
 
-security-scan:
-	bandit -r . -c .bandit -q
+# Just run this - it works everywhere:
+make security-scan
 ```
+
+**How it works**:
+1. Checks if Docker is available → uses linting container
+2. Falls back to Poetry if Docker unavailable
+3. Falls back to direct `bandit` command if neither available
+
+No need to modify - the Makefile handles environment detection automatically!
 
 ## Understanding Bandit Output
 
@@ -247,11 +299,13 @@ Bandit can fail CI builds if security issues are found:
 ## Success Criteria
 
 Bandit is successfully installed when:
-- ✅ `bandit --version` works
-- ✅ `.bandit` configuration file exists
-- ✅ `bandit -r .` runs and scans code
+- ✅ `pyproject.toml` contains `[tool.bandit]` configuration (or .bandit exists)
+- ✅ `make security-scan` runs successfully (in any environment)
+- ✅ Docker approach (preferred): Security scan runs in container
+- ✅ Poetry approach (fallback): `poetry run bandit --version` works
+- ✅ Direct approach (last resort): `bandit --version` works
+- ✅ Configuration works in all three environments
 - ✅ No HIGH severity issues in production code
-- ✅ Make target works (if Makefile integration completed)
 
 ## Best Practices
 

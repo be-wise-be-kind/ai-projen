@@ -11,30 +11,33 @@
 
 ---
 
+## Environment Strategy
+
+**IMPORTANT**: Follow the Docker-first development hierarchy:
+
+1. **Docker (Preferred)** 🐳
+   - Run Ruff in containers via `make lint-python` (auto-detects Docker)
+   - Consistent across all environments
+   - Zero local environment pollution
+   - See: `.ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md`
+
+2. **Poetry (Fallback)** 📦
+   - Use Poetry virtual environment when Docker unavailable
+   - Makefile automatically detects and uses Poetry
+   - Still provides project isolation
+
+3. **Direct Local (Last Resort)** ⚠️
+   - Only when Docker AND Poetry unavailable
+   - Risk of environment pollution
+   - Not recommended for team environments
+
+---
+
 ## Installation Steps
 
-### Step 1: Install Ruff
+### Step 1: Configure in pyproject.toml
 
-Add Ruff to your Python dependencies:
-
-**Using pip**:
-```bash
-pip install ruff
-```
-
-**Using poetry** (recommended):
-```bash
-poetry add --group dev ruff
-```
-
-**Using requirements-dev.txt**:
-```
-ruff>=0.13.0
-```
-
-### Step 2: Copy Configuration
-
-Copy the Ruff configuration to your project:
+**All configuration goes in `pyproject.toml`** (works in Docker and locally):
 
 ```bash
 # If pyproject.toml doesn't exist, copy the entire file
@@ -47,31 +50,65 @@ cp plugins/languages/python/linters/ruff/config/pyproject.toml ./pyproject.toml
 **Important**: If `pyproject.toml` already exists, merge the `[tool.ruff]`, `[tool.ruff.format]`,
 and `[tool.ruff.lint]` sections into the existing file.
 
-### Step 3: Add Scripts (if using package.json equivalent)
+### Step 2: Install Based on Environment
 
-For Poetry, you can add scripts in `pyproject.toml`:
+**Docker-First Approach (Recommended)**:
 
-```toml
-[tool.poetry.scripts]
-lint = "ruff check ."
-format = "ruff format ."
+```bash
+# Build Docker images with all Python tools including Ruff
+make python-install  # Builds Docker images
+
+# Run linting in container (auto-detects environment)
+make lint-python     # Uses Docker if available
 ```
 
-Or create a Makefile target (see main Python plugin instructions).
+**Poetry Fallback** (if Docker unavailable):
 
-### Step 4: Verify Installation
+```bash
+poetry add --group dev ruff
+poetry run ruff check .
+```
 
-Test that Ruff is working:
+**Direct Local** (if neither Docker nor Poetry available):
 
+```bash
+pip install ruff
+ruff check .
+```
+
+### Step 3: Verify Installation
+
+**Docker Approach**:
+```bash
+# Verify Docker images built
+docker images | grep python-linter
+
+# Run linting in container
+make lint-python
+
+# Auto-fix in container
+make lint-fix-python
+```
+
+**Poetry Approach**:
+```bash
+# Check version
+poetry run ruff --version
+
+# Run linting
+poetry run ruff check .
+
+# Check formatting
+poetry run ruff format --check .
+```
+
+**Direct Local Approach**:
 ```bash
 # Check version
 ruff --version
 
 # Run linting
 ruff check .
-
-# Check formatting
-ruff format --check .
 
 # Auto-fix issues
 ruff check --fix .
@@ -134,28 +171,33 @@ ruff format --check .
 ruff check --fix . && ruff format .
 ```
 
-## Integration with Make
+## Makefile Integration
 
-Add to your Makefile:
+The Python plugin's Makefile (`makefile-python.mk`) includes automatic environment detection:
 
 ```makefile
-.PHONY: lint-python format-python
+# From makefile-python.mk (already included in plugin)
+lint-python: ## Auto-detects Docker → Poetry → Direct
+	# Automatically uses best available environment
+	# Priority: Docker > Poetry > Direct local
 
-lint-python:
-	ruff check .
-
-format-python:
-	ruff format .
-
-lint-fix-python:
-	ruff check --fix . && ruff format .
+# Just run this - it works everywhere:
+make lint-python
 ```
+
+**How it works**:
+1. Checks if Docker is available → uses linting container
+2. Falls back to Poetry if Docker unavailable
+3. Falls back to direct `ruff` command if neither available
+
+No need to modify - the Makefile handles environment detection automatically!
 
 ## Success Criteria
 
 Ruff is successfully installed when:
-- ✅ `ruff --version` works
 - ✅ `pyproject.toml` contains `[tool.ruff]` configuration
-- ✅ `ruff check .` runs without errors (or shows expected violations)
-- ✅ `ruff format --check .` runs without errors
-- ✅ Make targets work (if Makefile integration completed)
+- ✅ `make lint-python` runs successfully (in any environment)
+- ✅ Docker approach (preferred): Linting runs in container
+- ✅ Poetry approach (fallback): `poetry run ruff --version` works
+- ✅ Direct approach (last resort): `ruff --version` works
+- ✅ Configuration works in all three environments (thanks to pyproject.toml)

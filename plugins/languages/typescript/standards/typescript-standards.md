@@ -9,6 +9,54 @@
 
 ---
 
+## Environment Strategy
+
+### Docker-First Development Hierarchy
+
+This plugin follows the Docker-first development pattern established in PR7.5:
+
+1. **Docker (Preferred)** - Use containers for consistency
+   - Isolated environment with no local pollution
+   - Consistent Node.js version across team
+   - Hot module replacement works identically for everyone
+   - Easy cleanup: `make typescript-clean`
+
+2. **npm/local node_modules (Fallback)** - When Docker unavailable
+   - Project-isolated dependencies via package.json
+   - Local Node.js installation required
+   - Some platform-dependent behavior possible
+
+3. **Direct global (Last Resort)** - Avoid this
+   - Global npm packages pollute system
+   - Version conflicts between projects
+   - "Works on my machine" problems
+
+### Development Workflow
+
+**Docker-First (Recommended)**:
+```bash
+# One-time setup
+make typescript-install       # Build Docker images
+
+# Daily development
+make dev-typescript          # Start dev server (http://localhost:5173)
+# Edit code - changes hot reload automatically
+make typescript-check        # Run all checks before commit
+```
+
+**npm Fallback**:
+```bash
+# One-time setup
+npm ci                       # Install dependencies
+
+# Daily development
+npm run dev                  # Start dev server
+# Edit code - changes hot reload automatically
+npm run typecheck && npm run lint && npm test  # Checks before commit
+```
+
+**Environment Auto-Detection**: The Makefile automatically detects Docker/npm availability and uses the best option. No manual configuration needed.
+
 ## Type Safety
 
 ### Always Use Strict Mode
@@ -368,20 +416,57 @@ element.textContent = userInput;
 
 ## Tools and Commands
 
-### Linting
-- Run linting: `make lint-ts` or `npm run lint`
-- Auto-fix: `make format-ts` or `npm run lint:fix`
+### Docker-First Commands (Recommended)
 
-### Formatting
+**Development**:
+- Start dev server: `make dev-typescript`
+- Stop dev server: `make dev-typescript-stop`
+- View logs: `make dev-typescript-logs`
+
+**Linting**:
+- Run linting: `make lint-typescript`
+- Auto-fix: `make lint-typescript-fix`
+
+**Formatting**:
+- Format code: `make format-typescript`
+- Check formatting: `make format-check-typescript`
+
+**Testing**:
+- Run tests: `make test-typescript`
+- With coverage: `make test-coverage-typescript`
+
+**Type Checking**:
+- Type check: `make typecheck-typescript`
+
+**Combined**:
+- All checks: `make typescript-check`
+
+**Cleanup**:
+- Clean all: `make typescript-clean`
+
+### npm Fallback Commands
+
+**Linting**:
+- Run linting: `npm run lint`
+- Auto-fix: `npm run lint:fix`
+
+**Formatting**:
 - Format code: `npm run format`
 - Check formatting: `npm run format:check`
 
-### Testing
-- Run tests: `make test-ts` or `npm test`
+**Testing**:
+- Run tests: `npm test`
 - Coverage: `npm run test:coverage`
 
-### Type Checking
-- Type check: `make typecheck-ts` or `npm run typecheck`
+**Type Checking**:
+- Type check: `npm run typecheck`
+
+### Legacy Aliases (Backward Compatible)
+- `make lint-ts` → `make lint-typescript`
+- `make format-ts` → `make format-typescript`
+- `make test-ts` → `make test-typescript`
+- `make typecheck-ts` → `make typecheck-typescript`
+- `make ts-check` → `make typescript-check`
 
 ---
 

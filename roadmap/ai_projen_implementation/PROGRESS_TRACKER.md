@@ -28,8 +28,8 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the AI-Projen 
 4. **Update this document** after completing each PR
 
 ## 📍 Current Status
-**Current PR**: PR7.5 In Progress - Docker-first development pattern refactor
-**Infrastructure State**: PR5, PR6, PR7 completed by agents but need Docker-first updates before commit
+**Current PR**: PR7.6 Next - Comprehensive Python Tooling (mypy, bandit, pylint, flake8, radon)
+**Infrastructure State**: PR5-7.5 complete - Language plugins with Docker-first pattern established
 **Feature Target**: Modular AI-ready repository template framework with Docker-first development
 **Critical Decision**: All development should prioritize Docker > Isolated Env > Local Direct
 
@@ -43,53 +43,180 @@ roadmap/ai_projen_implementation/
 
 ## 🎯 Next PR to Implement
 
-### ➡️ START HERE: PR7.5 - Docker-First Development Pattern
+### ✅ COMPLETED: PR7.5 - Docker-First Development Pattern
+
+**Status**: ✅ Complete
+
+**What Was Done**:
+1. ✅ Created `.ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md` - comprehensive Docker-first philosophy
+2. ✅ Updated Python plugin `AGENT_INSTRUCTIONS.md` - added Environment Strategy section
+3. ✅ Created `Dockerfile.python` template - multi-stage with dev, lint, test, prod targets
+4. ✅ Created `docker-compose.python.yml` template - development orchestration
+5. ✅ Updated `makefile-python.mk` - complete Docker-first with auto-detection and graceful fallback
+
+**Key Features Implemented**:
+- Three-tier environment hierarchy: Docker → Poetry → Direct Local
+- Automatic detection with `HAS_DOCKER` and `HAS_POETRY` variables
+- Graceful fallback for environments without Docker
+- Multi-stage Dockerfiles for dev, lint, test, and production
+- Dedicated linting containers with auto-start
+- Volume mounts for hot-reload development
+- Clear warning messages when using non-preferred environments
+
+**Files Created/Updated**:
+- `.ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md` (NEW)
+- `plugins/languages/python/AGENT_INSTRUCTIONS.md` (UPDATED)
+- `plugins/languages/python/templates/Dockerfile.python` (NEW)
+- `plugins/languages/python/templates/docker-compose.python.yml` (NEW)
+- `plugins/languages/python/templates/makefile-python.mk` (UPDATED - comprehensive rewrite)
+
+---
+
+### ➡️ START HERE: PR7.6 - Comprehensive Python Tooling
 
 **Quick Summary**:
-Update Python plugin, TypeScript plugin, and documentation to enforce Docker-first development pattern. Docker is preferred, isolated environments (Poetry/venv) are fallback, direct local execution is last resort.
+Extend Python plugin with full production-grade tooling suite from durable-code-test: type checking (mypy), security (bandit, safety, pip-audit), comprehensive linting (pylint, flake8 suite), and complexity analysis (radon, xenon).
 
-**Pre-flight Checklist**:
-- ✅ PR5, PR6, PR7 completed by agents (not yet committed)
-- ✅ Access to durable-code-test for Docker patterns
-- ⬜ Understanding of development environment hierarchy
-
-**Critical Issue Identified**:
-Current plugins assume direct local tool execution. Need to update to:
-1. **Docker** (preferred) - Consistent environments, no local pollution
-2. **Isolated environments** (fallback) - Poetry/venv for Python, npm for TypeScript
-3. **Direct local** (last resort) - Only if Docker unavailable
+**Tools to Add**:
+- **mypy**: Static type checking
+- **bandit**: Security vulnerability scanning
+- **safety**: Dependency security checking
+- **pip-audit**: Alternative dependency security audit
+- **pylint**: Comprehensive code quality linting
+- **flake8**: Style guide enforcement + plugins:
+  - flake8-docstrings (documentation)
+  - flake8-bugbear (common bugs)
+  - flake8-comprehensions (better list/dict/set comprehensions)
+  - flake8-simplify (code simplification)
+- **radon**: Cyclomatic complexity and maintainability index
+- **xenon**: Complexity monitoring and enforcement
 
 **Files to Update**:
+- Python Plugin pyproject.toml template - Add all dev dependencies
+- Python Plugin Makefile targets - Add lint-mypy, lint-bandit, lint-pylint, lint-flake8, complexity-radon, security-scan
+- Python Plugin standards - Document all tool configurations
+- Python Plugin AGENT_INSTRUCTIONS.md - Update tool checklist
+- Python Plugin README.md - Document all available targets
 
-Python Plugin:
-- AGENT_INSTRUCTIONS.md - Add Docker preference step
-- templates/makefile-python.mk - Docker-first targets with auto-detection
-- templates/Dockerfile.python - NEW
-- templates/docker-compose.python.yml - NEW
-- standards/python-standards.md - Emphasize Docker
-- README.md - Docker-first quick start
+**Source Reference**: `/home/stevejackson/Projects/durable-code-test/durable-code-app/backend/pyproject.toml` (lines 24-36, 47-125)
 
-TypeScript Plugin:
-- AGENT_INSTRUCTIONS.md - Add Docker preference step
-- templates/makefile-typescript.mk - Docker-first targets
-- templates/Dockerfile.typescript - NEW
-- templates/docker-compose.typescript.yml - NEW
-- standards/typescript-standards.md - Docker approach
-- README.md - Docker-first quick start
+### 📋 UPCOMING: PR7.7 - How-To Template System & Plugin Integration
 
-Documentation:
-- .ai/docs/DEVELOPMENT_ENVIRONMENT_PHILOSOPHY.md - NEW: Explain hierarchy
-- .ai/howto/how-to-create-a-language-plugin.md - Add Docker-first section
+**Quick Summary**:
+Formalize the how-to framework as a core plugin component. How-tos are AI-agent-focused guides that work hand-in-hand with templates to provide step-by-step instructions for common development tasks. Missing from current framework but fundamental to `.ai` folder structure.
 
-**Prerequisites Complete**: Yes - PR5, PR6, PR7 completed, awaiting Docker-first refactor
+**Problem Identified**:
+- How-tos are used in durable-code-test but not formalized in the plugin system
+- Each plugin should provide how-tos for common tasks in its domain
+- How-tos reference templates and guide agents through implementation
+- Currently no structure, validation, or template for creating how-tos in plugins
+
+**Plugin-Specific How-Tos Needed**:
+
+**Python Plugin** (`plugins/languages/python/howtos/`):
+- `how-to-create-an-api-endpoint.md` - FastAPI endpoint creation
+- `how-to-create-a-cli-command.md` - Click/Typer CLI commands
+- `how-to-add-database-model.md` - SQLAlchemy/Pydantic models
+- `how-to-write-a-test.md` - pytest test creation
+- `how-to-add-background-job.md` - Celery/RQ task creation
+- `how-to-handle-authentication.md` - OAuth/JWT implementation
+
+**TypeScript Plugin** (`plugins/languages/typescript/howtos/`):
+- `how-to-create-a-component.md` - React component creation
+- `how-to-create-a-component-library.md` - Shared component library
+- `how-to-add-a-route.md` - React Router route creation
+- `how-to-create-a-hook.md` - Custom React hook
+- `how-to-add-state-management.md` - Context/Redux integration
+- `how-to-write-a-test.md` - Vitest test creation
+
+**Infrastructure Plugin** (`plugins/infrastructure/docker/howtos/`):
+- `how-to-add-a-service.md` - Add container to docker-compose
+- `how-to-create-multi-stage-dockerfile.md` - Optimize Docker builds
+- `how-to-add-volume.md` - Persistent data volumes
+
+**Files to Create**:
+
+1. **Framework Components**:
+   - `.ai/docs/HOW_TO_TEMPLATE.md` - Template for creating how-tos
+   - `.ai/docs/HOWTO_STANDARDS.md` - Standards for how-to documentation
+   - `plugins/_template/howtos/HOWTO_TEMPLATE.md` - Plugin how-to template
+
+2. **Plugin Structure Updates**:
+   ```
+   plugins/<category>/<name>/
+   ├── AGENT_INSTRUCTIONS.md
+   ├── README.md
+   ├── howtos/              # NEW
+   │   ├── README.md        # Index of available how-tos
+   │   └── *.md             # Individual how-to guides
+   ├── templates/
+   └── standards/
+   ```
+
+3. **Manifest Updates**:
+   - Update plugin manifest schema to include `howtos` section
+   - Validation for how-to file structure
+   - Discovery mechanism for available how-tos
+
+4. **Integration with agents.md**:
+   - How-tos should be listed in `.ai/index.yaml`
+   - agents.md should reference available how-tos by category
+   - Cross-references between how-tos and templates
+
+**How-To Structure** (standardized format):
+```markdown
+# How-To: [Task Name]
+
+**Purpose**: One-line description
+**Scope**: What this covers
+**Prerequisites**: Required plugins/setup
+**Estimated Time**: X minutes
+**Difficulty**: Beginner/Intermediate/Advanced
+
+## Overview
+Brief explanation of what we're building and why
+
+## Steps
+
+### Step 1: [Action]
+Detailed instructions with code examples
+
+**Template**: `templates/example.template` (if applicable)
+**Reference**: Link to related documentation
+
+### Step 2: [Action]
+...
+
+## Verification
+How to test that it worked
+
+## Common Issues
+Troubleshooting section
+
+## Next Steps
+Related how-tos or advanced topics
+```
+
+**Success Metrics**:
+- ✅ How-to template framework created
+- ✅ Python plugin has 3+ how-tos
+- ✅ TypeScript plugin has 3+ how-tos
+- ✅ Plugin manifest includes how-to discovery
+- ✅ agents.md integration documented
+- ✅ _template/ plugin includes how-to examples
+- ✅ How-tos reference templates where applicable
+- ✅ Validation ensures consistent structure
+
+**Impact**:
+This PR makes plugins truly AI-agent-friendly by providing actionable guides for common tasks, not just configuration. It's the missing piece between "here's the tooling" and "here's how to use it for actual work."
 
 ---
 
 ## Overall Progress
-**Total Completion**: 23% (5/22 PRs completed)
+**Total Completion**: 38% (9/24 PRs completed)
 
 ```
-[█████░░░░░░░░░░░░░░░] 23% Complete
+[████████░░░░░░░░░░░░] 38% Complete
 ```
 
 ---
@@ -104,9 +231,12 @@ Documentation:
 | PR3 | Plugin Manifest & Discovery Engine | 🟢 | 100% | High | P0 | Complete - manifest + validation |
 | PR3.5 | agents.md Integration | 🟢 | 100% | Medium | P0 | Complete - primary AI entry point |
 | PR4 | Plugin Template System | 🟢 | 100% | Medium | P0 | Complete - all _template/ dirs |
-| PR5 | Python Language Plugin | 🔴 | 0% | High | P1 | Ruff/Black/pytest |
-| PR6 | TypeScript Language Plugin | 🔴 | 0% | High | P1 | ESLint/Prettier/Vitest |
-| PR7 | how-to-create-a-language-plugin.md | 🔴 | 0% | Low | P1 | Documentation |
+| PR5 | Python Language Plugin | 🟢 | 100% | High | P1 | Complete - Ruff/Black/pytest |
+| PR6 | TypeScript Language Plugin | 🟢 | 100% | High | P1 | Complete - ESLint/Prettier/Vitest |
+| PR7 | how-to-create-a-language-plugin.md | 🟢 | 100% | Low | P1 | Complete - Documentation |
+| PR7.5 | Docker-First Development Pattern | 🟢 | 100% | Medium | P1 | Complete - Python plugin Docker-first |
+| PR7.6 | Comprehensive Python Tooling | 🔴 | 0% | High | P1 | mypy/bandit/pylint/flake8/radon |
+| PR7.7 | How-To Template System & Plugin Integration | 🔴 | 0% | High | P1 | Formalize howto framework |
 | PR8 | Test Language Plugins | 🔴 | 0% | Medium | P1 | Validation |
 | PR9 | Docker Infrastructure Plugin | 🔴 | 0% | High | P1 | Frontend+backend containers |
 | PR10 | GitHub Actions CI/CD Plugin | 🔴 | 0% | Medium | P1 | Complete pipeline |
@@ -145,11 +275,14 @@ Documentation:
 - ✅ PR3.5: agents.md Integration
 - ✅ PR4: Plugin Template System
 
-### Phase 2: Reference Language Plugins 🔴 0% Complete (PR5-8)
+### Phase 2: Reference Language Plugins 🟡 67% Complete (PR5-8)
 **Goal**: Complete Python + TypeScript support for full-stack apps
-- 🔴 PR5: Python Language Plugin (Ruff/Black/pytest/standards)
-- 🔴 PR6: TypeScript Language Plugin (ESLint/Prettier/Vitest/React)
-- 🔴 PR7: how-to-create-a-language-plugin.md
+- ✅ PR5: Python Language Plugin (Ruff/Black/pytest/standards)
+- ✅ PR6: TypeScript Language Plugin (ESLint/Prettier/Vitest/React)
+- ✅ PR7: how-to-create-a-language-plugin.md
+- ✅ PR7.5: Docker-First Development Pattern (Python + TypeScript)
+- 🔴 PR7.6: Comprehensive Python Tooling (mypy/bandit/pylint/flake8/radon)
+- 🔴 PR7.7: How-To Template System & Plugin Integration
 - 🔴 PR8: Test Language Plugins
 
 ### Phase 3: Reference Infrastructure Plugins 🔴 0% Complete (PR9-12)
