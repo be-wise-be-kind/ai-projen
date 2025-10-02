@@ -131,17 +131,15 @@ See [.ai/howto/how-to-create-a-plugin.md](.ai/howto/how-to-create-a-plugin.md) f
 5. **Production-Ready** - Reference implementations are battle-tested
 6. **Agent-Friendly** - Designed for AI agent consumption
 
-## Status
-
-**Current**: v0.1.0 (PR0 complete - Roadmap established)
-
-**Next**: PR1 - Repository Structure & Meta Documentation
-
-See [roadmap/ai_projen_implementation/PROGRESS_TRACKER.md](roadmap/ai_projen_implementation/PROGRESS_TRACKER.md) for detailed progress.
-
 ## Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) (coming in PR21).
+Contributions are welcome! To add a new plugin:
+1. Copy the appropriate `_template/` directory from `plugins/`
+2. Follow the template README instructions
+3. Test your plugin standalone
+4. Submit a pull request
+
+See plugin templates in `plugins/` for detailed guidance.
 
 ## License
 
