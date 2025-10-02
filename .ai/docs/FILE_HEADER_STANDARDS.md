@@ -10,9 +10,13 @@
 
 **Exports**: Header format standards, validation rules, formatting guidelines, and implementation templates
 
-**Related**: Links to file placement standards, development standards, and automated linting documentation
+**Related**: Documentation Standards Plugin (`plugins/standards/documentation/`) provides comprehensive file header guides and templates
 
 **Implementation**: Comprehensive field definitions, line break guidelines, and automated validation integration
+
+---
+
+> **Note**: This file is maintained in the ai-projen repository for reference. For comprehensive file header documentation including detailed guides, how-tos, and templates, install the **Documentation Standards Plugin** (`plugins/standards/documentation/`). The canonical file header documentation is at `plugins/standards/documentation/ai-content/docs/file-headers.md`.
 
 ---
 

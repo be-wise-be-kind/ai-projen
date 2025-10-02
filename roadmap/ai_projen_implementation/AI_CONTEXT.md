@@ -448,7 +448,7 @@ When creating or modifying template files in plugins:
 
 #### Template File Requirements
 1. **File Extension**: Always use `.template` extension (e.g., `component.tsx.template`, `module.py.template`)
-2. **Comprehensive Headers**: Follow FILE_HEADER_STANDARDS.md Template Files section
+2. **Comprehensive Headers**: Follow file header standards from Documentation Standards Plugin
 3. **Mandatory Fields**: Purpose, Scope, Overview, **Placeholders**, **Usage**, Related, Implementation
 4. **Placeholder Documentation**: List ALL {{PLACEHOLDERS}} with:
    - Clear description
@@ -472,15 +472,15 @@ Each template must include:
 4. Validation command for generated file
 
 #### Template Documentation Resources
-- **Header Standards**: `.ai/docs/FILE_HEADER_STANDARDS.md` (Template Files section)
+- **Header Standards**: `plugins/standards/documentation/ai-content/docs/file-headers.md`
 - **Creation Guide**: `.ai/howto/how-to-create-a-template.md`
 - **Meta-Template**: `.ai/templates/TEMPLATE_FILE_TEMPLATE.md`
 - **Examples**: See Python and TypeScript plugin templates
 
-#### Integration with Foundation Plugin
-- FILE_HEADER_STANDARDS.md is included in `plugins/foundation/ai-folder/ai-content/templates/docs/`
-- Every project initialized with ai-folder gets comprehensive file header standards
-- Template standards are part of foundational project setup
+#### Integration with Documentation Standards Plugin
+- File header standards provided by Documentation Standards Plugin (`plugins/standards/documentation/`)
+- Comprehensive file header guides for all file types
+- Template-specific requirements documented in file-headers.md
 
 ## Risk Mitigation
 

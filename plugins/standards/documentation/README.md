@@ -47,32 +47,7 @@ This plugin provides standards and templates for:
 - **CSS/SCSS** (.css, .scss) - Stylesheets
 - **Shell Scripts** (.sh, .ps1, .bat) - Automation scripts
 
-### Plugin Structure
-
-```
-plugins/standards/documentation/
-├── AGENT_INSTRUCTIONS.md           # Installation guide for AI agents
-├── README.md                        # This file
-├── manifest.yaml                    # Plugin metadata and configuration
-└── ai-content/
-    ├── docs/
-    │   ├── file-headers.md          # File header standards reference
-    │   ├── readme-standards.md      # README documentation standards
-    │   └── api-documentation.md     # API documentation best practices
-    ├── howtos/
-    │   ├── README.md                # How-to guide index
-    │   ├── how-to-write-file-headers.md    # Step-by-step header guide
-    │   ├── how-to-create-readme.md         # README creation guide
-    │   └── how-to-document-api.md          # API documentation guide
-    ├── standards/
-    │   └── DOCUMENTATION_STANDARDS.md      # Comprehensive standards document
-    └── templates/
-        ├── file-header-markdown.template   # Markdown header template
-        ├── file-header-python.template     # Python header template
-        ├── file-header-typescript.template # TypeScript header template
-        ├── file-header-yaml.template       # YAML header template
-        └── README.template                  # README template
-```
+---
 
 ## Quick Start
 

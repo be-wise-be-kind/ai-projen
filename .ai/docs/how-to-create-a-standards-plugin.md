@@ -1206,7 +1206,7 @@ standards:
 
 # Result:
 # - .ai/docs/DOCUMENTATION_STANDARDS.md created
-# - .ai/docs/FILE_HEADER_STANDARDS.md created
+# - .ai/docs/file-headers.md created (file header standards)
 # - .ai/howto/how-to-write-file-headers.md created
 # - README template available
 # - File header linter configured
@@ -1556,19 +1556,20 @@ documentation/
 ├── README.md
 ├── ai-content/
 │   ├── docs/
-│   │   ├── FILE_HEADER_STANDARDS.md
+│   │   ├── file-headers.md
 │   │   ├── api-documentation.md
-│   │   └── readme-guidelines.md
+│   │   └── readme-standards.md
 │   ├── howtos/
 │   │   ├── how-to-write-file-headers.md
-│   │   ├── how-to-document-apis.md
-│   │   └── how-to-write-readmes.md
+│   │   ├── how-to-document-api.md
+│   │   └── how-to-create-readme.md
 │   ├── standards/
 │   │   └── DOCUMENTATION_STANDARDS.md
 │   └── templates/
-│       ├── README.template.md
-│       ├── CHANGELOG.template.md
-│       └── file-header.template
+│       ├── README.template
+│       ├── file-header-markdown.template
+│       ├── file-header-python.template
+│       └── file-header-typescript.template
 ```
 
 ### Pre-commit Hooks Plugin (PR15)
@@ -1870,7 +1871,7 @@ After creating your standards plugin:
 ### Documentation
 - `PLUGIN_ARCHITECTURE.md` - Plugin structure requirements
 - `PLUGIN_MANIFEST.yaml` - All available plugins
-- `FILE_HEADER_STANDARDS.md` - Documentation standards
+- `plugins/standards/documentation/ai-content/docs/file-headers.md` - File header standards
 - `HOWTO_STANDARDS.md` - How-to guide standards
 
 ### Reference Implementations

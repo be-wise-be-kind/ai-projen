@@ -368,21 +368,20 @@ This PR makes plugins truly AI-agent-friendly by providing actionable guides for
 **Status**: ✅ Complete
 
 **Quick Summary**:
-Standardize all template file headers across the repository to comply with FILE_HEADER_STANDARDS.md, create comprehensive template creation documentation, and integrate template standards into the foundation plugin so every new project starts with proper standards.
+Standardize all template file headers across the repository to comply with file header standards, create comprehensive template creation documentation, and ensure comprehensive file header documentation is available.
 
 **Problem Identified**:
 - 59 template files across repository lacked proper comprehensive headers
 - No standardized guidance for creating new template files
 - Template files had minimal 2-3 line headers instead of comprehensive documentation
-- FILE_HEADER_STANDARDS.md not included in foundation plugin for distribution to new projects
 - Templates needed special header format explaining placeholders and usage
 
 **What Was Done**:
 
-1. **Foundation Plugin Integration** (NEW):
-   - Created `plugins/foundation/ai-folder/ai-content/templates/docs/FILE_HEADER_STANDARDS.md`
-   - Every project initialized with ai-folder now gets comprehensive file header standards
-   - Includes complete Template Files section with requirements and examples
+1. **File Header Standards Documentation**:
+   - File header standards now provided by Documentation Standards Plugin (PR14)
+   - Canonical location: `plugins/standards/documentation/ai-content/docs/file-headers.md`
+   - `.ai/docs/FILE_HEADER_STANDARDS.md` maintained for reference with pointer to doc plugin
 
 2. **Template Documentation Created** (3 NEW files):
    - `.ai/howto/how-to-create-a-template.md` - Comprehensive template creation guide
@@ -415,12 +414,12 @@ Standardize all template file headers across the repository to comply with FILE_
 - `{{kebab-case}}` - URLs, CSS classes, file paths
 
 **Files Created/Modified**:
-- 3 new files (FILE_HEADER_STANDARDS.md in foundation, how-to guide, meta-template)
+- 3 new files (how-to guide, meta-template, updated FILE_HEADER_STANDARDS.md)
 - 33 template files updated with comprehensive headers
 - 6 documentation files updated (index.yaml, layout.yaml, AGENT_INSTRUCTIONS.md, AI_CONTEXT.md, FILE_HEADER_STANDARDS.md)
 
 **Impact**:
-This PR ensures all templates are properly documented with comprehensive headers, establishes template creation standards, and integrates FILE_HEADER_STANDARDS.md into the foundation plugin so every new project gets proper standards from the start. Makes template files self-documenting and easy to understand for both AI agents and human developers.
+This PR ensures all templates are properly documented with comprehensive headers and establishes template creation standards. Makes template files self-documenting and easy to understand for both AI agents and human developers. File header standards consolidated in Documentation Standards Plugin (PR14).
 
 ---
 

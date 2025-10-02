@@ -199,16 +199,16 @@ After successful installation:
 
 ## File Header Standards
 
-All files created by this plugin and subsequent plugins should follow the file header standards documented in:
-- **FILE_HEADER_STANDARDS.md**: Included in `.ai/docs/` (copied from ai-projen framework)
-- **Template Files Section**: Special requirements for template files with placeholders
+All files created by this plugin and subsequent plugins should follow the file header standards. For comprehensive file header guidelines:
+- Install the **Documentation Standards Plugin** (`plugins/standards/documentation/`)
+- Reference `.ai/docs/file-headers.md` (provided by documentation standards plugin)
 
-When creating files:
+Basic header requirements:
 1. Follow the header format appropriate for the file type (Markdown, YAML, etc.)
 2. Include mandatory fields: Purpose, Scope, Overview
 3. For templates: Add Placeholders and Usage fields
 4. Use atemporal language (no "currently", "now", "recently", etc.)
-5. Reference FILE_HEADER_STANDARDS.md for detailed guidelines
+5. See documentation standards plugin for detailed guidelines
 
 ## Integration with Other Plugins
 
