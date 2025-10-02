@@ -477,7 +477,7 @@ After installation:
   - `howtos/how-to-add-deployment.md` - AWS deployment setup
 
 - **Standards**:
-  - `standards/CI_CD_STANDARDS.md` - CI/CD best practices
+  - `standards/ci-cd-standards.md` - CI/CD best practices
 
 - **Templates**:
   - `templates/ci-python.yml` - Python CI workflow
@@ -490,7 +490,7 @@ After installation:
 ## Support
 
 For issues or questions:
-1. Check `standards/CI_CD_STANDARDS.md` for best practices
+1. Check `standards/ci-cd-standards.md` for best practices
 2. Review workflow logs in GitHub Actions tab
 3. Consult GitHub Actions documentation
 4. Review how-to guides in `howtos/` directory

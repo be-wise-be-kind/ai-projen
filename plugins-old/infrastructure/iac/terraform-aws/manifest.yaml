@@ -1,0 +1,230 @@
+version: "1.0"
+name: terraform-aws
+category: infrastructure/iac
+provider: aws
+status: stable
+
+metadata:
+  display_name: "Terraform/AWS Infrastructure"
+  description: "Deploy AWS infrastructure using Terraform with VPC, ECS Fargate, and ALB workspaces"
+  author: "ai-projen"
+  tags:
+    - terraform
+    - aws
+    - infrastructure
+    - iac
+    - vpc
+    - ecs
+    - fargate
+    - alb
+    - containers
+
+workspaces:
+  - name: vpc
+    description: "VPC networking infrastructure with subnets, security groups, and routing"
+    persistent: true
+    resources:
+      - VPC
+      - Subnets (public/private)
+      - Internet Gateway
+      - Route Tables
+      - Security Groups
+
+  - name: ecs
+    description: "ECS Fargate cluster for container orchestration"
+    persistent: false
+    dependencies:
+      - vpc
+    resources:
+      - ECS Cluster
+      - Task Definitions
+      - ECS Services
+      - Auto-Scaling Policies
+      - CloudWatch Log Groups
+      - IAM Roles
+
+  - name: alb
+    description: "Application Load Balancer for traffic distribution"
+    persistent: false
+    dependencies:
+      - vpc
+    resources:
+      - Application Load Balancer
+      - Target Groups
+      - Listeners (HTTP/HTTPS)
+      - Health Checks
+      - CloudWatch Alarms
+
+dependencies:
+  required:
+    - terraform: ">=1.0"
+    - aws-cli: ">=2.0"
+
+  optional:
+    - docker: "For building and pushing container images"
+
+features:
+  - Multi-AZ VPC architecture
+  - ECS Fargate serverless containers
+  - Application Load Balancer
+  - Auto-scaling policies
+  - CloudWatch monitoring
+  - S3 remote state management
+  - DynamoDB state locking
+  - Cost optimization (Fargate Spot)
+  - HTTPS termination
+  - Health checks
+  - Rolling deployments
+  - Zero-downtime updates
+
+configuration:
+  state_backend:
+    type: s3
+    locking: dynamodb
+    encryption: true
+    versioning: true
+
+  environments:
+    - dev
+    - staging
+    - prod
+
+  aws_regions:
+    default: us-west-2
+    supported:
+      - us-east-1
+      - us-east-2
+      - us-west-1
+      - us-west-2
+      - eu-west-1
+      - eu-central-1
+      - ap-southeast-1
+      - ap-northeast-1
+
+cost_optimization:
+  - Fargate Spot for non-production (70% savings)
+  - Minimal task sizing for development
+  - Single instance for dev environments
+  - No NAT gateways in development
+  - Short log retention for dev (7 days)
+  - Conditional Container Insights (prod only)
+  - Disabled cross-AZ load balancing
+
+security:
+  - Encrypted state files at rest
+  - State file versioning
+  - State locking
+  - Least-privilege IAM roles
+  - Private subnets for ECS tasks
+  - Security groups with minimal access
+  - HTTPS termination support
+
+integration:
+  compatible_with:
+    - languages/python
+    - languages/typescript
+    - infrastructure/containerization/docker
+    - infrastructure/ci-cd/github-actions
+
+  provides:
+    - VPC ID and subnet IDs
+    - ECS cluster name
+    - ALB DNS name
+    - Target group ARNs
+    - CloudWatch log groups
+
+documentation:
+  agent_instructions: AGENT_INSTRUCTIONS.md
+  readme: README.md
+  standards: standards/TERRAFORM_STANDARDS.md
+  howtos:
+    - howtos/how-to-create-workspace.md
+    - howtos/how-to-deploy-to-aws.md
+    - howtos/how-to-manage-state.md
+
+templates:
+  workspaces:
+    vpc:
+      - templates/workspaces/vpc/main.tf
+      - templates/workspaces/vpc/variables.tf
+      - templates/workspaces/vpc/outputs.tf
+    ecs:
+      - templates/workspaces/ecs/main.tf
+      - templates/workspaces/ecs/variables.tf
+      - templates/workspaces/ecs/outputs.tf
+    alb:
+      - templates/workspaces/alb/main.tf
+      - templates/workspaces/alb/variables.tf
+      - templates/workspaces/alb/outputs.tf
+
+  common:
+    - templates/backend.tf
+    - templates/terraform.tfvars.example
+
+deployment_order:
+  - vpc
+  - ecs
+  - alb
+
+estimated_deployment_time:
+  vpc: 2-3 minutes
+  ecs: 3-5 minutes
+  alb: 2-3 minutes
+  total: 10-15 minutes
+
+estimated_cost:
+  development:
+    monthly: "$20-30"
+    breakdown:
+      vpc: "$0 (free tier)"
+      ecs_fargate_spot: "$5-10"
+      alb: "$16"
+
+  production:
+    monthly: "$100-500"
+    breakdown:
+      vpc: "$0 (free tier)"
+      ecs_fargate: "$50-300 (varies with usage)"
+      alb: "$16"
+      nat_gateway: "$32 (if enabled)"
+      data_transfer: "varies"
+
+prerequisites:
+  aws_permissions:
+    - EC2 (full access)
+    - ECS (full access)
+    - ElasticLoadBalancing (full access)
+    - IAM (create roles and policies)
+    - CloudWatch (create log groups and alarms)
+    - S3 (read/write for state)
+    - DynamoDB (read/write for locking)
+
+  tools:
+    - name: terraform
+      version: ">=1.0"
+      required: true
+    - name: aws-cli
+      version: ">=2.0"
+      required: true
+    - name: docker
+      version: ">=20.0"
+      required: false
+
+validation:
+  checks:
+    - S3 bucket exists with versioning enabled
+    - DynamoDB table exists for state locking
+    - VPC created with correct CIDR
+    - Security groups allow ALB to ECS traffic
+    - ECS cluster created and tasks running
+    - ALB created and targets healthy
+    - Health checks passing
+    - Application accessible via ALB DNS
+
+success_criteria:
+  - All workspaces deployed without errors
+  - Terraform plan shows no changes
+  - Application accessible via ALB DNS
+  - ECS tasks running with desired count
+  - ALB health checks passing
+  - CloudWatch logs showing application output

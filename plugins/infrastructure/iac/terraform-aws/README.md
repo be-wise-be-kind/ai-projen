@@ -383,7 +383,7 @@ cd terraform/workspaces/vpc && terraform destroy
 
 ### Standards
 
-- [Terraform Standards](standards/TERRAFORM_STANDARDS.md) - Best practices and conventions
+- [Terraform Standards](standards/terraform-standards.md) - Best practices and conventions
 
 ### Agent Instructions
 
@@ -457,7 +457,7 @@ IAM user/role needs:
 ## Support
 
 For issues or questions:
-- Review [Terraform Standards](standards/TERRAFORM_STANDARDS.md)
+- Review [Terraform Standards](standards/terraform-standards.md)
 - Check [How-To Guides](howtos/)
 - Consult [AWS Documentation](https://docs.aws.amazon.com/)
 - Review [Terraform AWS Provider Docs](https://registry.terraform.io/providers/hashicorp/aws/latest/docs)

@@ -1,0 +1,77 @@
+# Purpose: Full-stack Docker Compose configuration with hot reload support
+# Scope: Local development environment orchestration for frontend + backend applications
+# Overview: Configures Docker services for local full-stack development using multi-stage
+#     Dockerfiles with the 'dev' target. Provides automatic code reloading for both backend
+#     (FastAPI/Flask/Django with hot reload) and frontend (Vite HMR/Next.js Fast Refresh).
+#     Volume mounts bind local source directories to containers enabling instant code updates
+#     without rebuilds. Uses the efficient multi-stage build pattern for faster builds and
+#     better layer caching. Services auto-restart unless explicitly stopped.
+# Dependencies: Docker, Docker Compose, multi-stage Dockerfiles, local source code
+# Exports: Full-stack application services with hot reload capabilities
+# Interfaces: Backend on port ${BACKEND_PORT:-8000}, Frontend on port ${FRONTEND_PORT:-5173}
+# Implementation: Multi-stage Docker builds with dev target, volume mounts for code
+
+services:
+  backend-dev:
+    build:
+      context: .
+      dockerfile: .docker/dockerfiles/Dockerfile.backend
+      target: dev
+    container_name: ${PROJECT_NAME:-app}-backend-${BRANCH_NAME:-main}-dev
+    ports:
+      - "${BACKEND_PORT:-8000}:8000"
+    environment:
+      - ENV=development
+      - PYTHONUNBUFFERED=1
+    volumes:
+      # Mount source code for hot reload
+      - ./app:/app/app
+      - ./src:/app/src
+      # Mount tests and tools if they exist
+      - ./test:/app/test
+      - ./tests:/app/tests
+      - ./tools:/app/tools
+      # Exclude Python cache to prevent permission issues
+      - /app/__pycache__
+      - /app/app/__pycache__
+      - /app/src/__pycache__
+    networks:
+      - app-network
+    restart: unless-stopped
+    # Adjust command based on your framework (configured in Dockerfile)
+    # FastAPI: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    # Flask: flask run --host=0.0.0.0 --port=8000 --debug
+    # Django: python manage.py runserver 0.0.0.0:8000
+    healthcheck:
+      test: ["CMD-SHELL", "python -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/health\")' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  frontend-dev:
+    build:
+      context: .
+      dockerfile: .docker/dockerfiles/Dockerfile.frontend
+      target: dev
+    container_name: ${PROJECT_NAME:-app}-frontend-${BRANCH_NAME:-main}-dev
+    ports:
+      - "${FRONTEND_PORT:-5173}:5173"
+    depends_on:
+      - backend-dev
+    volumes:
+      # Mount source code for hot reload
+      - ./frontend:/app
+      # Exclude node_modules to use container's installed dependencies
+      - /app/node_modules
+    networks:
+      - app-network
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=development
+      - VITE_API_URL=http://backend-dev:8000
+    # Command configured in Dockerfile (npm run dev)
+
+networks:
+  app-network:
+    driver: bridge

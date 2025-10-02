@@ -310,7 +310,7 @@ Point user to:
 - `howtos/how-to-create-workspace.md` - Creating additional workspaces
 - `howtos/how-to-deploy-to-aws.md` - Deployment workflows
 - `howtos/how-to-manage-state.md` - State management
-- `standards/TERRAFORM_STANDARDS.md` - Best practices
+- `standards/terraform-standards.md` - Best practices
 
 ---
 
@@ -494,5 +494,5 @@ Plugin installation is successful when:
 - Templates: `templates/workspaces/{vpc,ecs,alb}/`
 - Backend template: `templates/backend.tf`
 - Example variables: `templates/terraform.tfvars.example`
-- Standards: `standards/TERRAFORM_STANDARDS.md`
+- Standards: `standards/terraform-standards.md`
 - How-tos: `howtos/*.md`

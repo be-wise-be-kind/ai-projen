@@ -1,0 +1,53 @@
+"""{{COMMAND_NAME}} CLI command.
+
+Purpose: {{PURPOSE}}
+Scope: Command-line interface for {{DESCRIPTION}}
+"""
+
+import typer
+from rich.console import Console
+from typing import Annotated, Optional
+from pathlib import Path
+
+console = Console()
+app = typer.Typer(help="{{COMMAND_DESCRIPTION}}")
+
+
+@app.command()
+def {{FUNCTION_NAME}}(
+    {{PARAMETER_NAME}}: Annotated[{{PARAMETER_TYPE}}, typer.Argument(help="{{PARAMETER_DESCRIPTION}}")],
+    option: Annotated[str, typer.Option("--option", "-o", help="{{OPTION_DESCRIPTION}}")] = "default",
+    verbose: Annotated[bool, typer.Option("--verbose", "-v", help="Enable verbose output")] = False,
+) -> None:
+    """{{COMMAND_FULL_DESCRIPTION}}.
+
+    Args:
+        {{PARAMETER_NAME}}: {{PARAMETER_DESCRIPTION}}
+        option: {{OPTION_DESCRIPTION}}
+        verbose: Enable verbose output
+
+    Examples:
+        {{COMMAND_NAME}} {{FUNCTION_NAME}} arg1 --option value
+        {{COMMAND_NAME}} {{FUNCTION_NAME}} arg1 --verbose
+    """
+    if verbose:
+        console.print(f"[dim]Running {{FUNCTION_NAME}} with {{{PARAMETER_NAME}}}[/dim]")
+
+    try:
+        # TODO: Implement command logic
+        console.print(f"[green]Processing {{{PARAMETER_NAME}}}...[/green]")
+
+        # Example: Process with progress
+        # from rich.progress import track
+        # for item in track(items, description="Processing..."):
+        #     process(item)
+
+        console.print("[bold green]✓ Complete![/bold green]")
+
+    except Exception as e:
+        console.print(f"[red]✗ Error: {e}[/red]")
+        raise typer.Exit(code=1)
+
+
+if __name__ == '__main__':
+    app()

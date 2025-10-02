@@ -1,0 +1,359 @@
+# Purpose: Docker build context exclusion list for optimized and secure builds
+# Scope: Excludes unnecessary files from Docker build context
+# Overview: Prevents build cache, dependencies, IDE files, and sensitive data from being
+#     copied into Docker images. Reduces build context size by 60-80% and prevents
+#     accidental inclusion of secrets or development artifacts in images.
+# Implementation: Patterns for common development files, dependencies, and secrets
+
+# ==============================================================================
+# Version Control
+# ==============================================================================
+.git
+.gitignore
+.gitattributes
+.github
+
+# ==============================================================================
+# Python
+# ==============================================================================
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
+
+# Installer logs
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+.pytest_cache/
+cover/
+
+# Translations
+*.mo
+*.pot
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+
+# Flask
+instance/
+.webassets-cache
+
+# Scrapy
+.scrapy
+
+# Sphinx documentation
+docs/_build/
+
+# PyBuilder
+.pybuilder/
+target/
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# IPython
+profile_default/
+ipython_config.py
+
+# pyenv
+.python-version
+
+# pipenv
+Pipfile.lock
+
+# poetry
+poetry.lock
+
+# PEP 582
+__pypackages__/
+
+# Celery
+celerybeat-schedule
+celerybeat.pid
+
+# SageMath parsed files
+*.sage.py
+
+# Environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Spyder project settings
+.spyderproject
+.spyproject
+
+# Rope project settings
+.ropeproject
+
+# mkdocs documentation
+/site
+
+# mypy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# Pyre type checker
+.pyre/
+
+# pytype static type analyzer
+.pytype/
+
+# Cython debug symbols
+cython_debug/
+
+# ==============================================================================
+# Node.js / JavaScript / TypeScript
+# ==============================================================================
+# Dependencies
+node_modules/
+jspm_packages/
+bower_components/
+
+# Production builds
+/build
+/dist
+/.next/
+/out/
+
+# Testing
+/coverage
+
+# TypeScript cache
+*.tsbuildinfo
+
+# npm
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+.pnpm-debug.log*
+
+# Parcel cache
+.cache
+.parcel-cache
+
+# Next.js build output
+.next
+out
+
+# Nuxt.js build / generate output
+.nuxt
+dist
+
+# Gatsby files
+.cache/
+public
+
+# vuepress build output
+.vuepress/dist
+
+# Serverless directories
+.serverless/
+
+# FuseBox cache
+.fusebox/
+
+# DynamoDB Local files
+.dynamodb/
+
+# TernJS port file
+.tern-port
+
+# Stores VSCode versions used for testing VSCode extensions
+.vscode-test
+
+# yarn v2
+.yarn/cache
+.yarn/unplugged
+.yarn/build-state.yml
+.yarn/install-state.gz
+.pnp.*
+
+# ==============================================================================
+# IDEs and Editors
+# ==============================================================================
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+*.code-workspace
+
+# ==============================================================================
+# Operating Systems
+# ==============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.fuse_hidden*
+.directory
+.Trash-*
+.nfs*
+
+# ==============================================================================
+# Docker
+# ==============================================================================
+.docker
+docker-compose.yml
+docker-compose.*.yml
+.dockerignore
+Dockerfile*
+
+# ==============================================================================
+# CI/CD
+# ==============================================================================
+.circleci/
+.travis.yml
+.gitlab-ci.yml
+azure-pipelines.yml
+.buildkite/
+.drone.yml
+
+# ==============================================================================
+# Security and Secrets
+# ==============================================================================
+# Environment files (may contain secrets)
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+.env.*
+
+# Credentials
+credentials.json
+service-account.json
+*.pem
+*.key
+*.cert
+id_rsa*
+*.p12
+
+# AWS
+.aws/
+
+# ==============================================================================
+# Documentation
+# ==============================================================================
+README.md
+CHANGELOG.md
+CONTRIBUTING.md
+LICENSE
+*.md
+
+# ==============================================================================
+# Testing and Reports
+# ==============================================================================
+.reports/
+test-results/
+allure-results/
+allure-report/
+
+# ==============================================================================
+# Terraform
+# ==============================================================================
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+
+# ==============================================================================
+# AI/ML
+# ==============================================================================
+*.h5
+*.pkl
+*.joblib
+models/
+data/
+datasets/
+
+# ==============================================================================
+# Logs
+# ==============================================================================
+*.log
+logs/
+*.log.*
+
+# ==============================================================================
+# Temporary Files
+# ==============================================================================
+*.tmp
+*.temp
+tmp/
+temp/
+*.bak
+*.backup

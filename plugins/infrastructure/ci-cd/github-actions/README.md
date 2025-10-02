@@ -421,7 +421,7 @@ env:
 
 ## Standards
 
-See [CI_CD_STANDARDS.md](standards/CI_CD_STANDARDS.md) for:
+See [ci-cd-standards.md](standards/ci-cd-standards.md) for:
 - Workflow naming conventions
 - Branch protection rules
 - Deployment strategies
@@ -485,7 +485,7 @@ To add new workflow templates:
 
 - **Documentation**: See `AGENT_INSTRUCTIONS.md`
 - **How-To Guides**: See `howtos/` directory
-- **Standards**: See `standards/CI_CD_STANDARDS.md`
+- **Standards**: See `standards/ci-cd-standards.md`
 - **GitHub Actions Docs**: https://docs.github.com/en/actions
 
 ## License

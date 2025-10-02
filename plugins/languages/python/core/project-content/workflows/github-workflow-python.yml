@@ -1,0 +1,188 @@
+# Purpose: GitHub Actions workflow for Python linting, type checking, security scanning, and testing
+# Scope: Comprehensive Python CI/CD quality checks
+# Overview: Runs Ruff linting/formatting, MyPy type checking, Bandit security scanning, and
+#     pytest with coverage on pull requests and pushes to main. Uses caching for fast builds.
+# Dependencies: Python 3.11, ruff, mypy, bandit, pytest, pytest-cov
+# Exports: CI/CD workflow for Python projects
+# Environment: GitHub Actions
+# Related: Python development workflow, continuous integration
+# Implementation: GitHub Actions workflow YAML
+
+name: Python Quality Checks
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '**.py'
+      - 'pyproject.toml'
+      - 'pytest.ini'
+      - 'mypy.ini'
+      - '.bandit'
+      - 'requirements*.txt'
+      - '.github/workflows/python.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**.py'
+      - 'pyproject.toml'
+
+env:
+  PYTHON_VERSION: '3.11'
+
+jobs:
+  quality-checks:
+    name: Python Linting, Type Checking, and Security
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/pypoetry
+          key: ${{ runner.os }}-python-${{ hashFiles('**/pyproject.toml', '**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-python-
+
+      - name: Install Poetry (if using Poetry)
+        if: hashFiles('pyproject.toml') != ''
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies (Poetry)
+        if: hashFiles('pyproject.toml') != ''
+        run: |
+          poetry install --with dev
+
+      - name: Install dependencies (pip)
+        if: hashFiles('pyproject.toml') == '' && hashFiles('requirements.txt') != ''
+        run: |
+          pip install -r requirements.txt
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+      - name: Run Ruff linting
+        run: |
+          echo "Running Ruff linter..."
+          if [ -f "pyproject.toml" ] && command -v poetry >/dev/null 2>&1; then
+            poetry run ruff check .
+          else
+            ruff check .
+          fi
+
+      - name: Run Ruff formatting check
+        run: |
+          echo "Checking code formatting with Ruff..."
+          if [ -f "pyproject.toml" ] && command -v poetry >/dev/null 2>&1; then
+            poetry run ruff format --check .
+          else
+            ruff format --check .
+          fi
+
+      - name: Run MyPy type checking
+        run: |
+          echo "Running MyPy type checker..."
+          if [ -f "pyproject.toml" ] && command -v poetry >/dev/null 2>&1; then
+            poetry run mypy .
+          else
+            mypy .
+          fi
+
+      - name: Run Bandit security scan
+        run: |
+          echo "Running Bandit security scanner..."
+          if [ -f "pyproject.toml" ] && command -v poetry >/dev/null 2>&1; then
+            poetry run bandit -r . -q || true
+          else
+            bandit -r . -q || true
+          fi
+
+      - name: Generate quality summary
+        if: always()
+        run: |
+          echo "## 🐍 Python Quality Checks" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Tools Used:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Ruff**: Linting and formatting" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **MyPy**: Static type checking" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Bandit**: Security vulnerability scanning" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+
+  testing:
+    name: Python Testing
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/pip
+            ~/.cache/pypoetry
+          key: ${{ runner.os }}-python-${{ hashFiles('**/pyproject.toml', '**/requirements*.txt') }}
+          restore-keys: |
+            ${{ runner.os }}-python-
+
+      - name: Install Poetry (if using Poetry)
+        if: hashFiles('pyproject.toml') != ''
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Install dependencies (Poetry)
+        if: hashFiles('pyproject.toml') != ''
+        run: |
+          poetry install --with dev
+
+      - name: Install dependencies (pip)
+        if: hashFiles('pyproject.toml') == '' && hashFiles('requirements.txt') != ''
+        run: |
+          pip install -r requirements.txt
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+
+      - name: Run tests with coverage
+        run: |
+          echo "Running pytest with coverage..."
+          if [ -f "pyproject.toml" ] && command -v poetry >/dev/null 2>&1; then
+            poetry run pytest --cov=. --cov-report=xml --cov-report=term
+          else
+            pytest --cov=. --cov-report=xml --cov-report=term
+          fi
+
+      - name: Upload coverage reports
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-report
+          path: |
+            coverage.xml
+            htmlcov/
+          retention-days: 30
+
+      - name: Generate test summary
+        if: always()
+        run: |
+          echo "## 🧪 Python Testing" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Framework:" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Pytest**: Unit and integration tests" >> $GITHUB_STEP_SUMMARY
+          echo "- ✅ **Coverage**: Code coverage reporting" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Coverage report uploaded as artifact." >> $GITHUB_STEP_SUMMARY

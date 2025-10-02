@@ -68,7 +68,83 @@
 - Policy enforcement
 - Best practices
 
+## Plugin Taxonomy
+
+### Complete Taxonomy Structure
+
+```
+plugins/
+├── foundation/                          # Universal/required
+│   └── ai-folder/                      # The .ai directory itself
+│
+├── languages/                           # Language-specific
+│   └── <language>/                     # e.g., python, typescript, go
+│       ├── core/                       # Language core setup
+│       ├── linters/
+│       │   └── <tool>/                # e.g., ruff, eslint
+│       ├── formatters/
+│       │   └── <tool>/                # e.g., black, prettier
+│       ├── testing/
+│       │   └── <framework>/           # e.g., pytest, vitest
+│       └── frameworks/                 # Optional framework-specific
+│           └── <framework>/           # e.g., fastapi, react
+│
+├── infrastructure/
+│   ├── containerization/
+│   │   └── <tool>/                    # e.g., docker, podman
+│   ├── ci-cd/
+│   │   └── <platform>/                # e.g., github-actions, gitlab-ci
+│   └── iac/
+│       └── <tool>-<vendor>/          # e.g., terraform-aws, pulumi-gcp
+│
+└── standards/                           # Cross-cutting concerns
+    └── <standard-name>/                # e.g., security, documentation
+```
+
+### Plugin Taxonomy Principles
+
+1. **Capability over Vendor**: Organize by what the plugin does, not who makes it
+   - ✅ `infrastructure/ci-cd/github-actions/` (capability: CI/CD, tool: GitHub Actions)
+   - ❌ `github/actions/` (organized by vendor)
+
+2. **Hierarchy by Specificity**: General → Specific
+   - Language → Tool Category → Specific Tool
+   - Example: `languages/python/linters/ruff/`
+
+3. **Vendor Suffix for Cloud**: Only add vendor when multiple exist
+   - ✅ `iac/terraform-aws/` (Terraform has multiple providers)
+   - ✅ `containerization/docker/` (Docker is the tool itself)
+
 ## Plugin Structure
+
+### Standard Internal Structure
+
+**Every plugin** (regardless of taxonomy level) follows this structure:
+
+```
+<plugin-name>/
+├── AGENT_INSTRUCTIONS.md              # AI installation guide
+├── README.md                          # Human documentation
+├── manifest.yaml                       # Plugin metadata (optional)
+│
+├── ai-content/                         # → Goes to target repo's .ai/
+│   ├── docs/                          # Documentation files
+│   ├── howtos/                        # Task guides
+│   │   ├── README.md                  # Index/catalog
+│   │   └── how-to-*.md               # Individual guides
+│   ├── standards/                     # Standards documents
+│   └── templates/                     # Code generation templates
+│
+├── project-content/                    # → Goes to target repo root
+│   ├── config/                        # Config files (.ruff.toml, etc)
+│   ├── makefiles/                     # Makefile snippets
+│   ├── workflows/                     # CI/CD workflows
+│   ├── docker/                        # Dockerfiles, compose files
+│   └── terraform/                     # IaC files
+│
+└── src-templates/                      # → Code examples (not auto-installed)
+    └── examples/                      # Example implementations
+```
 
 ### Required Files
 
@@ -130,7 +206,6 @@ Variables and options
 
 ## Integration
 Works with: {other plugins}
-```
 
 ### Optional but Recommended
 
@@ -155,70 +230,193 @@ Pre-configured files ready to copy:
 - Test framework setups
 - Tool-specific settings
 
+### Content Categories
+
+#### ai-content/ Directory
+**Purpose**: Content that goes into the target repository's `.ai/` directory
+
+**Contents**:
+- `docs/` - Plugin-specific documentation
+- `howtos/` - Step-by-step task guides
+- `standards/` - Standards and best practices documents
+- `templates/` - Code generation templates (.template files)
+
+**Destination**: `.ai/` in target repository
+
+**Template Variables** (for files in ai-content/templates/):
+- `{{PROJECT_NAME}}` - Repository name
+- `{{PROJECT_TYPE}}` - Language/framework
+- `{{AUTHOR_NAME}}` - Developer name
+- `{{AUTHOR_EMAIL}}` - Developer email
+- Custom plugin-specific variables
+
+#### project-content/ Directory
+**Purpose**: Configuration and infrastructure files for the project root
+
+**Contents**:
+- `config/` - Configuration files (pyproject.toml, .eslintrc, etc.)
+- `makefiles/` - Makefile snippets (.mk files)
+- `workflows/` - CI/CD workflow files
+- `docker/` - Docker and docker-compose files
+- `terraform/` - Terraform configuration files
+
+**Destination**: Project root or designated directories in target repository
+
+#### src-templates/ Directory
+**Purpose**: Example source code implementations
+
+**Contents**:
+- `examples/` - Example implementations referenced by how-tos
+- NOT automatically installed
+- Used by AI agents when following how-to guides
+
+**Destination**: Not automatically copied; used as reference
+
 ### Directory Structure Examples
 
-#### Language Plugin
+#### Language Plugin - Core (Python Example)
 ```
-plugins/languages/python/
-├── AGENT_INSTRUCTIONS.md      # Installation guide
-├── README.md                   # Human-readable docs
-├── linters/
-│   ├── ruff/
-│   │   ├── AGENT_INSTRUCTIONS.md
-│   │   └── config/
-│   │       └── .ruff.toml
-│   ├── pylint/
-│   │   └── config/
-│   └── flake8/
-│       └── config/
-├── formatters/
-│   └── black/
-│       └── config/
-│           └── pyproject.toml
-├── testing/
-│   └── pytest/
-│       └── config/
-│           └── pytest.ini
-├── standards/
-│   └── python-standards.md
-└── templates/
-    ├── makefile-python.mk
-    └── github-workflow-python-lint.yml
+plugins/languages/python/core/
+├── AGENT_INSTRUCTIONS.md           # Installation guide for AI agents
+├── README.md                        # Human-readable overview
+├── manifest.yaml                    # Plugin metadata and dependencies
+│
+├── ai-content/                      # → .ai/ in target repo
+│   ├── howtos/                     # Task guides
+│   │   ├── README.md               # Index of how-tos
+│   │   ├── how-to-create-an-api-endpoint.md
+│   │   ├── how-to-add-database-model.md
+│   │   └── how-to-write-a-test.md
+│   ├── standards/                  # Standards documents
+│   │   ├── python-standards.md
+│   │   └── comprehensive-tooling.md
+│   └── templates/                  # Code generation templates
+│       ├── fastapi-router.py.template
+│       ├── sqlalchemy-model.py.template
+│       └── pytest-test.py.template
+│
+├── project-content/                 # → Project root
+│   ├── config/                     # Config files
+│   │   ├── pyproject.toml.template
+│   │   ├── .flake8
+│   │   └── .pylintrc
+│   ├── makefiles/                  # Makefile snippets
+│   │   └── makefile-python.mk
+│   ├── docker/                     # Docker files
+│   │   ├── Dockerfile.python
+│   │   └── docker-compose.python.yml
+│   └── workflows/                  # CI/CD workflows
+│       └── github-workflow-python.yml
+│
+└── src-templates/                   # Examples (not auto-installed)
+    └── examples/
+        ├── example.py
+        └── test_example.py
 ```
 
-#### Infrastructure Plugin
+#### Language Plugin - Linter Tool (Ruff Example)
+```
+plugins/languages/python/linters/ruff/
+├── AGENT_INSTRUCTIONS.md           # Installation guide
+├── README.md                        # Tool overview
+│
+├── ai-content/
+│   └── howtos/                     # Ruff-specific how-tos (optional)
+│
+└── project-content/
+    └── config/                     # Ruff configuration
+        └── pyproject.toml          # [tool.ruff] sections
+```
+
+#### Language Plugin - Testing Framework (Pytest Example)
+```
+plugins/languages/python/testing/pytest/
+├── AGENT_INSTRUCTIONS.md           # Installation guide
+├── README.md                        # Framework overview
+│
+├── ai-content/
+│   └── howtos/                     # Pytest-specific how-tos (optional)
+│
+└── project-content/
+    └── config/                     # Pytest configuration
+        └── pytest.ini
+```
+
+#### Infrastructure Plugin - Containerization (Docker Example)
 ```
 plugins/infrastructure/containerization/docker/
-├── AGENT_INSTRUCTIONS.md
-├── README.md
-└── templates/
-    ├── .docker/
-    │   ├── dockerfiles/
-    │   │   ├── backend/
-    │   │   │   ├── Dockerfile.dev
-    │   │   │   └── Dockerfile.prod
-    │   │   └── frontend/
-    │   │       ├── Dockerfile.dev
-    │   │       └── Dockerfile.prod
-    │   └── compose/
-    │       ├── dev.yml
-    │       └── prod.yml
-    ├── .dockerignore
-    └── makefile-docker.mk
+├── AGENT_INSTRUCTIONS.md           # Installation guide
+├── README.md                        # Plugin overview
+├── manifest.yaml                    # Plugin metadata
+│
+├── ai-content/                      # → .ai/ in target repo
+│   ├── howtos/                     # Docker task guides
+│   │   ├── README.md               # Index of Docker how-tos
+│   │   ├── how-to-add-a-service.md
+│   │   ├── how-to-create-multi-stage-dockerfile.md
+│   │   └── how-to-add-volume.md
+│   └── standards/                  # Docker best practices
+│       └── docker-standards.md
+│
+└── project-content/                 # → Project root
+    ├── docker/                     # Docker files
+    │   ├── Dockerfile.backend
+    │   ├── Dockerfile.frontend
+    │   ├── docker-compose.yml
+    │   ├── .dockerignore
+    │   └── .env.example
+    └── makefiles/                  # Makefile snippets
+        └── makefile-docker.mk
 ```
 
-#### Standards Plugin
+#### Infrastructure Plugin - CI/CD (GitHub Actions Example)
 ```
-plugins/standards/security/
-├── AGENT_INSTRUCTIONS.md
-├── README.md
-├── docs/
-│   ├── secrets-management.md
-│   ├── dependency-scanning.md
-│   └── code-scanning.md
-└── templates/
-    ├── .gitignore.security
-    └── github-workflow-security.yml
+plugins/infrastructure/ci-cd/github-actions/
+├── AGENT_INSTRUCTIONS.md           # Installation guide
+├── README.md                        # Plugin overview
+├── manifest.yaml                    # Plugin metadata
+│
+├── ai-content/                      # → .ai/ in target repo
+│   ├── howtos/                     # CI/CD task guides
+│   │   ├── README.md               # Index of CI/CD how-tos
+│   │   ├── how-to-add-workflow.md
+│   │   ├── how-to-configure-secrets.md
+│   │   └── how-to-add-deployment.md
+│   └── standards/                  # CI/CD best practices
+│       └── ci-cd-standards.md
+│
+└── project-content/                 # → Project root
+    └── workflows/                  # Workflow templates
+        ├── ci-python.yml
+        ├── ci-typescript.yml
+        ├── ci-full-stack.yml
+        ├── build-ecr.yml
+        ├── deploy-aws.yml
+        └── release.yml
+```
+
+#### Infrastructure Plugin - IaC (Terraform AWS Example)
+```
+plugins/infrastructure/iac/terraform-aws/
+├── AGENT_INSTRUCTIONS.md           # Installation guide
+├── README.md                        # Plugin overview
+├── manifest.yaml                    # Plugin metadata
+│
+├── ai-content/                      # → .ai/ in target repo
+│   ├── howtos/                     # Terraform task guides
+│   │   ├── README.md
+│   │   ├── how-to-deploy-to-aws.md
+│   │   ├── how-to-manage-state.md
+│   │   └── how-to-create-workspace.md
+│   └── standards/                  # Terraform best practices
+│       └── terraform-standards.md
+│
+└── project-content/                 # → Project root
+    └── terraform/                  # Terraform files
+        ├── main.tf
+        ├── variables.tf
+        ├── outputs.tf
+        └── workspaces/
 ```
 
 ## Plugin Manifest

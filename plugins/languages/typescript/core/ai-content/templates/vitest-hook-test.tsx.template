@@ -1,0 +1,175 @@
+// Purpose: {{TEST_PURPOSE}} - Hook test
+// Scope: {{TEST_SCOPE}}
+// Usage: Copy and replace {{PLACEHOLDERS}}
+
+import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
+import { renderHook, act, waitFor } from '@testing-library/react';
+import { use{{HOOK_NAME}} } from './use{{HOOK_NAME}}';
+
+describe('use{{HOOK_NAME}}', () => {
+  beforeEach(() => {
+    // Setup before each test
+    // Clear mocks, reset localStorage, etc.
+  });
+
+  afterEach(() => {
+    // Cleanup after each test
+  });
+
+  describe('Initialization', () => {
+    it('initializes with default value', () => {
+      const { result } = renderHook(() => use{{HOOK_NAME}}({{INITIAL_PARAM}}));
+
+      expect(result.current.{{RETURN_VALUE}}).toBe({{EXPECTED_VALUE}});
+    });
+
+    it('initializes with provided value', () => {
+      const { result } = renderHook(() =>
+        use{{HOOK_NAME}}({{CUSTOM_PARAM}})
+      );
+
+      expect(result.current.{{RETURN_VALUE}}).toBe({{CUSTOM_EXPECTED}});
+    });
+  });
+
+  describe('State Updates', () => {
+    it('updates state correctly', () => {
+      const { result } = renderHook(() => use{{HOOK_NAME}}({{INITIAL_PARAM}}));
+
+      act(() => {
+        result.current.{{UPDATE_FUNCTION}}({{NEW_VALUE}});
+      });
+
+      expect(result.current.{{RETURN_VALUE}}).toBe({{NEW_VALUE}});
+    });
+
+    it('updates state with function', () => {
+      const { result } = renderHook(() => use{{HOOK_NAME}}({{INITIAL_PARAM}}));
+
+      act(() => {
+        result.current.{{UPDATE_FUNCTION}}((prev) => {{UPDATE_LOGIC}});
+      });
+
+      expect(result.current.{{RETURN_VALUE}}).toBe({{EXPECTED_AFTER_UPDATE}});
+    });
+  });
+
+  describe('Side Effects', () => {
+    it('runs effect on mount', () => {
+      const effectSpy = vi.fn();
+
+      renderHook(() => {
+        const hook = use{{HOOK_NAME}}({{INITIAL_PARAM}});
+        effectSpy();
+        return hook;
+      });
+
+      expect(effectSpy).toHaveBeenCalledTimes(1);
+    });
+
+    it('runs effect when dependencies change', () => {
+      const { rerender } = renderHook(
+        ({ param }) => use{{HOOK_NAME}}(param),
+        { initialProps: { param: {{INITIAL_PARAM}} } }
+      );
+
+      rerender({ param: {{NEW_PARAM}} });
+
+      // Assert effect ran again
+    });
+
+    it('cleans up on unmount', () => {
+      const cleanup = vi.fn();
+
+      const { unmount } = renderHook(() => {
+        const hook = use{{HOOK_NAME}}({{INITIAL_PARAM}});
+        // Mock cleanup
+        return hook;
+      });
+
+      unmount();
+
+      expect(cleanup).toHaveBeenCalled();
+    });
+  });
+
+  describe('Async Operations', () => {
+    it('handles async operations', async () => {
+      const { result } = renderHook(() => use{{HOOK_NAME}}({{INITIAL_PARAM}}));
+
+      await act(async () => {
+        await result.current.{{ASYNC_FUNCTION}}({{ASYNC_PARAM}});
+      });
+
+      await waitFor(() => {
+        expect(result.current.{{RETURN_VALUE}}).toBe({{ASYNC_RESULT}});
+      });
+    });
+
+    it('handles async errors', async () => {
+      const { result } = renderHook(() => use{{HOOK_NAME}}({{INITIAL_PARAM}}));
+
+      await act(async () => {
+        await result.current.{{ASYNC_FUNCTION}}({{INVALID_PARAM}});
+      });
+
+      await waitFor(() => {
+        expect(result.current.error).toBeTruthy();
+      });
+    });
+
+    it('sets loading state during async operation', async () => {
+      const { result } = renderHook(() => use{{HOOK_NAME}}({{INITIAL_PARAM}}));
+
+      act(() => {
+        result.current.{{ASYNC_FUNCTION}}({{ASYNC_PARAM}});
+      });
+
+      expect(result.current.isLoading).toBe(true);
+
+      await waitFor(() => {
+        expect(result.current.isLoading).toBe(false);
+      });
+    });
+  });
+
+  describe('Edge Cases', () => {
+    it('handles null/undefined values', () => {
+      const { result } = renderHook(() => use{{HOOK_NAME}}(null));
+
+      expect(result.current.{{RETURN_VALUE}}).toBeDefined();
+    });
+
+    it('handles rapid updates', () => {
+      const { result } = renderHook(() => use{{HOOK_NAME}}({{INITIAL_PARAM}}));
+
+      act(() => {
+        result.current.{{UPDATE_FUNCTION}}({{VALUE_1}});
+        result.current.{{UPDATE_FUNCTION}}({{VALUE_2}});
+        result.current.{{UPDATE_FUNCTION}}({{VALUE_3}});
+      });
+
+      expect(result.current.{{RETURN_VALUE}}).toBe({{VALUE_3}});
+    });
+  });
+});
+
+// Template Placeholders:
+// {{TEST_PURPOSE}} - Test purpose
+// {{TEST_SCOPE}} - Test scope
+// {{HOOK_NAME}} - Hook name (without 'use' prefix)
+// {{INITIAL_PARAM}} - Initial parameter value
+// {{RETURN_VALUE}} - Returned value name
+// {{EXPECTED_VALUE}} - Expected initial value
+// {{CUSTOM_PARAM}} - Custom parameter
+// {{CUSTOM_EXPECTED}} - Expected value for custom param
+// {{UPDATE_FUNCTION}} - Function to update state
+// {{NEW_VALUE}} - New value to set
+// {{UPDATE_LOGIC}} - Logic for functional update
+// {{EXPECTED_AFTER_UPDATE}} - Expected value after update
+// {{NEW_PARAM}} - New parameter for rerender
+// {{ASYNC_FUNCTION}} - Async function name
+// {{ASYNC_PARAM}} - Async function parameter
+// {{ASYNC_RESULT}} - Expected async result
+// {{INVALID_PARAM}} - Invalid parameter for error test
+// {{VALUE_1}}, {{VALUE_2}}, {{VALUE_3}} - Values for rapid updates
