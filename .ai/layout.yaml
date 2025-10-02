@@ -1,0 +1,222 @@
+# Purpose: Define file placement rules for ai-projen repository
+# Scope: All project files, enforcing organization standards
+# Overview: Establishes authoritative rules for where different types of files should be placed
+#     throughout the ai-projen repository. Provides guidance for AI agents and validation rules
+#     for maintaining consistent project organization.
+
+version: "1.0"
+_meta:
+  description: "File placement rules for ai-projen repository"
+  schema_version: "1.0"
+  last_updated: "2025-10-01"
+
+ai_guidance:
+  description: "Human-readable guidance for AI agents on file placement"
+  principles:
+    plugin_organization: "All plugins in plugins/ with category subdirectories"
+    documentation_separation: "Project docs in .ai/docs/, plugin docs in plugin directories"
+    template_isolation: "Templates in .ai/templates/ and plugin-specific templates/ directories"
+    orchestrator_root: "Orchestrators (CREATE/UPGRADE/ADD) at repository root"
+
+  decision_trees:
+    plugin_placement:
+      question: "Where should this plugin go?"
+      criteria:
+        is_universal: "→ plugins/foundation/"
+        is_language: "→ plugins/languages/{language}/"
+        is_containerization: "→ plugins/infrastructure/containerization/{tool}/"
+        is_cicd: "→ plugins/infrastructure/ci-cd/{platform}/"
+        is_iac: "→ plugins/infrastructure/iac/{tool}/"
+        is_standard: "→ plugins/standards/{standard}/"
+
+    documentation_placement:
+      question: "Where should this documentation go?"
+      criteria:
+        is_project_doc: "→ .ai/docs/"
+        is_howto: "→ .ai/howto/"
+        is_plugin_specific: "→ plugins/{category}/{name}/README.md"
+        is_roadmap: "→ roadmap/{feature}/"
+
+    template_placement:
+      question: "Where should this template go?"
+      criteria:
+        is_universal_template: "→ .ai/templates/"
+        is_plugin_template: "→ plugins/{category}/{name}/templates/"
+        is_category_template: "→ plugins/{category}/_template/"
+
+  common_mistakes:
+    plugins_in_wrong_category: "Don't put language plugins in infrastructure/"
+    docs_in_plugin_root: "Don't put project docs in plugin directories"
+    templates_scattered: "Don't scatter templates - use templates/ directories"
+    orchestrators_in_plugins: "Don't put CREATE/UPGRADE/ADD in plugins/"
+
+linter_rules:
+  description: "Machine-readable rules for file placement validation"
+
+  paths:
+    .:
+      description: "Root directory"
+      allow:
+        - '^README\.md$'
+        - '^LICENSE$'
+        - '^\.gitignore$'
+        - '^\.env$'
+        - '^CREATE-NEW-AI-REPO\.md$'
+        - '^UPGRADE-TO-AI-REPO\.md$'
+        - '^ADD-CAPABILITY\.md$'
+        - '^CONTRIBUTING\.md$'
+      deny:
+        - '^\.(py|js|ts)$'
+        - '^test.*\.md$'
+        - '^debug.*'
+
+    .ai/:
+      description: "AI navigation and documentation"
+      allow:
+        - '^\.ai/index\.yaml$'
+        - '^\.ai/layout\.yaml$'
+        - '^\.ai/docs/.*\.md$'
+        - '^\.ai/howto/.*\.md$'
+        - '^\.ai/templates/.*\.(template|md)$'
+      deny:
+        - '\.py$'
+        - '\.js$'
+        - '\.ts$'
+        - 'test'
+
+    plugins/:
+      description: "Plugin library"
+      allow:
+        - '^plugins/PLUGIN_MANIFEST\.yaml$'
+        - '^plugins/foundation/.*/AGENT_INSTRUCTIONS\.md$'
+        - '^plugins/foundation/.*/README\.md$'
+        - '^plugins/foundation/.*/template/.*$'
+        - '^plugins/languages/.*/AGENT_INSTRUCTIONS\.md$'
+        - '^plugins/languages/.*/README\.md$'
+        - '^plugins/languages/.*/templates/.*$'
+        - '^plugins/languages/.*/configs/.*$'
+        - '^plugins/languages/_template/.*$'
+        - '^plugins/infrastructure/.*/AGENT_INSTRUCTIONS\.md$'
+        - '^plugins/infrastructure/.*/README\.md$'
+        - '^plugins/infrastructure/.*/templates/.*$'
+        - '^plugins/infrastructure/.*/_template/.*$'
+        - '^plugins/standards/.*/AGENT_INSTRUCTIONS\.md$'
+        - '^plugins/standards/.*/README\.md$'
+        - '^plugins/standards/.*/templates/.*$'
+        - '^plugins/standards/.*/docs/.*\.md$'
+        - '^plugins/standards/_template/.*$'
+      deny:
+        - '^plugins/[^/]+\.py$'
+        - '^plugins/[^/]+\.js$'
+        - 'test_'
+        - '_test\.'
+
+    roadmap/:
+      description: "Implementation roadmaps"
+      allow:
+        - '^roadmap/ROADMAP\.md$'
+        - '^roadmap/[^/]+/PROGRESS_TRACKER\.md$'
+        - '^roadmap/[^/]+/AI_CONTEXT\.md$'
+        - '^roadmap/[^/]+/PR_BREAKDOWN\.md$'
+        - '^roadmap/[^/]+/.*\.md$'
+      deny:
+        - '\.py$'
+        - '\.js$'
+        - '\.ts$'
+        - 'test'
+
+    test-*/:
+      description: "Test repositories for validation"
+      allow:
+        - '^test-.*/.*$'
+      deny:
+        - (none - test repos are sandboxes)
+
+  global_patterns:
+    description: "Patterns that apply across the entire repository"
+
+    deny_everywhere:
+      - '__pycache__'
+      - '\.pyc$'
+      - 'node_modules/'
+      - '\.venv/'
+      - '\.DS_Store$'
+      - 'Thumbs\.db$'
+      - '\.env\.local$'
+      - '.*\.swp$'
+
+    markdown_files:
+      patterns:
+        - '\.md$'
+      allowed_locations:
+        - '^README\.md$'
+        - '^\.ai/docs/.*\.md$'
+        - '^\.ai/howto/.*\.md$'
+        - '^plugins/.*/README\.md$'
+        - '^plugins/.*/AGENT_INSTRUCTIONS\.md$'
+        - '^plugins/.*/docs/.*\.md$'
+        - '^roadmap/.*\.md$'
+
+    yaml_files:
+      patterns:
+        - '\.yaml$'
+        - '\.yml$'
+      allowed_locations:
+        - '^\.ai/.*\.yaml$'
+        - '^plugins/PLUGIN_MANIFEST\.yaml$'
+        - '^plugins/.*/templates/.*\.yml$'
+        - '^\.pre-commit-config\.yaml$'
+
+enforcement:
+  linter_config_key: "layout_rules_file"
+  usage_example:
+    validation: "Validate file placement against layout.yaml rules"
+
+plugin_specific_rules:
+  foundation:
+    location: "plugins/foundation/"
+    naming: "{plugin-name}/"
+    required_files:
+      - AGENT_INSTRUCTIONS.md
+      - README.md
+    structure: "template/ directory for files to copy"
+
+  languages:
+    location: "plugins/languages/"
+    naming: "{language-name}/"
+    required_files:
+      - AGENT_INSTRUCTIONS.md
+      - README.md
+    structure: "linters/, formatters/, testing/, templates/"
+    template: "_template/ for creating new language plugins"
+
+  infrastructure:
+    location: "plugins/infrastructure/{subcategory}/"
+    subcategories:
+      - containerization
+      - ci-cd
+      - iac
+    naming: "{tool-name}/"
+    required_files:
+      - AGENT_INSTRUCTIONS.md
+      - README.md
+    structure: "templates/ directory"
+    template: "_template/ in each subcategory"
+
+  standards:
+    location: "plugins/standards/"
+    naming: "{standard-name}/"
+    required_files:
+      - AGENT_INSTRUCTIONS.md
+      - README.md
+    structure: "docs/ for guidelines, templates/ for configs"
+    template: "_template/ for creating new standards plugins"
+
+orchestrator_rules:
+  location: "Repository root"
+  naming:
+    - CREATE-NEW-AI-REPO.md
+    - UPGRADE-TO-AI-REPO.md
+    - ADD-CAPABILITY.md
+  format: "Markdown documents targeting AI agents"
+  purpose: "Entry points for users to interact with framework"

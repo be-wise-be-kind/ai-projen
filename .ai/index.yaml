@@ -1,0 +1,138 @@
+# Purpose: AI navigation index for ai-projen repository
+# Scope: Repository structure, available resources, commands, and documentation
+# Overview: Provides AI agents with a quick reference to navigate the ai-projen repository structure,
+#     locate key files, understand available commands, and access documentation. Essential for AI agents
+#     to quickly orient themselves when working on the framework or understanding how to use it.
+
+version: "1.0"
+project:
+  name: ai-projen
+  type: plugin-framework
+  purpose: Create AI-ready repositories through composable plugins
+  status: in-development
+  version: "0.1.0"
+
+structure:
+  orchestrators:
+    location: .
+    files:
+      - CREATE-NEW-AI-REPO.md (coming in PR17)
+      - UPGRADE-TO-AI-REPO.md (coming in PR18)
+      - ADD-CAPABILITY.md (coming in PR19)
+
+  plugins:
+    location: plugins/
+    categories:
+      foundation: Universal plugins (ai-folder)
+      languages: Language-specific tooling (Python, TypeScript)
+      infrastructure: Deployment tools (Docker, CI/CD, IaC)
+      standards: Quality enforcement (Security, Documentation)
+    manifest: plugins/PLUGIN_MANIFEST.yaml
+
+  documentation:
+    location: .ai/docs/
+    files:
+      - PROJECT_CONTEXT.md
+      - PLUGIN_ARCHITECTURE.md
+      - PLUGIN_DISCOVERY.md
+
+  howto:
+    location: .ai/howto/
+    files:
+      - how-to-create-a-plugin.md (coming soon)
+      - how-to-create-a-language-plugin.md (coming soon)
+      - how-to-create-an-infrastructure-plugin.md (coming soon)
+      - how-to-create-a-standards-plugin.md (coming soon)
+
+  templates:
+    location: .ai/templates/
+    files:
+      - (coming soon - will contain reusable templates)
+
+  roadmap:
+    location: roadmap/ai_projen_implementation/
+    files:
+      - PROGRESS_TRACKER.md
+      - AI_CONTEXT.md
+      - PR_BREAKDOWN.md
+
+commands:
+  # Development commands (when plugins are built)
+  test: "make test-all (coming soon)"
+  lint: "make lint-all (coming soon)"
+  validate: "make validate-manifest (coming soon)"
+
+entry_points:
+  new_repo: CREATE-NEW-AI-REPO.md (coming in PR17)
+  upgrade_repo: UPGRADE-TO-AI-REPO.md (coming in PR18)
+  add_capability: ADD-CAPABILITY.md (coming in PR19)
+
+key_files:
+  manifest: plugins/PLUGIN_MANIFEST.yaml (coming in PR3)
+  readme: README.md
+  gitignore: .gitignore
+  env: .env (local only, gitignored)
+
+architecture:
+  pattern: Plugin-based framework
+  plugin_categories:
+    - foundation (universal)
+    - languages (language-specific)
+    - infrastructure (deployment)
+    - standards (quality)
+
+  plugin_structure:
+    required:
+      - AGENT_INSTRUCTIONS.md
+      - README.md
+    optional:
+      - templates/
+      - configs/
+
+  orchestration:
+    - Manifest-driven discovery
+    - Interactive question flow
+    - Custom roadmap generation
+    - Sequential PR execution
+    - Resume capability
+
+source_material:
+  repository: https://github.com/steve-e-jackson/durable-code-test
+  extraction:
+    - .ai folder structure
+    - Makefile patterns
+    - Docker setup
+    - GitHub Actions workflows
+    - Terraform workspace patterns
+    - Pre-commit hooks
+    - Standards documentation
+
+development:
+  current_phase: Phase 1 - Core Framework
+  current_pr: PR1 - Repository Structure & Meta Documentation
+  next_pr: PR2 - Foundation Plugin (ai-folder)
+
+  progress:
+    total_prs: 21
+    completed: 1 (PR0 - Roadmap)
+    in_progress: 1 (PR1)
+    remaining: 19
+
+  priorities:
+    - P0: Core framework (PR1-4)
+    - P1: Language & infrastructure plugins (PR5-12)
+    - P2: Standards plugins (PR13-16)
+    - P3: Orchestrators (PR17-19)
+    - P4: Launch (PR20-21)
+
+contributing:
+  guidelines: CONTRIBUTING.md (coming in PR21)
+  plugin_creation: .ai/howto/how-to-create-a-plugin.md (coming soon)
+  testing: Use test-empty-setup/, test-incremental-setup/, test-upgrade-existing/
+
+notes_for_agents:
+  - This is a self-referential repository (it uses the patterns it teaches)
+  - All plugins should work standalone (without orchestrator)
+  - State is tracked via roadmap/ai_projen_implementation/PROGRESS_TRACKER.md
+  - Patterns extracted from durable-code-test (production-proven)
+  - Framework grows through community contributions
