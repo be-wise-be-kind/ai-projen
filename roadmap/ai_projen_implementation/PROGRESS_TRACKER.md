@@ -239,6 +239,8 @@ After completing each PR:
 - Don't forget to test in all three test repos
 - Don't merge to main without updating this PROGRESS_TRACKER.md
 - Don't add temporal/progress info to `agents.md` - it describes the project as-is, not development status
+- **Don't assume local tool execution** - Always prioritize Docker, then isolated environments, then local as last resort
+- **Don't pollute global environment** - All tools should run in containers or project-isolated environments
 
 ### Resources
 - Source repository: [durable-code-test](https://github.com/steve-e-jackson/durable-code-test)
