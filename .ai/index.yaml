@@ -28,6 +28,8 @@ structure:
       infrastructure: Deployment tools (Docker, CI/CD, IaC)
       standards: Quality enforcement (Security, Documentation)
     manifest: plugins/PLUGIN_MANIFEST.yaml
+    total_stable: 9
+    total_planned: 8
 
   documentation:
     location: .ai/docs/
@@ -35,6 +37,7 @@ structure:
       - PROJECT_CONTEXT.md
       - PLUGIN_ARCHITECTURE.md
       - PLUGIN_DISCOVERY.md
+      - MANIFEST_VALIDATION.md
 
   howto:
     location: .ai/howto/
@@ -109,14 +112,14 @@ source_material:
 
 development:
   current_phase: Phase 1 - Core Framework
-  current_pr: PR1 - Repository Structure & Meta Documentation
-  next_pr: PR2 - Foundation Plugin (ai-folder)
+  current_pr: PR3 - Plugin Manifest & Discovery Engine
+  next_pr: PR4 - Plugin Template System
 
   progress:
     total_prs: 21
-    completed: 1 (PR0 - Roadmap)
-    in_progress: 1 (PR1)
-    remaining: 19
+    completed: 3 (PR0, PR1, PR2)
+    in_progress: 1 (PR3)
+    remaining: 17
 
   priorities:
     - P0: Core framework (PR1-4)

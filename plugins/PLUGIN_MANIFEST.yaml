@@ -1,0 +1,289 @@
+# Purpose: Plugin manifest declaring all available ai-projen plugins
+# Scope: Foundation, language, infrastructure, and standards plugins with options and defaults
+# Overview: Central registry of all plugins available in the ai-projen framework. Defines plugin
+#     status (stable/planned/community), available options, recommended defaults, and dependencies.
+#     Used by orchestrators for discovery and by AI agents for understanding available capabilities.
+
+version: "1.0"
+
+# Foundation plugins (universal - always required)
+foundation:
+  ai-folder:
+    status: stable
+    required: true
+    description: Creates .ai/ directory structure for AI navigation
+    location: plugins/foundation/ai-folder/
+    dependencies: []
+    installation_guide: plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md
+
+# Language plugins (language-specific tooling)
+languages:
+  python:
+    status: stable
+    description: Python development environment with linting, formatting, and testing
+    location: plugins/languages/python/
+    dependencies:
+      - foundation/ai-folder
+
+    options:
+      linters:
+        available: [ruff, pylint, flake8]
+        recommended: ruff
+        description: Code quality and style checking
+
+      formatters:
+        available: [black, autopep8, yapf]
+        recommended: black
+        description: Automatic code formatting
+
+      testing:
+        available: [pytest, unittest]
+        recommended: pytest
+        description: Testing framework
+
+      type_checking:
+        available: [mypy, pyright, none]
+        recommended: mypy
+        description: Static type checking
+
+    installation_guide: plugins/languages/python/AGENT_INSTRUCTIONS.md
+
+  typescript:
+    status: stable
+    description: TypeScript/JavaScript development environment
+    location: plugins/languages/typescript/
+    dependencies:
+      - foundation/ai-folder
+
+    options:
+      linters:
+        available: [eslint, biome]
+        recommended: eslint
+        description: Code quality and style checking
+
+      formatters:
+        available: [prettier, biome]
+        recommended: prettier
+        description: Automatic code formatting
+
+      testing:
+        available: [vitest, jest, mocha]
+        recommended: vitest
+        description: Testing framework
+
+      frameworks:
+        available: [react, vue, none]
+        recommended: react
+        description: Frontend framework support
+
+    installation_guide: plugins/languages/typescript/AGENT_INSTRUCTIONS.md
+
+  # Planned language plugins
+  go:
+    status: planned
+    description: Go development environment
+    location: plugins/languages/go/
+
+  rust:
+    status: planned
+    description: Rust development environment
+    location: plugins/languages/rust/
+
+  java:
+    status: planned
+    description: Java development environment
+    location: plugins/languages/java/
+
+# Infrastructure plugins (deployment and tooling)
+infrastructure:
+  containerization:
+    docker:
+      status: stable
+      description: Docker containerization for frontend and backend services
+      location: plugins/infrastructure/containerization/docker/
+      dependencies:
+        - foundation/ai-folder
+
+      options:
+        services:
+          available: [frontend, backend, database, cache]
+          recommended: [frontend, backend]
+          description: Services to containerize
+
+        compose:
+          available: [yes, no]
+          recommended: yes
+          description: Include docker-compose.yml
+
+      installation_guide: plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md
+
+    podman:
+      status: planned
+      description: Podman containerization (Docker alternative)
+      location: plugins/infrastructure/containerization/podman/
+
+  ci-cd:
+    github-actions:
+      status: stable
+      description: GitHub Actions CI/CD pipeline
+      location: plugins/infrastructure/ci-cd/github-actions/
+      dependencies:
+        - foundation/ai-folder
+
+      options:
+        workflows:
+          available: [test, lint, build, deploy, all]
+          recommended: all
+          description: CI/CD workflows to include
+
+        matrix:
+          available: [yes, no]
+          recommended: yes
+          description: Test across multiple versions
+
+      installation_guide: plugins/infrastructure/ci-cd/github-actions/AGENT_INSTRUCTIONS.md
+
+    gitlab-ci:
+      status: planned
+      description: GitLab CI/CD pipeline
+      location: plugins/infrastructure/ci-cd/gitlab-ci/
+
+    jenkins:
+      status: planned
+      description: Jenkins CI/CD pipeline
+      location: plugins/infrastructure/ci-cd/jenkins/
+
+  iac:
+    terraform:
+      status: stable
+      description: Terraform infrastructure as code
+      location: plugins/infrastructure/iac/terraform/
+      dependencies:
+        - foundation/ai-folder
+
+      options:
+        providers:
+          available: [aws, gcp, azure]
+          recommended: aws
+          description: Cloud provider
+
+        workspaces:
+          available: [dev, staging, prod]
+          recommended: [dev, staging, prod]
+          description: Environment workspaces
+
+        modules:
+          available: [vpc, ecs, alb, rds, s3, cloudfront]
+          recommended: [vpc, ecs, alb]
+          description: Infrastructure modules to include
+
+      installation_guide: plugins/infrastructure/iac/terraform/AGENT_INSTRUCTIONS.md
+
+    pulumi:
+      status: planned
+      description: Pulumi infrastructure as code
+      location: plugins/infrastructure/iac/pulumi/
+
+    cdk:
+      status: planned
+      description: AWS CDK infrastructure as code
+      location: plugins/infrastructure/iac/cdk/
+
+# Standards plugins (quality and governance)
+standards:
+  security:
+    status: stable
+    description: Security standards and best practices
+    location: plugins/standards/security/
+    dependencies:
+      - foundation/ai-folder
+    required: recommended
+
+    options:
+      scanning:
+        available: [secrets, dependencies, code]
+        recommended: [secrets, dependencies]
+        description: Security scanning types
+
+      tools:
+        available: [gitleaks, trivy, bandit, safety]
+        recommended: [gitleaks, trivy]
+        description: Security scanning tools
+
+    installation_guide: plugins/standards/security/AGENT_INSTRUCTIONS.md
+
+  documentation:
+    status: stable
+    description: Documentation standards and templates
+    location: plugins/standards/documentation/
+    dependencies:
+      - foundation/ai-folder
+    required: recommended
+
+    options:
+      headers:
+        available: [yes, no]
+        recommended: yes
+        description: File header documentation
+
+      readme_sections:
+        available: [standard, comprehensive, minimal]
+        recommended: standard
+        description: README.md template detail level
+
+    installation_guide: plugins/standards/documentation/AGENT_INSTRUCTIONS.md
+
+  pre-commit-hooks:
+    status: stable
+    description: Pre-commit hooks for quality gates
+    location: plugins/standards/pre-commit-hooks/
+    dependencies:
+      - foundation/ai-folder
+    required: recommended
+
+    options:
+      hooks:
+        available: [format, lint, test, secrets, trailing-whitespace]
+        recommended: [format, lint, secrets, trailing-whitespace]
+        description: Pre-commit hooks to enable
+
+    installation_guide: plugins/standards/pre-commit-hooks/AGENT_INSTRUCTIONS.md
+
+  solid-principles:
+    status: planned
+    description: SOLID principles linting and enforcement
+    location: plugins/standards/solid-principles/
+
+# Plugin extension templates
+_templates:
+  language:
+    location: plugins/languages/_template/
+    description: Template for creating new language plugins
+    guide: .ai/howto/how-to-create-a-language-plugin.md
+
+  infrastructure:
+    location: plugins/infrastructure/_template/
+    description: Template for creating new infrastructure plugins
+    guide: .ai/howto/how-to-create-an-infrastructure-plugin.md
+
+  standards:
+    location: plugins/standards/_template/
+    description: Template for creating new standards plugins
+    guide: .ai/howto/how-to-create-a-standards-plugin.md
+
+# Metadata
+metadata:
+  version: "1.0"
+  last_updated: "2025-10-01"
+  total_plugins:
+    stable: 9
+    planned: 8
+    community: 0
+
+  notes_for_agents:
+    - This manifest is the source of truth for available plugins
+    - "Use 'status: stable' plugins for production"
+    - "'status: planned' plugins are roadmap items"
+    - Always check dependencies before installing plugins
+    - Recommended options are battle-tested defaults
+    - Community plugins can be added by following _template/ guides

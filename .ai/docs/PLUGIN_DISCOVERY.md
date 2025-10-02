@@ -241,6 +241,56 @@ Generated with:
 
 ## Manifest Reading
 
+### Manifest Structure
+
+The `plugins/PLUGIN_MANIFEST.yaml` file is the central registry of all available plugins. It follows this structure:
+
+```yaml
+version: "1.0"
+
+foundation:
+  <plugin-name>:
+    status: stable|planned|community
+    required: true|false|recommended
+    description: Brief description
+    location: plugins/foundation/<plugin-name>/
+    dependencies: [list of required plugins]
+    installation_guide: path/to/AGENT_INSTRUCTIONS.md
+
+languages:
+  <language-name>:
+    status: stable|planned|community
+    description: Brief description
+    location: plugins/languages/<language-name>/
+    dependencies: [list of required plugins]
+    options:
+      <option-category>:
+        available: [list of choices]
+        recommended: default choice
+        description: What this option configures
+    installation_guide: path/to/AGENT_INSTRUCTIONS.md
+
+infrastructure:
+  <category>:
+    <tool-name>:
+      status: stable|planned|community
+      description: Brief description
+      location: plugins/infrastructure/<category>/<tool>/
+      dependencies: [list of required plugins]
+      options: {...}
+      installation_guide: path/to/AGENT_INSTRUCTIONS.md
+
+standards:
+  <standard-name>:
+    status: stable|planned|community
+    required: true|false|recommended
+    description: Brief description
+    location: plugins/standards/<standard-name>/
+    dependencies: [list of required plugins]
+    options: {...}
+    installation_guide: path/to/AGENT_INSTRUCTIONS.md
+```
+
 ### Loading Manifest
 ```markdown
 Agent reads: plugins/PLUGIN_MANIFEST.yaml
@@ -249,8 +299,37 @@ Extracts:
 - Available languages and their options
 - Available infrastructure plugins
 - Available standards plugins
-- Status of each plugin (stable/planned)
+- Status of each plugin (stable/planned/community)
 - Recommended defaults
+- Plugin dependencies
+- Installation guide paths
+```
+
+### Manifest Validation
+
+Before using the manifest, agents should validate:
+
+1. **YAML Syntax**: File must parse as valid YAML
+2. **Version**: Manifest version is supported
+3. **Required Fields**: Each plugin has required fields (status, description, location)
+4. **Dependencies**: Referenced dependencies exist in manifest
+5. **Paths**: Installation guide paths point to existing files (for stable plugins)
+
+Example validation:
+```python
+import yaml
+
+with open('plugins/PLUGIN_MANIFEST.yaml') as f:
+    manifest = yaml.safe_load(f)
+
+# Check version
+assert manifest['version'] == '1.0'
+
+# Check foundation plugins have required fields
+for plugin_name, plugin_data in manifest['foundation'].items():
+    assert 'status' in plugin_data
+    assert 'description' in plugin_data
+    assert 'location' in plugin_data
 ```
 
 ### Using Manifest for Questions
