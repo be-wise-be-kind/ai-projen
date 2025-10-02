@@ -1,0 +1,80 @@
+# Purpose: Docker Compose configuration for CLI tool containerized distribution
+# Scope: CLI container setup with volume mounts for configuration and data persistence
+# Overview: Provides containerized execution environment for the CLI application with externalized
+#     configuration through volume mounts, environment variable support for runtime configuration,
+#     and flexible command execution patterns. Enables running CLI in isolated container without
+#     local Python installation. Includes service definitions for both one-off command execution
+#     and interactive usage patterns. Multi-stage build minimizes image size.
+# Dependencies: Docker Engine >=20.10, Docker Compose >=2.0, Dockerfile
+# Exports: CLI service configuration for docker-compose orchestration
+# Interfaces: Docker volume mounts, environment variables, command-line execution
+# Environment: Development and production CLI tool deployment in containers
+# Related: Dockerfile, .ai/howtos/python-cli/how-to-package-cli-tool.md
+# Implementation: Volume mounts for config/data, environment config, Docker best practices
+
+version: '3.8'
+
+services:
+  # Main CLI service for command execution
+  cli:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: {{PROJECT_NAME}}:latest
+    container_name: {{PROJECT_NAME}}-cli
+
+    # Volume mounts
+    volumes:
+      # Mount config directory (read-only)
+      - ./config:/config:ro
+      # Mount data directory (read-write)
+      - ./data:/data
+
+    # Environment variables
+    environment:
+      # Config file path inside container
+      - CLI_CONFIG_PATH=/config/config.yaml
+      # Logging level
+      - LOG_LEVEL=INFO
+      # Python optimization
+      - PYTHONUNBUFFERED=1
+
+    # Default command (shows help)
+    command: ["--help"]
+
+    # Resource limits (optional, adjust as needed)
+    # deploy:
+    #   resources:
+    #     limits:
+    #       cpus: '0.5'
+    #       memory: 256M
+
+  # Interactive CLI service for exploration
+  cli-interactive:
+    extends: cli
+    container_name: {{PROJECT_NAME}}-cli-interactive
+    stdin_open: true
+    tty: true
+    command: ["/bin/bash"]
+
+# Optional: Define named volumes for persistent data
+# volumes:
+#   cli-data:
+#     driver: local
+
+# Usage examples:
+#
+# Run CLI command:
+#   docker-compose -f docker-compose.cli.yml run --rm cli hello --name World
+#
+# Run with custom config:
+#   docker-compose -f docker-compose.cli.yml run --rm cli --config /config/config.yaml config show
+#
+# Interactive shell:
+#   docker-compose -f docker-compose.cli.yml run --rm cli-interactive
+#
+# Build image:
+#   docker-compose -f docker-compose.cli.yml build
+#
+# Run with environment override:
+#   docker-compose -f docker-compose.cli.yml run --rm -e LOG_LEVEL=DEBUG cli hello

@@ -1,0 +1,26 @@
+/**
+ * Purpose: React application entry point and root rendering
+ *
+ * Scope: Application initialization and React root mounting
+ *
+ * Overview: Entry point for the React application that mounts the root App component to the DOM.
+ *     Configures React strict mode for development warnings and wraps app with necessary providers.
+ *     Serves as the bootstrap file referenced by index.html.
+ *
+ * Dependencies: React, ReactDOM, App component
+ *
+ * Exports: None (entry point)
+ *
+ * Implementation: React 18 createRoot API with StrictMode wrapper
+ */
+
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+import './index.css';
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);

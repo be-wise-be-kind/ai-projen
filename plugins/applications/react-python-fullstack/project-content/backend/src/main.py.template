@@ -1,0 +1,126 @@
+"""
+Purpose: FastAPI application entry point with CORS, middleware, and router configuration
+
+Scope: Main application setup for the backend API server
+
+Overview: Initializes FastAPI application with CORS middleware for frontend communication, error
+    handling middleware, health check endpoints, and router registration. Configures OpenAPI
+    documentation, logging, and development/production settings. Serves as the entry point for
+    uvicorn server and provides application factory pattern for testing.
+
+Dependencies: FastAPI, CORS middleware, logging, backend routers
+
+Exports: FastAPI app instance
+
+Interfaces: HTTP REST API on configured port (default 8000)
+
+Implementation: FastAPI application factory with middleware and router setup
+"""
+
+from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
+import logging
+import sys
+
+# Import routers
+from backend.src.routers import health
+
+# Import configuration
+from backend.src.config import get_settings
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
+)
+
+logger = logging.getLogger(__name__)
+
+# Get settings
+settings = get_settings()
+
+# Create FastAPI application
+app = FastAPI(
+    title="Full-Stack Application API",
+    description="FastAPI backend for React + Python full-stack application",
+    version="1.0.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+    openapi_url="/openapi.json",
+)
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=settings.CORS_ORIGINS,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+
+# Global exception handler
+@app.exception_handler(Exception)
+async def global_exception_handler(request, exc):
+    logger.error(f"Unhandled exception: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "error": "INTERNAL_SERVER_ERROR",
+            "message": "An unexpected error occurred",
+        },
+    )
+
+
+# Startup event
+@app.on_event("startup")
+async def startup_event():
+    logger.info("Starting up application...")
+    logger.info(f"Environment: {settings.ENVIRONMENT}")
+    logger.info(f"API Host: {settings.API_HOST}:{settings.API_PORT}")
+    logger.info(f"CORS Origins: {settings.CORS_ORIGINS}")
+
+
+# Shutdown event
+@app.on_event("shutdown")
+async def shutdown_event():
+    logger.info("Shutting down application...")
+
+
+# Register routers
+app.include_router(health.router)
+
+# Add more routers here as you create them:
+# from backend.src.routers import tasks
+# app.include_router(tasks.router)
+
+
+# Root endpoint
+@app.get(
+    "/",
+    tags=["root"],
+    summary="API Root",
+    description="Returns basic information about the API",
+)
+async def root():
+    """Root endpoint providing API information"""
+    return {
+        "message": "Full-Stack Application API",
+        "version": "1.0.0",
+        "docs": "/docs",
+        "health": "/health",
+    }
+
+
+if __name__ == "__main__":
+    import uvicorn
+
+    uvicorn.run(
+        "backend.src.main:app",
+        host=settings.API_HOST,
+        port=settings.API_PORT,
+        reload=settings.API_RELOAD,
+        log_level=settings.LOG_LEVEL.lower(),
+    )

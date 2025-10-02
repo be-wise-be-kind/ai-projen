@@ -1,0 +1,71 @@
+"""
+Purpose: Application configuration management with environment variable loading
+
+Scope: Centralized configuration for database, API, CORS, security, and logging settings
+
+Overview: Provides type-safe configuration using Pydantic settings with automatic environment
+    variable loading from .env files. Manages database URLs, API settings, CORS origins,
+    JWT secrets, and logging configuration. Supports different configurations for development,
+    testing, and production environments with validation and defaults.
+
+Dependencies: Pydantic settings, environment variables
+
+Exports: Settings class, get_settings function
+
+Implementation: Pydantic BaseSettings with env file support and singleton pattern
+"""
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from typing import List
+from functools import lru_cache
+
+
+class Settings(BaseSettings):
+    """Application settings loaded from environment variables"""
+
+    # Environment
+    ENVIRONMENT: str = "development"
+
+    # API Settings
+    API_HOST: str = "0.0.0.0"
+    API_PORT: int = 8000
+    API_RELOAD: bool = True
+
+    # Database
+    DATABASE_URL: str = "postgresql://postgres:postgres@localhost:5432/app_db"
+
+    # CORS
+    CORS_ORIGINS: List[str] = [
+        "http://localhost:5173",  # Vite dev server
+        "http://localhost:3000",  # Alternative frontend port
+    ]
+
+    # Security
+    SECRET_KEY: str = "change-me-in-production-use-long-random-string"
+    ALGORITHM: str = "HS256"
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 30
+
+    # Logging
+    LOG_LEVEL: str = "INFO"
+
+    # Model configuration
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=True,
+        extra="allow",
+    )
+
+
+@lru_cache()
+def get_settings() -> Settings:
+    """
+    Get cached settings instance
+
+    Uses lru_cache to ensure settings are loaded only once and reused
+    across the application for better performance.
+
+    Returns:
+        Settings: Application settings instance
+    """
+    return Settings()

@@ -1,0 +1,228 @@
+/**
+ * Purpose: Template for creating API client modules for specific resources
+ * Scope: Type-safe API client methods for CRUD operations on resources
+ * Overview: Template for generating resource-specific API client with typed methods for all
+ *     CRUD operations, error handling, and request configuration. Works with centralized
+ *     API client (src/api/client.ts) for authentication and error handling.
+ *
+ * Placeholders:
+ *   {{ResourceName}}: Resource name in PascalCase (e.g., "Task", "User", "Product")
+ *     - Type: string (valid TypeScript type name)
+ *     - Example: "Task"
+ *     - Required: yes
+ *
+ *   {{resource-name}}: Resource name in kebab-case for file naming
+ *     - Type: string
+ *     - Example: "task" or "user-profile"
+ *     - Required: yes
+ *
+ *   {{resources}}: Plural resource name in lowercase (e.g., "tasks", "users")
+ *     - Type: string
+ *     - Example: "tasks"
+ *     - Required: yes
+ *
+ *   {{RESOURCE_DESCRIPTION}}: Description of what this resource represents
+ *     - Type: string
+ *     - Example: "User task management"
+ *     - Required: yes
+ *
+ * Usage:
+ *   1. Copy template to destination:
+ *      cp .ai/templates/fullstack/api-client.ts.template frontend/src/api/{{resource-name}}.ts
+ *
+ *   2. Replace all placeholders:
+ *      - {{ResourceName}}: PascalCase resource name
+ *      - {{resource-name}}: kebab-case file name
+ *      - {{resources}}: plural lowercase
+ *      - {{RESOURCE_DESCRIPTION}}: description
+ *
+ *   3. Remove this template header (lines 1-55)
+ *
+ *   4. Ensure types exist:
+ *      - Create/update frontend/src/types/api.ts with:
+ *        - {{ResourceName}}Create
+ *        - {{ResourceName}}Update
+ *        - {{ResourceName}}Response
+ *
+ *   5. Customize methods:
+ *      - Add custom endpoints
+ *      - Modify query parameters
+ *      - Add batch operations
+ *      - Update response handling
+ *
+ *   6. Use in components:
+ *      import { {{resource-name}}Api } from '../api/{{resource-name}}';
+ *      const data = await {{resource-name}}Api.list();
+ *
+ *   7. Validate:
+ *      npm run type-check
+ *      npm test
+ *
+ * Related: how-to-connect-frontend-to-api.md, src/api/client.ts, TypeScript documentation
+ */
+
+import { apiClient } from './client';
+import {
+  {{ResourceName}}Create,
+  {{ResourceName}}Update,
+  {{ResourceName}}Response,
+} from '../types/api';
+
+/**
+ * API client for {{RESOURCE_DESCRIPTION}}
+ *
+ * Provides type-safe methods for all {{ResourceName}} CRUD operations:
+ * - list: Get paginated list with optional filtering
+ * - getById: Get single {{ResourceName}} by ID
+ * - create: Create new {{ResourceName}}
+ * - update: Update existing {{ResourceName}}
+ * - delete: Delete {{ResourceName}} by ID
+ */
+export const {{resources}}Api = {
+  /**
+   * Get all {{resources}} with optional filtering and pagination
+   *
+   * @param params - Query parameters for filtering and pagination
+   * @param params.skip - Number of records to skip (pagination)
+   * @param params.limit - Maximum number of records to return
+   * @param params.search - Optional search query
+   * @returns Promise resolving to array of {{ResourceName}} objects
+   *
+   * @example
+   * // Get first 20 {{resources}}
+   * const {{resources}} = await {{resources}}Api.list({ skip: 0, limit: 20 });
+   *
+   * @example
+   * // Search {{resources}}
+   * const results = await {{resources}}Api.list({ search: 'important' });
+   */
+  async list(params?: {
+    skip?: number;
+    limit?: number;
+    search?: string;
+    // Add other filter parameters as needed
+  }): Promise<{{ResourceName}}Response[]> {
+    return apiClient.get<{{ResourceName}}Response[]>('/api/{{resources}}', {
+      params,
+    });
+  },
+
+  /**
+   * Get a specific {{ResourceName}} by ID
+   *
+   * @param id - {{ResourceName}} ID
+   * @returns Promise resolving to {{ResourceName}} object
+   * @throws ApiError with status 404 if not found
+   *
+   * @example
+   * const {{ResourceName}} = await {{resources}}Api.getById(123);
+   */
+  async getById(id: number): Promise<{{ResourceName}}Response> {
+    return apiClient.get<{{ResourceName}}Response>(`/api/{{resources}}/${id}`);
+  },
+
+  /**
+   * Create a new {{ResourceName}}
+   *
+   * @param data - {{ResourceName}} creation data
+   * @returns Promise resolving to created {{ResourceName}} object
+   * @throws ApiError if validation fails
+   *
+   * @example
+   * const new{{ResourceName}} = await {{resources}}Api.create({
+   *   title: 'New {{ResourceName}}',
+   *   description: 'Description here',
+   * });
+   */
+  async create(data: {{ResourceName}}Create): Promise<{{ResourceName}}Response> {
+    return apiClient.post<{{ResourceName}}Response, {{ResourceName}}Create>(
+      '/api/{{resources}}',
+      data
+    );
+  },
+
+  /**
+   * Update an existing {{ResourceName}}
+   *
+   * @param id - {{ResourceName}} ID to update
+   * @param data - Partial {{ResourceName}} data to update
+   * @returns Promise resolving to updated {{ResourceName}} object
+   * @throws ApiError with status 404 if not found
+   *
+   * @example
+   * const updated = await {{resources}}Api.update(123, {
+   *   title: 'Updated title',
+   * });
+   */
+  async update(
+    id: number,
+    data: {{ResourceName}}Update
+  ): Promise<{{ResourceName}}Response> {
+    return apiClient.put<{{ResourceName}}Response, {{ResourceName}}Update>(
+      `/api/{{resources}}/${id}`,
+      data
+    );
+  },
+
+  /**
+   * Partially update a {{ResourceName}} (PATCH)
+   *
+   * @param id - {{ResourceName}} ID to update
+   * @param data - Partial {{ResourceName}} data to update
+   * @returns Promise resolving to updated {{ResourceName}} object
+   *
+   * @example
+   * const patched = await {{resources}}Api.patch(123, { completed: true });
+   */
+  async patch(
+    id: number,
+    data: Partial<{{ResourceName}}Update>
+  ): Promise<{{ResourceName}}Response> {
+    return apiClient.patch<{{ResourceName}}Response, Partial<{{ResourceName}}Update>>(
+      `/api/{{resources}}/${id}`,
+      data
+    );
+  },
+
+  /**
+   * Delete a {{ResourceName}}
+   *
+   * @param id - {{ResourceName}} ID to delete
+   * @returns Promise resolving when deletion completes
+   * @throws ApiError with status 404 if not found
+   *
+   * @example
+   * await {{resources}}Api.delete(123);
+   */
+  async delete(id: number): Promise<void> {
+    return apiClient.delete<void>(`/api/{{resources}}/${id}`);
+  },
+
+  // Optional: Add custom endpoints specific to this resource
+  //
+  // Example: Bulk operations
+  // async bulkCreate(data: {{ResourceName}}Create[]): Promise<{{ResourceName}}Response[]> {
+  //   return apiClient.post<{{ResourceName}}Response[], {{ResourceName}}Create[]>(
+  //     '/api/{{resources}}/bulk',
+  //     data
+  //   );
+  // },
+  //
+  // Example: Status update
+  // async updateStatus(id: number, status: string): Promise<{{ResourceName}}Response> {
+  //   return apiClient.patch<{{ResourceName}}Response>(
+  //     `/api/{{resources}}/${id}/status`,
+  //     { status }
+  //   );
+  // },
+  //
+  // Example: Custom search
+  // async search(query: string): Promise<{{ResourceName}}Response[]> {
+  //   return apiClient.get<{{ResourceName}}Response[]>(
+  //     '/api/{{resources}}/search',
+  //     { params: { q: query } }
+  //   );
+  // },
+};
+
+export default {{resources}}Api;

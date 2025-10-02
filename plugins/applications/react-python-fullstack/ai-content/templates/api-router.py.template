@@ -1,0 +1,193 @@
+"""
+Purpose: Template for creating new FastAPI router modules for REST API endpoints
+Scope: FastAPI router creation for CRUD operations on specific resources
+Overview: Template for generating FastAPI router with complete CRUD endpoints including proper
+    error handling, validation, dependency injection, and OpenAPI documentation. Replace
+    placeholders with actual resource names and customize operations as needed.
+
+Placeholders:
+  {{RESOURCE_NAME}}: Resource name in PascalCase (e.g., "Task", "User", "Product")
+    - Type: string (valid Python class name)
+    - Example: "Task"
+    - Required: yes
+
+  {{resource_name}}: Resource name in snake_case (e.g., "task", "user", "product")
+    - Type: string (valid Python identifier)
+    - Example: "task"
+    - Required: yes
+
+  {{RESOURCE_PLURAL}}: Plural resource name in lowercase (e.g., "tasks", "users")
+    - Type: string
+    - Example: "tasks"
+    - Required: yes
+
+  {{PURPOSE}}: Brief description of the router's purpose
+    - Type: string
+    - Example: "Task management REST API endpoints"
+    - Required: yes
+
+  {{DESCRIPTION}}: Detailed description of what this router provides
+    - Type: string
+    - Example: "Provides CRUD operations for task management with user ownership"
+    - Required: yes
+
+Usage:
+  1. Copy template to destination:
+     cp .ai/templates/fullstack/api-router.py.template backend/src/routers/{{resource_name}}.py
+
+  2. Replace all placeholders:
+     - {{RESOURCE_NAME}}: PascalCase resource name
+     - {{resource_name}}: snake_case resource name
+     - {{RESOURCE_PLURAL}}: plural lowercase name
+     - {{PURPOSE}}: router purpose
+     - {{DESCRIPTION}}: detailed description
+
+  3. Remove this template header (lines 1-45)
+
+  4. Customize endpoints as needed:
+     - Add additional routes
+     - Modify validation
+     - Add authentication/authorization
+     - Update response models
+
+  5. Create corresponding schema file:
+     cp .ai/templates/fullstack/schemas.py.template backend/src/schemas/{{resource_name}}.py
+
+  6. Create corresponding service file:
+     backend/src/services/{{resource_name}}_service.py
+
+  7. Register router in main.py:
+     app.include_router({{resource_name}}.router)
+
+  8. Validate:
+     docker-compose run backend ruff check backend/src/routers/{{resource_name}}.py
+     docker-compose run backend pytest tests/test_{{resource_name}}.py
+
+Related: how-to-add-api-endpoint.md, FastAPI documentation, Pydantic documentation
+"""
+
+from fastapi import APIRouter, Depends, HTTPException, status, Query
+from sqlalchemy.orm import Session
+from typing import List
+
+from backend.src.database.session import get_db
+from backend.src.schemas.{{resource_name}} import {{RESOURCE_NAME}}Create, {{RESOURCE_NAME}}Update, {{RESOURCE_NAME}}Response
+from backend.src.services.{{resource_name}}_service import {{RESOURCE_NAME}}Service
+
+
+router = APIRouter(
+    prefix="/api/{{RESOURCE_PLURAL}}",
+    tags=["{{RESOURCE_PLURAL}}"],
+    responses={404: {"description": "{{RESOURCE_NAME}} not found"}},
+)
+
+
+@router.post(
+    "/",
+    response_model={{RESOURCE_NAME}}Response,
+    status_code=status.HTTP_201_CREATED,
+    summary="Create a new {{resource_name}}",
+    description="{{DESCRIPTION}} - Creates a new {{resource_name}} with the provided data",
+)
+def create_{{resource_name}}(
+    {{resource_name}}_data: {{RESOURCE_NAME}}Create,
+    db: Session = Depends(get_db)
+):
+    """Create a new {{resource_name}}"""
+    {{resource_name}} = {{RESOURCE_NAME}}Service.create_{{resource_name}}(db, {{resource_name}}_data)
+    return {{resource_name}}
+
+
+@router.get(
+    "/",
+    response_model=List[{{RESOURCE_NAME}}Response],
+    summary="List all {{RESOURCE_PLURAL}}",
+    description="Get a paginated list of {{RESOURCE_PLURAL}} with optional filtering",
+)
+def list_{{RESOURCE_PLURAL}}(
+    skip: int = Query(0, ge=0, description="Number of records to skip"),
+    limit: int = Query(100, ge=1, le=1000, description="Maximum number of records to return"),
+    db: Session = Depends(get_db)
+):
+    """Get list of {{RESOURCE_PLURAL}} with pagination"""
+    {{RESOURCE_PLURAL}} = {{RESOURCE_NAME}}Service.get_{{RESOURCE_PLURAL}}(db, skip=skip, limit=limit)
+    return {{RESOURCE_PLURAL}}
+
+
+@router.get(
+    "/{{{resource_name}}_id}",
+    response_model={{RESOURCE_NAME}}Response,
+    summary="Get {{resource_name}} by ID",
+    description="Retrieve a specific {{resource_name}} by its unique identifier",
+)
+def get_{{resource_name}}(
+    {{resource_name}}_id: int,
+    db: Session = Depends(get_db)
+):
+    """Get a specific {{resource_name}} by ID"""
+    {{resource_name}} = {{RESOURCE_NAME}}Service.get_{{resource_name}}(db, {{resource_name}}_id)
+
+    if not {{resource_name}}:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"{{RESOURCE_NAME}} with id {{{resource_name}}_id} not found"
+        )
+
+    return {{resource_name}}
+
+
+@router.put(
+    "/{{{resource_name}}_id}",
+    response_model={{RESOURCE_NAME}}Response,
+    summary="Update {{resource_name}}",
+    description="Update an existing {{resource_name}}'s fields",
+)
+def update_{{resource_name}}(
+    {{resource_name}}_id: int,
+    {{resource_name}}_data: {{RESOURCE_NAME}}Update,
+    db: Session = Depends(get_db)
+):
+    """Update an existing {{resource_name}}"""
+    {{resource_name}} = {{RESOURCE_NAME}}Service.update_{{resource_name}}(db, {{resource_name}}_id, {{resource_name}}_data)
+
+    if not {{resource_name}}:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"{{RESOURCE_NAME}} with id {{{resource_name}}_id} not found"
+        )
+
+    return {{resource_name}}
+
+
+@router.delete(
+    "/{{{resource_name}}_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+    summary="Delete {{resource_name}}",
+    description="Delete a {{resource_name}} by its ID",
+)
+def delete_{{resource_name}}(
+    {{resource_name}}_id: int,
+    db: Session = Depends(get_db)
+):
+    """Delete a {{resource_name}}"""
+    deleted = {{RESOURCE_NAME}}Service.delete_{{resource_name}}(db, {{resource_name}}_id)
+
+    if not deleted:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"{{RESOURCE_NAME}} with id {{{resource_name}}_id} not found"
+        )
+
+    return None
+
+
+# Optional: Add custom endpoints specific to this resource
+# Example: Search, bulk operations, status updates, etc.
+#
+# @router.get("/search/")
+# def search_{{RESOURCE_PLURAL}}(
+#     query: str = Query(..., min_length=1),
+#     db: Session = Depends(get_db)
+# ):
+#     """Search {{RESOURCE_PLURAL}} by query string"""
+#     return {{RESOURCE_NAME}}Service.search(db, query)

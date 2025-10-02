@@ -1,0 +1,135 @@
+# Purpose: Docker Compose configuration for full-stack application with backend, frontend, and database
+# Scope: Local development and production container orchestration
+# Overview: Orchestrates all services for the full-stack application including FastAPI backend,
+#     React frontend, PostgreSQL database, and supporting services. Provides hot reload for both
+#     frontend and backend, persistent database storage, networking between services, and health checks.
+#     Supports both development and production configurations with environment variable overrides.
+# Dependencies: Docker Engine 20.10+, Docker Compose 2.0+
+# Exports: Docker services for backend (port 8000), frontend (port 5173), and database (port 5432)
+# Interfaces: HTTP (backend 8000, frontend 5173), PostgreSQL (5432)
+# Environment: Development and production ready
+# Related: .docker/dockerfiles/, backend/.env, frontend/.env
+# Implementation: Multi-service Docker Compose with volume mounts and health checks
+
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  db:
+    image: postgres:15-alpine
+    container_name: fullstack-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: app_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - fullstack-network
+
+  # FastAPI Backend
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+      target: development  # Use 'production' for production builds
+    container_name: fullstack-backend
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    volumes:
+      # Hot reload: Mount source code
+      - ./backend/src:/app/src
+      - ./backend/tests:/app/tests
+    environment:
+      # Database connection
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/app_db
+
+      # API settings
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+      - API_RELOAD=true
+
+      # CORS origins (allow frontend)
+      - CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+
+      # Security (CHANGE IN PRODUCTION!)
+      - SECRET_KEY=development-secret-key-change-in-production
+      - ALGORITHM=HS256
+      - ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+      # Logging
+      - LOG_LEVEL=INFO
+      - ENVIRONMENT=development
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - fullstack-network
+
+  # React Frontend (Vite)
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: development  # Use 'production' for production builds
+    container_name: fullstack-frontend
+    restart: unless-stopped
+    ports:
+      - "5173:5173"
+    volumes:
+      # Hot reload: Mount source code
+      - ./frontend/src:/app/src
+      - ./frontend/public:/app/public
+      # Exclude node_modules from mount (use container's node_modules)
+      - /app/node_modules
+    environment:
+      # Backend API URL
+      - VITE_API_URL=http://localhost:8000
+      - VITE_API_TIMEOUT=30000
+    depends_on:
+      - backend
+    networks:
+      - fullstack-network
+
+  # Nginx Reverse Proxy (Optional - for production)
+  # Uncomment to use Nginx as reverse proxy in front of backend
+  # nginx:
+  #   image: nginx:alpine
+  #   container_name: fullstack-nginx
+  #   restart: unless-stopped
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./nginx.conf:/etc/nginx/nginx.conf:ro
+  #     - ./ssl:/etc/nginx/ssl:ro  # SSL certificates
+  #   depends_on:
+  #     - backend
+  #     - frontend
+  #   networks:
+  #     - fullstack-network
+
+# Named volumes for persistent data
+volumes:
+  postgres_data:
+    driver: local
+
+# Network for inter-service communication
+networks:
+  fullstack-network:
+    driver: bridge

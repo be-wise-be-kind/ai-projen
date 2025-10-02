@@ -1,0 +1,214 @@
+# {{APPLICATION_NAME}} Application Plugin Manifest
+
+name: {{APPLICATION_NAME}}
+version: 1.0.0
+type: application  # or meta-plugin
+description: {{ONE_LINE_DESCRIPTION}}
+author: ai-projen framework
+last_updated: {{YYYY-MM-DD}}
+
+# Application metadata
+metadata:
+  use_case: {{USE_CASE_DESCRIPTION}}
+  target_users: {{TARGET_USER_DESCRIPTION}}
+  complexity: {{beginner|intermediate|advanced}}
+  estimated_setup_time: {{X-Y}} minutes
+
+  technology_stack:
+    primary_language: {{LANGUAGE_1}}
+    secondary_language: {{LANGUAGE_2}}  # Optional
+    frameworks:
+      - {{FRAMEWORK_1}}
+      - {{FRAMEWORK_2}}
+    infrastructure:
+      - {{INFRA_TOOL_1}}
+      - {{INFRA_TOOL_2}}
+
+  application_type: {{cli|web|api|microservice|data-pipeline|mobile|desktop}}
+
+# Plugin dependencies (MUST be installed in this order)
+dependencies:
+  required:
+    - foundation/ai-folder                    # Always required
+    - languages/{{PRIMARY_LANGUAGE}}          # Primary language
+    # Add secondary language if needed
+    # - languages/{{SECONDARY_LANGUAGE}}
+    - infrastructure/containerization/docker  # Containerization
+    - infrastructure/ci-cd/github-actions     # CI/CD
+    # Add IaC if needed
+    # - infrastructure/iac/{{IAC_TOOL}}
+    - standards/security                      # Security standards
+    - standards/documentation                 # Documentation standards
+    - standards/pre-commit-hooks              # Pre-commit hooks
+
+  optional:
+    # List optional plugins that enhance the application
+    # - infrastructure/iac/terraform-aws
+    # - languages/{{OTHER_LANGUAGE}}
+
+# What this application provides
+provides:
+  starter_application:
+    description: {{DESCRIPTION_OF_STARTER_APP}}
+    structure:
+      - src/                                  # Application source code
+      - tests/                                # Test suite
+      - {{OTHER_DIRECTORIES}}                 # Other directories
+
+    features:
+      - {{FEATURE_1}}
+      - {{FEATURE_2}}
+      - {{FEATURE_3}}
+      - {{FEATURE_4}}
+
+  documentation:
+    architecture: ai-content/docs/{{APPLICATION_NAME}}-architecture.md
+    howtos:
+      - how-to-{{TASK_1}}.md
+      - how-to-{{TASK_2}}.md
+      - how-to-{{TASK_3}}.md
+      - how-to-{{TASK_4}}.md
+
+  templates:
+    - {{TEMPLATE_1}}.template
+    - {{TEMPLATE_2}}.template
+    - {{TEMPLATE_3}}.template
+
+  configuration:
+    - docker-compose.{{APPLICATION_NAME}}.yml
+    - {{CONFIG_FILE_1}}
+    - {{CONFIG_FILE_2}}
+
+# Installation
+installation:
+  complexity: {{low|medium|high}}
+  steps:
+    - Check prerequisites
+    - Install foundation plugin
+    - Install language plugins
+    - Install infrastructure plugins
+    - Install standards plugins
+    - Copy application files
+    - Configure application
+    - Install dependencies
+    - Validate installation
+
+  prerequisites:
+    system:
+      - {{TOOL_1}}: "{{VERSION_REQUIREMENT}}"
+      - {{TOOL_2}}: "{{VERSION_REQUIREMENT}}"
+      - Docker: ">=20.10"
+      - Docker Compose: ">=2.0"
+
+    knowledge:
+      - {{SKILL_1}}: {{beginner|intermediate|advanced}}
+      - {{SKILL_2}}: {{beginner|intermediate|advanced}}
+
+# Common commands
+commands:
+  install_dependencies: {{COMMAND}}
+  run_dev: docker-compose up
+  run_tests: {{TEST_COMMAND}}
+  run_lint: {{LINT_COMMAND}}
+  build: docker-compose build
+  deploy: {{DEPLOY_COMMAND}}
+
+# Integration with other plugins
+integrates_with:
+  - name: docker
+    required: true
+    description: Containerization for development and deployment
+
+  - name: github-actions
+    required: true
+    description: Automated CI/CD pipeline
+
+  - name: {{OTHER_PLUGIN}}
+    required: false
+    description: {{INTEGRATION_DESCRIPTION}}
+
+# Development workflow
+workflow:
+  development:
+    - Start: docker-compose up
+    - Edit: {{HOW_TO_EDIT_CODE}}
+    - Test: {{TEST_COMMAND}}
+    - Lint: {{LINT_COMMAND}}
+    - Commit: pre-commit hooks run automatically
+
+  adding_features:
+    - Check: .ai/howtos/{{APPLICATION_NAME}}/
+    - Follow: how-to-add-{{FEATURE}}.md
+    - Test: {{TEST_NEW_FEATURE_COMMAND}}
+
+  deployment:
+    - Build: docker-compose build
+    - Test: Run full test suite
+    - Deploy: Follow .ai/howtos/{{APPLICATION_NAME}}/how-to-deploy.md
+
+# References
+references:
+  documentation:
+    - name: "Application README"
+      file: README.md
+
+    - name: "Agent Instructions"
+      file: AGENT_INSTRUCTIONS.md
+
+    - name: "Architecture Documentation"
+      file: ai-content/docs/{{APPLICATION_NAME}}-architecture.md
+
+  external:
+    - name: "{{PRIMARY_FRAMEWORK}}"
+      url: "{{URL}}"
+
+    - name: "{{SECONDARY_FRAMEWORK}}"
+      url: "{{URL}}"
+
+    - name: "{{TOOL}}"
+      url: "{{URL}}"
+
+# Example usage
+examples:
+  basic:
+    description: {{BASIC_EXAMPLE_DESCRIPTION}}
+    commands:
+      - docker-compose up
+      - {{EXAMPLE_COMMAND}}
+
+  advanced:
+    description: {{ADVANCED_EXAMPLE_DESCRIPTION}}
+    howto: .ai/howtos/{{APPLICATION_NAME}}/how-to-{{ADVANCED_TASK}}.md
+
+# Testing
+testing:
+  unit_tests: {{UNIT_TEST_COMMAND}}
+  integration_tests: {{INTEGRATION_TEST_COMMAND}}
+  e2e_tests: {{E2E_TEST_COMMAND}}
+  coverage: {{COVERAGE_COMMAND}}
+
+# Customization points
+customization:
+  - description: Change {{OPTION_1}}
+    file: {{FILE_1}}
+    documentation: .ai/howtos/{{APPLICATION_NAME}}/how-to-{{TASK}}.md
+
+  - description: Add {{FEATURE}}
+    file: {{FILE_2}}
+    documentation: .ai/howtos/{{APPLICATION_NAME}}/how-to-add-{{FEATURE}}.md
+
+  - description: Configure {{SETTING}}
+    file: {{CONFIG_FILE}}
+    documentation: .ai/docs/{{APPLICATION_NAME}}-architecture.md
+
+# Known limitations
+limitations:
+  - {{LIMITATION_1}}
+  - {{LIMITATION_2}}
+  - {{LIMITATION_3}}
+
+# Future enhancements
+future:
+  - {{ENHANCEMENT_1}}
+  - {{ENHANCEMENT_2}}
+  - {{ENHANCEMENT_3}}

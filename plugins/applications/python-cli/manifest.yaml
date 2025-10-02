@@ -1,0 +1,218 @@
+# Python CLI Application Plugin Manifest
+
+name: python-cli
+version: 1.0.0
+type: meta-plugin
+description: Complete Python CLI application with Click framework, Docker packaging, and comprehensive tooling
+author: ai-projen framework
+last_updated: 2025-10-02
+
+# Application metadata
+metadata:
+  use_case: Command-line tools and utilities with professional-grade packaging and distribution
+  target_users: Developers building CLI tools, DevOps automation scripts, system utilities
+  complexity: intermediate
+  estimated_setup_time: 10-15 minutes
+
+  technology_stack:
+    primary_language: python
+    frameworks:
+      - Click 8.x
+      - pytest
+      - Ruff
+    infrastructure:
+      - Docker
+      - GitHub Actions
+
+  application_type: cli
+
+# Plugin dependencies (MUST be installed in this order)
+dependencies:
+  required:
+    - foundation/ai-folder                    # Always required
+    - languages/python                        # Python with comprehensive tooling
+    - infrastructure/containerization/docker  # Container packaging
+    - infrastructure/ci-cd/github-actions     # CI/CD pipeline
+    - standards/pre-commit-hooks              # Pre-commit hooks
+    - standards/security                      # Security standards
+    - standards/documentation                 # Documentation standards
+
+  optional:
+    - infrastructure/iac/terraform-aws        # For cloud deployment
+    - languages/python/security/pip-audit     # Enhanced security scanning
+
+# What this application provides
+provides:
+  starter_application:
+    description: Production-ready Python CLI tool with Click framework, config management, logging, and Docker packaging
+    structure:
+      - src/                                  # Application source code
+      - tests/                                # Comprehensive test suite
+      - docker-compose.cli.yml                # CLI-specific Docker setup
+
+    features:
+      - Click-based CLI with multiple commands
+      - YAML/JSON configuration file support
+      - Structured logging with configurable levels
+      - Comprehensive error handling
+      - Docker containerization for distribution
+      - Example commands (hello, config show/set)
+      - Complete test coverage with pytest
+      - Type hints throughout
+
+  documentation:
+    architecture: ai-content/docs/python-cli-architecture.md
+    howtos:
+      - how-to-add-cli-command.md
+      - how-to-handle-config-files.md
+      - how-to-package-cli-tool.md
+
+  templates:
+    - cli-entrypoint.py.template
+    - config-loader.py.template
+    - setup.py.template
+
+  configuration:
+    - docker-compose.cli.yml
+    - pyproject.toml.template
+    - README.md.template
+
+# Installation
+installation:
+  complexity: medium
+  steps:
+    - Check prerequisites
+    - Install foundation plugin
+    - Install Python plugin
+    - Install infrastructure plugins
+    - Install standards plugins
+    - Copy application files
+    - Configure application
+    - Install dependencies
+    - Validate installation
+
+  prerequisites:
+    system:
+      - Python: ">=3.11"
+      - Docker: ">=20.10"
+      - Docker Compose: ">=2.0"
+
+    knowledge:
+      - Python: intermediate
+      - CLI development: beginner
+      - Docker: beginner
+
+# Common commands
+commands:
+  install_dependencies: pip install -e ".[dev]"
+  run_dev: python -m src.cli
+  run_tests: pytest
+  run_lint: ruff check src tests
+  run_format: ruff format src tests
+  build: docker-compose -f docker-compose.cli.yml build
+  deploy: docker-compose -f docker-compose.cli.yml up
+
+# Integration with other plugins
+integrates_with:
+  - name: docker
+    required: true
+    description: Containerization for CLI tool distribution
+
+  - name: github-actions
+    required: true
+    description: Automated testing and release builds
+
+  - name: python
+    required: true
+    description: Core Python tooling and standards
+
+  - name: pre-commit-hooks
+    required: true
+    description: Code quality enforcement
+
+# Development workflow
+workflow:
+  development:
+    - Start: python -m src.cli --help
+    - Edit: Modify src/ files
+    - Test: pytest
+    - Lint: ruff check src tests
+    - Commit: pre-commit hooks run automatically
+
+  adding_features:
+    - Check: .ai/howtos/python-cli/
+    - Follow: how-to-add-cli-command.md
+    - Test: Add tests for new command
+
+  deployment:
+    - Build: docker-compose -f docker-compose.cli.yml build
+    - Test: Run full test suite
+    - Deploy: Follow .ai/howtos/python-cli/how-to-package-cli-tool.md
+
+# References
+references:
+  documentation:
+    - name: "Application README"
+      file: README.md
+
+    - name: "Agent Instructions"
+      file: AGENT_INSTRUCTIONS.md
+
+    - name: "Architecture Documentation"
+      file: ai-content/docs/python-cli-architecture.md
+
+  external:
+    - name: "Click Documentation"
+      url: "https://click.palletsprojects.com/"
+
+    - name: "pytest Documentation"
+      url: "https://docs.pytest.org/"
+
+    - name: "Ruff Linter"
+      url: "https://docs.astral.sh/ruff/"
+
+# Example usage
+examples:
+  basic:
+    description: Run the CLI tool locally
+    commands:
+      - python -m src.cli --help
+      - python -m src.cli hello --name "World"
+
+  advanced:
+    description: Package and distribute CLI tool
+    howto: .ai/howtos/python-cli/how-to-package-cli-tool.md
+
+# Testing
+testing:
+  unit_tests: pytest tests/
+  integration_tests: pytest tests/ -m integration
+  coverage: pytest --cov=src --cov-report=html
+  type_checking: mypy src/
+
+# Customization points
+customization:
+  - description: Add new CLI command
+    file: src/cli.py
+    documentation: .ai/howtos/python-cli/how-to-add-cli-command.md
+
+  - description: Configure application settings
+    file: config.yaml
+    documentation: .ai/howtos/python-cli/how-to-handle-config-files.md
+
+  - description: Customize Docker packaging
+    file: docker-compose.cli.yml
+    documentation: .ai/howtos/python-cli/how-to-package-cli-tool.md
+
+# Known limitations
+limitations:
+  - Designed for single-file CLI distribution (not multi-binary projects)
+  - Config file location is fixed to user home or current directory
+  - Docker image includes full Python runtime (not optimized for size)
+
+# Future enhancements
+future:
+  - Add plugin system for extensibility
+  - Support for auto-completion in bash/zsh
+  - Add interactive mode with prompt_toolkit
+  - Package as standalone binary with PyInstaller

@@ -1,0 +1,56 @@
+/**
+ * Purpose: Root application component with routing and layout
+ *
+ * Scope: Main application shell with React Router configuration
+ *
+ * Overview: Root component that sets up React Router for client-side navigation and provides
+ *     application layout structure. Defines all application routes and manages global state
+ *     providers. Serves as the top-level component for the entire application.
+ *
+ * Dependencies: React Router, page components
+ *
+ * Exports: App component as default export
+ *
+ * State/Behavior: Manages routing configuration and global layout
+ */
+
+import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
+import Home from './pages/Home';
+import './App.css';
+
+function App() {
+  return (
+    <BrowserRouter>
+      <div className="app">
+        <nav className="nav">
+          <div className="nav-container">
+            <Link to="/" className="nav-logo">
+              Full-Stack App
+            </Link>
+            <ul className="nav-menu">
+              <li className="nav-item">
+                <Link to="/" className="nav-link">
+                  Home
+                </Link>
+              </li>
+              {/* Add more navigation links as you create pages */}
+            </ul>
+          </div>
+        </nav>
+
+        <main className="main">
+          <Routes>
+            <Route path="/" element={<Home />} />
+            {/* Add more routes here */}
+          </Routes>
+        </main>
+
+        <footer className="footer">
+          <p>&copy; 2025 Full-Stack Application. Built with React + FastAPI.</p>
+        </footer>
+      </div>
+    </BrowserRouter>
+  );
+}
+
+export default App;

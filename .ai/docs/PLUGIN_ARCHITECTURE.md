@@ -125,6 +125,26 @@ Available guides:
 - Policy enforcement
 - Best practices
 
+### applications/
+**Purpose**: Pre-configured plugin compositions for common application types
+
+**Examples**: `python-cli`, `react-python-fullstack`
+
+**Characteristics**:
+- Meta-plugins that compose other plugins
+- Opinionated architectures with sensible defaults
+- Provide complete, functional starter applications
+- Include application-specific how-tos and templates
+- Simplify onboarding for common use cases
+- Declare dependencies on foundation, language, infrastructure, and standards plugins
+
+**Relationship to Other Plugins**:
+Applications are **orchestrators**, not replacements. They:
+- Select and configure individual plugins from other categories
+- Provide application-specific documentation and templates
+- Offer a "quick start" path vs. custom plugin selection
+- Allow users to modify or extend after initial setup
+
 ## Plugin Taxonomy
 
 ### Complete Taxonomy Structure
@@ -154,8 +174,12 @@ plugins/
 │   └── iac/
 │       └── <tool>-<vendor>/          # e.g., terraform-aws, pulumi-gcp
 │
-└── standards/                           # Cross-cutting concerns
-    └── <standard-name>/                # e.g., security, documentation
+├── standards/                           # Cross-cutting concerns
+│   └── <standard-name>/                # e.g., security, documentation
+│
+└── applications/                        # Complete application types
+    ├── _template/                      # Template for new applications
+    └── <app-type>/                    # e.g., python-cli, react-python-fullstack
 ```
 
 ### Plugin Taxonomy Principles
@@ -171,6 +195,11 @@ plugins/
 3. **Vendor Suffix for Cloud**: Only add vendor when multiple exist
    - ✅ `iac/terraform-aws/` (Terraform has multiple providers)
    - ✅ `containerization/docker/` (Docker is the tool itself)
+
+4. **Applications as Compositions**: Applications compose plugins, not replace them
+   - ✅ `applications/python-cli/` declares dependencies on python, docker, github-actions plugins
+   - ✅ Applications provide app-specific how-tos that reference underlying plugin documentation
+   - ❌ Applications should not duplicate plugin functionality
 
 ## Plugin Structure
 
@@ -474,6 +503,72 @@ plugins/infrastructure/iac/terraform-aws/
         ├── variables.tf
         ├── outputs.tf
         └── workspaces/
+```
+
+#### Application Plugin (Python CLI Example)
+```
+plugins/applications/python-cli/
+├── AGENT_INSTRUCTIONS.md           # Orchestration instructions
+├── README.md                        # Application overview
+├── manifest.yaml                    # Dependencies on other plugins
+│
+├── ai-content/                      # → .ai/ in target repo
+│   ├── docs/
+│   │   └── python-cli-architecture.md
+│   ├── howtos/                     # Application-specific how-tos
+│   │   ├── README.md
+│   │   ├── how-to-add-cli-command.md
+│   │   ├── how-to-handle-config-files.md
+│   │   └── how-to-package-cli-tool.md
+│   └── templates/                  # Application templates
+│       ├── cli-entrypoint.py.template
+│       ├── config-loader.py.template
+│       └── setup.py.template
+│
+└── project-content/                 # → Project root
+    ├── src/                        # Starter application code
+    │   ├── __init__.py.template
+    │   ├── cli.py.template
+    │   └── config.py.template
+    └── pyproject.toml.template
+```
+
+**Key Difference**: Application plugins provide **complete starter applications** with application-specific how-tos, while language/infrastructure plugins provide **tooling and configuration**.
+
+#### Application Plugin (React + Python Full-Stack Example)
+```
+plugins/applications/react-python-fullstack/
+├── AGENT_INSTRUCTIONS.md
+├── README.md
+├── manifest.yaml                    # Declares many plugin dependencies
+│
+├── ai-content/
+│   ├── docs/
+│   │   ├── fullstack-architecture.md
+│   │   └── api-frontend-integration.md
+│   ├── howtos/
+│   │   ├── README.md
+│   │   ├── how-to-add-api-endpoint.md
+│   │   ├── how-to-add-frontend-page.md
+│   │   ├── how-to-connect-frontend-to-api.md
+│   │   └── how-to-deploy-fullstack-app.md
+│   └── templates/
+│       ├── api-router.py.template
+│       ├── react-component.tsx.template
+│       └── api-client.ts.template
+│
+└── project-content/
+    ├── backend/                    # Complete backend starter
+    │   └── src/
+    │       ├── __init__.py.template
+    │       ├── main.py.template
+    │       └── routers/
+    ├── frontend/                   # Complete frontend starter
+    │   └── src/
+    │       ├── App.tsx.template
+    │       ├── api/
+    │       └── components/
+    └── docker-compose.fullstack.yml
 ```
 
 ## Plugin Manifest

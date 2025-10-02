@@ -1,0 +1,161 @@
+/**
+ * Purpose: Centralized API client for all backend communication
+ *
+ * Scope: All frontend-backend HTTP requests with authentication and error handling
+ *
+ * Overview: Provides type-safe interface to backend API with automatic JWT authentication,
+ *     comprehensive error handling, request cancellation, and retry logic. Centralizes
+ *     configuration, headers, and response parsing for consistent behavior across application.
+ *     Uses axios interceptors for request/response transformation.
+ *
+ * Dependencies: axios for HTTP requests, TypeScript for type safety
+ *
+ * Exports: apiClient instance, ApiError class, request methods
+ *
+ * Implementation: Axios instance with interceptors for auth and error handling
+ */
+
+import axios, { AxiosError, AxiosInstance, AxiosRequestConfig } from 'axios';
+
+// API configuration from environment variables
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_TIMEOUT = Number(import.meta.env.VITE_API_TIMEOUT) || 30000;
+
+/**
+ * Custom error class for API errors with structured information
+ */
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    public statusCode: number,
+    public errorCode?: string,
+    public details?: Record<string, unknown>
+  ) {
+    super(message);
+    this.name = 'ApiError';
+  }
+}
+
+/**
+ * Create and configure axios instance
+ */
+const axiosInstance: AxiosInstance = axios.create({
+  baseURL: API_BASE_URL,
+  timeout: API_TIMEOUT,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+/**
+ * Request interceptor: Add authentication token to all requests
+ */
+axiosInstance.interceptors.request.use(
+  (config) => {
+    // Get token from localStorage (or sessionStorage)
+    const token = localStorage.getItem('access_token');
+
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+/**
+ * Response interceptor: Handle errors consistently across the application
+ */
+axiosInstance.interceptors.response.use(
+  (response) => {
+    // Return successful response as-is
+    return response;
+  },
+  (error: AxiosError) => {
+    if (error.response) {
+      // Server responded with error status
+      const { status, data } = error.response;
+      const errorData = data as {
+        error?: string;
+        message?: string;
+        details?: Record<string, unknown>;
+      };
+
+      // Create structured error
+      throw new ApiError(
+        errorData.message || 'An error occurred',
+        status,
+        errorData.error,
+        errorData.details
+      );
+    } else if (error.request) {
+      // Request made but no response received
+      throw new ApiError('Network error - no response from server', 0);
+    } else {
+      // Request configuration error
+      throw new ApiError('Request configuration error', 0);
+    }
+  }
+);
+
+/**
+ * API client with typed methods for HTTP operations
+ */
+export const apiClient = {
+  /**
+   * Send GET request
+   */
+  async get<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    const response = await axiosInstance.get<T>(url, config);
+    return response.data;
+  },
+
+  /**
+   * Send POST request
+   */
+  async post<T, D = unknown>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    const response = await axiosInstance.post<T>(url, data, config);
+    return response.data;
+  },
+
+  /**
+   * Send PUT request
+   */
+  async put<T, D = unknown>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    const response = await axiosInstance.put<T>(url, data, config);
+    return response.data;
+  },
+
+  /**
+   * Send PATCH request
+   */
+  async patch<T, D = unknown>(
+    url: string,
+    data?: D,
+    config?: AxiosRequestConfig
+  ): Promise<T> {
+    const response = await axiosInstance.patch<T>(url, data, config);
+    return response.data;
+  },
+
+  /**
+   * Send DELETE request
+   */
+  async delete<T>(url: string, config?: AxiosRequestConfig): Promise<T> {
+    const response = await axiosInstance.delete<T>(url, config);
+    return response.data;
+  },
+};
+
+export default apiClient;

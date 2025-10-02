@@ -1,0 +1,209 @@
+# Application Plugin Template
+
+**Purpose**: Template for creating new common application plugins in ai-projen
+
+**Scope**: Structure, requirements, and guidance for creating application meta-plugins
+
+**Overview**: This template provides the structure and guidance for creating new common application
+    plugins. Application plugins are meta-plugins that compose existing language, infrastructure,
+    and standards plugins to deliver complete, functional starter applications for specific use cases.
+    They simplify onboarding by providing opinionated, battle-tested architectures with application-specific
+    documentation and templates.
+
+**Usage**: Copy this _template/ directory to create a new application plugin, then customize for your
+    specific application type (e.g., python-data-pipeline, nextjs-app, golang-microservice).
+
+---
+
+## What is an Application Plugin?
+
+An application plugin is a **meta-plugin** that:
+1. **Composes other plugins**: Declares dependencies on foundation, language, infrastructure, and standards plugins
+2. **Provides starter code**: Includes a complete, functional starter application
+3. **Offers application-specific guidance**: How-tos tailored to the specific application type
+4. **Simplifies onboarding**: "I want X" → Single choice instead of selecting 10+ individual plugins
+
+## Key Characteristics
+
+- **Opinionated**: Makes sensible defaults for technology choices
+- **Complete**: User gets working application, not just scaffolding
+- **Extensible**: Users can modify, add, or swap plugins after setup
+- **Use-Case Focused**: Documentation addresses specific application patterns
+
+## When to Create an Application Plugin
+
+Create an application plugin when:
+- ✅ There's a common, well-defined application pattern (CLI, web app, microservice, etc.)
+- ✅ The pattern requires 5+ individual plugins working together
+- ✅ You can provide a complete, functional starter application
+- ✅ Application-specific how-tos would add value beyond general plugin docs
+
+Don't create an application plugin when:
+- ❌ The pattern is too niche or specialized
+- ❌ It only requires 1-2 plugins
+- ❌ You can't provide a complete working example
+- ❌ General plugin documentation is sufficient
+
+## Directory Structure
+
+```
+plugins/applications/{{APPLICATION_NAME}}/
+├── AGENT_INSTRUCTIONS.md           # How to install this application
+├── README.md                        # Human-readable overview
+├── manifest.yaml                    # Dependencies and metadata
+│
+├── ai-content/                      # → Goes to .ai/ in target repo
+│   ├── docs/
+│   │   └── {{APPLICATION_NAME}}-architecture.md
+│   ├── howtos/                     # Application-specific how-tos
+│   │   ├── README.md               # Index of how-tos
+│   │   ├── how-to-{{TASK_1}}.md
+│   │   ├── how-to-{{TASK_2}}.md
+│   │   └── how-to-{{TASK_3}}.md
+│   └── templates/                  # Code generation templates
+│       ├── {{TEMPLATE_1}}.template
+│       └── {{TEMPLATE_2}}.template
+│
+└── project-content/                 # → Goes to project root
+    ├── src/                        # Starter application code
+    │   └── (application structure)
+    ├── tests/                      # Example tests
+    └── {{CONFIG_FILES}}            # Application configs
+```
+
+## Required Files
+
+### 1. AGENT_INSTRUCTIONS.md
+Step-by-step installation instructions for AI agents, including:
+- Prerequisites check
+- Plugin dependency installation (in correct order)
+- Application file installation
+- Configuration steps
+- Validation commands
+
+### 2. README.md
+Human-readable documentation:
+- What application type this provides
+- Use cases
+- Technology stack
+- What gets installed
+- Quick start guide
+
+### 3. manifest.yaml
+Plugin metadata:
+- Name, version, description
+- Type: "meta-plugin" or "application"
+- Dependencies (all required plugins)
+- What the application provides
+
+### 4. ai-content/howtos/
+Application-specific how-to guides:
+- Focus on common tasks for this application type
+- Reference underlying plugin documentation when appropriate
+- Include complete, working examples
+- Address application-specific patterns
+
+### 5. project-content/
+Complete starter application:
+- Functional example demonstrating best practices
+- Application structure/skeleton
+- Configuration files
+- Example tests
+- README.md for the generated application
+
+## Creating Your Application Plugin
+
+### Step 1: Copy This Template
+```bash
+cp -r plugins/applications/_template plugins/applications/{{YOUR_APP_NAME}}
+```
+
+### Step 2: Define Your Application
+Answer these questions:
+- What use case does this serve?
+- What is the technology stack?
+- Which plugins does it depend on?
+- What makes this application type unique?
+
+### Step 3: Declare Dependencies
+In `manifest.yaml`, list ALL required plugins:
+```yaml
+dependencies:
+  - foundation/ai-folder
+  - languages/{{LANGUAGE}}
+  - infrastructure/containerization/docker
+  - infrastructure/ci-cd/github-actions
+  - standards/security
+  - standards/documentation
+  - standards/pre-commit-hooks
+```
+
+### Step 4: Create Starter Application
+In `project-content/`, create a complete, working example:
+- Follow best practices
+- Include comments explaining key patterns
+- Make it production-ready (not a toy example)
+- Add example tests
+
+### Step 5: Write Application-Specific How-Tos
+In `ai-content/howtos/`, create guides for common tasks:
+- How to add {{FEATURE_1}}
+- How to configure {{FEATURE_2}}
+- How to deploy {{APPLICATION_NAME}}
+
+Reference underlying plugin docs when appropriate.
+
+### Step 6: Write AGENT_INSTRUCTIONS.md
+Provide step-by-step installation:
+1. Check prerequisites
+2. Install foundation plugin
+3. Install language plugins
+4. Install infrastructure plugins
+5. Install standards plugins
+6. Copy application files
+7. Configure application
+8. Validate installation
+
+### Step 7: Update PLUGIN_MANIFEST.yaml
+Add your application to `plugins/PLUGIN_MANIFEST.yaml` under `applications:`.
+
+### Step 8: Test Thoroughly
+- Install application in empty directory
+- Verify all plugins install correctly
+- Ensure starter application runs
+- Test all how-to guides
+- Validate CI/CD pipeline
+
+## Best Practices
+
+### Do
+- ✅ Provide complete, functional starter applications
+- ✅ Use battle-tested technology stacks
+- ✅ Include comprehensive how-to guides
+- ✅ Make applications extensible (users can modify)
+- ✅ Document all dependencies clearly
+- ✅ Test application creation end-to-end
+
+### Don't
+- ❌ Duplicate plugin functionality
+- ❌ Create toy examples (make it production-ready)
+- ❌ Assume users know underlying technologies
+- ❌ Skip testing in clean environments
+- ❌ Make applications too rigid (allow customization)
+
+## Example Applications
+
+Reference implementations:
+- `plugins/applications/python-cli/` - Python CLI tool
+- `plugins/applications/react-python-fullstack/` - Full-stack web app
+
+## Getting Help
+
+- Read: `.ai/docs/how-to-create-a-common-application.md`
+- Study: Existing application plugins (python-cli, react-python-fullstack)
+- Check: PLUGIN_ARCHITECTURE.md for plugin structure
+- Ask: Open an issue if you have questions
+
+---
+
+**Remember**: Application plugins simplify onboarding by providing opinionated, complete starter applications. They compose existing plugins, not replace them.

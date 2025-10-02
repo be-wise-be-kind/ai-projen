@@ -1,0 +1,268 @@
+# React + Python Full-Stack Application Plugin Manifest
+
+name: react-python-fullstack
+version: 1.0.0
+type: meta-plugin
+description: Complete full-stack web application with React frontend and Python FastAPI backend
+author: ai-projen framework
+last_updated: 2025-10-02
+
+# Application metadata
+metadata:
+  use_case: Production-ready full-stack web applications with modern frontend and scalable backend
+  target_users: Full-stack developers building web applications with TypeScript and Python
+  complexity: advanced
+  estimated_setup_time: 45-60 minutes
+
+  technology_stack:
+    primary_language: python
+    secondary_language: typescript
+    frameworks:
+      - FastAPI
+      - React 18
+      - Vite
+      - SQLAlchemy
+      - React Router
+      - Pydantic
+    infrastructure:
+      - Docker
+      - Docker Compose
+      - PostgreSQL
+      - Nginx
+      - GitHub Actions
+      - Terraform AWS
+
+  application_type: web
+
+# Plugin dependencies (MUST be installed in this order)
+dependencies:
+  required:
+    - foundation/ai-folder
+    - languages/python
+    - languages/typescript
+    - infrastructure/containerization/docker
+    - infrastructure/ci-cd/github-actions
+    - infrastructure/iac/terraform-aws
+    - standards/security
+    - standards/documentation
+    - standards/pre-commit-hooks
+
+  optional:
+    - standards/code-quality
+
+# What this application provides
+provides:
+  starter_application:
+    description: Production-ready full-stack application with React frontend, FastAPI backend, PostgreSQL database, and complete Docker orchestration
+    structure:
+      - backend/src/           # FastAPI application source
+      - backend/tests/         # Backend test suite
+      - frontend/src/          # React application source
+      - frontend/public/       # Static assets
+      - docker-compose.fullstack.yml  # Multi-container orchestration
+
+    features:
+      - FastAPI backend with OpenAPI documentation
+      - React 18 frontend with TypeScript and Vite
+      - PostgreSQL database with SQLAlchemy ORM
+      - JWT authentication patterns
+      - CORS configuration for frontend-backend communication
+      - API client with error handling
+      - React Router for navigation
+      - Docker hot-reload for both frontend and backend
+      - Health check endpoints
+      - Environment variable configuration
+      - Comprehensive error handling
+      - Logging infrastructure
+      - Database migration patterns with Alembic
+
+  documentation:
+    architecture: ai-content/docs/fullstack-architecture.md
+    integration: ai-content/docs/api-frontend-integration.md
+    howtos:
+      - how-to-add-api-endpoint.md
+      - how-to-add-frontend-page.md
+      - how-to-connect-frontend-to-api.md
+      - how-to-deploy-fullstack-app.md
+
+  templates:
+    - api-router.py.template
+    - react-component.tsx.template
+    - api-client.ts.template
+
+  configuration:
+    - docker-compose.fullstack.yml
+    - backend/.env.example
+    - frontend/.env.example
+    - nginx.conf
+
+# Installation
+installation:
+  complexity: high
+  steps:
+    - Check prerequisites
+    - Install foundation plugin
+    - Install Python plugin
+    - Install TypeScript plugin
+    - Install Docker plugin
+    - Install GitHub Actions plugin
+    - Install Terraform AWS plugin
+    - Install standards plugins
+    - Copy application files
+    - Configure environment
+    - Install dependencies
+    - Validate installation
+
+  prerequisites:
+    system:
+      - Python: ">=3.11"
+      - Node.js: ">=18.0"
+      - Docker: ">=20.10"
+      - Docker Compose: ">=2.0"
+
+    knowledge:
+      - Python: intermediate
+      - TypeScript: intermediate
+      - React: intermediate
+      - FastAPI: beginner
+      - Docker: intermediate
+      - SQL: beginner
+
+# Common commands
+commands:
+  install_dependencies: docker-compose run backend poetry install && docker-compose run frontend npm install
+  run_dev: docker-compose up
+  run_tests: docker-compose run backend pytest && docker-compose run frontend npm test
+  run_lint: docker-compose run backend ruff check && docker-compose run frontend npm run lint
+  build: docker-compose build
+  deploy: terraform apply
+
+# Integration with other plugins
+integrates_with:
+  - name: docker
+    required: true
+    description: Containerization for backend, frontend, and database
+
+  - name: github-actions
+    required: true
+    description: Automated CI/CD pipeline for testing and deployment
+
+  - name: terraform-aws
+    required: true
+    description: Infrastructure as code for AWS deployment
+
+  - name: python
+    required: true
+    description: Backend language and tooling
+
+  - name: typescript
+    required: true
+    description: Frontend language and tooling
+
+# Development workflow
+workflow:
+  development:
+    - Start: docker-compose up
+    - Edit Backend: Hot reload in backend container
+    - Edit Frontend: Hot reload in frontend container via Vite
+    - Test Backend: docker-compose run backend pytest
+    - Test Frontend: docker-compose run frontend npm test
+    - Lint: docker-compose run backend ruff check && docker-compose run frontend npm run lint
+    - Commit: pre-commit hooks run automatically
+
+  adding_features:
+    - Check: .ai/howtos/react-python-fullstack/
+    - Follow: how-to-add-api-endpoint.md for backend features
+    - Follow: how-to-add-frontend-page.md for frontend features
+    - Follow: how-to-connect-frontend-to-api.md for integration
+    - Test: Run both backend and frontend tests
+
+  deployment:
+    - Build: docker-compose build
+    - Test: Run full test suite
+    - Deploy: Follow .ai/howtos/react-python-fullstack/how-to-deploy-fullstack-app.md
+
+# References
+references:
+  documentation:
+    - name: "Application README"
+      file: README.md
+
+    - name: "Agent Instructions"
+      file: AGENT_INSTRUCTIONS.md
+
+    - name: "Full-Stack Architecture"
+      file: ai-content/docs/fullstack-architecture.md
+
+    - name: "API-Frontend Integration"
+      file: ai-content/docs/api-frontend-integration.md
+
+  external:
+    - name: "FastAPI"
+      url: "https://fastapi.tiangolo.com/"
+
+    - name: "React"
+      url: "https://react.dev/"
+
+    - name: "Vite"
+      url: "https://vitejs.dev/"
+
+    - name: "SQLAlchemy"
+      url: "https://docs.sqlalchemy.org/"
+
+    - name: "React Router"
+      url: "https://reactrouter.com/"
+
+# Example usage
+examples:
+  basic:
+    description: Start development environment with hot reload
+    commands:
+      - docker-compose up
+      - Open http://localhost:5173 for frontend
+      - Open http://localhost:8000/docs for API docs
+
+  advanced:
+    description: Add new feature with frontend and backend integration
+    howto: .ai/howtos/react-python-fullstack/how-to-add-api-endpoint.md
+
+# Testing
+testing:
+  unit_tests: docker-compose run backend pytest && docker-compose run frontend npm test
+  integration_tests: docker-compose run backend pytest tests/integration/
+  e2e_tests: docker-compose run frontend npm run test:e2e
+  coverage: docker-compose run backend pytest --cov && docker-compose run frontend npm run test:coverage
+
+# Customization points
+customization:
+  - description: Change database configuration
+    file: docker-compose.fullstack.yml
+    documentation: .ai/docs/fullstack-architecture.md
+
+  - description: Add authentication endpoint
+    file: backend/src/routers/auth.py
+    documentation: .ai/howtos/react-python-fullstack/how-to-add-api-endpoint.md
+
+  - description: Add new React page
+    file: frontend/src/pages/
+    documentation: .ai/howtos/react-python-fullstack/how-to-add-frontend-page.md
+
+  - description: Configure CORS settings
+    file: backend/src/config.py
+    documentation: .ai/docs/api-frontend-integration.md
+
+# Known limitations
+limitations:
+  - Requires Docker for local development
+  - PostgreSQL only (no multi-database support yet)
+  - AWS-only deployment (other clouds require custom Terraform)
+  - Single-region deployment
+
+# Future enhancements
+future:
+  - WebSocket support for real-time features
+  - GraphQL API option
+  - Multi-database support (MySQL, MongoDB)
+  - Kubernetes deployment option
+  - Server-side rendering (SSR) option
+  - Mobile app integration patterns

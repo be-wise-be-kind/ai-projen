@@ -1,0 +1,109 @@
+"""
+Purpose: Health check endpoint for monitoring and load balancer health checks
+
+Scope: System health monitoring and readiness checks
+
+Overview: Provides health check endpoint for monitoring tools, load balancers, and container
+    orchestration systems. Returns application health status, database connectivity, and
+    version information. Used by AWS ECS health checks, monitoring systems, and debugging.
+
+Dependencies: FastAPI, database connection (optional)
+
+Exports: Health check router
+
+Interfaces: GET /health endpoint returning health status
+
+Implementation: Simple FastAPI router with database connection check
+"""
+
+from fastapi import APIRouter, status
+from datetime import datetime
+import sys
+
+router = APIRouter(
+    prefix="",
+    tags=["health"],
+)
+
+
+@router.get(
+    "/health",
+    status_code=status.HTTP_200_OK,
+    summary="Health Check",
+    description="Returns the health status of the API and database connectivity",
+    response_model=dict,
+)
+async def health_check():
+    """
+    Health check endpoint
+
+    Returns:
+        dict: Health status information including:
+            - status: "healthy" if all checks pass
+            - timestamp: Current server time
+            - version: Application version
+            - python_version: Python runtime version
+            - database: Database connection status (if applicable)
+    """
+    # TODO: Add database connection check
+    # try:
+    #     from backend.src.database.session import get_db
+    #     db = next(get_db())
+    #     db.execute("SELECT 1")
+    #     db_status = "connected"
+    # except Exception as e:
+    #     db_status = f"disconnected: {str(e)}"
+
+    return {
+        "status": "healthy",
+        "timestamp": datetime.utcnow().isoformat(),
+        "version": "1.0.0",
+        "python_version": f"{sys.version_info.major}.{sys.version_info.minor}.{sys.version_info.micro}",
+        # "database": db_status,
+    }
+
+
+@router.get(
+    "/ready",
+    status_code=status.HTTP_200_OK,
+    summary="Readiness Check",
+    description="Returns readiness status for accepting traffic (used by Kubernetes)",
+)
+async def readiness_check():
+    """
+    Readiness check endpoint
+
+    Used by container orchestration to determine if the service is ready
+    to accept traffic. Returns 200 if ready, 503 if not ready.
+
+    Returns:
+        dict: Readiness status
+    """
+    # TODO: Add readiness checks (database, migrations, etc.)
+    # For now, always return ready
+    return {
+        "ready": True,
+        "timestamp": datetime.utcnow().isoformat(),
+    }
+
+
+@router.get(
+    "/live",
+    status_code=status.HTTP_200_OK,
+    summary="Liveness Check",
+    description="Returns liveness status (used by Kubernetes)",
+)
+async def liveness_check():
+    """
+    Liveness check endpoint
+
+    Used by container orchestration to determine if the service is alive.
+    Returns 200 if alive, 503 if dead and should be restarted.
+
+    Returns:
+        dict: Liveness status
+    """
+    return {
+        "alive": True,
+        "timestamp": datetime.utcnow().isoformat(),
+    }

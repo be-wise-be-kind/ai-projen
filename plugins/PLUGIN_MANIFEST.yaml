@@ -1,0 +1,369 @@
+# Purpose: Plugin manifest declaring all available ai-projen plugins
+# Scope: Foundation, language, infrastructure, standards, and application plugins with options and defaults
+# Overview: Central registry of all plugins available in the ai-projen framework. Defines plugin
+#     status (stable/planned/community), available options, recommended defaults, and dependencies.
+#     Used by orchestrators for discovery and by AI agents for understanding available capabilities.
+#     Applications are meta-plugins that compose other plugins for common use cases.
+
+version: "1.0"
+
+# Foundation plugins (universal - always required)
+foundation:
+  ai-folder:
+    status: stable
+    required: true
+    description: Creates .ai/ directory structure for AI navigation
+    location: plugins/foundation/ai-folder/
+    dependencies: []
+    installation_guide: plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md
+
+# Language plugins (language-specific tooling)
+languages:
+  python:
+    status: stable
+    description: Python development environment with linting, formatting, type checking, security, and testing
+    location: plugins/languages/python/
+    dependencies:
+      - foundation/ai-folder
+
+    options:
+      linter_formatter:
+        available: [ruff]
+        recommended: ruff
+        description: Fast all-in-one linter and formatter (replaces Black, isort, flake8)
+        note: Ruff handles both linting AND formatting - no separate formatter needed
+
+      type_checking:
+        available: [mypy, none]
+        recommended: mypy
+        description: Static type checking for catching type errors
+
+      security:
+        available: [bandit, none]
+        recommended: bandit
+        description: Security vulnerability scanning for Python code
+
+      testing:
+        available: [pytest, unittest]
+        recommended: pytest
+        description: Testing framework with async support and coverage
+
+    tools_provided:
+      - name: Ruff
+        purpose: Linting and formatting
+        replaces: [Black, isort, flake8, parts of pylint]
+        speed: 10-100x faster than traditional tools
+
+      - name: MyPy
+        purpose: Static type checking
+        features: [PEP 484 compliance, gradual typing, strict mode]
+
+      - name: Bandit
+        purpose: Security scanning
+        detects: [hardcoded secrets, SQL injection, weak crypto, insecure deserialization]
+
+      - name: Pytest
+        purpose: Testing framework
+        features: [fixtures, parametrization, async support, coverage reporting]
+
+    installation_guide: plugins/languages/python/core/AGENT_INSTRUCTIONS.md
+
+  typescript:
+    status: stable
+    description: TypeScript/JavaScript development environment
+    location: plugins/languages/typescript/
+    dependencies:
+      - foundation/ai-folder
+
+    options:
+      linters:
+        available: [eslint, biome]
+        recommended: eslint
+        description: Code quality and style checking
+
+      formatters:
+        available: [prettier, biome]
+        recommended: prettier
+        description: Automatic code formatting
+
+      testing:
+        available: [vitest, jest, mocha]
+        recommended: vitest
+        description: Testing framework
+
+      frameworks:
+        available: [react, vue, none]
+        recommended: react
+        description: Frontend framework support
+
+    installation_guide: plugins/languages/typescript/core/AGENT_INSTRUCTIONS.md
+
+  # Planned language plugins
+  go:
+    status: planned
+    description: Go development environment
+    location: plugins/languages/go/
+
+  rust:
+    status: planned
+    description: Rust development environment
+    location: plugins/languages/rust/
+
+  java:
+    status: planned
+    description: Java development environment
+    location: plugins/languages/java/
+
+# Infrastructure plugins (deployment and tooling)
+infrastructure:
+  containerization:
+    docker:
+      status: stable
+      description: Docker containerization for frontend and backend services
+      location: plugins/infrastructure/containerization/docker/
+      dependencies:
+        - foundation/ai-folder
+
+      options:
+        services:
+          available: [frontend, backend, database, cache]
+          recommended: [frontend, backend]
+          description: Services to containerize
+
+        compose:
+          available: [yes, no]
+          recommended: yes
+          description: Include docker-compose.yml
+
+      installation_guide: plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md
+
+    podman:
+      status: planned
+      description: Podman containerization (Docker alternative)
+      location: plugins/infrastructure/containerization/podman/
+
+  ci-cd:
+    github-actions:
+      status: stable
+      description: GitHub Actions CI/CD pipeline
+      location: plugins/infrastructure/ci-cd/github-actions/
+      dependencies:
+        - foundation/ai-folder
+
+      options:
+        workflows:
+          available: [test, lint, build, deploy, all]
+          recommended: all
+          description: CI/CD workflows to include
+
+        matrix:
+          available: [yes, no]
+          recommended: yes
+          description: Test across multiple versions
+
+      installation_guide: plugins/infrastructure/ci-cd/github-actions/AGENT_INSTRUCTIONS.md
+
+    gitlab-ci:
+      status: planned
+      description: GitLab CI/CD pipeline
+      location: plugins/infrastructure/ci-cd/gitlab-ci/
+
+    jenkins:
+      status: planned
+      description: Jenkins CI/CD pipeline
+      location: plugins/infrastructure/ci-cd/jenkins/
+
+  iac:
+    terraform-aws:
+      status: stable
+      description: Terraform infrastructure as code for AWS
+      location: plugins/infrastructure/iac/terraform-aws/
+      dependencies:
+        - foundation/ai-folder
+
+      options:
+        workspaces:
+          available: [vpc, ecs, alb, rds, s3, cloudfront]
+          recommended: [vpc, ecs, alb]
+          description: Infrastructure workspaces to include
+
+      installation_guide: plugins/infrastructure/iac/terraform-aws/AGENT_INSTRUCTIONS.md
+
+    pulumi:
+      status: planned
+      description: Pulumi infrastructure as code
+      location: plugins/infrastructure/iac/pulumi/
+
+    cdk:
+      status: planned
+      description: AWS CDK infrastructure as code
+      location: plugins/infrastructure/iac/cdk/
+
+# Standards plugins (quality and governance)
+standards:
+  security:
+    status: stable
+    description: Security standards and best practices
+    location: plugins/standards/security/
+    dependencies:
+      - foundation/ai-folder
+    required: recommended
+
+    options:
+      scanning:
+        available: [secrets, dependencies, code]
+        recommended: [secrets, dependencies]
+        description: Security scanning types
+
+      tools:
+        available: [gitleaks, trivy, bandit, safety]
+        recommended: [gitleaks, trivy]
+        description: Security scanning tools
+
+    installation_guide: plugins/standards/security/AGENT_INSTRUCTIONS.md
+
+  documentation:
+    status: stable
+    description: Documentation standards and templates
+    location: plugins/standards/documentation/
+    dependencies:
+      - foundation/ai-folder
+    required: recommended
+
+    options:
+      headers:
+        available: [yes, no]
+        recommended: yes
+        description: File header documentation
+
+      readme_sections:
+        available: [standard, comprehensive, minimal]
+        recommended: standard
+        description: README.md template detail level
+
+    installation_guide: plugins/standards/documentation/AGENT_INSTRUCTIONS.md
+
+  pre-commit-hooks:
+    status: stable
+    description: Pre-commit hooks for quality gates
+    location: plugins/standards/pre-commit-hooks/
+    dependencies:
+      - foundation/ai-folder
+    required: recommended
+
+    options:
+      hooks:
+        available: [format, lint, test, secrets, trailing-whitespace]
+        recommended: [format, lint, secrets, trailing-whitespace]
+        description: Pre-commit hooks to enable
+
+    installation_guide: plugins/standards/pre-commit-hooks/AGENT_INSTRUCTIONS.md
+
+  solid-principles:
+    status: planned
+    description: SOLID principles linting and enforcement
+    location: plugins/standards/solid-principles/
+
+# Application plugins (complete application types - meta-plugins)
+applications:
+  python-cli:
+    status: stable
+    description: Complete Python CLI application with Click/Typer, Docker, testing, and CI/CD
+    location: plugins/applications/python-cli/
+    type: meta-plugin
+    use_case: Command-line tools, data processing scripts, automation utilities
+
+    dependencies:
+      - foundation/ai-folder
+      - languages/python
+      - infrastructure/containerization/docker
+      - infrastructure/ci-cd/github-actions
+      - standards/pre-commit-hooks
+      - standards/security
+      - standards/documentation
+
+    provides:
+      - Complete CLI starter application with config management
+      - Application-specific how-tos (add command, handle config, package tool)
+      - CLI framework templates (Click and Typer)
+      - Docker packaging for CLI distribution
+      - GitHub Actions workflow for CLI testing and release
+
+    installation_guide: plugins/applications/python-cli/AGENT_INSTRUCTIONS.md
+
+  react-python-fullstack:
+    status: stable
+    description: Complete full-stack web application with React frontend and Python FastAPI backend
+    location: plugins/applications/react-python-fullstack/
+    type: meta-plugin
+    use_case: Modern web applications with REST API backend, SPA frontend, database, and cloud deployment
+
+    dependencies:
+      - foundation/ai-folder
+      - languages/python
+      - languages/typescript
+      - infrastructure/containerization/docker
+      - infrastructure/ci-cd/github-actions
+      - infrastructure/iac/terraform-aws
+      - standards/pre-commit-hooks
+      - standards/security
+      - standards/documentation
+
+    provides:
+      - Complete frontend starter (React + Vite + TypeScript + routing + state)
+      - Complete backend starter (FastAPI + database + authentication)
+      - Application-specific how-tos (add endpoint, add page, connect API, deploy)
+      - Integration templates (API client, CORS, docker-compose orchestration)
+      - AWS deployment configuration (ECS + ALB + RDS)
+      - Full-stack CI/CD pipeline
+
+    installation_guide: plugins/applications/react-python-fullstack/AGENT_INSTRUCTIONS.md
+
+# Plugin extension templates
+_templates:
+  language:
+    location: plugins/languages/_template/
+    description: Template for creating new language plugins
+    guide: .ai/docs/how-to-create-a-language-plugin.md
+
+  infrastructure:
+    location: plugins/infrastructure/_template/
+    description: Template for creating new infrastructure plugins
+    guide: .ai/docs/how-to-create-an-infrastructure-plugin.md
+
+  standards:
+    location: plugins/standards/_template/
+    description: Template for creating new standards plugins
+    guide: .ai/docs/how-to-create-a-standards-plugin.md
+
+  application:
+    location: plugins/applications/_template/
+    description: Template for creating new application plugins
+    guide: .ai/docs/how-to-create-a-common-application.md
+
+# Metadata
+metadata:
+  version: "1.0"
+  last_updated: "2025-10-02"
+  total_plugins:
+    stable: 11  # 9 existing + 2 applications
+    planned: 8
+    community: 0
+
+  plugin_categories:
+    - foundation (1 stable)
+    - languages (2 stable, 3 planned)
+    - infrastructure (3 stable, 3 planned)
+    - standards (3 stable, 1 planned)
+    - applications (2 stable)
+
+  notes_for_agents:
+    - This manifest is the source of truth for available plugins
+    - "Use 'status: stable' plugins for production"
+    - "'status: planned' plugins are roadmap items"
+    - Always check dependencies before installing plugins
+    - Recommended options are battle-tested defaults
+    - Community plugins can be added by following _template/ guides
+    - Application plugins are meta-plugins that compose other plugins for common use cases
+    - Applications provide "quick start" path vs custom plugin selection
+    - Applications are installed like regular plugins but orchestrate multiple plugin installations

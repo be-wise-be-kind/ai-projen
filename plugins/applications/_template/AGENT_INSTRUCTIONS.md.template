@@ -1,0 +1,323 @@
+# {{APPLICATION_NAME}} Application - Agent Instructions
+
+**Purpose**: Installation instructions for AI agents to set up {{APPLICATION_NAME}} application
+
+**Scope**: Complete installation of {{APPLICATION_NAME}} with all dependencies
+
+**Overview**: Step-by-step instructions for installing a complete {{APPLICATION_NAME}} application.
+    This meta-plugin orchestrates the installation of foundation, language, infrastructure, and
+    standards plugins, then adds application-specific starter code, configuration, and documentation.
+
+**Prerequisites**: Empty or existing repository with git initialized
+
+---
+
+## What This Application Provides
+
+**Use Case**: {{USE_CASE_DESCRIPTION}}
+
+**Technology Stack**:
+- {{LANGUAGE_1}}
+- {{LANGUAGE_2}} (if applicable)
+- {{INFRASTRUCTURE_TOOL_1}}
+- {{INFRASTRUCTURE_TOOL_2}}
+- {{OTHER_TECHNOLOGIES}}
+
+**What Gets Installed**:
+- Complete starter application with {{FEATURES}}
+- Application-specific how-to guides
+- Docker containerization
+- CI/CD pipeline
+- Security and documentation standards
+- Pre-commit hooks
+
+## Installation Steps
+
+### Prerequisites Check
+
+Before installation, verify:
+
+```bash
+# Check git repository exists
+test -d .git && echo "✅ Git repository" || echo "❌ Run: git init"
+
+# Check {{TOOL_1}} installed
+{{TOOL_1}} --version && echo "✅ {{TOOL_1}}" || echo "❌ Install {{TOOL_1}}"
+
+# Check {{TOOL_2}} installed
+{{TOOL_2}} --version && echo "✅ {{TOOL_2}}" || echo "❌ Install {{TOOL_2}}"
+
+# Check Docker running (if required)
+docker ps > /dev/null 2>&1 && echo "✅ Docker running" || echo "❌ Start Docker"
+```
+
+### Phase 1: Foundation Setup
+
+**1. Install foundation/ai-folder plugin**
+
+Follow: `plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md`
+
+Creates `.ai/` directory structure for AI navigation.
+
+**Validation**:
+```bash
+test -d .ai && echo "✅ .ai folder created" || echo "❌ Foundation plugin failed"
+```
+
+### Phase 2: Language Plugin Installation
+
+**2. Install languages/{{PRIMARY_LANGUAGE}} plugin**
+
+Follow: `plugins/languages/{{PRIMARY_LANGUAGE}}/core/AGENT_INSTRUCTIONS.md`
+
+Installs {{LANGUAGE}} with linting, formatting, type checking, testing.
+
+**Options**:
+- Linter: {{RECOMMENDED_LINTER}}
+- Formatter: {{RECOMMENDED_FORMATTER}}
+- Testing: {{RECOMMENDED_TEST_FRAMEWORK}}
+- Type checking: {{RECOMMENDED_TYPE_CHECKER}}
+
+**Validation**:
+```bash
+test -f {{LANGUAGE_CONFIG_FILE}} && echo "✅ {{LANGUAGE}} configured" || echo "❌ Language plugin failed"
+```
+
+**3. Install languages/{{SECONDARY_LANGUAGE}} plugin (if applicable)**
+
+Follow: `plugins/languages/{{SECONDARY_LANGUAGE}}/core/AGENT_INSTRUCTIONS.md`
+
+**Options**:
+- (Specify options for secondary language)
+
+### Phase 3: Infrastructure Plugin Installation
+
+**4. Install infrastructure/containerization/docker plugin**
+
+Follow: `plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md`
+
+**Options**:
+- Services: {{SERVICES_LIST}}
+- Compose: yes
+
+Creates Docker containerization for {{APPLICATION_NAME}}.
+
+**Validation**:
+```bash
+test -f docker-compose.yml && echo "✅ Docker configured" || echo "❌ Docker plugin failed"
+```
+
+**5. Install infrastructure/ci-cd/github-actions plugin**
+
+Follow: `plugins/infrastructure/ci-cd/github-actions/AGENT_INSTRUCTIONS.md`
+
+**Options**:
+- Workflows: all
+- Matrix: yes
+
+Creates CI/CD pipeline for {{APPLICATION_NAME}}.
+
+**Validation**:
+```bash
+test -d .github/workflows && echo "✅ CI/CD configured" || echo "❌ CI/CD plugin failed"
+```
+
+**6. Install infrastructure/iac/{{IAC_TOOL}} plugin (if applicable)**
+
+Follow: `plugins/infrastructure/iac/{{IAC_TOOL}}/AGENT_INSTRUCTIONS.md`
+
+**Options**:
+- (Specify options for IaC tool)
+
+### Phase 4: Standards Plugin Installation
+
+**7. Install standards/security plugin**
+
+Follow: `plugins/standards/security/AGENT_INSTRUCTIONS.md`
+
+**Options**:
+- Scanning: [secrets, dependencies]
+- Tools: [gitleaks, trivy]
+
+**Validation**:
+```bash
+test -f .gitignore && grep -q "secrets" .gitignore && echo "✅ Security configured" || echo "❌ Security plugin failed"
+```
+
+**8. Install standards/documentation plugin**
+
+Follow: `plugins/standards/documentation/AGENT_INSTRUCTIONS.md`
+
+**Options**:
+- Headers: yes
+- README sections: standard
+
+**Validation**:
+```bash
+test -f .ai/docs/file-headers.md && echo "✅ Documentation configured" || echo "❌ Documentation plugin failed"
+```
+
+**9. Install standards/pre-commit-hooks plugin**
+
+Follow: `plugins/standards/pre-commit-hooks/AGENT_INSTRUCTIONS.md`
+
+**Options**:
+- Hooks: [format, lint, secrets, trailing-whitespace]
+
+**Validation**:
+```bash
+test -f .pre-commit-config.yaml && echo "✅ Pre-commit configured" || echo "❌ Pre-commit plugin failed"
+```
+
+### Phase 5: Application-Specific Installation
+
+**10. Copy Application Starter Code**
+
+Copy files from `plugins/applications/{{APPLICATION_NAME}}/project-content/` to project root:
+
+```bash
+# Copy application structure
+cp -r plugins/applications/{{APPLICATION_NAME}}/project-content/src ./
+cp -r plugins/applications/{{APPLICATION_NAME}}/project-content/tests ./
+
+# Copy configuration files
+cp plugins/applications/{{APPLICATION_NAME}}/project-content/{{CONFIG_FILE_1}} ./
+cp plugins/applications/{{APPLICATION_NAME}}/project-content/{{CONFIG_FILE_2}} ./
+
+# Copy application-specific docker-compose (if applicable)
+cp plugins/applications/{{APPLICATION_NAME}}/project-content/docker-compose.{{APPLICATION_NAME}}.yml ./
+```
+
+**11. Copy Application Documentation**
+
+Copy files from `plugins/applications/{{APPLICATION_NAME}}/ai-content/` to `.ai/`:
+
+```bash
+# Copy architecture documentation
+cp plugins/applications/{{APPLICATION_NAME}}/ai-content/docs/*.md .ai/docs/
+
+# Copy application-specific how-tos
+cp -r plugins/applications/{{APPLICATION_NAME}}/ai-content/howtos .ai/howtos/{{APPLICATION_NAME}}/
+
+# Copy application templates
+cp -r plugins/applications/{{APPLICATION_NAME}}/ai-content/templates .ai/templates/{{APPLICATION_NAME}}/
+```
+
+**12. Configure Application**
+
+Customize application for this project:
+
+```bash
+# Update project name in configuration files
+sed -i 's/{{PROJECT_NAME}}/{{ACTUAL_PROJECT_NAME}}/g' {{CONFIG_FILES}}
+
+# Update application-specific settings
+# (Add application-specific configuration steps here)
+```
+
+**13. Install Dependencies**
+
+```bash
+# Install {{LANGUAGE_1}} dependencies
+{{LANGUAGE_1_INSTALL_COMMAND}}
+
+# Install {{LANGUAGE_2}} dependencies (if applicable)
+{{LANGUAGE_2_INSTALL_COMMAND}}
+```
+
+**14. Update .ai/index.yaml**
+
+Add application entry to `.ai/index.yaml`:
+
+```yaml
+application:
+  type: {{APPLICATION_TYPE}}
+  stack: {{TECHNOLOGY_STACK}}
+  howtos: .ai/howtos/{{APPLICATION_NAME}}/
+  templates: .ai/templates/{{APPLICATION_NAME}}/
+```
+
+## Post-Installation
+
+### Initial Setup
+
+```bash
+# Build containers
+docker-compose build
+
+# Run development environment
+docker-compose up -d
+
+# Run tests
+{{TEST_COMMAND}}
+
+# Run linting
+{{LINT_COMMAND}}
+```
+
+### Validation
+
+Run complete validation:
+
+```bash
+# Check all files created
+test -d src && echo "✅ Application source" || echo "❌ Missing src/"
+test -d tests && echo "✅ Application tests" || echo "❌ Missing tests/"
+test -f docker-compose.yml && echo "✅ Docker compose" || echo "❌ Missing docker-compose.yml"
+test -d .github/workflows && echo "✅ CI/CD workflows" || echo "❌ Missing .github/workflows/"
+test -f .ai/howtos/{{APPLICATION_NAME}}/README.md && echo "✅ Application how-tos" || echo "❌ Missing how-tos"
+
+# Run application
+{{RUN_COMMAND}}
+
+# Should see: {{EXPECTED_OUTPUT}}
+```
+
+## Success Criteria
+
+- [x] All plugin dependencies installed successfully
+- [x] Application starter code copied and configured
+- [x] Application runs in Docker
+- [x] Tests pass
+- [x] Linting passes
+- [x] CI/CD pipeline configured
+- [x] Application-specific how-tos available in .ai/howtos/
+- [x] Security standards applied
+- [x] Documentation standards applied
+- [x] Pre-commit hooks installed
+
+## Next Steps
+
+1. **Read Application How-Tos**: Check `.ai/howtos/{{APPLICATION_NAME}}/` for guides
+2. **Customize Application**: Modify starter code for your needs
+3. **Add Features**: Follow how-tos to add {{FEATURE_1}}, {{FEATURE_2}}, etc.
+4. **Deploy**: Follow deployment guide in `.ai/howtos/{{APPLICATION_NAME}}/how-to-deploy.md`
+
+## Common Issues
+
+### Issue: Plugin dependency failed
+**Solution**: Install failed plugin manually following its AGENT_INSTRUCTIONS.md
+
+### Issue: Docker containers won't start
+**Solution**:
+```bash
+docker-compose down
+docker-compose build --no-cache
+docker-compose up
+```
+
+### Issue: Tests failing
+**Solution**: Check that dependencies are installed and Docker is running
+
+### Issue: {{APPLICATION_SPECIFIC_ISSUE}}
+**Solution**: {{APPLICATION_SPECIFIC_SOLUTION}}
+
+## Application-Specific Notes
+
+- {{NOTE_1}}
+- {{NOTE_2}}
+- {{NOTE_3}}
+
+---
+
+**Remember**: This is a starter application. Customize it for your needs. All underlying plugins can be configured independently.

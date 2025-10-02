@@ -1,0 +1,102 @@
+/**
+ * Purpose: Home page component with welcome message and health check
+ *
+ * Scope: Main landing page of the application
+ *
+ * Overview: Displays welcome message, application overview, and backend health status.
+ *     Serves as the main landing page and demonstrates frontend-backend integration.
+ *     Includes navigation to other sections and quick start information.
+ *
+ * Dependencies: React, Health component
+ *
+ * Exports: Home page component as default export
+ *
+ * State/Behavior: Stateless presentational component with health check integration
+ */
+
+import Health from '../components/Health';
+import styles from './Home.module.css';
+
+export default function Home() {
+  return (
+    <div className={styles.container}>
+      <div className={styles.hero}>
+        <h1 className={styles.title}>Welcome to Your Full-Stack Application</h1>
+        <p className={styles.subtitle}>
+          React + TypeScript + Vite frontend with Python + FastAPI backend
+        </p>
+      </div>
+
+      <div className={styles.content}>
+        <section className={styles.section}>
+          <h2>Getting Started</h2>
+          <p>
+            This is a production-ready full-stack application with modern tooling and best practices.
+            The frontend and backend are fully integrated and ready for development.
+          </p>
+
+          <div className={styles.features}>
+            <div className={styles.feature}>
+              <h3>🚀 Fast Development</h3>
+              <p>Hot reload for both frontend (Vite HMR) and backend (uvicorn --reload)</p>
+            </div>
+
+            <div className={styles.feature}>
+              <h3>🔒 Type-Safe</h3>
+              <p>TypeScript on frontend, Python type hints on backend, Pydantic validation</p>
+            </div>
+
+            <div className={styles.feature}>
+              <h3>🧪 Well-Tested</h3>
+              <p>Vitest for frontend, pytest for backend, CI/CD with GitHub Actions</p>
+            </div>
+
+            <div className={styles.feature}>
+              <h3>📦 Containerized</h3>
+              <p>Docker Compose orchestration for all services, ready for deployment</p>
+            </div>
+          </div>
+        </section>
+
+        <section className={styles.section}>
+          <h2>Backend Connection</h2>
+          <Health />
+        </section>
+
+        <section className={styles.section}>
+          <h2>Next Steps</h2>
+          <ul className={styles.steps}>
+            <li>
+              <strong>Add API Endpoints:</strong> Follow{' '}
+              <code>.ai/howtos/fullstack/how-to-add-api-endpoint.md</code>
+            </li>
+            <li>
+              <strong>Add Frontend Pages:</strong> Follow{' '}
+              <code>.ai/howtos/fullstack/how-to-add-frontend-page.md</code>
+            </li>
+            <li>
+              <strong>Connect Frontend to API:</strong> Follow{' '}
+              <code>.ai/howtos/fullstack/how-to-connect-frontend-to-api.md</code>
+            </li>
+            <li>
+              <strong>Deploy to AWS:</strong> Follow{' '}
+              <code>.ai/howtos/fullstack/how-to-deploy-fullstack-app.md</code>
+            </li>
+          </ul>
+        </section>
+
+        <section className={styles.section}>
+          <h2>Documentation</h2>
+          <div className={styles.docs}>
+            <a href="/docs" target="_blank" rel="noopener noreferrer" className={styles.docLink}>
+              📚 API Documentation (OpenAPI)
+            </a>
+            <span className={styles.docDescription}>
+              Interactive API documentation with try-it-out functionality
+            </span>
+          </div>
+        </section>
+      </div>
+    </div>
+  );
+}

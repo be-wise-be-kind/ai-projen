@@ -1,0 +1,377 @@
+# Full-Stack Application
+
+**React + TypeScript + Vite frontend with Python + FastAPI backend**
+
+Production-ready full-stack web application with modern tooling, Docker orchestration, and comprehensive testing.
+
+---
+
+## Quick Start
+
+### Prerequisites
+
+- Docker and Docker Compose installed
+- Git initialized in this repository
+
+### Start Development Environment
+
+```bash
+# Build and start all services
+docker-compose -f docker-compose.fullstack.yml up --build
+
+# Or start in background
+docker-compose -f docker-compose.fullstack.yml up -d
+
+# Services will be available at:
+# - Frontend: http://localhost:5173
+# - Backend API: http://localhost:8000
+# - API Docs: http://localhost:8000/docs
+# - Database: localhost:5432
+```
+
+### Run Tests
+
+```bash
+# Backend tests
+docker-compose -f docker-compose.fullstack.yml run backend pytest
+
+# Frontend tests
+docker-compose -f docker-compose.fullstack.yml run frontend npm test
+
+# With coverage
+docker-compose -f docker-compose.fullstack.yml run backend pytest --cov
+docker-compose -f docker-compose.fullstack.yml run frontend npm run test:coverage
+```
+
+### Stop Services
+
+```bash
+# Stop services
+docker-compose -f docker-compose.fullstack.yml down
+
+# Stop and remove volumes (WARNING: deletes database data)
+docker-compose -f docker-compose.fullstack.yml down -v
+```
+
+---
+
+## Project Structure
+
+```
+.
+├── backend/
+│   ├── src/
+│   │   ├── main.py              # FastAPI application entry point
+│   │   ├── config.py            # Configuration and environment variables
+│   │   └── routers/
+│   │       └── health.py        # Health check endpoints
+│   ├── tests/
+│   │   └── test_health.py       # Backend tests
+│   ├── pyproject.toml           # Python dependencies (Poetry)
+│   ├── Dockerfile               # Backend container definition
+│   └── .env                     # Backend environment variables
+│
+├── frontend/
+│   ├── src/
+│   │   ├── main.tsx             # React entry point
+│   │   ├── App.tsx              # Root component with routing
+│   │   ├── api/
+│   │   │   └── client.ts        # API client with auth
+│   │   ├── components/
+│   │   │   └── Health.tsx       # Health check component
+│   │   └── pages/
+│   │       └── Home.tsx         # Home page
+│   ├── package.json             # Frontend dependencies
+│   ├── tsconfig.json            # TypeScript configuration
+│   ├── vite.config.ts           # Vite configuration
+│   ├── Dockerfile               # Frontend container definition
+│   └── .env                     # Frontend environment variables
+│
+├── docker-compose.fullstack.yml # Multi-service orchestration
+│
+└── .ai/
+    ├── docs/
+    │   ├── fullstack-architecture.md      # System architecture
+    │   └── api-frontend-integration.md    # Integration patterns
+    └── howtos/fullstack/
+        ├── how-to-add-api-endpoint.md
+        ├── how-to-add-frontend-page.md
+        ├── how-to-connect-frontend-to-api.md
+        └── how-to-deploy-fullstack-app.md
+```
+
+---
+
+## Technology Stack
+
+### Backend
+- **Python 3.11+**: Application runtime
+- **FastAPI**: Modern web framework with automatic OpenAPI docs
+- **SQLAlchemy**: ORM for database operations
+- **Pydantic**: Data validation and settings
+- **pytest**: Testing framework
+- **Poetry**: Dependency management
+
+### Frontend
+- **React 18**: UI library
+- **TypeScript**: Type-safe JavaScript
+- **Vite**: Fast build tool with HMR
+- **React Router**: Client-side routing
+- **Axios**: HTTP client
+- **Vitest**: Testing framework
+
+### Infrastructure
+- **Docker**: Containerization
+- **Docker Compose**: Multi-container orchestration
+- **PostgreSQL**: Relational database
+- **Nginx**: Reverse proxy (optional)
+
+---
+
+## Development
+
+### Hot Reload
+
+Both frontend and backend support hot reload:
+
+- **Frontend**: Vite HMR updates instantly on file changes
+- **Backend**: uvicorn `--reload` restarts on Python file changes
+
+### Backend Development
+
+```bash
+# Access backend shell
+docker-compose -f docker-compose.fullstack.yml exec backend bash
+
+# Run linting
+docker-compose -f docker-compose.fullstack.yml run backend ruff check
+
+# Format code
+docker-compose -f docker-compose.fullstack.yml run backend ruff format
+
+# Type checking
+docker-compose -f docker-compose.fullstack.yml run backend mypy src/
+
+# Database migrations (when added)
+docker-compose -f docker-compose.fullstack.yml run backend alembic upgrade head
+```
+
+### Frontend Development
+
+```bash
+# Access frontend shell
+docker-compose -f docker-compose.fullstack.yml exec frontend sh
+
+# Run linting
+docker-compose -f docker-compose.fullstack.yml run frontend npm run lint
+
+# Format code
+docker-compose -f docker-compose.fullstack.yml run frontend npm run format
+
+# Type checking
+docker-compose -f docker-compose.fullstack.yml run frontend npm run type-check
+
+# Build for production
+docker-compose -f docker-compose.fullstack.yml run frontend npm run build
+```
+
+### Database
+
+```bash
+# Access PostgreSQL
+docker-compose -f docker-compose.fullstack.yml exec db psql -U postgres -d app_db
+
+# View database logs
+docker-compose -f docker-compose.fullstack.yml logs db
+
+# Backup database
+docker-compose -f docker-compose.fullstack.yml exec db pg_dump -U postgres app_db > backup.sql
+
+# Restore database
+cat backup.sql | docker-compose -f docker-compose.fullstack.yml exec -T db psql -U postgres -d app_db
+```
+
+---
+
+## Adding Features
+
+### Add an API Endpoint
+
+Follow the detailed guide: `.ai/howtos/fullstack/how-to-add-api-endpoint.md`
+
+**Quick steps**:
+1. Create SQLAlchemy model in `backend/src/models/`
+2. Create Pydantic schemas in `backend/src/schemas/`
+3. Create service in `backend/src/services/`
+4. Create router in `backend/src/routers/`
+5. Register router in `main.py`
+6. Write tests in `backend/tests/`
+
+### Add a Frontend Page
+
+Follow the detailed guide: `.ai/howtos/fullstack/how-to-add-frontend-page.md`
+
+**Quick steps**:
+1. Create page component in `frontend/src/pages/`
+2. Create CSS module for styling
+3. Add route in `App.tsx`
+4. Add navigation links
+5. Write tests in `__tests__/`
+
+### Connect Frontend to API
+
+Follow the detailed guide: `.ai/howtos/fullstack/how-to-connect-frontend-to-api.md`
+
+**Quick steps**:
+1. Define TypeScript types in `frontend/src/types/api.ts`
+2. Create API module in `frontend/src/api/`
+3. Use API in components with error handling
+4. Handle loading and error states
+
+---
+
+## Environment Variables
+
+### Backend (.env)
+
+```env
+# Database
+DATABASE_URL=postgresql://postgres:postgres@db:5432/app_db
+
+# API
+API_HOST=0.0.0.0
+API_PORT=8000
+API_RELOAD=true
+
+# CORS
+CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+
+# Security
+SECRET_KEY=change-me-in-production
+ALGORITHM=HS256
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+
+# Logging
+LOG_LEVEL=INFO
+ENVIRONMENT=development
+```
+
+### Frontend (.env)
+
+```env
+VITE_API_URL=http://localhost:8000
+VITE_API_TIMEOUT=30000
+```
+
+---
+
+## Testing
+
+### Backend Tests
+
+```bash
+# Run all tests
+docker-compose -f docker-compose.fullstack.yml run backend pytest
+
+# Run specific test file
+docker-compose -f docker-compose.fullstack.yml run backend pytest tests/test_health.py
+
+# Run with coverage
+docker-compose -f docker-compose.fullstack.yml run backend pytest --cov=backend/src --cov-report=html
+
+# Run with verbose output
+docker-compose -f docker-compose.fullstack.yml run backend pytest -v
+```
+
+### Frontend Tests
+
+```bash
+# Run all tests
+docker-compose -f docker-compose.fullstack.yml run frontend npm test
+
+# Run in watch mode
+docker-compose -f docker-compose.fullstack.yml run frontend npm test -- --watch
+
+# Run with coverage
+docker-compose -f docker-compose.fullstack.yml run frontend npm run test:coverage
+
+# Run specific test
+docker-compose -f docker-compose.fullstack.yml run frontend npm test -- Health
+```
+
+---
+
+## Deployment
+
+Follow the comprehensive deployment guide: `.ai/howtos/fullstack/how-to-deploy-fullstack-app.md`
+
+**Deployment targets**:
+- AWS ECS + Fargate (backend containers)
+- AWS RDS (PostgreSQL database)
+- AWS S3 + CloudFront (frontend static files)
+- AWS ALB (load balancing)
+- Terraform (infrastructure as code)
+- GitHub Actions (CI/CD)
+
+---
+
+## Troubleshooting
+
+### Services won't start
+
+```bash
+# Check logs
+docker-compose -f docker-compose.fullstack.yml logs
+
+# Rebuild without cache
+docker-compose -f docker-compose.fullstack.yml build --no-cache
+
+# Remove all containers and volumes
+docker-compose -f docker-compose.fullstack.yml down -v
+```
+
+### Frontend can't connect to backend
+
+- Check `VITE_API_URL` in `frontend/.env`
+- Check `CORS_ORIGINS` in `backend/.env`
+- Verify backend is running: `curl http://localhost:8000/health`
+
+### Database connection issues
+
+- Check database is running: `docker-compose -f docker-compose.fullstack.yml ps`
+- Check `DATABASE_URL` in `backend/.env`
+- View database logs: `docker-compose -f docker-compose.fullstack.yml logs db`
+
+### Hot reload not working
+
+- Check volume mounts in `docker-compose.fullstack.yml`
+- Restart services: `docker-compose -f docker-compose.fullstack.yml restart`
+- Check file permissions
+
+---
+
+## Documentation
+
+- **API Documentation**: http://localhost:8000/docs (OpenAPI/Swagger)
+- **Architecture**: `.ai/docs/fullstack-architecture.md`
+- **Integration Patterns**: `.ai/docs/api-frontend-integration.md`
+- **How-to Guides**: `.ai/howtos/fullstack/`
+
+---
+
+## License
+
+MIT License - See LICENSE file for details
+
+---
+
+## Support
+
+For issues and questions:
+- Check documentation in `.ai/docs/` and `.ai/howtos/`
+- Review architecture diagrams
+- Check logs: `docker-compose -f docker-compose.fullstack.yml logs`
+
+---
+
+**Happy coding! Build something amazing!** 🚀
