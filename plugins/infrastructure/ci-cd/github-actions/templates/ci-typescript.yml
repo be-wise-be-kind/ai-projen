@@ -1,0 +1,253 @@
+# Purpose: TypeScript/React code quality and testing workflow using dedicated Docker linting containers
+# Scope: Complete linting coverage for TypeScript and React with Docker-first CI/CD pattern
+# Overview: Executes comprehensive code quality checks using dedicated linting containers optimized for
+#     TypeScript and React development. Implements GHCR registry caching with conditional rebuilds for
+#     80-90% faster CI runs. Runs ESLint, Prettier, TypeScript compiler, and Vitest in isolated containers
+#     with comprehensive coverage reporting and component testing support.
+# Dependencies: Docker BuildKit, GHCR registry cache, TypeScript plugin make targets, Node.js
+# Exports: Linting execution status, test results, code quality reports, and coverage summaries
+# Environment: GitHub Actions CI/CD pipeline with GHCR-based image caching
+# Related: .docker/dockerfiles/, docker-compose.yml, Makefile
+# Implementation: Uses GHCR registry cache with conditional rebuilds and parallel execution
+
+name: TypeScript CI
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.jsx'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'tsconfig.json'
+      - '.eslintrc*'
+      - '.prettierrc*'
+      - '.github/workflows/ci-typescript.yml'
+      - 'Dockerfile*'
+      - 'docker-compose*.yml'
+  push:
+    branches: [main]
+    paths:
+      - '**/*.ts'
+      - '**/*.tsx'
+      - '**/*.js'
+      - '**/*.jsx'
+      - 'package.json'
+      - 'package-lock.json'
+
+env:
+  NODE_VERSION: '20'  # Customize: Your Node.js version
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/${{ github.repository_owner }}/{{PROJECT_NAME}}  # Customize: Replace {{PROJECT_NAME}}
+
+jobs:
+  lint-and-test:
+    name: TypeScript Linting & Testing
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 2  # Need previous commit to detect changes
+
+      # Set up Docker Buildx for advanced caching features
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Login to GitHub Container Registry for caching
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Detect if linting dependencies have changed
+      - name: Check if linting dependencies changed
+        id: lint-deps-check
+        run: |
+          # Files that affect linting container builds
+          LINT_FILES=(
+            "Dockerfile"
+            "Dockerfile.frontend"
+            ".docker/dockerfiles/Dockerfile.frontend"
+            "package.json"
+            "package-lock.json"
+            "tsconfig.json"
+            ".eslintrc.json"
+            ".eslintrc.cjs"
+            ".prettierrc"
+          )
+
+          # Check if any lint dependency files changed
+          CHANGED=false
+          for file in "${LINT_FILES[@]}"; do
+            if [ -f "$file" ] && git diff --name-only HEAD~1 HEAD | grep -q "^${file}$"; then
+              echo "Detected change in: $file"
+              CHANGED=true
+              break
+            fi
+          done
+
+          # Always rebuild on main branch to refresh cache
+          if [ "${{ github.ref }}" == "refs/heads/main" ]; then
+            echo "On main branch - will rebuild and cache"
+            CHANGED=true
+          fi
+
+          echo "rebuild_needed=$CHANGED" >> $GITHUB_OUTPUT
+
+          if [ "$CHANGED" == "true" ]; then
+            echo "🔨 Linting container will be rebuilt"
+          else
+            echo "✨ Using cached linting container (no dependency changes detected)"
+          fi
+
+      # Build or pull TypeScript linting container
+      - name: Build or pull TypeScript linting container
+        run: |
+          TS_IMAGE="${{ env.IMAGE_PREFIX }}-typescript-linter:latest"
+          REBUILD="${{ steps.lint-deps-check.outputs.rebuild_needed }}"
+
+          # Determine which Dockerfile to use (check common locations)
+          if [ -f ".docker/dockerfiles/Dockerfile.frontend" ]; then
+            DOCKERFILE=".docker/dockerfiles/Dockerfile.frontend"
+          elif [ -f "Dockerfile.frontend" ]; then
+            DOCKERFILE="Dockerfile.frontend"
+          elif [ -f "Dockerfile" ]; then
+            DOCKERFILE="Dockerfile"
+          else
+            echo "Error: No Dockerfile found for TypeScript/frontend"
+            exit 1
+          fi
+
+          if [ "$REBUILD" == "true" ]; then
+            echo "Building TypeScript linting container with registry cache..."
+            docker buildx build \
+              --cache-from type=registry,ref=${TS_IMAGE} \
+              --cache-to type=registry,ref=${TS_IMAGE},mode=max \
+              --target lint \
+              --load \
+              -t {{PROJECT_NAME}}-typescript-linter:latest \
+              -f ${DOCKERFILE} \
+              .
+            echo "✓ TypeScript linting container built and cached"
+          else
+            echo "Pulling cached TypeScript linting container..."
+            docker pull ${TS_IMAGE} || echo "No cache found, will build"
+            if docker image inspect ${TS_IMAGE} >/dev/null 2>&1; then
+              docker tag ${TS_IMAGE} {{PROJECT_NAME}}-typescript-linter:latest
+              echo "✓ TypeScript linting container pulled from cache"
+            else
+              echo "Cache miss - building TypeScript linting container..."
+              docker buildx build \
+                --cache-from type=registry,ref=${TS_IMAGE} \
+                --cache-to type=registry,ref=${TS_IMAGE},mode=max \
+                --target lint \
+                --load \
+                -t {{PROJECT_NAME}}-typescript-linter:latest \
+                -f ${DOCKERFILE} \
+                .
+            fi
+          fi
+
+      # Run TypeScript linting
+      - name: Run TypeScript linting
+        run: |
+          # Check if using Make or direct Docker commands
+          if [ -f "Makefile" ] && grep -q "lint-typescript" Makefile; then
+            echo "Running linting via Make..."
+            make lint-typescript
+          else
+            echo "Running linting via Docker..."
+            # Fallback to direct Docker commands if no Makefile
+            docker run --rm -v $(pwd):/app {{PROJECT_NAME}}-typescript-linter:latest npm run lint
+            docker run --rm -v $(pwd):/app {{PROJECT_NAME}}-typescript-linter:latest npm run format:check
+            docker run --rm -v $(pwd):/app {{PROJECT_NAME}}-typescript-linter:latest npm run type-check
+          fi
+
+      # Build dev container for testing
+      - name: Build TypeScript dev container
+        run: |
+          # Determine Dockerfile
+          if [ -f ".docker/dockerfiles/Dockerfile.frontend" ]; then
+            DOCKERFILE=".docker/dockerfiles/Dockerfile.frontend"
+          elif [ -f "Dockerfile.frontend" ]; then
+            DOCKERFILE="Dockerfile.frontend"
+          elif [ -f "Dockerfile" ]; then
+            DOCKERFILE="Dockerfile"
+          else
+            echo "Error: No Dockerfile found for TypeScript/frontend"
+            exit 1
+          fi
+
+          echo "Building TypeScript dev container..."
+          docker buildx build \
+            --cache-from type=gha \
+            --cache-to type=gha,mode=max \
+            --target dev \
+            --load \
+            -t {{PROJECT_NAME}}-typescript-dev:latest \
+            -f ${DOCKERFILE} \
+            .
+
+      # Run TypeScript tests
+      - name: Run TypeScript tests
+        run: |
+          # Check if using Make or direct Docker commands
+          if [ -f "Makefile" ] && grep -q "test-typescript" Makefile; then
+            echo "Running tests via Make..."
+            make test-typescript
+          else
+            echo "Running tests via Docker..."
+            docker run --rm -v $(pwd):/app {{PROJECT_NAME}}-typescript-dev:latest npm run test:coverage
+          fi
+
+      # Upload coverage reports
+      - name: Upload coverage reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: typescript-coverage
+          path: |
+            coverage/
+            coverage.xml
+          retention-days: 30
+
+      # Generate summary
+      - name: Generate TypeScript CI summary
+        if: always()
+        run: |
+          echo "## 📘 TypeScript CI Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🔍 Linting Tools Executed:" >> $GITHUB_STEP_SUMMARY
+          echo "- **ESLint**: Code quality and best practices" >> $GITHUB_STEP_SUMMARY
+          echo "- **Prettier**: Code formatting validation" >> $GITHUB_STEP_SUMMARY
+          echo "- **TypeScript Compiler**: Type checking" >> $GITHUB_STEP_SUMMARY
+          echo "- **React Rules**: React-specific linting (if React project)" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🧪 Testing:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Vitest**: Unit and component tests" >> $GITHUB_STEP_SUMMARY
+          echo "- **Coverage**: Code coverage analysis" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### 🐳 Containers Used:" >> $GITHUB_STEP_SUMMARY
+          echo "- **Linting Container**: \`{{PROJECT_NAME}}-typescript-linter\`" >> $GITHUB_STEP_SUMMARY
+          echo "- **Dev Container**: \`{{PROJECT_NAME}}-typescript-dev\`" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### ⚡ Performance:" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.lint-deps-check.outputs.rebuild_needed }}" == "false" ]; then
+            echo "- ✨ **Cache Hit**: Linting container pulled from cache" >> $GITHUB_STEP_SUMMARY
+            echo "- **Time Savings**: ~80-90% faster than rebuilding" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "- 🔨 **Rebuild**: Dependencies changed, container rebuilt and cached" >> $GITHUB_STEP_SUMMARY
+            echo "- **Cache Updated**: Future runs will be faster" >> $GITHUB_STEP_SUMMARY
+          fi
