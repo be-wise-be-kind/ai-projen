@@ -21,7 +21,7 @@
 # 3. Direct (Last Resort) - Direct local execution (not recommended)
 ################################################################################
 
-.PHONY: lint-python format-python format-check-python typecheck security-scan test-python test-coverage-python python-check python-install dev-python lint-start-python
+.PHONY: lint-python format-python format-check-python typecheck security-scan lint-mypy lint-bandit lint-pylint lint-flake8 complexity-radon complexity-xenon security-full test-python test-coverage-python python-check python-install dev-python lint-start-python
 
 # Color codes for output
 PYTHON_CYAN := \033[0;36m
@@ -211,6 +211,148 @@ else
 endif
 
 ################################################################################
+# Comprehensive Linting Tools (Docker-First)
+################################################################################
+
+lint-mypy: typecheck ## Alias for typecheck (MyPy type checking)
+
+lint-bandit: security-scan ## Alias for security-scan (Bandit security scanning)
+
+lint-pylint: ## Run Pylint comprehensive code quality linting - Docker-first
+ifdef HAS_DOCKER
+	@if ! docker ps | grep -q "$(PROJECT_NAME)-python-linter-$(BRANCH_NAME)"; then \
+		$(MAKE) lint-start-python; \
+	fi
+	@echo "$(PYTHON_CYAN)Running Pylint code quality linter in Docker...$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && pylint $(PYTHON_SRC_DIRS) --output-format=colorized"
+	@echo "$(PYTHON_GREEN)✓ Pylint linting complete$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@poetry run pylint $(PYTHON_SRC_DIRS) --output-format=colorized
+	@echo "$(PYTHON_GREEN)✓ Pylint linting complete$(PYTHON_NC)"
+else
+	@pylint $(PYTHON_SRC_DIRS) --output-format=colorized
+	@echo "$(PYTHON_GREEN)✓ Pylint linting complete$(PYTHON_NC)"
+endif
+
+lint-flake8: ## Run Flake8 style guide enforcement with plugins - Docker-first
+ifdef HAS_DOCKER
+	@if ! docker ps | grep -q "$(PROJECT_NAME)-python-linter-$(BRANCH_NAME)"; then \
+		$(MAKE) lint-start-python; \
+	fi
+	@echo "$(PYTHON_CYAN)Running Flake8 style checker in Docker...$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && flake8 $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)"
+	@echo "$(PYTHON_GREEN)✓ Flake8 linting complete$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@poetry run flake8 $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
+	@echo "$(PYTHON_GREEN)✓ Flake8 linting complete$(PYTHON_NC)"
+else
+	@flake8 $(PYTHON_SRC_DIRS) $(PYTHON_TEST_DIR)
+	@echo "$(PYTHON_GREEN)✓ Flake8 linting complete$(PYTHON_NC)"
+endif
+
+################################################################################
+# Complexity Analysis (Docker-First)
+################################################################################
+
+complexity-radon: ## Run Radon complexity and maintainability analysis - Docker-first
+ifdef HAS_DOCKER
+	@if ! docker ps | grep -q "$(PROJECT_NAME)-python-linter-$(BRANCH_NAME)"; then \
+		$(MAKE) lint-start-python; \
+	fi
+	@echo "$(PYTHON_CYAN)Running Radon complexity analysis in Docker...$(PYTHON_NC)"
+	@echo "$(PYTHON_YELLOW)Cyclomatic Complexity (CC):$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && radon cc $(PYTHON_SRC_DIRS) -a -s"
+	@echo ""
+	@echo "$(PYTHON_YELLOW)Maintainability Index (MI):$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && radon mi $(PYTHON_SRC_DIRS) -s"
+	@echo "$(PYTHON_GREEN)✓ Radon complexity analysis complete$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@echo "$(PYTHON_YELLOW)Cyclomatic Complexity (CC):$(PYTHON_NC)"
+	@poetry run radon cc $(PYTHON_SRC_DIRS) -a -s
+	@echo ""
+	@echo "$(PYTHON_YELLOW)Maintainability Index (MI):$(PYTHON_NC)"
+	@poetry run radon mi $(PYTHON_SRC_DIRS) -s
+	@echo "$(PYTHON_GREEN)✓ Radon complexity analysis complete$(PYTHON_NC)"
+else
+	@echo "$(PYTHON_YELLOW)Cyclomatic Complexity (CC):$(PYTHON_NC)"
+	@radon cc $(PYTHON_SRC_DIRS) -a -s
+	@echo ""
+	@echo "$(PYTHON_YELLOW)Maintainability Index (MI):$(PYTHON_NC)"
+	@radon mi $(PYTHON_SRC_DIRS) -s
+	@echo "$(PYTHON_GREEN)✓ Radon complexity analysis complete$(PYTHON_NC)"
+endif
+
+complexity-xenon: ## Run Xenon complexity monitoring and enforcement - Docker-first
+ifdef HAS_DOCKER
+	@if ! docker ps | grep -q "$(PROJECT_NAME)-python-linter-$(BRANCH_NAME)"; then \
+		$(MAKE) lint-start-python; \
+	fi
+	@echo "$(PYTHON_CYAN)Running Xenon complexity enforcement in Docker...$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && xenon --max-absolute A --max-modules A --max-average A $(PYTHON_SRC_DIRS)"
+	@echo "$(PYTHON_GREEN)✓ Xenon complexity check passed (grade A)$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@poetry run xenon --max-absolute A --max-modules A --max-average A $(PYTHON_SRC_DIRS)
+	@echo "$(PYTHON_GREEN)✓ Xenon complexity check passed (grade A)$(PYTHON_NC)"
+else
+	@xenon --max-absolute A --max-modules A --max-average A $(PYTHON_SRC_DIRS)
+	@echo "$(PYTHON_GREEN)✓ Xenon complexity check passed (grade A)$(PYTHON_NC)"
+endif
+
+################################################################################
+# Comprehensive Security Scanning (Docker-First)
+################################################################################
+
+security-full: ## Run all security tools (Bandit, Safety, pip-audit) - Docker-first
+ifdef HAS_DOCKER
+	@if ! docker ps | grep -q "$(PROJECT_NAME)-python-linter-$(BRANCH_NAME)"; then \
+		$(MAKE) lint-start-python; \
+	fi
+	@echo "$(PYTHON_CYAN)Running comprehensive security scanning in Docker...$(PYTHON_NC)"
+	@echo "$(PYTHON_YELLOW)1. Bandit (code security vulnerabilities):$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && bandit -r $(PYTHON_SRC_DIRS) -ll"
+	@echo ""
+	@echo "$(PYTHON_YELLOW)2. Safety (dependency vulnerabilities):$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && safety check --json || true"
+	@echo ""
+	@echo "$(PYTHON_YELLOW)3. pip-audit (dependency security audit):$(PYTHON_NC)"
+	@docker exec $(PROJECT_NAME)-python-linter-$(BRANCH_NAME) bash -c "\
+		cd /workspace && pip-audit || true"
+	@echo "$(PYTHON_GREEN)✓ Comprehensive security scan complete$(PYTHON_NC)"
+else ifdef HAS_POETRY
+	@echo "$(PYTHON_YELLOW)Docker not available, using Poetry...$(PYTHON_NC)"
+	@echo "$(PYTHON_YELLOW)1. Bandit (code security vulnerabilities):$(PYTHON_NC)"
+	@poetry run bandit -r $(PYTHON_SRC_DIRS) -ll
+	@echo ""
+	@echo "$(PYTHON_YELLOW)2. Safety (dependency vulnerabilities):$(PYTHON_NC)"
+	@poetry run safety check --json || true
+	@echo ""
+	@echo "$(PYTHON_YELLOW)3. pip-audit (dependency security audit):$(PYTHON_NC)"
+	@poetry run pip-audit || true
+	@echo "$(PYTHON_GREEN)✓ Comprehensive security scan complete$(PYTHON_NC)"
+else
+	@echo "$(PYTHON_YELLOW)1. Bandit (code security vulnerabilities):$(PYTHON_NC)"
+	@bandit -r $(PYTHON_SRC_DIRS) -ll
+	@echo ""
+	@echo "$(PYTHON_YELLOW)2. Safety (dependency vulnerabilities):$(PYTHON_NC)"
+	@safety check --json || true
+	@echo ""
+	@echo "$(PYTHON_YELLOW)3. pip-audit (dependency security audit):$(PYTHON_NC)"
+	@pip-audit || true
+	@echo "$(PYTHON_GREEN)✓ Comprehensive security scan complete$(PYTHON_NC)"
+endif
+
+################################################################################
 # Testing (Docker-First)
 ################################################################################
 
@@ -338,13 +480,26 @@ endif
 	@echo "  $(PYTHON_YELLOW)make dev-python$(PYTHON_NC)               - Start development environment"
 	@echo "  $(PYTHON_YELLOW)make dev-stop-python$(PYTHON_NC)          - Stop development environment"
 	@echo ""
-	@echo "$(PYTHON_GREEN)Quality Checks:$(PYTHON_NC)"
-	@echo "  $(PYTHON_YELLOW)make lint-python$(PYTHON_NC)              - Run Ruff linter"
+	@echo "$(PYTHON_GREEN)Quality Checks (Primary):$(PYTHON_NC)"
+	@echo "  $(PYTHON_YELLOW)make lint-python$(PYTHON_NC)              - Run Ruff linter (fast, recommended)"
 	@echo "  $(PYTHON_YELLOW)make lint-fix-python$(PYTHON_NC)          - Auto-fix linting issues"
 	@echo "  $(PYTHON_YELLOW)make format-python$(PYTHON_NC)            - Format code with Ruff"
 	@echo "  $(PYTHON_YELLOW)make format-check-python$(PYTHON_NC)      - Check formatting"
 	@echo "  $(PYTHON_YELLOW)make typecheck$(PYTHON_NC)                - Run MyPy type checker"
 	@echo "  $(PYTHON_YELLOW)make security-scan$(PYTHON_NC)            - Run Bandit security scanner"
+	@echo ""
+	@echo "$(PYTHON_GREEN)Additional Linting:$(PYTHON_NC)"
+	@echo "  $(PYTHON_YELLOW)make lint-mypy$(PYTHON_NC)                - MyPy type checking (alias)"
+	@echo "  $(PYTHON_YELLOW)make lint-bandit$(PYTHON_NC)              - Bandit security scan (alias)"
+	@echo "  $(PYTHON_YELLOW)make lint-pylint$(PYTHON_NC)              - Pylint comprehensive linting"
+	@echo "  $(PYTHON_YELLOW)make lint-flake8$(PYTHON_NC)              - Flake8 + plugins linting"
+	@echo ""
+	@echo "$(PYTHON_GREEN)Complexity Analysis:$(PYTHON_NC)"
+	@echo "  $(PYTHON_YELLOW)make complexity-radon$(PYTHON_NC)         - Radon CC & MI analysis"
+	@echo "  $(PYTHON_YELLOW)make complexity-xenon$(PYTHON_NC)         - Xenon complexity enforcement"
+	@echo ""
+	@echo "$(PYTHON_GREEN)Security (Comprehensive):$(PYTHON_NC)"
+	@echo "  $(PYTHON_YELLOW)make security-full$(PYTHON_NC)            - All security tools (Bandit+Safety+pip-audit)"
 	@echo ""
 	@echo "$(PYTHON_GREEN)Testing:$(PYTHON_NC)"
 	@echo "  $(PYTHON_YELLOW)make test-python$(PYTHON_NC)              - Run all tests"

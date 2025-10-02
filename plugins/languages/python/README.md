@@ -12,6 +12,8 @@ A production-ready Python development setup based on modern best practices and r
 
 ### Tools Included
 
+#### Core Tools (Always Recommended)
+
 1. **Ruff** - Fast all-in-one linter and formatter
    - Replaces: Black, isort, flake8, and parts of pylint
    - 10-100x faster than traditional Python tools
@@ -32,6 +34,43 @@ A production-ready Python development setup based on modern best practices and r
    - Async support, fixtures, parametrization
    - Coverage reporting with pytest-cov
 
+#### Comprehensive Tooling Suite (PR7.6 - Production-Grade)
+
+5. **Pylint** - Comprehensive code quality linting
+   - Advanced code quality checks beyond Ruff
+   - Design pattern enforcement
+   - Code smell detection
+   - Refactoring suggestions
+
+6. **Flake8 + Plugins** - Style guide enforcement
+   - **flake8-docstrings**: Google-style documentation standards
+   - **flake8-bugbear**: Common bug detection
+   - **flake8-comprehensions**: Better list/dict/set comprehensions
+   - **flake8-simplify**: Code simplification suggestions
+
+7. **Radon** - Complexity and maintainability analysis
+   - Cyclomatic Complexity (CC) measurement
+   - Maintainability Index (MI) calculation
+   - Enforces Grade A complexity (CC 1-5)
+   - Enforces Grade A maintainability (MI 20-100)
+
+8. **Xenon** - Complexity enforcement
+   - Fails build if complexity exceeds thresholds
+   - Prevents complexity from increasing over time
+   - Enforces Grade A standards
+
+9. **Safety** - Dependency vulnerability scanning
+   - CVE database checking
+   - Known vulnerabilities in installed packages
+   - Outdated dependency detection
+
+10. **pip-audit** - Alternative dependency auditor
+    - OSV database (more comprehensive than Safety)
+    - Supply chain security issues
+    - Multiple vulnerability databases
+
+**Note**: The comprehensive suite provides all production-grade tooling from the durable-code-test reference implementation.
+
 ### Configuration Files
 
 All configurations are pre-tuned for Python 3.11+ projects:
@@ -49,12 +88,19 @@ python/
 │   └── pytest/
 │       └── config/pytest.ini        # Pytest test configuration
 ├── templates/
-│   ├── makefile-python.mk           # Make targets for Python
+│   ├── pyproject.toml.template      # COMPREHENSIVE config with all tools (PR7.6)
+│   ├── makefile-python.mk           # Make targets for all Python tools
 │   ├── github-workflow-python.yml   # GitHub Actions workflow
+│   ├── Dockerfile.python            # Multi-stage Docker builds
+│   ├── docker-compose.python.yml    # Docker Compose config
 │   ├── example.py                   # Example Python module
 │   └── test_example.py              # Example test file
 └── standards/
-    └── python-standards.md          # PEP 8 + best practices
+    ├── python-standards.md          # PEP 8 + best practices
+    ├── COMPREHENSIVE_TOOLING.md     # Complete tool guide (PR7.6)
+    ├── .flake8                      # Flake8 + plugins config
+    ├── .pylintrc                    # Pylint comprehensive config
+    └── radon.cfg                    # Radon complexity config
 ```
 
 ## Quick Start
@@ -131,13 +177,15 @@ All Make targets support automatic environment detection (Docker → Poetry → 
 
 ### Make Targets
 
+#### Core Development Targets
+
 ```bash
 # Development
 make dev-python               # Start dev environment (Docker-first)
 make dev-stop-python          # Stop dev environment
 
-# Quality checks (Docker-first with auto-detection)
-make lint-python              # Run Ruff linting
+# Primary Quality Checks (Docker-first with auto-detection)
+make lint-python              # Run Ruff linting (fast, recommended)
 make lint-fix-python          # Auto-fix linting issues
 make format-python            # Format code with Ruff
 make typecheck                # Run MyPy type checking
@@ -150,13 +198,44 @@ make test-unit-python         # Run only unit tests
 make test-integration-python  # Run only integration tests
 
 # Combined
-make python-check             # Run all checks (lint + type + security + test)
+make python-check             # Run core checks (lint + type + security + test)
 
 # Utilities
 make python-install           # Install/build dependencies (environment-aware)
 make clean-python             # Clean cache files and containers
 make help-python              # Show Python-specific help with environment info
 ```
+
+#### Comprehensive Tooling Targets (PR7.6)
+
+```bash
+# Additional Linting
+make lint-mypy                # MyPy type checking (alias for typecheck)
+make lint-bandit              # Bandit security scan (alias for security-scan)
+make lint-pylint              # Pylint comprehensive code quality linting
+make lint-flake8              # Flake8 + plugins (docstrings, bugbear, comprehensions, simplify)
+
+# Complexity Analysis
+make complexity-radon         # Radon cyclomatic complexity & maintainability index
+make complexity-xenon         # Xenon complexity enforcement (fails on Grade < A)
+
+# Comprehensive Security
+make security-full            # All security tools (Bandit + Safety + pip-audit)
+```
+
+#### Target Descriptions
+
+**Primary Tools** (Fast, use daily):
+- `lint-python` - Ruff linting (10-100x faster than traditional tools)
+- `typecheck` - MyPy type checking (catches type errors)
+- `security-scan` - Bandit code security scanning
+
+**Comprehensive Tools** (Thorough, use for audits/CI):
+- `lint-pylint` - Deep code quality analysis (slower but catches more issues)
+- `lint-flake8` - Style guide + documentation enforcement
+- `complexity-radon` - Analyze code complexity (informational)
+- `complexity-xenon` - Enforce complexity limits (fails build if too complex)
+- `security-full` - Complete security audit (code + dependencies)
 
 **Environment Auto-Detection**: All targets automatically detect and use:
 1. Docker (if available) - runs in containers
@@ -329,6 +408,109 @@ repos:
 
 ### Security Plugin
 Bandit integrates with security scanning workflows via `make security-scan`
+
+## Comprehensive Tooling Suite (PR7.6)
+
+### Overview
+
+This plugin now includes the complete production-grade tooling suite from durable-code-test, providing comprehensive code quality, security, and maintainability analysis.
+
+### Tool Selection Guide
+
+#### When to Use Each Tool
+
+| Scenario | Recommended Tools | Notes |
+|----------|------------------|-------|
+| **Daily Development** | Ruff + MyPy + Bandit | Fast, catches most issues |
+| **Pre-Commit** | Ruff (auto-fix) + MyPy | Quick validation before commit |
+| **CI/CD Pipeline** | All tools | Comprehensive quality gate |
+| **Code Audits** | Pylint + Flake8 + Radon | Deep analysis |
+| **Security Review** | security-full | All security scanners |
+| **Complexity Review** | Radon + Xenon | Identify refactoring targets |
+
+#### Workflow Examples
+
+**Development Workflow**:
+```bash
+make lint-python        # Quick Ruff check (fast)
+make typecheck          # Type checking
+make test-python        # Run tests
+```
+
+**Pre-Commit Workflow**:
+```bash
+make lint-fix-python    # Auto-fix issues
+make format-python      # Format code
+make typecheck          # Verify types
+```
+
+**CI/CD Workflow**:
+```bash
+make lint-python        # Ruff linting
+make lint-pylint        # Comprehensive linting
+make typecheck          # Type checking
+make security-full      # Complete security scan
+make complexity-xenon   # Enforce complexity limits
+make test-coverage-python  # Tests with coverage
+```
+
+**Periodic Audit Workflow**:
+```bash
+make lint-flake8        # Style guide + documentation
+make complexity-radon   # Complexity analysis
+make security-full      # Security audit
+```
+
+### Complexity Standards
+
+The plugin enforces **Grade A** complexity standards:
+
+**Cyclomatic Complexity (CC)**:
+- Grade A: 1-5 (simple, easy to test) ✅
+- Grade B: 6-10 (moderate)
+- Grade C: 11-20 (complex, needs refactoring)
+- Grade D: 21-50 (very complex)
+- Grade F: 51+ (unmaintainable)
+
+**Maintainability Index (MI)**:
+- Grade A: 20-100 (maintainable) ✅
+- Grade B: 10-19 (moderately maintainable)
+- Grade C: 0-9 (difficult to maintain)
+
+Use `make complexity-radon` to analyze and `make complexity-xenon` to enforce.
+
+### Security Layers
+
+**Three-Tier Security Scanning**:
+
+1. **Bandit** (`make security-scan`) - Code-level vulnerabilities
+   - Hardcoded secrets
+   - SQL injection risks
+   - Use of unsafe functions
+   - Shell injection risks
+
+2. **Safety** (`make security-full`) - Dependency vulnerabilities
+   - CVE database checking
+   - Known vulnerabilities in packages
+   - Outdated dependencies
+
+3. **pip-audit** (`make security-full`) - Alternative dependency audit
+   - OSV database (more comprehensive)
+   - Supply chain security
+   - Multiple vulnerability sources
+
+**Best Practice**: Run `make security-full` in CI/CD to catch all security issues.
+
+### Complete Tool Documentation
+
+For detailed information on each tool, configuration options, and usage patterns, see:
+
+**`standards/COMPREHENSIVE_TOOLING.md`** - Complete guide covering:
+- Tool comparisons and selection criteria
+- Configuration details for all tools
+- Workflow recommendations
+- Troubleshooting guides
+- Integration examples
 
 ## Why These Tools?
 

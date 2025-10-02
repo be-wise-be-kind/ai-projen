@@ -51,6 +51,7 @@ Before installing this plugin, ensure:
 
 Ask the user (or use recommended defaults):
 
+#### Core Tools (Always Installed)
 1. **Linter + Formatter**: Use Ruff?
    - **Ruff** (RECOMMENDED - fast, all-in-one tool combining linting + formatting)
      - Replaces: Black, isort, flake8, and parts of pylint
@@ -73,10 +74,29 @@ Ask the user (or use recommended defaults):
    - unittest (Python built-in, less features)
    - Default: **pytest**
 
-5. **Project Structure**: Create starter files?
+#### Comprehensive Tooling Suite (PR7.6 - Production-Grade)
+5. **Additional Linters**: Install comprehensive linting suite?
+   - **Pylint** (comprehensive code quality linting)
+   - **Flake8** + plugins (style guide enforcement with docstrings, bugbear, comprehensions, simplify)
+   - Default: **Yes** (recommended for production projects)
+
+6. **Complexity Analysis**: Enable complexity monitoring?
+   - **Radon** (cyclomatic complexity and maintainability index)
+   - **Xenon** (complexity enforcement - fails build if too complex)
+   - Default: **Yes** (recommended for maintainability)
+
+7. **Comprehensive Security**: Enable all security tools?
+   - **Safety** (dependency vulnerability scanning via CVE database)
+   - **pip-audit** (alternative dependency auditor via OSV database)
+   - Default: **Yes** (recommended for production security)
+
+8. **Project Structure**: Create starter files?
    - Yes (creates example.py and tests/)
    - No
    - Default: **No** (only if new project)
+
+**Note**: The comprehensive tooling suite includes all tools from durable-code-test reference implementation.
+See `standards/COMPREHENSIVE_TOOLING.md` for detailed tool documentation.
 
 ### Step 2: Install Ruff (Linter + Formatter)
 
@@ -292,7 +312,74 @@ pytest-asyncio>=0.23.0
 pytest-cov>=4.1.0
 ```
 
-### Step 11: Create Example/Starter Files (Optional)
+### Step 11: Install Comprehensive Tooling Suite (Optional but Recommended)
+
+**If user selected comprehensive tooling** (Pylint, Flake8, Radon, Xenon, Safety, pip-audit):
+
+#### Install Additional Dependencies
+
+Using the comprehensive pyproject.toml template:
+```bash
+# Copy the comprehensive template (includes all tools)
+cp plugins/languages/python/templates/pyproject.toml.template ./pyproject.toml
+
+# Customize placeholders in pyproject.toml:
+# - {{PROJECT_NAME}} → your project name
+# - {{PROJECT_DESCRIPTION}} → your description
+# - {{PACKAGE_NAME}} → your main package
+# - {{AUTHOR_NAME}} and {{AUTHOR_EMAIL}} → your info
+
+# Install all dependencies
+poetry install
+```
+
+Or add tools individually:
+```bash
+# Additional linters
+poetry add --group dev pylint flake8 flake8-docstrings flake8-bugbear flake8-comprehensions flake8-simplify
+
+# Complexity analysis
+poetry add --group dev radon xenon
+
+# Additional security tools
+poetry add --group dev safety pip-audit
+```
+
+#### Copy Configuration Files
+
+```bash
+# Flake8 configuration
+cp plugins/languages/python/standards/.flake8 ./.flake8
+
+# Pylint configuration (optional if using pyproject.toml)
+cp plugins/languages/python/standards/.pylintrc ./.pylintrc
+
+# Radon configuration (optional)
+cp plugins/languages/python/standards/radon.cfg ./radon.cfg
+```
+
+#### Verify Comprehensive Tooling
+
+```bash
+# Verify installations
+pylint --version
+flake8 --version
+radon --version
+xenon --version
+safety --version
+pip-audit --version
+
+# Test individual tools
+make lint-pylint           # Pylint linting
+make lint-flake8           # Flake8 + plugins
+make complexity-radon      # Radon analysis
+make complexity-xenon      # Xenon enforcement
+make security-full         # All security tools
+```
+
+**Documentation**: See `standards/COMPREHENSIVE_TOOLING.md` for detailed tool usage and configuration.
+
+### Step 12: Create Example/Starter Files (Optional)
 
 **If user requested starter files** or this is a new empty project:
 
@@ -319,44 +406,65 @@ pytest-cov>=4.1.0
    make test-python
    ```
 
-### Step 12: Validate Installation
+### Step 13: Validate Installation
 
 Run the following commands to verify complete installation:
 
 ```bash
-# 1. Verify tools are installed
+# 1. Verify core tools are installed
 ruff --version
 mypy --version
 bandit --version
 pytest --version
 
-# 2. Verify config files exist
-ls -la pyproject.toml  # Ruff config (or separate .ruff.toml)
-ls -la mypy.ini        # MyPy config
-ls -la .bandit         # Bandit config
-ls -la pytest.ini      # Pytest config
+# 2. Verify comprehensive tools (if installed)
+pylint --version || echo "Pylint not installed (optional)"
+flake8 --version || echo "Flake8 not installed (optional)"
+radon --version || echo "Radon not installed (optional)"
+xenon --version || echo "Xenon not installed (optional)"
+safety --version || echo "Safety not installed (optional)"
+pip-audit --version || echo "pip-audit not installed (optional)"
 
-# 3. Run quality checks
+# 3. Verify config files exist
+ls -la pyproject.toml  # Comprehensive config with all tools
+ls -la .flake8         # Flake8 config (if comprehensive tooling installed)
+ls -la .pylintrc       # Pylint config (if using standalone file)
+
+# 4. Run quality checks
 make lint-python       # Should pass or show expected warnings
 make typecheck         # Should pass or show expected type issues
 make security-scan     # Should pass or show security findings
 make test-python       # Should pass if tests exist
 
-# 4. Run all checks together
-make python-check      # Runs all Python quality checks
+# 5. Run comprehensive checks (if tools installed)
+make lint-pylint || echo "Pylint not configured"
+make lint-flake8 || echo "Flake8 not configured"
+make complexity-radon || echo "Radon not configured"
+make security-full || echo "Comprehensive security not configured"
+
+# 6. Run all checks together
+make python-check      # Runs core Python quality checks
 ```
 
 ## Post-Installation
 
 After successful installation, inform the user:
 
-**Installed Tools**:
+**Installed Core Tools**:
 - ✅ **Ruff**: Fast linter + formatter (replaces Black, isort, flake8)
 - ✅ **MyPy**: Static type checker (if selected)
 - ✅ **Bandit**: Security vulnerability scanner (if selected)
 - ✅ **Pytest**: Testing framework with coverage support
 
-**Available Make Targets**:
+**Installed Comprehensive Tools** (if selected):
+- ✅ **Pylint**: Comprehensive code quality linting
+- ✅ **Flake8 + plugins**: Style guide enforcement (docstrings, bugbear, comprehensions, simplify)
+- ✅ **Radon**: Cyclomatic complexity and maintainability index
+- ✅ **Xenon**: Complexity enforcement (fails on violations)
+- ✅ **Safety**: Dependency vulnerability scanning (CVE database)
+- ✅ **pip-audit**: Alternative dependency auditor (OSV database)
+
+**Available Make Targets (Core)**:
 ```bash
 make lint-python              # Run Ruff linting
 make format-python            # Format code with Ruff
@@ -364,9 +472,25 @@ make typecheck                # Run MyPy type checking
 make security-scan            # Run Bandit security scan
 make test-python              # Run pytest tests
 make test-coverage-python     # Run tests with coverage
-make python-check             # Run all checks
+make python-check             # Run all core checks
 make python-install           # Install dependencies
 make clean-python             # Clean cache files
+```
+
+**Available Make Targets (Comprehensive)**:
+```bash
+# Additional Linting
+make lint-mypy                # MyPy type checking (alias)
+make lint-bandit              # Bandit security scan (alias)
+make lint-pylint              # Pylint comprehensive linting
+make lint-flake8              # Flake8 + plugins linting
+
+# Complexity Analysis
+make complexity-radon         # Radon CC & MI analysis
+make complexity-xenon         # Xenon complexity enforcement (fails on violations)
+
+# Comprehensive Security
+make security-full            # All security tools (Bandit + Safety + pip-audit)
 ```
 
 **Next Steps**:
