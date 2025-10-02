@@ -32,9 +32,7 @@ yarn-error.log*
 .DS_Store
 
 # Test repositories
-test-empty-setup/
-test-incremental-setup/
-test-upgrade-existing/
+tests/
 
 # OS
 Thumbs.db
