@@ -1,0 +1,199 @@
+"""
+Test template for async functions and async code patterns.
+
+Usage: Copy patterns from this template for testing async operations.
+"""
+import pytest
+import asyncio
+from unittest.mock import AsyncMock
+
+
+class TestBasicAsyncFunctions:
+    """Basic async function testing patterns."""
+
+    @pytest.mark.asyncio
+    async def test_simple_async_function(self):
+        """Test a basic async function."""
+        async def fetch_data():
+            await asyncio.sleep(0.01)
+            return {"status": "success"}
+
+        result = await fetch_data()
+        assert result["status"] == "success"
+
+    @pytest.mark.asyncio
+    async def test_async_function_with_parameters(self):
+        """Test async function with parameters."""
+        async def calculate(x: int, y: int) -> int:
+            await asyncio.sleep(0.01)
+            return x + y
+
+        result = await calculate(5, 3)
+        assert result == 8
+
+
+class TestAsyncConcurrency:
+    """Testing concurrent async operations."""
+
+    @pytest.mark.asyncio
+    async def test_async_gather(self):
+        """Test multiple async operations with gather."""
+        async def task(n: int) -> int:
+            await asyncio.sleep(0.01)
+            return n * 2
+
+        results = await asyncio.gather(
+            task(1),
+            task(2),
+            task(3)
+        )
+
+        assert results == [2, 4, 6]
+
+    @pytest.mark.asyncio
+    async def test_async_tasks(self):
+        """Test creating and managing async tasks."""
+        async def background_task(task_id: int) -> str:
+            await asyncio.sleep(0.01)
+            return f"Task {task_id} completed"
+
+        tasks = [asyncio.create_task(background_task(i)) for i in range(3)]
+        results = await asyncio.gather(*tasks)
+
+        assert len(results) == 3
+        assert all("completed" in result for result in results)
+
+
+class TestAsyncTimeouts:
+    """Testing async operations with timeouts."""
+
+    @pytest.mark.asyncio
+    async def test_operation_completes_within_timeout(self):
+        """Test async operation completes before timeout."""
+        async def quick_operation():
+            await asyncio.sleep(0.1)
+            return "done"
+
+        result = await asyncio.wait_for(quick_operation(), timeout=1.0)
+        assert result == "done"
+
+    @pytest.mark.asyncio
+    async def test_operation_times_out(self):
+        """Test async operation exceeds timeout."""
+        async def slow_operation():
+            await asyncio.sleep(2.0)
+            return "done"
+
+        with pytest.raises(asyncio.TimeoutError):
+            await asyncio.wait_for(slow_operation(), timeout=0.1)
+
+
+class TestAsyncErrorHandling:
+    """Testing error handling in async code."""
+
+    @pytest.mark.asyncio
+    async def test_async_exception_raised(self):
+        """Test async function raises expected exception."""
+        async def failing_operation():
+            await asyncio.sleep(0.01)
+            raise ValueError("Operation failed")
+
+        with pytest.raises(ValueError, match="Operation failed"):
+            await failing_operation()
+
+    @pytest.mark.asyncio
+    async def test_async_retry_logic(self):
+        """Test async retry mechanism."""
+        attempt_count = 0
+
+        async def unreliable_operation():
+            nonlocal attempt_count
+            attempt_count += 1
+            await asyncio.sleep(0.01)
+            if attempt_count < 3:
+                raise ConnectionError("Temporary failure")
+            return "success"
+
+        # Retry logic
+        max_retries = 5
+        for attempt in range(max_retries):
+            try:
+                result = await unreliable_operation()
+                break
+            except ConnectionError:
+                if attempt == max_retries - 1:
+                    raise
+
+        assert result == "success"
+        assert attempt_count == 3
+
+
+class TestAsyncMocking:
+    """Testing with mocked async functions."""
+
+    @pytest.mark.asyncio
+    async def test_with_async_mock(self, mocker):
+        """Test using AsyncMock."""
+        mock_async_func = mocker.AsyncMock(return_value="mocked result")
+
+        result = await mock_async_func()
+
+        assert result == "mocked result"
+        mock_async_func.assert_awaited_once()
+
+    @pytest.mark.asyncio
+    async def test_async_http_call_mocked(self, mocker):
+        """Test mocking async HTTP client."""
+        import httpx
+
+        mock_response = mocker.Mock()
+        mock_response.json.return_value = {"data": "test"}
+        mock_response.status_code = 200
+
+        mock_get = mocker.patch("httpx.AsyncClient.get", return_value=mock_response)
+
+        async with httpx.AsyncClient() as client:
+            response = await client.get("https://api.example.com/data")
+
+        assert response.json() == {"data": "test"}
+        mock_get.assert_called_once()
+
+
+class TestAsyncContextManagers:
+    """Testing async context managers."""
+
+    @pytest.mark.asyncio
+    async def test_async_context_manager(self):
+        """Test async context manager usage."""
+        class AsyncResource:
+            async def __aenter__(self):
+                await asyncio.sleep(0.01)
+                self.active = True
+                return self
+
+            async def __aexit__(self, exc_type, exc_val, exc_tb):
+                await asyncio.sleep(0.01)
+                self.active = False
+
+        async with AsyncResource() as resource:
+            assert resource.active is True
+
+        assert resource.active is False
+
+
+# Async fixtures example
+@pytest.fixture
+async def async_resource():
+    """Async fixture providing a resource."""
+    await asyncio.sleep(0.01)  # Setup
+    resource = {"data": "test"}
+
+    yield resource
+
+    await asyncio.sleep(0.01)  # Teardown
+
+
+@pytest.mark.asyncio
+async def test_with_async_fixture(async_resource):
+    """Test using async fixture."""
+    assert async_resource["data"] == "test"

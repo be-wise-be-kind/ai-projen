@@ -164,6 +164,7 @@ Three entry points for different use cases:
 #### Journey 1: Creating New Full-Stack App
 ```
 User → Point agent to CREATE-NEW-AI-REPO.md
+Agent → Uses PLUGIN_MANIFEST.yaml for discovery
 Agent → Asks discovery questions:
   - Languages? [Python, TypeScript]
   - Need Docker? [Yes]
@@ -178,30 +179,38 @@ Agent → Generates custom roadmap in target repo:
   └── PR_BREAKDOWN.md      (step-by-step PRs)
 
 Agent → Executes PRs sequentially:
-  PR1: Foundation (.ai folder)
-  PR2: Python setup (Ruff/Black/pytest)
-  PR3: TypeScript setup (ESLint/Prettier/Vitest)
-  PR4: Docker (frontend + backend containers)
-  PR5: GitHub Actions (lint/test/build/deploy)
-  PR6: Terraform/AWS (VPC/ECS/ALB)
-  PR7: Security standards
-  PR8: Documentation standards
-  PR9: Pre-commit hooks
+  PR1: Foundation (.ai folder) → plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md
+  PR2: Python setup → plugins/languages/python/core/AGENT_INSTRUCTIONS.md
+  PR3: TypeScript setup → plugins/languages/typescript/core/AGENT_INSTRUCTIONS.md
+  PR4: Docker → plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md
+  PR5: GitHub Actions → plugins/infrastructure/ci-cd/github-actions/AGENT_INSTRUCTIONS.md
+  PR6: Terraform/AWS → plugins/infrastructure/iac/terraform-aws/AGENT_INSTRUCTIONS.md
+  PR7: Security standards → plugins/standards/security/AGENT_INSTRUCTIONS.md
+  PR8: Documentation standards → plugins/standards/documentation/AGENT_INSTRUCTIONS.md
+  PR9: Pre-commit hooks → plugins/standards/pre-commit-hooks/AGENT_INSTRUCTIONS.md
   PR10: Integration & validation
 
 User → Has production-ready repo in <30 minutes
 ```
 
-#### Journey 2: Adding Single Capability
+#### Journey 2: Adding Single Capability (Manual Discovery)
 ```
 User → "Add Python linting to my existing repo"
-Agent → Reads ADD-CAPABILITY.md
-Agent → Checks plugins/languages/python/AGENT_INSTRUCTIONS.md
+Agent → Reads ADD-CAPABILITY.md (orchestrator)
+        OR
+Agent → Reads .ai/howto/how-to-discover-and-install-plugins.md (manual discovery)
+Agent → Discovery flow:
+  1. Checks PLUGIN_MANIFEST.yaml → languages/python exists
+  2. Reads PLUGIN_ARCHITECTURE.md → Understands plugin organization
+  3. Navigates to plugins/languages/python/
+  4. Reads README.md → What does Python plugin provide?
+  5. Follows core/AGENT_INSTRUCTIONS.md → Installation steps
 Agent → Installs standalone:
-  - .ruff.toml
-  - Makefile targets (lint-python)
-  - Pre-commit hook entry
-  - GitHub Actions workflow (lint)
+  - pyproject.toml (Ruff config)
+  - Makefile.python (lint-python target)
+  - .ai/docs/PYTHON_STANDARDS.md
+  - .github/workflows/python.yml (if CI/CD present)
+  - Extends agents.md with Python guidelines
 User → Can run `make lint-python` immediately
 ```
 
@@ -212,8 +221,49 @@ User → Returns days later
 Agent → Reads roadmap/ai_setup/PROGRESS_TRACKER.md
 Agent → "I see you've completed PR1-PR5. Next up is PR6: Terraform/AWS. Ready to continue?"
 User → "Yes"
+Agent → Follows plugins/infrastructure/iac/terraform-aws/AGENT_INSTRUCTIONS.md
 Agent → Picks up exactly where left off
 ```
+
+#### Journey 4: Plugin Discovery Without Orchestrator
+```
+User → "I don't know what's available"
+Agent → Reads .ai/howto/how-to-discover-and-install-plugins.md
+Agent → Shows user PLUGIN_MANIFEST.yaml contents
+Agent → User selects: "I need Docker containerization"
+Agent → Discovery path:
+  1. PLUGIN_MANIFEST.yaml → infrastructure/containerization/docker (status: stable)
+  2. Navigate to plugins/infrastructure/containerization/docker/
+  3. Read README.md → Features: multi-stage builds, compose files
+  4. Check dependencies → None required (standalone)
+  5. Follow AGENT_INSTRUCTIONS.md → Install configs, Dockerfiles, compose
+User → Docker configured without using orchestrator
+```
+
+### The Discovery System
+
+**Key Components**:
+1. **PLUGIN_MANIFEST.yaml** - Central catalog ("what exists?")
+2. **PLUGIN_ARCHITECTURE.md** - Structure reference ("how is it organized?")
+3. **how-to-discover-and-install-plugins.md** - Discovery guide ("how do I find and use?")
+4. **AGENT_INSTRUCTIONS.md** (per plugin) - Installation steps ("how do I install?")
+
+**Discovery Flow**:
+```
+User Intent ("I need Python")
+    ↓
+PLUGIN_MANIFEST.yaml (languages/python exists, status: stable)
+    ↓
+PLUGIN_ARCHITECTURE.md (explains: plugins/languages/python/ structure)
+    ↓
+plugins/languages/python/README.md (describes: linting, formatting, testing)
+    ↓
+plugins/languages/python/core/AGENT_INSTRUCTIONS.md (instructs: installation)
+    ↓
+Files Placed (pyproject.toml, Makefile.python, .ai/docs/PYTHON_STANDARDS.md)
+```
+
+**Principle**: Every plugin is **discoverable** (manifest), **understandable** (README), and **installable** (AGENT_INSTRUCTIONS) without requiring the orchestrator.
 
 ## Key Decisions Made
 

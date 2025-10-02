@@ -1,0 +1,151 @@
+"""
+Common pytest fixtures and configuration.
+
+Place this file in your tests/ directory to make fixtures available to all tests.
+"""
+import pytest
+import asyncio
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+from fastapi.testclient import TestClient
+
+from app.main import app
+from app.database import Base
+
+
+# ===== Database Fixtures =====
+
+@pytest.fixture(scope="function")
+def db_session():
+    """Synchronous database session for testing."""
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    yield session
+
+    session.close()
+    Base.metadata.drop_all(engine)
+
+
+@pytest.fixture
+async def async_db_session():
+    """Async database session for testing."""
+    engine = create_async_engine("sqlite+aiosqlite:///:memory:")
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+    async with async_session() as session:
+        yield session
+
+    await engine.dispose()
+
+
+# ===== API Client Fixtures =====
+
+@pytest.fixture
+def client():
+    """FastAPI test client."""
+    return TestClient(app)
+
+
+@pytest.fixture
+async def async_client():
+    """Async HTTP client for testing."""
+    from httpx import AsyncClient
+
+    async with AsyncClient(app=app, base_url="http://test") as ac:
+        yield ac
+
+
+# ===== Authentication Fixtures =====
+
+@pytest.fixture
+def auth_headers(client):
+    """Generate authentication headers with valid token."""
+    # Login to get token
+    response = client.post("/auth/login", json={
+        "email": "test@example.com",
+        "password": "testpassword"
+    })
+    token = response.json()["access_token"]
+
+    return {"Authorization": f"Bearer {token}"}
+
+
+@pytest.fixture
+def test_user(db_session):
+    """Create a test user in database."""
+    from app.models import User
+
+    user = User(email="test@example.com", name="Test User")
+    db_session.add(user)
+    db_session.commit()
+
+    return user
+
+
+# ===== Mock Fixtures =====
+
+@pytest.fixture
+def mock_external_api(mocker):
+    """Mock external API calls."""
+    mock_response = mocker.Mock()
+    mock_response.json.return_value = {"status": "success"}
+    mock_response.status_code = 200
+
+    mocker.patch("httpx.get", return_value=mock_response)
+
+    return mock_response
+
+
+@pytest.fixture
+def mock_db_session(mocker):
+    """Mock database session for unit tests."""
+    from sqlalchemy.orm import Session
+
+    return mocker.Mock(spec=Session)
+
+
+# ===== Environment Fixtures =====
+
+@pytest.fixture(autouse=True)
+def test_env(monkeypatch):
+    """Set test environment variables automatically for all tests."""
+    monkeypatch.setenv("ENVIRONMENT", "test")
+    monkeypatch.setenv("DATABASE_URL", "sqlite:///:memory:")
+    monkeypatch.setenv("SECRET_KEY", "test-secret-key-123")
+
+
+# ===== Async Event Loop Fixture =====
+
+@pytest.fixture(scope="session")
+def event_loop():
+    """Create event loop for async tests."""
+    loop = asyncio.get_event_loop_policy().new_event_loop()
+    yield loop
+    loop.close()
+
+
+# ===== Cleanup Fixtures =====
+
+@pytest.fixture(autouse=True)
+def reset_database(db_session):
+    """Reset database after each test."""
+    yield
+    # Cleanup happens automatically with db_session fixture
+
+
+# ===== Custom Markers =====
+
+def pytest_configure(config):
+    """Register custom markers."""
+    config.addinivalue_line("markers", "slow: marks tests as slow (deselect with '-m \"not slow\"')")
+    config.addinivalue_line("markers", "integration: marks tests as integration tests")
+    config.addinivalue_line("markers", "unit: marks tests as unit tests")

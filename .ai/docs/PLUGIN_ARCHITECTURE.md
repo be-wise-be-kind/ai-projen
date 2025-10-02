@@ -13,9 +13,66 @@
 
 **Exports**: Plugin specifications, structure requirements, integration patterns
 
-**Related**: PROJECT_CONTEXT.md for philosophy, PLUGIN_DISCOVERY.md for orchestration
+**Related**: PROJECT_CONTEXT.md for philosophy, how-to-discover-and-install-plugins.md for usage
 
 **Implementation**: Standard directory structures, YAML manifest, markdown documentation
+
+---
+
+## Documentation System Overview
+
+### Document Roles and Relationships
+
+The ai-projen documentation system has distinct document types, each with a specific purpose and audience:
+
+| Document Type | Purpose | Audience | Location | Example |
+|---------------|---------|----------|----------|---------|
+| **PLUGIN_MANIFEST.yaml** | "What plugins exist?" | AI agents, orchestrators, users | `plugins/PLUGIN_MANIFEST.yaml` | Complete plugin catalog with status and options |
+| **PLUGIN_ARCHITECTURE.md** | "What is the plugin structure?" | Plugin developers | `.ai/docs/PLUGIN_ARCHITECTURE.md` | Technical specification (this document) |
+| **how-to-discover-and-install-plugins.md** | "How do I find and use plugins?" | Users, AI agents | `.ai/howto/how-to-discover-and-install-plugins.md` | Discovery and installation guide |
+| **AGENT_INSTRUCTIONS.md** | "How do I install this specific plugin?" | AI agents | `<plugin-dir>/AGENT_INSTRUCTIONS.md` | Step-by-step installation per plugin |
+| **how-to-create-a-*-plugin.md** | "How do I create a new plugin?" | Plugin developers | `.ai/howto/how-to-create-a-*-plugin.md` | Plugin creation guides |
+| **README.md** (per plugin) | "What does this plugin do?" | Users | `<plugin-dir>/README.md` | Plugin description and features |
+
+### The Discovery and Installation Flow
+
+```
+User Intent: "I need [capability]"
+         ↓
+1. PLUGIN_MANIFEST.yaml
+   "What's available?" → Shows plugin exists, location, options
+         ↓
+2. PLUGIN_ARCHITECTURE.md (this document)
+   "How is it organized?" → Explains structure and taxonomy
+         ↓
+3. <plugin-dir>/README.md
+   "What does it provide?" → Describes features and dependencies
+         ↓
+4. <plugin-dir>/AGENT_INSTRUCTIONS.md
+   "How do I install it?" → Step-by-step installation
+         ↓
+5. Files Placed in Repository
+   "Success!" → Plugin installed and validated
+```
+
+**Key Principle**: Each document has a **single, clear purpose** in the discovery-to-installation journey. No document duplicates another's role.
+
+### For Users and AI Agents
+
+**Start here for discovery**: `.ai/howto/how-to-discover-and-install-plugins.md`
+
+This guide provides:
+- Complete discovery workflow from intent to installation
+- Mapping of user needs to specific plugins
+- File placement documentation for each plugin type
+- Troubleshooting for common discovery issues
+
+**Start here for plugin creation**: `.ai/howto/how-to-create-a-*-plugin.md`
+
+Available guides:
+- `how-to-create-a-language-plugin.md` - For Python, TypeScript, Go, etc.
+- `how-to-create-an-infrastructure-plugin.md` - For Docker, CI/CD, IaC, etc.
+- `how-to-create-a-standards-plugin.md` - For security, documentation, hooks, etc.
 
 ---
 

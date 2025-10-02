@@ -77,36 +77,43 @@ roadmap/ai_projen_implementation/
 **Status**: ✅ Complete
 
 **What Was Done**:
-Added comprehensive production-grade tooling suite to Python plugin with mypy, bandit, safety, pip-audit, pylint, flake8 (with 4 plugins), radon, and xenon.
+Created proper plugin structure for comprehensive Python tooling suite and added extensive pytest testing guides with templates.
 
-**Tools Added**:
-- **mypy**: Static type checking
-- **bandit**: Security vulnerability scanning
-- **safety**: Dependency security checking
-- **pip-audit**: Alternative dependency security audit
-- **pylint**: Comprehensive code quality linting
-- **flake8** + plugins: flake8-docstrings, flake8-bugbear, flake8-comprehensions, flake8-simplify
-- **radon**: Cyclomatic complexity and maintainability index
-- **xenon**: Complexity monitoring and enforcement
+**New Plugin Directories Created** (6 plugins with proper structure):
+- `linters/pylint/` - Comprehensive code quality linting (AGENT_INSTRUCTIONS.md + README.md + config)
+- `linters/flake8/` - Style guide enforcement with 4 plugins (AGENT_INSTRUCTIONS.md + README.md + config)
+- `analysis/radon/` - Cyclomatic complexity analysis (AGENT_INSTRUCTIONS.md + README.md)
+- `analysis/xenon/` - Complexity enforcement that fails builds (AGENT_INSTRUCTIONS.md + README.md)
+- `security/safety/` - CVE database scanning (AGENT_INSTRUCTIONS.md + README.md)
+- `security/pip-audit/` - PyPI Advisory + OSV scanning (AGENT_INSTRUCTIONS.md + README.md)
 
-**Files Created** (5 new files):
-- `plugins/languages/python/templates/pyproject.toml.template` (complete Poetry configuration)
-- `plugins/languages/python/standards/.flake8` (flake8 configuration)
-- `plugins/languages/python/standards/.pylintrc` (pylint configuration)
-- `plugins/languages/python/standards/radon.cfg` (radon configuration)
-- `plugins/languages/python/standards/COMPREHENSIVE_TOOLING.md` (456-line comprehensive guide)
+**Testing How-Tos Created** (7 comprehensive guides in `testing/pytest/ai-content/howtos/`):
+- Moved `how-to-write-a-test.md` from core to pytest plugin (proper location)
+- `how-to-mock-dependencies.md` - Mocking external services, APIs, databases, file systems, time
+- `how-to-test-async-code.md` - pytest-asyncio, async fixtures, concurrency, timeouts
+- `how-to-test-fastapi-endpoints.md` - REST API testing, authentication, validation
+- `how-to-test-database-operations.md` - SQLAlchemy, transactions, async databases
+- `how-to-use-pytest-fixtures.md` - Scopes, conftest.py, composition, parametrization
+- `how-to-parametrize-tests.md` - Multiple test cases, test IDs, indirect parametrization
+- `README.md` - Complete index with quick reference table
 
-**Files Modified** (3 files):
-- `plugins/languages/python/templates/makefile-python.mk` (added lint-mypy, lint-bandit, lint-pylint, lint-flake8, complexity-radon, security-full targets)
-- `plugins/languages/python/AGENT_INSTRUCTIONS.md` (updated with comprehensive tooling suite guidance)
-- `plugins/languages/python/README.md` (documented all new tools and targets)
+**Testing Templates Created** (5 production-ready templates in `testing/pytest/ai-content/templates/`):
+- `test-api-endpoint.py.template` - FastAPI endpoint testing patterns
+- `test-async-function.py.template` - Async/await testing patterns
+- `test-database-model.py.template` - Database CRUD testing patterns
+- `conftest.py.template` - Shared fixtures and test configuration
+- `mock-external-service.py.template` - Mocking patterns (HTTP, DB, files, time, env vars)
+
+**New Plugin Categories**:
+- `analysis/` - Code complexity metrics (radon, xenon)
+- `security/` - Dependency vulnerability scanning (safety, pip-audit)
 
 **Key Features**:
-- Docker-first execution for all tools
-- Grade A enforcement (CC 1-5, MI 20-100)
-- Three-tier security scanning (Bandit + Safety + pip-audit)
-- Complete workflow examples for daily dev, pre-commit, CI/CD
-- 1,353 lines added across 8 files
+- Proper plugin architecture following taxonomy (each tool in own plugin directory)
+- Complete AGENT_INSTRUCTIONS.md + README.md for each plugin
+- Comprehensive testing guides addressing developer pain points (mocking, async, FastAPI, DB)
+- Production-ready templates with best practices
+- ~26 new files total (12 plugin files + 7 how-tos + 1 index + 5 templates + 1 moved)
 
 ---
 

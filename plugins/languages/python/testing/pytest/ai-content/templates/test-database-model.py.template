@@ -1,0 +1,122 @@
+"""
+Test template for database models and operations.
+
+Usage: Copy and adapt for your SQLAlchemy models.
+"""
+import pytest
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from app.database import Base
+from app.models import User
+
+
+@pytest.fixture(scope="function")
+def db_session():
+    """Create in-memory SQLite database for testing."""
+    engine = create_engine("sqlite:///:memory:")
+    Base.metadata.create_all(engine)
+
+    Session = sessionmaker(bind=engine)
+    session = Session()
+
+    yield session
+
+    session.close()
+    Base.metadata.drop_all(engine)
+
+
+class TestUserModel:
+    """Tests for User model CRUD operations."""
+
+    def test_create_user(self, db_session):
+        """Test creating a new user."""
+        user = User(email="test@example.com", name="Test User")
+        db_session.add(user)
+        db_session.commit()
+
+        assert user.id is not None
+        assert db_session.query(User).count() == 1
+
+    def test_read_user(self, db_session):
+        """Test querying user from database."""
+        user = User(email="test@example.com", name="Test User")
+        db_session.add(user)
+        db_session.commit()
+
+        found = db_session.query(User).filter_by(email="test@example.com").first()
+        assert found is not None
+        assert found.name == "Test User"
+
+    def test_update_user(self, db_session):
+        """Test updating user attributes."""
+        user = User(email="test@example.com", name="Old Name")
+        db_session.add(user)
+        db_session.commit()
+
+        user.name = "New Name"
+        db_session.commit()
+
+        updated = db_session.query(User).get(user.id)
+        assert updated.name == "New Name"
+
+    def test_delete_user(self, db_session):
+        """Test deleting user."""
+        user = User(email="test@example.com", name="Test User")
+        db_session.add(user)
+        db_session.commit()
+
+        db_session.delete(user)
+        db_session.commit()
+
+        assert db_session.query(User).filter_by(email="test@example.com").first() is None
+
+    def test_unique_constraint(self, db_session):
+        """Test unique email constraint."""
+        user1 = User(email="duplicate@example.com", name="User 1")
+        db_session.add(user1)
+        db_session.commit()
+
+        user2 = User(email="duplicate@example.com", name="User 2")
+        db_session.add(user2)
+
+        with pytest.raises(Exception):  # IntegrityError or similar
+            db_session.commit()
+
+    def test_relationship(self, db_session):
+        """Test model relationships."""
+        user = User(email="test@example.com", name="Test User")
+        # Add related objects (e.g., user.posts.append(post))
+        db_session.add(user)
+        db_session.commit()
+
+        # Test relationship loaded
+        assert hasattr(user, 'posts')  # Example relationship
+
+
+# Async database testing
+@pytest.fixture
+async def async_db_session():
+    """Create async in-memory database for testing."""
+    from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sessionmaker
+
+    engine = create_async_engine("sqlite+aiosqlite:///:memory:")
+
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+    async_session = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
+
+    async with async_session() as session:
+        yield session
+
+    await engine.dispose()
+
+
+@pytest.mark.asyncio
+async def test_async_create_user(async_db_session):
+    """Test creating user with async session."""
+    user = User(email="async@example.com", name="Async User")
+    async_db_session.add(user)
+    await async_db_session.commit()
+
+    assert user.id is not None
