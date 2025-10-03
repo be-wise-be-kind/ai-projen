@@ -252,10 +252,10 @@ Each plugin's contribution should:
 
 ```python
 def extend_agents_md(plugin_name, section_marker, content):
-    """Extend agents.md with plugin-specific content"""
+    """Extend AGENTS.md with plugin-specific content"""
 
-    # Read current agents.md
-    with open('agents.md', 'r') as f:
+    # Read current AGENTS.md
+    with open('AGENTS.md', 'r') as f:
         current_content = f.read()
 
     # Find the marker section
@@ -264,7 +264,7 @@ def extend_agents_md(plugin_name, section_marker, content):
 
     # Check if markers exist
     if start_marker not in current_content:
-        raise ValueError(f"Marker {start_marker} not found in agents.md")
+        raise ValueError(f"Marker {start_marker} not found in AGENTS.md")
 
     # Extract existing content between markers
     start_idx = current_content.find(start_marker) + len(start_marker)
@@ -285,7 +285,7 @@ def extend_agents_md(plugin_name, section_marker, content):
     )
 
     # Write back
-    with open('agents.md', 'w') as f:
+    with open('AGENTS.md', 'w') as f:
         f.write(updated_content)
 ```
 
@@ -353,7 +353,7 @@ To add a custom marker:
 Plugins should validate their extensions:
 
 ```bash
-# Check agents.md still parses as valid markdown
+# Check AGENTS.md still parses as valid markdown
 # Check all command examples are syntactically correct
 # Check links to .ai/docs/ resolve
 # Check no duplicate headings

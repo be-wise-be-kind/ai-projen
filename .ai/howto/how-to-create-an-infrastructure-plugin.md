@@ -1364,7 +1364,7 @@ cd /tmp/test-<plugin>
 git init
 
 # 3. Install foundation plugin
-# (Copy .ai/ structure, create agents.md)
+# (Copy .ai/ structure, create AGENTS.md)
 
 # 4. Install a language plugin (Python or TypeScript)
 # Follow language plugin AGENT_INSTRUCTIONS.md
@@ -1381,7 +1381,7 @@ make ci-lint       # For CI/CD
 make infra-plan    # For IaC
 
 # 8. Verify integration
-grep "<Your Tool>" agents.md  # Should show infrastructure section
+grep "<Your Tool>" AGENTS.md  # Should show infrastructure section
 ```
 
 ### Integration Testing
@@ -1678,7 +1678,7 @@ Adds <Tool> infrastructure plugin for <category>.
 - ✅ Multi-environment support (dev, staging, prod)
 - ✅ Configuration templates
 - ✅ Makefile integration
-- ✅ agents.md extension snippet
+- ✅ AGENTS.md extension snippet
 - ✅ Standards documentation
 - ✅ How-to guides
 - ✅ PLUGIN_MANIFEST.yaml entry
@@ -1695,7 +1695,7 @@ Tested standalone installation in clean directory:
 - ✅ Makefile targets work
 - ✅ Multi-environment configuration validated
 - ✅ Integration with language plugins tested
-- ✅ agents.md updated correctly
+- ✅ AGENTS.md updated correctly
 - ✅ No conflicts with existing plugins
 
 🤖 Generated with [Claude Code](https://claude.com/claude-code)

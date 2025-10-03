@@ -251,7 +251,7 @@ Add Python-specific guidelines to agents.md:
 Or copy from template:
 ```bash
 cat plugins/languages/python/templates/agents-md-extension.txt
-# Then insert the content into agents.md between markers
+# Then insert the content into AGENTS.md between markers
 ```
 
 ### Step 8: Add .ai Documentation

@@ -245,7 +245,7 @@ Add Docker-specific guidelines to agents.md:
 Or copy from template:
 ```bash
 cat plugins/infrastructure/docker/templates/agents-md-extension.txt
-# Then insert content into agents.md between markers
+# Then insert content into AGENTS.md between markers
 ```
 
 ### Step 10: Add .ai Documentation

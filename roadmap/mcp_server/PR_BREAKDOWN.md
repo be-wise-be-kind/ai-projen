@@ -1563,9 +1563,9 @@ export class ValidationTools {
 
       const hasAgentsMd = await this.pathExists(`${projectPath}/agents.md`);
       checks.push({
-        name: 'agents.md exists',
+        name: 'AGENTS.md exists',
         passed: hasAgentsMd,
-        message: hasAgentsMd ? 'agents.md found' : 'agents.md missing',
+        message: hasAgentsMd ? 'AGENTS.md found' : 'AGENTS.md missing',
       });
     }
 

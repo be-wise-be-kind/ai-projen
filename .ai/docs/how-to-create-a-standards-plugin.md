@@ -1815,7 +1815,7 @@ Tested standalone installation in clean directory:
 - ✅ Enforcement works (pre-commit, CI/CD)
 - ✅ Integration with Python plugin tested
 - ✅ Integration with TypeScript plugin tested
-- ✅ agents.md updated correctly
+- ✅ AGENTS.md updated correctly
 - ✅ .ai/index.yaml references standard
 - ✅ No conflicts with existing plugins
 

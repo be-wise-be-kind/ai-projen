@@ -165,7 +165,7 @@ grep -A 20 "^  $plugin_id:" /path/to/ai-projen/plugins/PLUGIN_MANIFEST.yaml | gr
 **Foundation Dependency** (most common):
 ```bash
 # Check if foundation/ai-folder installed
-if [ -d .ai ] && [ -f agents.md ]; then
+if [ -d .ai ] && [ -f AGENTS.md ]; then
     echo "✓ Foundation installed"
 else
     echo "✗ Foundation missing - install foundation/ai-folder first"
@@ -296,9 +296,9 @@ Execute installation steps from AGENT_INSTRUCTIONS.md exactly.
 # cp /path/to/plugin/templates/Makefile.plugin ./Makefile.plugin
 # echo "-include Makefile.plugin" >> Makefile
 
-# 4. Extend agents.md (if plugin provides extension)
+# 4. Extend AGENTS.md (if plugin provides extension)
 # Example from instructions:
-# cat /path/to/plugin/templates/agents-extension.md >> agents.md
+# cat /path/to/plugin/templates/agents-extension.md >> AGENTS.md
 
 # 5. Update .ai/index.yaml (record installation)
 # Example from instructions:
@@ -355,8 +355,8 @@ fi
 
 **agents.md Extension**:
 ```bash
-# Verify agents.md was extended, not replaced
-cat agents.md | grep "##"
+# Verify AGENTS.md was extended, not replaced
+cat AGENTS.md | grep "##"
 
 # Should show sections from all installed plugins
 ```
@@ -443,7 +443,7 @@ make help
 **agents.md Updated**:
 ```bash
 # Check plugin section added
-cat agents.md | grep -i "<plugin-keyword>"
+cat AGENTS.md | grep -i "<plugin-keyword>"
 ```
 
 **Functionality Works**:

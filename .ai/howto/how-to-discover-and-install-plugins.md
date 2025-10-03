@@ -610,7 +610,7 @@ ls -la <expected-config-files>
 make lint-python  # or make lint-ts, make docker-build, etc.
 
 # Verify integration
-grep "<plugin-content>" agents.md
+grep "<plugin-content>" AGENTS.md
 ```
 
 ---

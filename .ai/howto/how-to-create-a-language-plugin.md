@@ -1130,7 +1130,7 @@ cd /tmp/test-<language>-plugin
 git init
 
 # 3. Install foundation plugin manually
-# (Copy .ai/ structure, create agents.md)
+# (Copy .ai/ structure, create AGENTS.md)
 
 # 4. Install your language plugin
 # Follow your AGENT_INSTRUCTIONS.md step-by-step
@@ -1147,8 +1147,8 @@ make format-<lang>  # Should work without errors
 # 8. Run tests (if example tests provided)
 make test-<lang>  # Should pass or show expected output
 
-# 9. Check agents.md updated
-grep "<Language>" agents.md  # Should show your language section
+# 9. Check AGENTS.md updated
+grep "<Language>" AGENTS.md  # Should show your language section
 ```
 
 ### Integration Testing
@@ -1161,7 +1161,7 @@ Test your plugin with other plugins:
 2. Install TypeScript plugin
 3. Verify both work independently
 4. Verify no conflicts in Makefile
-5. Verify agents.md has both sections
+5. Verify AGENTS.md has both sections
 6. Run `make lint-python` and `make lint-ts`
 ```
 
@@ -1488,7 +1488,7 @@ Adds <Language> language plugin with comprehensive tooling support.
 - ✅ <Formatter> formatter with configuration
 - ✅ <Test Framework> test framework with configuration
 - ✅ Makefile integration (`make lint-<lang>`, `make format-<lang>`, `make test-<lang>`)
-- ✅ agents.md extension snippet
+- ✅ AGENTS.md extension snippet
 - ✅ Standards documentation (`.ai/docs/<LANGUAGE>_STANDARDS.md`)
 - ✅ GitHub Actions workflow template
 - ✅ PLUGIN_MANIFEST.yaml entry
@@ -1504,7 +1504,7 @@ Tested standalone installation in clean directory:
 - ✅ Linting works (`make lint-<lang>`)
 - ✅ Formatting works (`make format-<lang>`)
 - ✅ Tests run (`make test-<lang>`)
-- ✅ agents.md updated correctly
+- ✅ AGENTS.md updated correctly
 - ✅ No conflicts with existing plugins
 
 ## Reference

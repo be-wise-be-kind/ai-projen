@@ -1,1 +1,1 @@
-- The very first response you should have to any prompt is to read agents.md
+- The very first response you should have to any prompt is to read AGENTS.md
