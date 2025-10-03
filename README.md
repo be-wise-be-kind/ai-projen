@@ -39,6 +39,7 @@ An AI-ready repository includes:
 
 - **Structured documentation** - Clear `.ai/` folder with how-to guides, standards, and templates that AI agents can navigate
 - **Language tooling** - Linting, formatting, type checking, and testing frameworks properly configured
+- **Immediate feedback loops** - Quick validation through logging, errors, monitoring, and near-instant quality gate execution
 - **Development consistency** - Containerization for reproducible environments across machines
 - **Automation** - CI/CD pipelines for automated testing, building, and deployment
 - **Infrastructure as code** - Declarative cloud infrastructure for consistent deployments
