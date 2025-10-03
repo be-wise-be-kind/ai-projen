@@ -40,6 +40,7 @@ A plugin-based framework that:
 
 ### Plugin-Based Design
 Everything is a plugin:
+- **applications/** - Complete application types (python-cli, react-python-fullstack)
 - **foundation/** - Universal plugins (ai-folder structure)
 - **languages/** - Language-specific tooling (Python, TypeScript)
 - **infrastructure/** - Deployment tools (Docker, CI/CD, Terraform)
@@ -211,10 +212,10 @@ All patterns extracted from **durable-code-test**:
 ## Future Directions
 
 ### V1.0 Scope (Current)
-- Python + TypeScript
-- Docker + GitHub Actions
-- Terraform/AWS
-- Security + Documentation + Pre-commit
+- **Applications**: Python CLI, React + Python Full-Stack
+- **Languages**: Python + TypeScript
+- **Infrastructure**: Docker + GitHub Actions + Terraform/AWS
+- **Standards**: Security + Documentation + Pre-commit
 
 ### Post-V1.0 (Community-Driven)
 - Additional languages (Go, Rust, Java)

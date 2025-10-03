@@ -73,6 +73,7 @@ Result: Capability added to repository!
    ```
 
 2. **Find your capability category**:
+   - **Applications**: `applications:` section (complete application types)
    - **Languages**: `languages:` section
    - **Infrastructure**: `infrastructure:` section
    - **Standards**: `standards:` section
@@ -150,10 +151,14 @@ plugins/
 │   └── iac/
 │       └── terraform-aws/  # AWS infrastructure
 │
-└── standards/
-    ├── security/           # Security scanning
-    ├── documentation/      # Doc standards
-    └── pre-commit-hooks/   # Quality gates
+├── standards/
+│   ├── security/           # Security scanning
+│   ├── documentation/      # Doc standards
+│   └── pre-commit-hooks/   # Quality gates
+│
+└── applications/            # Complete application types (NEW!)
+    ├── python-cli/         # Python CLI tool
+    └── react-python-fullstack/  # Full-stack web app
 ```
 
 ### Navigation Pattern
@@ -248,6 +253,82 @@ Every AGENT_INSTRUCTIONS.md follows this pattern:
    Step 7: Extend agents.md with Python guidelines
    Step 8: Validate with make lint-python
    ```
+
+---
+
+## Using Common Applications (Quick Start)
+
+### What are Common Applications?
+
+**Common Applications** are meta-plugins that provide complete, production-ready starter applications for common use cases. Instead of selecting 10+ individual plugins, choose one application type and get everything configured and working.
+
+### Available Applications
+
+#### Python CLI Application
+
+**When to Use**: Building command-line tools, data processing scripts, or automation utilities
+
+**What You Get**:
+- Complete Click-based CLI framework
+- Config file management (YAML/JSON)
+- Docker packaging for distribution
+- GitHub Actions CI/CD pipeline
+- Comprehensive testing with pytest
+- Security scanning and documentation standards
+
+**Installation**:
+```bash
+cat plugins/applications/python-cli/AGENT_INSTRUCTIONS.md
+# Follow all installation steps
+```
+
+**Time to Working Application**: ~15-20 minutes
+
+#### React + Python Full-Stack Application
+
+**When to Use**: Building modern web applications with REST API backend
+
+**What You Get**:
+- FastAPI backend with health endpoints and database patterns
+- React + TypeScript + Vite frontend with routing
+- Docker orchestration (backend, frontend, PostgreSQL database)
+- Complete CI/CD pipeline with GitHub Actions
+- AWS deployment configuration with Terraform
+- Security and documentation standards
+
+**Installation**:
+```bash
+cat plugins/applications/react-python-fullstack/AGENT_INSTRUCTIONS.md
+# Follow all installation steps
+```
+
+**Time to Working Application**: ~25-30 minutes
+
+### Applications vs Individual Plugins
+
+| Aspect | Applications | Individual Plugins |
+|--------|-------------|-------------------|
+| **Setup Time** | 15-30 min | 30-60 min |
+| **Decisions** | 1 (choose application) | 10+ (choose each plugin) |
+| **What You Get** | Complete working app | Tooling and configuration |
+| **Best For** | Quick start, proven patterns | Custom combinations, existing projects |
+| **Flexibility** | Opinionated defaults | Full control over choices |
+
+### When to Use Applications
+
+✅ **Use Applications When**:
+- You want to start coding immediately
+- The application type matches your needs
+- You're okay with proven, opinionated choices
+- You're starting a new project from scratch
+
+❌ **Use Individual Plugins When**:
+- You need a specific technology combination
+- You're adding to an existing project
+- You want maximum control over every choice
+- The application pattern doesn't match your needs
+
+**Note**: Even if you use an application, you can still add/modify individual plugins after installation!
 
 ---
 
@@ -482,6 +563,8 @@ Repository Root/
 | "...add documentation standards" | standards | documentation | `plugins/standards/documentation/` |
 | "...add pre-commit hooks" | standards | pre-commit-hooks | `plugins/standards/pre-commit-hooks/` |
 | "...create .ai folder structure" | foundation | ai-folder | `plugins/foundation/ai-folder/` |
+| "...create a Python CLI tool" | applications | python-cli | `plugins/applications/python-cli/` |
+| "...create a full-stack web app" | applications | react-python-fullstack | `plugins/applications/react-python-fullstack/` |
 
 ---
 

@@ -8,7 +8,25 @@ A plugin-based framework for creating AI-ready repositories.
 
 ## Quick Start
 
-Point an AI agent to `CREATE-NEW-AI-REPO.md` and answer a few questions. In under 30 minutes, you'll have a complete development environment with:
+### Option 1: Use a Common Application (Fastest - 15-30 min)
+
+Get a complete, working application immediately:
+
+**Python CLI Tool**:
+```bash
+# Follow: plugins/applications/python-cli/AGENT_INSTRUCTIONS.md
+# Result: Complete CLI tool with Click, Docker, testing, CI/CD
+```
+
+**Full-Stack Web App** (React + Python):
+```bash
+# Follow: plugins/applications/react-python-fullstack/AGENT_INSTRUCTIONS.md
+# Result: FastAPI backend + React frontend + Docker + CI/CD + AWS deployment
+```
+
+### Option 2: Custom Build (Full Control - 30-60 min)
+
+Point an AI agent to `CREATE-NEW-AI-REPO.md` and answer a few questions. You'll get a custom development environment with:
 
 - ✅ **Structured .ai folder** for AI agent navigation
 - ✅ **Language tooling** (Python, TypeScript, or both)
@@ -20,8 +38,14 @@ Point an AI agent to `CREATE-NEW-AI-REPO.md` and answer a few questions. In unde
 
 ## Features
 
-### Production-Ready Plugins (v1.0)
-- **Languages**: Python (Ruff/Black/pytest), TypeScript (ESLint/Prettier/Vitest)
+### Production-Ready Content (v1.0)
+
+**Common Applications** (NEW!):
+- **Python CLI** - Complete command-line tool with Click, config management, Docker
+- **React + Python Full-Stack** - Modern web app with FastAPI backend, React frontend, database
+
+**Individual Plugins**:
+- **Languages**: Python (Ruff/MyPy/pytest), TypeScript (ESLint/Prettier/Vitest)
 - **Infrastructure**: Docker, GitHub Actions CI/CD, Terraform/AWS
 - **Standards**: Security, Documentation, Pre-commit Hooks
 - **Foundation**: AI folder structure (universal for all projects)
@@ -47,6 +71,10 @@ ai-projen/
 ├── UPGRADE-TO-AI-REPO.md          # Orchestrator for existing repos
 ├── ADD-CAPABILITY.md              # Add single capability
 └── plugins/                       # Plugin library
+    ├── applications/              # Complete application types (NEW!)
+    │   ├── python-cli/           # Python CLI tool
+    │   ├── react-python-fullstack/  # Full-stack web app
+    │   └── _template/             # Template for new applications
     ├── foundation/                # Universal (always required)
     │   └── ai-folder/
     ├── languages/                 # Language-specific tooling

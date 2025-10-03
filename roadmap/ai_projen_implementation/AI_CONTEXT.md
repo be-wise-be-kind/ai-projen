@@ -40,6 +40,7 @@ Setting all this up from scratch takes days/weeks and requires deep expertise. *
 ### The Solution
 
 A **plugin-based framework** where:
+- **Application plugins** (NEW!) compose other plugins into complete, working applications (Python CLI, Full-Stack Web)
 - **Foundation plugin** (ai-folder) is universal - every project needs it
 - **Language plugins** provide language-specific tooling (Python, TypeScript, etc.)
 - **Infrastructure plugins** provide deployment capabilities (Docker, CI/CD, Terraform)
@@ -57,12 +58,10 @@ AI-Projen emerged from building **durable-code-test**, a full-stack application 
 
 ### Scope Decision
 **V1.0 Includes**:
-- ✅ Python + TypeScript (full-stack ready)
-- ✅ Docker (frontend + backend)
-- ✅ GitHub Actions (CI/CD)
-- ✅ Terraform/AWS (cloud deployment)
-- ✅ Pre-commit hooks (quality gates)
-- ✅ Security + Documentation standards
+- ✅ **Applications**: Python CLI, React + Python Full-Stack (NEW!)
+- ✅ **Languages**: Python + TypeScript (full-stack ready)
+- ✅ **Infrastructure**: Docker (frontend + backend), GitHub Actions (CI/CD), Terraform/AWS (cloud deployment)
+- ✅ **Standards**: Pre-commit hooks (quality gates), Security + Documentation standards
 
 **Future (community-driven)**:
 - 🎯 Additional languages (Go, Rust, Java)
@@ -73,11 +72,12 @@ AI-Projen emerged from building **durable-code-test**, a full-stack application 
 ## Feature Vision
 
 1. **Framework Over Library**: Build the engine, not every possible plugin
-2. **Standalone First**: Every plugin works independently
-3. **Composable**: Plugins combine without conflicts
-4. **Extensible**: Clear path to add new plugins (<2 hours with docs)
-5. **Production-Ready**: Reference implementations are battle-tested
-6. **Agent-Friendly**: Designed for AI agent consumption (AGENT_INSTRUCTIONS.md)
+2. **Two-Path Approach**: Quick start with applications OR custom build with plugins
+3. **Standalone First**: Every plugin works independently
+4. **Composable**: Plugins combine without conflicts
+5. **Extensible**: Clear path to add new plugins/applications (<2 hours with docs)
+6. **Production-Ready**: Reference implementations are battle-tested
+7. **Agent-Friendly**: Designed for AI agent consumption (AGENT_INSTRUCTIONS.md)
 
 ## Current Application Context
 
