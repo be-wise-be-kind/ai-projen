@@ -257,8 +257,13 @@ Classify the request:
 
 5. **Continue Roadmap**
    - Intent: Implement next PR from roadmap
-   - **FIRST**: Ask user for roadmap path if not provided (e.g., `roadmap/my-feature/PR_BREAKDOWN.md`)
+   - **FIRST**: Ask user for roadmap path if not provided (e.g., `roadmap/my-feature/`)
    - Guide: Use roadmap's `PR_BREAKDOWN.md` and `PROGRESS_TRACKER.md` from provided path
+
+6. **Create New Feature Roadmap**
+   - Intent: Plan a new major feature or upgrade
+   - Templates: `.ai/templates/roadmap-*.md.template`
+   - Guide: Use roadmap templates to create comprehensive planning documents
 
 ### Step 2: Review Relevant Standards
 
@@ -408,6 +413,29 @@ When working on a roadmap, ask user for roadmap directory path. Typical structur
 - **`<roadmap-path>/PROGRESS_TRACKER.md`** - Current state and next PR to implement
 - **`<roadmap-path>/PR_BREAKDOWN.md`** - Detailed PR requirements
 - **`<roadmap-path>/AI_CONTEXT.md`** - Feature overview (optional)
+
+### Roadmap Templates (for creating new roadmaps)
+When planning a major feature or repository upgrade:
+- **`.ai/templates/roadmap-progress-tracker.md.template`** - Track current progress and AI agent handoff
+- **`.ai/templates/roadmap-pr-breakdown.md.template`** - Break features into atomic PRs with implementation steps
+- **`.ai/templates/roadmap-ai-context.md.template`** - Provide comprehensive feature context for AI agents
+
+**Three-Document Roadmap Structure**:
+1. **PROGRESS_TRACKER.md** (Required) - Primary handoff document, tracks current state, shows next PR to implement
+2. **PR_BREAKDOWN.md** (Required for multi-PR features) - Detailed implementation steps for each PR
+3. **AI_CONTEXT.md** (Optional) - Architectural decisions, feature vision, integration points
+
+**When to Use**:
+- Major features requiring multiple PRs
+- Large repository upgrades or migrations
+- Complex features needing AI agent coordination
+- Features requiring explicit progress tracking
+
+**How to Use**:
+1. Copy templates from `.ai/templates/` to `roadmap/<feature-name>/`
+2. Replace `{{PLACEHOLDERS}}` with actual values
+3. Commit roadmap documents before starting work
+4. Update PROGRESS_TRACKER.md after each PR completion
 
 ---
 

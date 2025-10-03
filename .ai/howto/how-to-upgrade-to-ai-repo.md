@@ -175,7 +175,44 @@ git add analysis.txt
 git commit -m "Add repository analysis"
 ```
 
-**Why This Matters**: Understanding existing setup prevents duplicate installations and identifies integration points.
+**Create Upgrade Roadmap** (Optional but recommended):
+```bash
+# For tracking upgrade progress, create a roadmap
+mkdir -p roadmap/upgrade-to-ai-ready
+
+# Use simplified progress tracker for upgrades
+cat > roadmap/upgrade-to-ai-ready/PROGRESS_TRACKER.md << EOF
+# Upgrade to AI-Ready - Progress Tracker
+
+**Purpose**: Track progress of upgrading existing repository to AI-ready patterns
+
+**Current Status**: Analysis phase
+
+## Upgrade Steps
+- [x] Create backup branch
+- [x] Analyze existing repository
+- [ ] Identify missing capabilities
+- [ ] Install foundation (if needed)
+- [ ] Install missing plugins incrementally
+- [ ] Merge configurations
+- [ ] Validate existing functionality preserved
+- [ ] Final validation
+
+## Current Task
+Analyzing existing repository structure
+
+## Notes for AI Agents
+- Always backup before changes
+- Merge configs, never replace
+- Validate after each plugin
+- Keep existing functionality working
+EOF
+
+git add roadmap/
+git commit -m "Add upgrade roadmap"
+```
+
+**Why This Matters**: Understanding existing setup prevents duplicate installations and identifies integration points. The roadmap helps track upgrade progress and provides resumability.
 
 ---
 
@@ -272,7 +309,7 @@ if [ ! -d .ai ]; then
     echo "Follow AGENT_INSTRUCTIONS.md to install foundation/ai-folder"
 
     # After installation, commit
-    git add .ai/ agents.md
+    git add .ai/ AGENTS.md
     git commit -m "Install foundation/ai-folder plugin"
 else
     echo "Foundation exists: .ai/ present"
@@ -436,8 +473,8 @@ After completing upgrade:
 # Verify .ai/ structure
 ls -la .ai/
 
-# Verify agents.md enhanced
-cat agents.md | grep "##"
+# Verify AGENTS.md enhanced
+cat AGENTS.md | grep "##"
 
 # Verify configs merged
 cat pyproject.toml  # Should have both old and new sections

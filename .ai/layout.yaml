@@ -58,12 +58,15 @@ ai_guidance:
       files:
         - HOW_TO_TEMPLATE.md (template for creating how-to guides)
         - TEMPLATE_FILE_TEMPLATE.md (meta-template for creating templates)
+        - roadmap-progress-tracker.md.template (roadmap progress tracking)
+        - roadmap-pr-breakdown.md.template (feature breakdown into PRs)
+        - roadmap-ai-context.md.template (comprehensive feature context)
 
     plugin_templates:
       foundation:
         location: "plugins/foundation/ai-folder/ai-content/templates/"
         files:
-          - agents.md.template (AI agent entry point)
+          - AGENTS.md.template (AI agent entry point)
           - index.yaml.template (navigation index)
           - layout.yaml.template (directory layout)
 

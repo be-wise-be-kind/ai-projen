@@ -238,18 +238,32 @@ If plugin A depends on B and B depends on A, this is invalid. The manifest shoul
 
 ### Step 6: Generate Installation Roadmap
 
-Create a progress-tracking document for resumability.
+Create a progress-tracking document for resumability using the roadmap templates.
 
-**Create Roadmap File**:
+**Create Roadmap Using Templates**:
 ```bash
+# Create roadmap directory
 mkdir -p roadmap/setup
-cat > roadmap/setup/INSTALLATION_ROADMAP.md << EOF
-# Installation Roadmap
+
+# Use the progress tracker template for tracking installation
+# Note: For simple installations, you may create a simplified version
+# For complex multi-repo setups, use all three templates:
+# - roadmap-progress-tracker.md.template
+# - roadmap-pr-breakdown.md.template (if breaking into multiple PRs)
+# - roadmap-ai-context.md.template (for complex feature context)
+
+cat > roadmap/setup/PROGRESS_TRACKER.md << EOF
+# Repository Setup - Progress Tracker
+
+**Purpose**: Track installation progress for AI-ready repository setup
+
+**Current Status**: In Progress
 
 ## Selected Plugins
 $(cat ordered-plugins.txt)
 
-## Progress
+## Installation Progress
+
 - [ ] Initialize repository
 - [ ] Install foundation plugins
 - [ ] Install language plugins
@@ -257,15 +271,34 @@ $(cat ordered-plugins.txt)
 - [ ] Install standards plugins
 - [ ] Validate installation
 
+## Current Task
+Installing plugins in dependency order
+
 ## Resume Instructions
 If interrupted, check last completed plugin above and resume with next unchecked item.
+
+## Notes for AI Agents
+- Follow AGENT_INSTRUCTIONS.md for each plugin exactly
+- Validate after each plugin installation
+- Commit after each successful plugin installation
+- Update this file after each step
 EOF
 
 git add roadmap/
 git commit -m "Add installation roadmap"
 ```
 
-**Why This Matters**: Roadmap enables resuming if installation is interrupted. Track progress explicitly.
+**Using Full Roadmap Templates** (for major repository setups):
+```bash
+# For complex setups, copy and fill in the full templates:
+cp /path/to/ai-projen/.ai/templates/roadmap-progress-tracker.md.template roadmap/setup/PROGRESS_TRACKER.md
+cp /path/to/ai-projen/.ai/templates/roadmap-pr-breakdown.md.template roadmap/setup/PR_BREAKDOWN.md
+cp /path/to/ai-projen/.ai/templates/roadmap-ai-context.md.template roadmap/setup/AI_CONTEXT.md
+
+# Then replace {{PLACEHOLDERS}} with actual values
+```
+
+**Why This Matters**: Roadmap enables resuming if installation is interrupted. Track progress explicitly. For complex setups, the full template structure provides comprehensive tracking and AI agent handoff support.
 
 ---
 
@@ -329,8 +362,8 @@ Verify all plugins installed correctly and integrate properly.
    # Foundation should create .ai/
    test -d .ai && echo "✓ .ai/ exists" || echo "✗ .ai/ missing"
 
-   # agents.md should exist
-   test -f agents.md && echo "✓ agents.md exists" || echo "✗ agents.md missing"
+   # AGENTS.md should exist
+   test -f AGENTS.md && echo "✓ agents.md exists" || echo "✗ agents.md missing"
 
    # Makefile should exist (if language plugins installed)
    test -f Makefile && echo "✓ Makefile exists" || echo "✗ Makefile missing"
@@ -351,8 +384,8 @@ Verify all plugins installed correctly and integrate properly.
    # Verify .ai/index.yaml lists installed plugins
    cat .ai/index.yaml | grep "installed_plugins:" -A 20
 
-   # Verify agents.md has sections from all plugins
-   cat agents.md | grep "##"
+   # Verify AGENTS.md has sections from all plugins
+   cat AGENTS.md | grep "##"
    ```
 
 4. **Run Validation Commands**:
@@ -378,7 +411,7 @@ Final verification checklist:
 **Repository Structure**:
 ```bash
 ls -la
-# Should show: .ai/, agents.md, Makefile (if applicable), plugin configs
+# Should show: .ai/, AGENTS.md, Makefile (if applicable), plugin configs
 ```
 
 **Plugin Tracking**:

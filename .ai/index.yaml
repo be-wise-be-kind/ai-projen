@@ -20,7 +20,7 @@ structure:
       - how-to-create-new-ai-repo.md
       - how-to-upgrade-to-ai-repo.md
       - how-to-add-capability.md
-    routing: See agents.md "Task Routing" section for intent-based selection
+    routing: See AGENTS.md "Task Routing" section for intent-based selection
 
   plugins:
     location: plugins/
@@ -98,19 +98,26 @@ structure:
       - Check plugin manifest for howtos section
       - Read plugin's howtos/README.md for index
       - Search .ai/index.yaml for project-level how-tos
-      - Reference agents.md for categorized how-to links
+      - Reference AGENTS.md for categorized how-to links
 
   templates:
     location: .ai/templates/
     files:
       - HOW_TO_TEMPLATE.md (template for creating how-to guides)
       - TEMPLATE_FILE_TEMPLATE.md (meta-template for creating template files)
+      - roadmap-progress-tracker.md.template (roadmap progress tracking and AI agent handoff)
+      - roadmap-pr-breakdown.md.template (feature breakdown into atomic PRs)
+      - roadmap-ai-context.md.template (comprehensive feature context for AI agents)
 
     purpose: Reusable file templates for code generation and consistency
 
     template_types:
       how_to_guides: HOW_TO_TEMPLATE.md
       template_creation: TEMPLATE_FILE_TEMPLATE.md
+      roadmap_planning:
+        - roadmap-progress-tracker.md.template (required - tracks current state)
+        - roadmap-pr-breakdown.md.template (required for multi-PR features)
+        - roadmap-ai-context.md.template (optional - architectural context)
 
     plugin_templates:
       foundation: plugins/foundation/ai-folder/ai-content/templates/
@@ -144,13 +151,13 @@ commands:
   validate: "make validate-manifest (coming soon)"
 
 entry_points:
-  primary: agents.md (AI agent entry point with task routing)
+  primary: AGENTS.md (AI agent entry point with task routing)
   new_repo: .ai/howto/how-to-create-new-ai-repo.md
   upgrade_repo: .ai/howto/how-to-upgrade-to-ai-repo.md
   add_capability: .ai/howto/how-to-add-capability.md
 
 key_files:
-  agents: agents.md (primary AI agent entry point)
+  agents: AGENTS.md (primary AI agent entry point)
   manifest: plugins/PLUGIN_MANIFEST.yaml
   readme: README.md
   gitignore: .gitignore
