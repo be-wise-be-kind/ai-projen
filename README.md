@@ -206,7 +206,25 @@ Contributions are welcome! The framework is designed to grow through community a
 
 ### How to Contribute
 
-**Adding a Plugin:**
+**Adding a Plugin (AI-First Approach):**
+
+Simply ask your AI agent:
+- "Let's create a new Go language plugin for ai-projen"
+- "Help me add a GitLab CI/CD plugin"
+- "Build a plugin for Kubernetes deployment"
+- "Create a plugin for AWS CDK infrastructure"
+
+Your AI agent will:
+1. Read the appropriate plugin creation guide from `.ai/howto/`
+2. Copy the relevant `_template/` directory
+3. Guide you through filling in all required sections
+4. Help test the plugin's standalone installation
+5. Ensure it follows established patterns
+6. Assist with pull request creation
+
+**Manual Plugin Creation:**
+
+If you prefer to work directly:
 1. Copy the appropriate `_template/` directory from the relevant plugin category
 2. Follow the template's README and fill in all required sections
 3. Test your plugin's standalone installation in a fresh repository
@@ -214,9 +232,13 @@ Contributions are welcome! The framework is designed to grow through community a
 5. Submit a pull request with clear description of the plugin's purpose
 
 **Improving Documentation:**
-Documentation updates are valuable contributions. Follow the standards in `.ai/docs/FILE_HEADER_STANDARDS.md` and `.ai/docs/HOWTO_STANDARDS.md`.
+
+Ask your AI agent: "Help me improve the documentation for [specific topic]"
+
+Or manually: Follow the standards in `.ai/docs/FILE_HEADER_STANDARDS.md` and `.ai/docs/HOWTO_STANDARDS.md`.
 
 **Reporting Issues:**
+
 If you encounter problems or have feature requests, please open an issue with detailed reproduction steps or use case description.
 
 ## Acknowledgments
