@@ -257,7 +257,8 @@ Classify the request:
 
 5. **Continue Roadmap**
    - Intent: Implement next PR from roadmap
-   - Guide: `roadmap/ai_projen_implementation/PR_BREAKDOWN.md`
+   - **FIRST**: Ask user for roadmap path if not provided (e.g., `roadmap/my-feature/PR_BREAKDOWN.md`)
+   - Guide: Use roadmap's `PR_BREAKDOWN.md` and `PROGRESS_TRACKER.md` from provided path
 
 ### Step 2: Review Relevant Standards
 
@@ -265,7 +266,7 @@ Before making changes, review:
 - `.ai/index.yaml` - Repository structure
 - `.ai/docs/PLUGIN_GIT_WORKFLOW_STANDARD.md` - Git workflow requirements
 - `.ai/docs/FILE_HEADER_STANDARDS.md` - File documentation requirements
-- `roadmap/ai_projen_implementation/PROGRESS_TRACKER.md` - Current state
+- Roadmap's `PROGRESS_TRACKER.md` - Current state (if working on roadmap)
 - `plugins/PLUGIN_MANIFEST.yaml` - Existing plugins
 
 ### Step 3: Create Feature Branch
@@ -348,28 +349,30 @@ Actions:
 8. Merge to main
 ```
 
-**Example 2**: "Continue with PR 20 from roadmap"
+**Example 2**: "Continue with next PR from roadmap"
 ```
 Analysis:
 - Working directory: /path/to/ai-projen (THIS repo = Type 2)
 - Task: Continue roadmap implementation
-- Reference: roadmap/ai_projen_implementation/PR_BREAKDOWN.md
+- Roadmap path: NOT PROVIDED (must ask)
 
 Actions:
 1. Classify as Type 2: Framework Developer
-2. Read PROGRESS_TRACKER.md for current state
-3. Read PR_BREAKDOWN.md for PR 20 requirements
-4. Create branch: feature/pr20-full-stack-integration-test
-5. Follow PR 20 implementation steps exactly
-6. Update PROGRESS_TRACKER.md when complete
-7. Commit and merge
+2. Ask user: "What is the roadmap directory path?" (e.g., roadmap/my-feature/)
+3. Read <roadmap-path>/PROGRESS_TRACKER.md for current state
+4. Identify next PR to implement
+5. Read <roadmap-path>/PR_BREAKDOWN.md for that PR's requirements
+6. Create branch: feature/pr<N>-<description>
+7. Follow PR implementation steps exactly
+8. Update <roadmap-path>/PROGRESS_TRACKER.md when complete
+9. Commit and merge
 ```
 
 ### Critical Rules for Framework Developer Mode
 
 1. **ALWAYS create feature branch** before changes
 2. **NEVER push to develop** (per CLAUDE.md user instruction)
-3. **ALWAYS update PROGRESS_TRACKER.md** when completing PRs
+3. **ALWAYS update roadmap's PROGRESS_TRACKER.md** when completing PRs (if working on roadmap)
 4. **FOLLOW all standards** in .ai/docs/
 5. **TEST plugins standalone** before considering complete
 6. **VALIDATE YAML** before committing
@@ -400,10 +403,11 @@ Actions:
 - **`.ai/docs/HOWTO_STANDARDS.md`** - How-to guide standards
 - **`.ai/docs/MANIFEST_VALIDATION.md`** - Plugin manifest schema
 
-### Roadmap (for Framework Developer Mode)
-- **`roadmap/ai_projen_implementation/PROGRESS_TRACKER.md`** - Current state
-- **`roadmap/ai_projen_implementation/PR_BREAKDOWN.md`** - Detailed PR requirements
-- **`roadmap/ai_projen_implementation/AI_CONTEXT.md`** - Feature overview
+### Roadmap (for Framework Developer Mode - if applicable)
+When working on a roadmap, ask user for roadmap directory path. Typical structure:
+- **`<roadmap-path>/PROGRESS_TRACKER.md`** - Current state and next PR to implement
+- **`<roadmap-path>/PR_BREAKDOWN.md`** - Detailed PR requirements
+- **`<roadmap-path>/AI_CONTEXT.md`** - Feature overview (optional)
 
 ---
 
@@ -473,7 +477,7 @@ START
 - [ ] Relevant documentation updated
 - [ ] YAML files validate
 - [ ] Changes committed with conventional message
-- [ ] PROGRESS_TRACKER.md updated (if roadmap work)
+- [ ] Roadmap's PROGRESS_TRACKER.md updated (if working on roadmap)
 
 ---
 
