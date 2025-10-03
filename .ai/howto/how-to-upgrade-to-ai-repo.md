@@ -1,79 +1,68 @@
 # How-To: Upgrade Existing Repository to AI-Ready
 
-**Purpose**: Guide for adding AI-ready patterns to existing repositories using ai-projen plugin framework
+**Purpose**: Workflow for safely adding AI-ready patterns to existing repositories with code and tooling already present
 
-**Scope**: Safe, non-destructive upgrade of existing repositories with gap analysis, conflict resolution, incremental installation, and backup strategies
+**Scope**: Abstract process for analyzing existing setup, identifying gaps, safely installing missing plugins, merging configurations, and validating preservation of existing functionality
 
-**Overview**: Step-by-step guide for analyzing existing repositories, identifying missing capabilities, safely installing plugins without breaking existing functionality, merging configurations, and validating the upgrade. Designed for repositories that already have code, tooling, or infrastructure but want to adopt AI-ready patterns incrementally.
+**Overview**: High-level orchestration workflow for non-destructive upgrades that works regardless of which plugins exist. Describes repository analysis, gap detection, safe installation with backups, configuration merging strategies, and validation. Delegates all plugin-specific installation details to individual plugin AGENT_INSTRUCTIONS.md files.
 
-**Dependencies**: Existing Git repository, ai-projen repository access, basic understanding of current repository structure
+**Dependencies**: Existing Git repository, ai-projen access, PLUGIN_MANIFEST.yaml, backup capability
 
 **Exports**: Upgraded repository with AI patterns, merged configurations, enhanced tooling, preserved existing functionality
 
-**Related**: [how-to-create-new-ai-repo.md](how-to-create-new-ai-repo.md), [how-to-add-capability.md](how-to-add-capability.md), [PLUGIN_MANIFEST.yaml](../../plugins/PLUGIN_MANIFEST.yaml)
+**Related**: [how-to-create-new-ai-repo.md](how-to-create-new-ai-repo.md), [how-to-add-capability.md](how-to-add-capability.md), [how-to-discover-and-install-plugins.md](how-to-discover-and-install-plugins.md)
 
-**Implementation**: Analyze → Identify gaps → Backup → Install incrementally → Merge configs → Validate
+**Implementation**: Backup → Analyze → Identify gaps → Install incrementally → Merge → Validate
 
 **Difficulty**: advanced
 
-**Estimated Time**: 30-60min (varies by existing complexity)
+**Estimated Time**: 30-90min (varies by existing complexity and plugin count)
 
 ---
 
 ## Prerequisites
 
-Before upgrading an existing repository, ensure you have:
-
 - **Existing Git repository**: Working repository with code
-- **Git working tree clean**: All changes committed (no uncommitted work)
-- **Backup capability**: Ability to create branch or backup
-- **ai-projen repository**: Cloned locally or accessible
-- **Understanding of current setup**: Know what linters, configs, infrastructure already exist
-- **Testing capability**: Existing tests should pass before upgrade
+- **Clean working tree**: All changes committed
+- **Backup capability**: Ability to create backup branch
+- **ai-projen access**: For PLUGIN_MANIFEST.yaml and AGENT_INSTRUCTIONS.md
+- **Existing tests**: Should pass before upgrade (baseline)
 
 ## Overview
 
 ### What This Upgrades
 
-This guide safely adds AI-ready patterns to existing repositories:
+This workflow safely adds AI-ready patterns by:
+1. Creating safety backup before any changes
+2. Analyzing existing repository structure (languages, tools, configs)
+3. Querying PLUGIN_MANIFEST.yaml to identify missing capabilities
+4. Installing missing plugins via their AGENT_INSTRUCTIONS.md
+5. Merging plugin configs with existing configs (not replacing)
+6. Validating that existing functionality still works
 
-- **Foundation**: `.ai/` directory structure (if missing)
-- **Enhanced tooling**: Better linters, formatters, test frameworks
-- **Infrastructure**: Docker, CI/CD, cloud deployment (if missing)
-- **Standards**: Security scanning, documentation, pre-commit hooks
-- **AI navigation**: agents.md entry point for AI agents
+### Core Principles
 
-### Upgrade Philosophy
+**Non-Destructive**: Never delete existing configuration
+**Backup-First**: Always create rollback point
+**Incremental**: Add capabilities one at a time
+**Merge-Over-Replace**: Preserve custom settings
+**Validate-Continuously**: Test after each addition
+**Plugin-Agnostic**: Works with any plugins in manifest
 
-**Non-Destructive Approach**:
-- Never delete existing configuration
-- Always backup before modifying
-- Merge plugin configs with existing configs
-- Preserve custom settings
-- Provide rollback instructions
+### When to Use This Workflow
 
-**Progressive Enhancement**:
-- Add capabilities incrementally
-- Test after each addition
-- Keep existing functionality working
-- Enhance, don't replace
-
-### When to Use This Guide
-
-Use this guide when you:
 - Have existing repository with code
 - Want to add AI-ready patterns
 - Need to preserve existing functionality
-- Want better tooling without disruption
-- Are adding Docker, CI/CD, or standards to existing project
+- Can't afford to break current setup
+- Want progressive enhancement
 
-### When NOT to Use This Guide
+### When NOT to Use This Workflow
 
-Do not use this guide when you:
-- Have empty repository (use how-to-create-new-ai-repo.md instead)
-- Want to start from scratch (create new repo instead)
-- Can't test existing functionality (too risky to upgrade)
-- Don't have backups (backup first!)
+- Empty repository (use how-to-create-new-ai-repo.md)
+- Want to start from scratch
+- Can't test existing functionality
+- Don't have backups available
 
 ---
 
@@ -83,16 +72,16 @@ Do not use this guide when you:
 
 Create backup branch before making any changes.
 
-**Create Backup Branch**:
+**Create Backup**:
 ```bash
 # Ensure working tree is clean
 git status
-# Should show: nothing to commit, working tree clean
+# Must show: nothing to commit, working tree clean
 
 # Create backup branch
 git checkout -b backup-before-ai-upgrade
 
-# Push backup to remote (if using remote)
+# Push to remote (recommended)
 git push -u origin backup-before-ai-upgrade
 
 # Return to main branch
@@ -102,778 +91,488 @@ git checkout main
 git checkout -b upgrade-to-ai-ready
 ```
 
-**Verify Existing Tests Pass**:
+**Establish Baseline**:
 ```bash
-# Run existing tests to establish baseline
-# Examples (adjust to your project):
-pytest  # Python
-npm test  # JavaScript/TypeScript
-make test  # If you have a Makefile
-./run-tests.sh  # Custom script
+# Run existing tests to document current state
+# (Adjust commands to your project's test suite)
+# Examples:
+pytest || npm test || make test || ./run-tests.sh
 
-# Document current state
+# Document baseline
 git log --oneline -5 > upgrade-baseline.txt
-git status >> upgrade-baseline.txt
+echo "Tests passing: $(date)" >> upgrade-baseline.txt
+git add upgrade-baseline.txt
+git commit -m "Establish upgrade baseline"
 ```
 
-**Why This Matters**: Backup branch provides rollback point if upgrade causes issues. Baseline test results confirm what "working" looks like.
+**Why This Matters**: Backup enables rollback if upgrade causes issues. Baseline proves what "working" looks like.
+
+---
 
 ### Step 2: Analyze Existing Repository
 
-Detect what's already present in the repository.
+Detect what already exists in the repository using file inspection.
 
-**Detect Programming Languages**:
+**Detect Languages**:
 ```bash
-# Check for Python
-find . -name "*.py" | head -5
-cat pyproject.toml 2>/dev/null || cat setup.py 2>/dev/null || cat requirements.txt 2>/dev/null
-python --version 2>/dev/null
-
-# Check for TypeScript/JavaScript
-find . -name "*.ts" -o -name "*.tsx" | head -5
-cat package.json 2>/dev/null
-cat tsconfig.json 2>/dev/null
-node --version 2>/dev/null
-
-# Check for Go
-find . -name "*.go" | head -5
-cat go.mod 2>/dev/null
-
-# Document findings
+# Language detection (generic approach)
 echo "=== Language Detection ===" > analysis.txt
-echo "Python files: $(find . -name '*.py' | wc -l)" >> analysis.txt
-echo "TypeScript files: $(find . -name '*.ts' -o -name '*.tsx' | wc -l)" >> analysis.txt
-echo "JavaScript files: $(find . -name '*.js' | wc -l)" >> analysis.txt
+
+# Check for common language indicators
+find . -name "*.py" -not -path "./venv/*" -not -path "./.venv/*" | head -1 && echo "Python: detected" >> analysis.txt
+find . -name "*.ts" -o -name "*.tsx" | head -1 && echo "TypeScript: detected" >> analysis.txt
+find . -name "*.js" -o -name "*.jsx" | head -1 && echo "JavaScript: detected" >> analysis.txt
+find . -name "*.go" | head -1 && echo "Go: detected" >> analysis.txt
+find . -name "*.rs" | head -1 && echo "Rust: detected" >> analysis.txt
+# Add more as needed
+
+# Check for language config files
+test -f pyproject.toml && echo "Python config: pyproject.toml" >> analysis.txt
+test -f package.json && echo "Node config: package.json" >> analysis.txt
+test -f go.mod && echo "Go config: go.mod" >> analysis.txt
 ```
 
-**Detect Existing Linters/Formatters**:
+**Detect Existing Tools**:
 ```bash
-# Python tools
-ls -la | grep -E '(\.ruff\.toml|\.flake8|pylintrc|\.black|pyproject\.toml)'
-
-# TypeScript/JavaScript tools
-ls -la | grep -E '(\.eslintrc|\.prettierrc|biome\.json)'
-
-# Add to analysis
+# Tool detection (generic patterns)
 echo "=== Existing Tools ===" >> analysis.txt
-echo "Python linters: $(ls -1 | grep -E '(ruff|flake8|pylint)' | tr '\n' ', ')" >> analysis.txt
-echo "JS/TS linters: $(ls -1 | grep -E '(eslint|prettier|biome)' | tr '\n' ', ')" >> analysis.txt
+
+# Linters/formatters (look for common config files)
+find . -maxdepth 2 -name ".*rc*" -o -name "*.config.*" | while read config; do
+    echo "Config found: $config" >> analysis.txt
+done
+
+# Specific tool checks
+test -f .ruff.toml && echo "Ruff: configured" >> analysis.txt
+test -f .eslintrc.json && echo "ESLint: configured" >> analysis.txt
+test -f .prettierrc && echo "Prettier: configured" >> analysis.txt
+test -f pytest.ini && echo "pytest: configured" >> analysis.txt
 ```
 
-**Detect Existing Docker**:
+**Detect Infrastructure**:
 ```bash
-# Check for Docker files
-ls -la | grep -i docker
-find . -name "Dockerfile*" -o -name "docker-compose*.yml"
-
-# Add to analysis
-echo "=== Docker ===" >> analysis.txt
-echo "Dockerfiles: $(find . -name 'Dockerfile*' | wc -l)" >> analysis.txt
-echo "Compose files: $(find . -name 'docker-compose*.yml' | wc -l)" >> analysis.txt
-```
-
-**Detect Existing CI/CD**:
-```bash
-# Check for GitHub Actions
-ls -la .github/workflows/ 2>/dev/null
-
-# Check for GitLab CI
-ls -la .gitlab-ci.yml 2>/dev/null
-
-# Check for other CI
-ls -la | grep -E '(\.travis|circle|jenkins)'
-
-# Add to analysis
-echo "=== CI/CD ===" >> analysis.txt
-echo "GitHub Actions: $(ls -1 .github/workflows/ 2>/dev/null | wc -l) workflows" >> analysis.txt
-echo "GitLab CI: $(test -f .gitlab-ci.yml && echo 'Yes' || echo 'No')" >> analysis.txt
-```
-
-**Detect Existing Infrastructure**:
-```bash
-# Check for Terraform
-find . -name "*.tf" | head -5
-ls -la terraform.tfstate 2>/dev/null
-
-# Check for Kubernetes
-find . -name "*.yaml" -path "*/k8s/*" -o -name "*.yaml" -path "*/kubernetes/*"
-
-# Add to analysis
+# Infrastructure detection
 echo "=== Infrastructure ===" >> analysis.txt
-echo "Terraform files: $(find . -name '*.tf' | wc -l)" >> analysis.txt
-echo "Kubernetes files: $(find . -name '*.yaml' -path '*/k8s/*' | wc -l)" >> analysis.txt
+
+# Docker
+find . -name "Dockerfile*" -o -name "docker-compose*.yml" | while read docker_file; do
+    echo "Docker: $docker_file" >> analysis.txt
+done
+
+# CI/CD
+test -d .github/workflows && echo "GitHub Actions: $(ls .github/workflows | wc -l) workflows" >> analysis.txt
+test -f .gitlab-ci.yml && echo "GitLab CI: configured" >> analysis.txt
+test -f .travis.yml && echo "Travis CI: configured" >> analysis.txt
+
+# Infrastructure as Code
+find . -name "*.tf" | head -1 && echo "Terraform: detected" >> analysis.txt
+find . -name "*.yaml" -path "*/k8s/*" | head -1 && echo "Kubernetes: detected" >> analysis.txt
 ```
 
-**Review Analysis**:
+**Save Analysis**:
 ```bash
-# View complete analysis
-cat analysis.txt
-
-# Save to repository
 git add analysis.txt
-git commit -m "Add repository analysis for AI upgrade"
+git commit -m "Add repository analysis"
 ```
 
-**Why This Matters**: Understanding what exists prevents duplicate installations and identifies integration points.
+**Why This Matters**: Understanding existing setup prevents duplicate installations and identifies integration points.
+
+---
 
 ### Step 3: Identify Missing Capabilities
 
-Compare existing setup against available plugins to find gaps.
+Compare existing setup against PLUGIN_MANIFEST.yaml to find gaps.
 
-**Create Gap Analysis**:
+**Query Manifest for Available Plugins**:
+```bash
+# Read all stable plugins from manifest
+grep "status: stable" /path/to/ai-projen/plugins/PLUGIN_MANIFEST.yaml -B 5 > available-plugins.txt
+```
+
+**Gap Analysis Process**:
 ```bash
 cat > gap-analysis.txt << 'EOF'
-# Gap Analysis - AI-Ready Upgrade
+# Gap Analysis
 
-## Existing Capabilities
+## Detected Existing Capabilities
 (from analysis.txt)
+
+## Available Plugin Categories
+(from PLUGIN_MANIFEST.yaml)
 
 ## Missing Capabilities
 
 ### Foundation
-- [ ] .ai/ folder structure - NEEDED for AI navigation
-- [ ] agents.md file - NEEDED for AI entry point
+- [ ] Check if .ai/ folder exists
+- [ ] Check if agents.md exists
 
-### Language Tooling
-
-#### Python (if Python detected)
-- [ ] Ruff linter - Faster, more comprehensive
-- [ ] Black formatter - Standard formatter
-- [ ] pytest - Test framework
-- [ ] MyPy - Type checking
-- [ ] Bandit - Security scanning
-
-#### TypeScript (if TypeScript detected)
-- [ ] ESLint - Linting
-- [ ] Prettier - Formatting
-- [ ] Vitest - Modern test framework
-- [ ] TypeScript strict mode - Type safety
+### Language Enhancements
+(For each detected language, check if corresponding plugin offers enhancements)
 
 ### Infrastructure
-- [ ] Docker multi-stage builds - Optimized containers
-- [ ] docker-compose - Development orchestration
-- [ ] GitHub Actions CI/CD - Automated testing
-- [ ] Terraform/AWS - Infrastructure as code
+(Check for Docker, CI/CD, IaC gaps)
 
 ### Standards
-- [ ] Security scanning - Secrets, dependencies, SAST
-- [ ] Documentation standards - File headers, README templates
-- [ ] Pre-commit hooks - Quality gates
-
-## Recommended Upgrade Path
-1. Install foundation/ai-folder (always first)
-2. Enhance existing language tooling
-3. Add missing infrastructure
-4. Apply standards
+(Check for Security, Documentation, Pre-commit hooks)
 
 ## Conflicts to Resolve
-(List any existing configs that will conflict with plugins)
+(List existing configs that may conflict with plugins)
 
-## Estimated Time
-Foundation: 5min
-Language enhancements: 10-15min
-Infrastructure: 15-20min
-Standards: 10min
-Total: 40-50min
+## Recommended Installation Order
+1. Foundation (if missing)
+2. Language enhancements
+3. Missing infrastructure
+4. Standards
+
 EOF
-
-# Review and edit
-cat gap-analysis.txt
 ```
 
-**Identify Conflicts**:
+**Map Detected → Available**:
 ```bash
-# Check for config file conflicts
-echo "=== Potential Conflicts ===" >> gap-analysis.txt
+# For each detected language, find corresponding plugin
+# Example: If Python detected, check for languages/python plugin
 
-# Will .ai/ conflict?
-test -d .ai && echo "- .ai/ directory exists (will merge)" >> gap-analysis.txt || echo "- .ai/ directory missing (will create)" >> gap-analysis.txt
+# If Python detected:
+if grep -q "Python: detected" analysis.txt; then
+    # Check if languages/python available
+    if grep -q "languages/python" available-plugins.txt; then
+        echo "- languages/python (available for Python tooling)" >> gap-analysis.txt
+    fi
+fi
 
-# Will agents.md conflict?
-test -f agents.md && echo "- agents.md exists (will merge)" >> gap-analysis.txt || echo "- agents.md missing (will create)" >> gap-analysis.txt
-
-# Will pyproject.toml conflict?
-test -f pyproject.toml && echo "- pyproject.toml exists (will merge)" >> gap-analysis.txt || echo "- pyproject.toml missing (will create)" >> gap-analysis.txt
-
-# Will package.json conflict?
-test -f package.json && echo "- package.json exists (will merge)" >> gap-analysis.txt || echo "- package.json missing (will create)" >> gap-analysis.txt
-
-# Will Dockerfile conflict?
-test -f Dockerfile && echo "- Dockerfile exists (will need manual merge)" >> gap-analysis.txt || echo "- Dockerfile missing (will create)" >> gap-analysis.txt
+# Repeat for other languages, infrastructure, standards
 ```
 
 **Commit Gap Analysis**:
 ```bash
-git add gap-analysis.txt
-git commit -m "Add gap analysis for AI upgrade"
+git add gap-analysis.txt available-plugins.txt
+git commit -m "Add gap analysis"
 ```
 
-**Why This Matters**: Gap analysis prevents installing unnecessary plugins and identifies conflicts to handle carefully.
+**Why This Matters**: Gap analysis identifies exactly what's missing without installing unnecessary plugins.
 
-### Step 4: Install Foundation Plugin
+---
 
-Install foundation/ai-folder plugin to create `.ai/` structure.
+### Step 4: Install Foundation Plugin (if missing)
 
-**Check if .ai/ Already Exists**:
+Install foundation/ai-folder if .ai/ doesn't exist.
+
+**Check if Foundation Needed**:
 ```bash
-if [ -d .ai ]; then
-    echo "WARNING: .ai/ directory already exists"
-    echo "Backing up existing .ai/ to .ai.backup/"
-    cp -r .ai .ai.backup
-    git add .ai.backup
-    git commit -m "Backup existing .ai/ directory"
-fi
-```
+if [ ! -d .ai ]; then
+    echo "Foundation needed: .ai/ missing"
 
-**Install Foundation Plugin**:
-```bash
-# Create .ai/ structure (or enhance existing)
-mkdir -p .ai/{docs,howto,templates,features}
+    # Locate foundation plugin in manifest
+    foundation_location=$(grep -A 5 "foundation/ai-folder:" /path/to/ai-projen/plugins/PLUGIN_MANIFEST.yaml | grep "location:" | awk '{print $2}')
 
-# Copy foundation templates
-cp /path/to/ai-projen/plugins/foundation/ai-folder/ai-content/templates/index.yaml.template .ai/index.yaml
-cp /path/to/ai-projen/plugins/foundation/ai-folder/ai-content/templates/layout.yaml.template .ai/layout.yaml
+    # Read AGENT_INSTRUCTIONS.md
+    cat "/path/to/ai-projen/$foundation_location/AGENT_INSTRUCTIONS.md"
 
-# Customize for your project
-PROJECT_NAME=$(basename $(pwd))
-sed -i "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" .ai/index.yaml
-sed -i "s/{{PROJECT_TYPE}}/existing-project-upgrade/g" .ai/index.yaml
+    # Follow instructions to install
+    echo "Follow AGENT_INSTRUCTIONS.md to install foundation/ai-folder"
 
-# Create or merge agents.md
-if [ -f agents.md ]; then
-    echo "Backing up existing agents.md"
-    cp agents.md agents.md.backup
-    # Append AI-ready section
-    cat /path/to/ai-projen/plugins/foundation/ai-folder/ai-content/templates/agents.md.template >> agents.md
+    # After installation, commit
+    git add .ai/ agents.md
+    git commit -m "Install foundation/ai-folder plugin"
 else
-    # Create new
-    cp /path/to/ai-projen/plugins/foundation/ai-folder/ai-content/templates/agents.md.template agents.md
-    sed -i "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" agents.md
-fi
+    echo "Foundation exists: .ai/ present"
 
-# Commit
-git add .ai/ agents.md agents.md.backup 2>/dev/null || true
-git commit -m "Install foundation/ai-folder plugin"
+    # If .ai/ exists but incomplete, consider backup and enhancement
+    if [ ! -f .ai/index.yaml ]; then
+        echo "WARNING: .ai/ exists but incomplete"
+        cp -r .ai .ai.backup
+        # Follow foundation AGENT_INSTRUCTIONS.md to complete
+    fi
+fi
 ```
 
-**Why This Matters**: Foundation plugin creates the structure all other plugins depend on.
+**Why This Matters**: Foundation is required for all other plugins. Install first if missing.
 
-### Step 5: Upgrade Language Tooling
+---
 
-Enhance existing language tooling with plugin configurations.
+### Step 5: Install Missing Plugins Incrementally
 
-**Upgrade Python Tooling** (if Python detected):
+For each missing capability, install its plugin via AGENT_INSTRUCTIONS.md.
+
+**Installation Pattern** (for each missing plugin):
+
 ```bash
-# Read Python plugin instructions
-cat /path/to/ai-projen/plugins/languages/python/AGENT_INSTRUCTIONS.md
+# Example: Installing a language enhancement plugin
 
-# Backup existing Python configs
-test -f pyproject.toml && cp pyproject.toml pyproject.toml.backup
-test -f setup.py && cp setup.py setup.py.backup
-test -f pytest.ini && cp pytest.ini pytest.ini.backup
+# 1. Get plugin ID from gap-analysis.txt
+plugin_id="languages/python"  # Example
 
-# Copy plugin configs to temp location for review
-cp /path/to/ai-projen/plugins/languages/python/templates/pyproject.toml pyproject.toml.plugin
-cp /path/to/ai-projen/plugins/languages/python/templates/.ruff.toml .ruff.toml
-cp /path/to/ai-projen/plugins/languages/python/templates/Makefile.python Makefile.python
+# 2. Locate plugin in manifest
+plugin_location=$(grep -A 5 "^  $plugin_id:" /path/to/ai-projen/plugins/PLUGIN_MANIFEST.yaml | grep "location:" | awk '{print $2}')
 
-# Merge pyproject.toml (manual step - preserve existing sections)
-echo "MANUAL ACTION REQUIRED:"
-echo "1. Open pyproject.toml and pyproject.toml.plugin side-by-side"
-echo "2. Merge [tool.ruff], [tool.black], [tool.pytest] from .plugin into main"
-echo "3. Preserve existing [project], [build-system] sections"
-echo "4. Remove pyproject.toml.plugin when done"
-
-# Add Makefile inclusion
-if [ -f Makefile ]; then
-    echo "-include Makefile.python" >> Makefile
-else
-    echo "include Makefile.python" > Makefile
+# 3. Backup existing configs before installation
+if [ -f pyproject.toml ]; then
+    cp pyproject.toml pyproject.toml.backup
 fi
+# Backup other relevant files
 
-# Extend agents.md
-cat /path/to/ai-projen/plugins/languages/python/templates/agents-extension.md >> agents.md
+# 4. Read AGENT_INSTRUCTIONS.md
+instructions_file="/path/to/ai-projen/$plugin_location/AGENT_INSTRUCTIONS.md"
+cat "$instructions_file"
 
-# Test new Python tooling
-make lint-python || echo "Note: May fail if no Python files match patterns yet"
+# 5. Follow installation instructions
+echo "Follow steps in AGENT_INSTRUCTIONS.md"
+echo "IMPORTANT: When merging configs, preserve existing settings"
 
-# Commit
+# 6. After installation, commit
 git add .
-git commit -m "Upgrade Python tooling with ai-projen plugin"
+git commit -m "Install $plugin_id plugin"
 ```
 
-**Upgrade TypeScript Tooling** (if TypeScript detected):
+**Key Points for Upgrades**:
+- **Backup first**: Save existing configs before plugin installation
+- **Merge, don't replace**: Preserve custom settings when conflicts occur
+- **Follow AGENT_INSTRUCTIONS.md**: It has installation details
+- **One at a time**: Install incrementally, test after each
+- **Manual merge if needed**: Some configs require human judgment
+
+**Why This Matters**: Incremental installation with backups enables safe rollback per plugin.
+
+---
+
+### Step 6: Merge Configurations
+
+When plugin configs conflict with existing configs, merge carefully.
+
+**Config Merge Strategy**:
+
+**General Pattern**:
 ```bash
-# Backup existing TypeScript configs
-test -f package.json && cp package.json package.json.backup
-test -f tsconfig.json && cp tsconfig.json tsconfig.json.backup
-test -f .eslintrc.json && cp .eslintrc.json .eslintrc.json.backup
+# For each config file that exists and plugin wants to modify:
 
-# Copy plugin configs for review
-cp /path/to/ai-projen/plugins/languages/typescript/templates/package.json package.json.plugin
-cp /path/to/ai-projen/plugins/languages/typescript/templates/tsconfig.json tsconfig.json.plugin
-cp /path/to/ai-projen/plugins/languages/typescript/templates/.eslintrc.json .eslintrc.json.plugin
-cp /path/to/ai-projen/plugins/languages/typescript/templates/.prettierrc.json .prettierrc.json
-cp /path/to/ai-projen/plugins/languages/typescript/templates/Makefile.typescript Makefile.typescript
+# 1. You have backup: <file>.backup
+# 2. Plugin provided: <file>.plugin (copy from templates)
+# 3. Need to create: <file> (merged result)
 
-# Merge package.json
-echo "MANUAL ACTION REQUIRED:"
-echo "1. Merge devDependencies from package.json.plugin into package.json"
-echo "2. Merge scripts from package.json.plugin into package.json"
-echo "3. Run 'npm install' to install new dev dependencies"
-echo "4. Remove package.json.plugin when done"
+# Example: pyproject.toml
+cp plugin-templates/pyproject.toml pyproject.toml.plugin
 
-# Merge tsconfig.json
-echo "MANUAL ACTION REQUIRED:"
-echo "1. Merge compilerOptions from tsconfig.json.plugin into tsconfig.json"
-echo "2. Enable strict mode if not already enabled"
-echo "3. Remove tsconfig.json.plugin when done"
-
-# Add Makefile inclusion
-echo "-include Makefile.typescript" >> Makefile
-
-# Extend agents.md
-cat /path/to/ai-projen/plugins/languages/typescript/templates/agents-extension.md >> agents.md
-
-# Commit after manual merges
-echo "After completing manual merges, run:"
-echo "git add ."
-echo "git commit -m 'Upgrade TypeScript tooling with ai-projen plugin'"
+# Manual merge (cannot be automated safely):
+echo "MERGE REQUIRED:"
+echo "1. Open pyproject.toml.backup (your existing config)"
+echo "2. Open pyproject.toml.plugin (plugin recommended config)"
+echo "3. Merge into pyproject.toml (combined result)"
+echo ""
+echo "Preserve:"
+echo "  - Your project name, version, dependencies"
+echo "  - Your custom settings"
+echo "Add:"
+echo "  - Plugin tool configurations ([tool.ruff], [tool.pytest], etc.)"
+echo ""
+echo "When done, remove .backup and .plugin files"
 ```
 
-**Why This Matters**: Upgrading language tooling enhances code quality without breaking existing code.
+**Merge Checklist**:
+- [ ] Identify all files both you and plugin need to modify
+- [ ] Backup your original versions
+- [ ] Get plugin template versions
+- [ ] Manually merge (preserve yours + add plugin's)
+- [ ] Test merged result
+- [ ] Commit merged config
 
-### Step 6: Add Missing Infrastructure
+**Why This Matters**: Config merging requires human judgment. Cannot be automated safely.
 
-Add Docker, CI/CD, and cloud infrastructure if missing.
+---
 
-**Add Docker** (if not present):
-```bash
-# Check if Docker exists
-if [ ! -f Dockerfile ] && [ ! -f docker-compose.yml ]; then
-    echo "Adding Docker infrastructure..."
+### Step 7: Validate Existing Functionality Preserved
 
-    # Create Docker directory structure
-    mkdir -p .docker/dockerfiles .docker/compose
-
-    # Copy Docker templates
-    cp /path/to/ai-projen/plugins/infrastructure/docker/templates/Dockerfile.python .docker/dockerfiles/Dockerfile.backend
-    cp /path/to/ai-projen/plugins/infrastructure/docker/templates/docker-compose.yml .docker/compose/docker-compose.dev.yml
-    cp /path/to/ai-projen/plugins/infrastructure/docker/templates/.dockerignore .dockerignore
-    cp /path/to/ai-projen/plugins/infrastructure/docker/templates/Makefile.docker Makefile.docker
-
-    # Add Makefile inclusion
-    echo "-include Makefile.docker" >> Makefile
-
-    # Test Docker
-    make docker-build
-
-    # Commit
-    git add .
-    git commit -m "Add Docker infrastructure"
-else
-    echo "Docker already exists - skipping (use manual integration if needed)"
-fi
-```
-
-**Add GitHub Actions** (if not present):
-```bash
-# Check if GitHub Actions exists
-if [ ! -d .github/workflows ]; then
-    echo "Adding GitHub Actions CI/CD..."
-
-    # Create workflows directory
-    mkdir -p .github/workflows
-
-    # Copy workflow templates
-    cp /path/to/ai-projen/plugins/infrastructure/ci-cd/github-actions/templates/ci-python.yml .github/workflows/ 2>/dev/null || true
-    cp /path/to/ai-projen/plugins/infrastructure/ci-cd/github-actions/templates/ci-typescript.yml .github/workflows/ 2>/dev/null || true
-    cp /path/to/ai-projen/plugins/infrastructure/ci-cd/github-actions/templates/ci-full-stack.yml .github/workflows/ 2>/dev/null || true
-
-    # Commit
-    git add .github/
-    git commit -m "Add GitHub Actions CI/CD"
-else
-    echo "GitHub Actions already exists - consider adding new workflows manually"
-    echo "Available templates: ci-python.yml, ci-typescript.yml, ci-full-stack.yml"
-fi
-```
-
-**Add Terraform/AWS** (if not present):
-```bash
-# Check if Terraform exists
-if [ ! -d infra ] && [ -z "$(find . -name '*.tf' 2>/dev/null)" ]; then
-    echo "Adding Terraform/AWS infrastructure..."
-
-    # Create infrastructure directory
-    mkdir -p infra/terraform/workspaces/{vpc,ecs,alb}
-
-    # Copy Terraform templates
-    cp -r /path/to/ai-projen/plugins/infrastructure/iac/terraform-aws/templates/workspaces/* infra/terraform/workspaces/
-    cp /path/to/ai-projen/plugins/infrastructure/iac/terraform-aws/templates/backend.tf infra/terraform/
-    cp /path/to/ai-projen/plugins/infrastructure/iac/terraform-aws/templates/terraform.tfvars.example infra/terraform/
-    cp /path/to/ai-projen/plugins/infrastructure/iac/terraform-aws/templates/Makefile.terraform Makefile.terraform
-
-    # Add Makefile inclusion
-    echo "-include Makefile.terraform" >> Makefile
-
-    # Commit
-    git add infra/ Makefile.terraform Makefile
-    git commit -m "Add Terraform/AWS infrastructure"
-else
-    echo "Infrastructure already exists - skipping"
-fi
-```
-
-**Why This Matters**: Infrastructure additions should be opt-in. Only add if truly missing.
-
-### Step 7: Apply Standards Plugins
-
-Add security, documentation, and pre-commit hooks.
-
-**Add Security Standards**:
-```bash
-# Backup existing .gitignore
-cp .gitignore .gitignore.backup
-
-# Copy security templates
-cp /path/to/ai-projen/plugins/standards/security/ai-content/templates/.gitignore.security.template .gitignore.security
-cp /path/to/ai-projen/plugins/standards/security/ai-content/templates/.env.example.template .env.example
-
-# Merge .gitignore
-echo "" >> .gitignore
-echo "# Security additions from ai-projen" >> .gitignore
-cat .gitignore.security >> .gitignore
-rm .gitignore.security
-
-# Add security workflow
-cp /path/to/ai-projen/plugins/standards/security/ai-content/templates/github-workflow-security.yml.template .github/workflows/security.yml
-
-# Commit
-git add .
-git commit -m "Add security standards"
-```
-
-**Add Documentation Standards**:
-```bash
-# Copy documentation standards
-mkdir -p .ai/docs
-cp /path/to/ai-projen/plugins/standards/documentation/ai-content/docs/file-headers.md .ai/docs/
-cp /path/to/ai-projen/plugins/standards/documentation/ai-content/docs/readme-standards.md .ai/docs/
-
-# Copy templates
-mkdir -p .ai/templates
-cp /path/to/ai-projen/plugins/standards/documentation/ai-content/templates/README.template .ai/templates/
-
-# Commit
-git add .ai/
-git commit -m "Add documentation standards"
-```
-
-**Add Pre-commit Hooks**:
-```bash
-# Check if pre-commit already exists
-if [ -f .pre-commit-config.yaml ]; then
-    echo "WARNING: .pre-commit-config.yaml already exists"
-    cp .pre-commit-config.yaml .pre-commit-config.yaml.backup
-    echo "Manual merge required"
-else
-    # Copy pre-commit config
-    cp /path/to/ai-projen/plugins/standards/pre-commit-hooks/ai-content/templates/.pre-commit-config.yaml.template .pre-commit-config.yaml
-
-    # Install pre-commit
-    pip install pre-commit
-    pre-commit install
-    pre-commit install --hook-type pre-push
-
-    # Test (may fail on existing code - that's okay)
-    pre-commit run --all-files || echo "Note: Some hooks may fail on existing code. Fix incrementally."
-fi
-
-# Commit
-git add .
-git commit -m "Add pre-commit hooks"
-```
-
-**Why This Matters**: Standards improve quality but shouldn't block existing work. Apply incrementally.
-
-### Step 8: Validate Upgrade
-
-Verify existing functionality still works after upgrade.
+Ensure existing code still works after upgrade.
 
 **Run Existing Tests**:
 ```bash
-# Run your existing test suite
-# Examples (adjust to your project):
-make test || pytest || npm test || ./run-tests.sh
+# Run same test command as baseline
+pytest || npm test || make test || ./run-tests.sh
 
 # Compare with baseline
-echo "=== Test Comparison ===" > validation.txt
-echo "Baseline (before upgrade): See upgrade-baseline.txt" >> validation.txt
-echo "After upgrade: Run tests and record results" >> validation.txt
+echo "Baseline: see upgrade-baseline.txt"
+echo "Current: $(date)"
+
+# Tests must still pass
 ```
 
-**Test New Make Targets**:
+**Test New Functionality**:
 ```bash
-# List all available targets
-make help
-
-# Test new targets
-make lint-python 2>&1 | tee -a validation.txt || true
-make lint-ts 2>&1 | tee -a validation.txt || true
-make test-python 2>&1 | tee -a validation.txt || true
-make test-ts 2>&1 | tee -a validation.txt || true
-
-# Test Docker (if added)
-make docker-build 2>&1 | tee -a validation.txt || true
+# If Makefile added, test new targets
+if [ -f Makefile ]; then
+    make help
+    make lint-all || true  # May show violations on existing code
+    make test-all || true
+fi
 ```
 
-**Verify No Breaking Changes**:
+**Check Integration**:
 ```bash
-# Check that existing functionality works
-echo "=== Functionality Checks ===" >> validation.txt
+# Verify no files deleted
+git status
+git diff --stat backup-before-ai-upgrade..HEAD
 
-# Can you still run your app?
-# (Adjust to your project's start command)
-# python -m your_app --help || npm start || make run
-
-# Do imports still work?
-# python -c "import your_module" || node -e "require('./your-module')"
-
-echo "All checks passed" >> validation.txt
+# Confirm additions only, not deletions
 ```
 
-**Review Changes**:
+**Rollback if Needed**:
 ```bash
-# Review all files changed
-git diff backup-before-ai-upgrade..HEAD --stat
+# If something broke:
+git checkout backup-before-ai-upgrade
+git checkout -b rollback-and-retry
 
-# Review all commits
-git log backup-before-ai-upgrade..HEAD --oneline
-
-# Save validation results
-git add validation.txt
-git commit -m "Validation complete: Upgrade successful"
+# Identify what failed, fix, retry upgrade
 ```
 
-**Why This Matters**: Validation ensures upgrade didn't break existing functionality.
+**Why This Matters**: Validation ensures upgrade didn't break existing functionality. Rollback if tests fail.
 
 ---
 
 ## Verification
 
-After completing the upgrade, verify successful integration:
+After completing upgrade:
 
-**Check 1: Repository Structure Enhanced**
+**Check Enhancements Added**:
 ```bash
-# Verify .ai/ structure exists
+# Verify .ai/ structure
 ls -la .ai/
-# Should show: docs/, howto/, templates/, features/, index.yaml, layout.yaml
 
-# Verify agents.md exists
-cat agents.md
-# Should include both original content (if any) and AI-ready sections
+# Verify agents.md enhanced
+cat agents.md | grep "##"
+
+# Verify configs merged
+cat pyproject.toml  # Should have both old and new sections
 ```
 
-**Check 2: New Tooling Works**
+**Check Existing Preserved**:
 ```bash
-# Test Make targets
-make help
-make lint-all || true
-make test-all || true
-```
+# Original code untouched
+git log --oneline --graph
 
-**Check 3: Existing Functionality Preserved**
-```bash
-# Run existing tests
-# (Use your project's test command)
+# Tests pass
+make test || pytest || npm test
 
-# Verify app still runs
-# (Use your project's start command)
-```
-
-**Check 4: Configurations Merged**
-```bash
-# Check config files have both old and new settings
-cat pyproject.toml  # Should have both your settings and plugin settings
-cat package.json    # Should have both your deps and plugin deps
-cat .gitignore      # Should have both your patterns and security patterns
+# Application runs
+# (Run your app's start command)
 ```
 
 **Success Criteria**:
-- [ ] .ai/ folder exists with proper structure
-- [ ] agents.md exists and is complete
-- [ ] New Make targets work
-- [ ] Existing tests still pass
+- [ ] All gaps filled
+- [ ] Existing tests pass
 - [ ] Existing functionality works
-- [ ] No files were deleted
-- [ ] Configs were merged (not replaced)
-- [ ] Backup branch exists for rollback
+- [ ] No files deleted
+- [ ] Configs merged (not replaced)
+- [ ] Backup branch exists
 
 ---
 
 ## Common Issues
 
-### Issue: Config Merge Conflicts
+### Issue: Config Overwritten
 
-**Symptoms**: Plugin config overwrites your custom settings
+**Symptoms**: Plugin installation replaced your config file
 
-**Cause**: Direct copy instead of merge
-
-**Solution**:
+**Solution**: Restore from backup and merge manually:
 ```bash
-# Restore from backup
-cp pyproject.toml.backup pyproject.toml
+# Restore original
+cp <config>.backup <config>
 
-# Manual merge:
-# 1. Open both files side-by-side
-# 2. Add plugin sections to your existing file
-# 3. Keep your custom settings
-# 4. Test that both old and new settings work
+# Get plugin version
+cp /path/to/plugin/templates/<config> <config>.plugin
 
-# Alternative: Use git merge tool
-git checkout backup-before-ai-upgrade -- pyproject.toml
-# Then manually add plugin settings
+# Merge manually (preserve your settings, add plugin's)
+# Edit <config> to combine both
+
+# Test merged result
 ```
 
-### Issue: Existing Tests Fail After Upgrade
+### Issue: Tests Fail After Upgrade
 
-**Symptoms**: Tests that passed before upgrade now fail
+**Symptoms**: Tests passed before, fail after plugin installation
 
-**Cause**: New linters/formatters found issues, or config conflict
-
-**Solution**:
+**Solution**: Identify what changed:
 ```bash
-# Identify what changed
+# Check what plugin modified
 git diff backup-before-ai-upgrade..HEAD
 
-# If linting issues:
-# Fix code to pass new linters, or
-# Adjust linter config to be less strict initially
+# If new linter found issues:
+# Option 1: Fix issues
+# Option 2: Adjust linter config to be less strict initially
 
 # If config conflict:
-# Restore original config
-# Merge more carefully
-
-# Rollback if needed:
-git checkout backup-before-ai-upgrade
-git checkout -b rollback-upgrade
+# Restore and merge more carefully
 ```
 
-### Issue: Docker Build Fails
+### Issue: Existing Tool Conflicts
 
-**Symptoms**: `make docker-build` fails after adding Docker plugin
+**Symptoms**: Plugin tool conflicts with existing tool
 
-**Cause**: Dockerfile doesn't match your project structure
-
-**Solution**:
+**Solution**: Choose one or run separately:
 ```bash
-# Customize Dockerfile for your project
-vim .docker/dockerfiles/Dockerfile.backend
-
-# Adjust:
-# - COPY paths to match your structure
-# - Dependencies installation
-# - Entrypoint command
-
-# Test build
-docker build -f .docker/dockerfiles/Dockerfile.backend -t test:latest .
+# Option 1: Keep existing, skip conflicting plugin
+# Option 2: Replace existing with plugin tool
+# Option 3: Rename targets to avoid collision
 ```
 
-### Issue: Pre-commit Hooks Block Commits
+### Issue: Lost Custom Settings
 
-**Symptoms**: Can't commit because pre-commit hooks fail
+**Symptoms**: Custom configuration disappeared
 
-**Cause**: Existing code doesn't meet new standards
-
-**Solution**:
+**Solution**: Restore from backup:
 ```bash
-# Temporary skip for existing issues
-SKIP=ruff,pylint,eslint git commit -m "Allow commit while fixing lint issues"
+# View your original
+cat <config>.backup
 
-# Or fix issues incrementally
-pre-commit run --all-files
-# Fix reported issues
-git add .
-git commit -m "Fix linting issues from upgrade"
+# View current
+cat <config>
 
-# Or adjust hook config to be less strict
-vim .pre-commit-config.yaml
-# Set fail_fast: false or remove strict hooks initially
-```
-
-### Issue: Lost Custom Configuration
-
-**Symptoms**: Your custom settings disappeared after upgrade
-
-**Cause**: Plugin config overwrote instead of merging
-
-**Solution**:
-```bash
-# Restore from backup
-git show backup-before-ai-upgrade:pyproject.toml > pyproject.toml.original
-git show HEAD:pyproject.toml > pyproject.toml.plugin
-
-# Manual merge
-# Combine both files, keeping all important settings
-vim pyproject.toml
-
-# Or use git merge
-git checkout backup-before-ai-upgrade -- pyproject.toml
-# Then re-apply plugin additions manually
+# Manually restore custom sections
+# Keep plugin additions too
 ```
 
 ---
 
 ## Best Practices
 
-- **Always backup first**: Create backup branch before starting
-- **Test continuously**: Run tests after each plugin addition
+- **Always backup first**: Create backup branch before any changes
+- **Test continuously**: Run tests after each plugin
 - **Merge, don't replace**: Preserve custom configurations
-- **Review diffs carefully**: Check what's changing before committing
-- **Fix incrementally**: Don't try to fix all lint issues at once
-- **Document conflicts**: Note any manual merges needed
-- **Keep existing tests passing**: Don't break functionality
-- **Be patient**: Upgrades take longer than clean installs
-- **Ask before overwriting**: Confirm destructive operations
+- **One plugin at a time**: Don't batch installations
+- **Read AGENT_INSTRUCTIONS.md**: Don't guess at installation
+- **Commit frequently**: One commit per plugin enables granular rollback
+- **Validate incrementally**: Catch issues early
 
 ---
 
 ## Rollback Instructions
 
-If upgrade causes issues, rollback to backup:
+If upgrade causes issues:
 
 **Full Rollback**:
 ```bash
-# Return to backup branch
+# Return to backup
 git checkout backup-before-ai-upgrade
 
-# Delete failed upgrade branch
+# Delete failed attempt
 git branch -D upgrade-to-ai-ready
 
-# Start over if desired
+# Retry if desired
 git checkout -b upgrade-to-ai-ready-v2
 ```
 
-**Partial Rollback** (keep some changes):
+**Partial Rollback**:
 ```bash
-# List commits to rollback
-git log --oneline
-
 # Revert specific commits
+git log --oneline
 git revert <commit-hash>
 
-# Or reset to specific point
+# Or reset to point
 git reset --hard <commit-before-problem>
 ```
 
-**Restore Specific Files**:
+**File-Level Rollback**:
 ```bash
-# Restore one file from backup
+# Restore one file
 git checkout backup-before-ai-upgrade -- path/to/file
-
-# Restore config files
-git checkout backup-before-ai-upgrade -- pyproject.toml package.json
 ```
 
 ---
@@ -882,64 +581,35 @@ git checkout backup-before-ai-upgrade -- pyproject.toml package.json
 
 After successful upgrade:
 
-1. **Fix lint issues incrementally**: Run linters, fix a few issues per PR
-2. **Add tests**: Write tests for existing code using new test frameworks
-3. **Enhance Docker**: Customize Dockerfiles for your specific needs
-4. **Configure CI/CD**: Add GitHub Secrets for deployments
-5. **Deploy infrastructure**: Run Terraform to create cloud resources
-6. **Document changes**: Update README with new development workflow
-7. **Train team**: Share new Make targets and AI-ready patterns
+1. **Fix Lint Issues**: Address violations found by new linters
+2. **Enhance Tests**: Add tests using new test frameworks
+3. **Customize Configs**: Tune plugin settings for your project
+4. **Add More Capabilities**: Use how-to-add-capability.md
+5. **Configure CI/CD**: If added, set up secrets and credentials
 
-**Related Guides**:
-- **Add more capabilities**: [how-to-add-capability.md](how-to-add-capability.md)
-- **Create new repos**: [how-to-create-new-ai-repo.md](how-to-create-new-ai-repo.md)
+**Related Workflows**:
+- **Add capability**: [how-to-add-capability.md](how-to-add-capability.md)
+- **Create new repo**: [how-to-create-new-ai-repo.md](how-to-create-new-ai-repo.md)
 
 ---
 
-## Checklist
+## Key Insight
 
-### Pre-Upgrade
-- [ ] Working tree is clean (no uncommitted changes)
-- [ ] Backup branch created
-- [ ] Existing tests pass
-- [ ] Analysis.txt created
-- [ ] Gap-analysis.txt created
+This workflow is a **safe upgrader**, not a **replacer**:
+- It **analyzes** existing setup through file inspection
+- It **identifies** gaps by comparing to PLUGIN_MANIFEST.yaml
+- It **backups** before any changes
+- It **installs** via AGENT_INSTRUCTIONS.md
+- It **merges** configs (preserves custom settings)
+- It **validates** existing functionality still works
 
-### Installation
-- [ ] Foundation plugin installed
-- [ ] Language plugins upgraded/installed
-- [ ] Infrastructure plugins added (if needed)
-- [ ] Standards plugins applied
-
-### Configuration Merging
-- [ ] pyproject.toml merged (if exists)
-- [ ] package.json merged (if exists)
-- [ ] .gitignore merged
-- [ ] Makefile enhanced
-- [ ] agents.md enhanced
-
-### Validation
-- [ ] Existing tests still pass
-- [ ] New Make targets work
-- [ ] No functionality broken
-- [ ] Validation.txt created
-- [ ] All changes committed
-
-### Cleanup
-- [ ] Backup files removed (.backup)
-- [ ] Temporary files removed (.plugin)
-- [ ] Upgrade branch merged to main
-- [ ] Backup branch preserved (for safety)
+The workflow works with any plugins in the manifest and any existing repository structure. It adapts automatically to what's detected and what's available.
 
 ---
 
 ## Related Documentation
 
-- [Create New Repo](how-to-create-new-ai-repo.md) - For starting from scratch
-- [Add Capability](how-to-add-capability.md) - For adding single plugins
-- [Plugin Manifest](../../plugins/PLUGIN_MANIFEST.yaml) - All available plugins
-- [Plugin Architecture](../docs/PLUGIN_ARCHITECTURE.md) - How plugins work
-
----
-
-**Congratulations!** You've successfully upgraded your existing repository to be AI-ready while preserving all existing functionality. Your repository now has enhanced tooling, infrastructure, and standards.
+- [PLUGIN_MANIFEST.yaml](../../plugins/PLUGIN_MANIFEST.yaml) - Plugin catalog
+- [Create New Repo](how-to-create-new-ai-repo.md) - For empty directories
+- [Add Capability](how-to-add-capability.md) - Single plugin addition
+- [Plugin Discovery](how-to-discover-and-install-plugins.md) - Discovery workflow
