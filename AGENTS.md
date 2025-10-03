@@ -60,7 +60,7 @@ ai-projen is a plugin-based framework that helps AI agents create and upgrade re
 
 **When**: User is working on THEIR repository (not ai-projen)
 
-**First Action**: Read `.ai/index.yaml` for complete repository structure and available resources
+**First Action**: Read `/path/to/ai-projen/.ai/index.yaml` (THIS repository's index) for complete ai-projen structure and available plugins
 
 ### Step 1: Understand User Intent
 
@@ -128,12 +128,13 @@ Analysis:
 
 Actions:
 1. Classify as Type 1: Repository Assistant
-2. Route to: .ai/howto/how-to-add-capability.md
-3. Follow guide to discover environment-setup plugin
-4. Execute plugin's AGENT_INSTRUCTIONS.md
-5. Create feature branch before changes
-6. Validate installation
-7. Report completion and next steps
+2. Read /path/to/ai-projen/.ai/index.yaml (ai-projen's index)
+3. Route to: /path/to/ai-projen/.ai/howto/how-to-add-capability.md
+4. Follow guide to discover environment-setup plugin
+5. Execute plugin's AGENT_INSTRUCTIONS.md in /home/user/my-app
+6. Create feature branch in /home/user/my-app before changes
+7. Validate installation
+8. Report completion and next steps
 ```
 
 **Example 2**: "Create a new Python CLI tool"
@@ -146,11 +147,12 @@ Analysis:
 Actions:
 1. Classify as Type 1: Repository Assistant
 2. Ask user for target directory
-3. Route to: .ai/howto/how-to-create-new-ai-repo.md
-4. Follow discovery questions
-5. Identify python-cli application plugin
-6. Execute complete installation
-7. Validate final result
+3. Read /path/to/ai-projen/.ai/index.yaml (ai-projen's index)
+4. Route to: /path/to/ai-projen/.ai/howto/how-to-create-new-ai-repo.md
+5. Follow discovery questions
+6. Identify python-cli application plugin
+7. Execute complete installation in target directory
+8. Validate final result
 ```
 
 **Example 3**: "I have an existing Django app, want to add CI/CD"
@@ -163,12 +165,13 @@ Analysis:
 Actions:
 1. Classify as Type 1: Repository Assistant
 2. Confirm repository path
-3. Route to: .ai/howto/how-to-add-capability.md
-4. Discover github-actions CI/CD plugin
-5. Execute AGENT_INSTRUCTIONS.md
-6. Create feature branch
-7. Integrate with existing Django setup
-8. Validate workflows
+3. Read /path/to/ai-projen/.ai/index.yaml (ai-projen's index)
+4. Route to: /path/to/ai-projen/.ai/howto/how-to-add-capability.md
+5. Discover github-actions CI/CD plugin
+6. Execute plugin's AGENT_INSTRUCTIONS.md in user's Django app
+7. Create feature branch in user's Django app
+8. Integrate with existing Django setup
+9. Validate workflows
 ```
 
 ### Critical Rules for Repository Assistant Mode
@@ -187,7 +190,7 @@ Actions:
 
 **When**: User is working on ai-projen repository ITSELF
 
-**First Action**: Read `.ai/index.yaml` for complete repository structure
+**First Action**: Read `.ai/index.yaml` (in ai-projen root) for complete repository structure
 
 ### Step 1: Determine Development Task Type
 
@@ -369,20 +372,20 @@ START
   ├─ User mentions external repository path?
   │  │
   │  YES → Type 1: Repository Assistant Mode
-  │  │      ├─ Read .ai/index.yaml
+  │  │      ├─ Read /path/to/ai-projen/.ai/index.yaml
   │  │      ├─ Classify intent (create/upgrade/add)
-  │  │      ├─ Route to appropriate how-to guide
-  │  │      ├─ Execute workflow exactly
+  │  │      ├─ Route to appropriate ai-projen how-to guide
+  │  │      ├─ Execute workflow in USER'S repository
   │  │      └─ Validate and report
   │  │
   │  NO → Type 2: Framework Developer Mode
-  │         ├─ Read .ai/index.yaml
+  │         ├─ Read ai-projen/.ai/index.yaml
   │         ├─ Classify task type
   │         ├─ Review relevant standards
-  │         ├─ Create feature branch
+  │         ├─ Create feature branch in ai-projen
   │         ├─ Make changes following standards
   │         ├─ Validate changes
-  │         └─ Commit and merge
+  │         └─ Commit and merge to ai-projen
 ```
 
 ---
