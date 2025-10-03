@@ -131,30 +131,45 @@ All tooling runs in isolated environments (Poetry virtual environments, Docker c
 
 ## Getting Started
 
-### Understanding the System
+### Understanding the System (AI-First)
+
+**For Human Developers:**
+
+Instead of reading documentation, simply ask your AI agent (while in the ai-projen repository):
+
+- "How do I use ai-projen to create a new repository?"
+- "How do I upgrade my existing repository to be AI-ready?"
+- "How do I add a specific capability to my project?"
+- "What plugins are available in ai-projen?"
+- "How does the plugin system work?"
+- "How do I create a new plugin?"
+
+Your AI agent will read the relevant documentation and explain it conversationally, showing you exactly what you need for your situation.
 
 **For AI Agents:**
 - Start with [AGENTS.md](AGENTS.md)
 - Understand routing between "Repository Assistant" and "Framework Developer" modes
 - Follow structured workflows in `.ai/howto/` guides
 
-**For Human Developers:**
-- Read [.ai/docs/PROJECT_CONTEXT.md](.ai/docs/PROJECT_CONTEXT.md) for architecture overview
-- Review [.ai/docs/PLUGIN_ARCHITECTURE.md](.ai/docs/PLUGIN_ARCHITECTURE.md) for technical details
-- Explore [plugins/PLUGIN_MANIFEST.yaml](plugins/PLUGIN_MANIFEST.yaml) for available capabilities
+**For Direct Documentation Access:**
+- [.ai/docs/PROJECT_CONTEXT.md](.ai/docs/PROJECT_CONTEXT.md) - Architecture overview
+- [.ai/docs/PLUGIN_ARCHITECTURE.md](.ai/docs/PLUGIN_ARCHITECTURE.md) - Technical details
+- [plugins/PLUGIN_MANIFEST.yaml](plugins/PLUGIN_MANIFEST.yaml) - Available capabilities
 
-### Common Workflows
+### Common Workflows (Just Ask Your AI Agent)
 
 **Quick Application Setup:**
-Install complete application types for common use cases:
-- Python CLI tools: `plugins/applications/python-cli/AGENT_INSTRUCTIONS.md`
-- Full-stack web apps: `plugins/applications/react-python-fullstack/AGENT_INSTRUCTIONS.md`
+- "Create a new Python CLI tool project"
+- "Setup a full-stack React and Python application"
 
 **Custom Repository:**
-Build exactly what you need by selecting individual plugins from each category based on your requirements.
+- "I need a Python API with Docker and GitHub Actions - help me set it up"
+- "Create a TypeScript project with React, testing, and CI/CD"
 
 **Incremental Enhancement:**
-Add capabilities to existing repositories one plugin at a time without disrupting current functionality.
+- "Add Docker to my existing Python project"
+- "Setup environment variables properly in this repository"
+- "Add security scanning to my project"
 
 ## Extending the Framework
 
@@ -181,23 +196,38 @@ Each guide provides detailed instructions, examples from existing plugins, and b
 
 ## Documentation
 
-### Essential Guides
+### AI-First Approach
+
+**Instead of reading documentation files, ask your AI agent directly** (while in the ai-projen repository):
+
+- "How do I use ai-projen to create a new repository?"
+- "Explain the plugin architecture"
+- "What's the difference between create, upgrade, and add capability?"
+- "How do I discover available plugins?"
+- "Walk me through creating a language plugin"
+- "What are the standards for file headers?"
+
+Your AI agent will read the relevant files and explain them conversationally, tailored to your specific question.
+
+### Documentation Reference (for AI Agents and Direct Access)
+
+**Essential Guides:**
 - **[.ai/index.yaml](.ai/index.yaml)** - Complete repository navigation map
 - **[.ai/docs/PROJECT_CONTEXT.md](.ai/docs/PROJECT_CONTEXT.md)** - Framework architecture and philosophy
 - **[.ai/docs/PLUGIN_ARCHITECTURE.md](.ai/docs/PLUGIN_ARCHITECTURE.md)** - Technical plugin specifications
 
-### How-To Guides
+**How-To Guides:**
 - **[.ai/howto/how-to-create-new-ai-repo.md](.ai/howto/how-to-create-new-ai-repo.md)** - Create new repository from scratch
 - **[.ai/howto/how-to-upgrade-to-ai-repo.md](.ai/howto/how-to-upgrade-to-ai-repo.md)** - Upgrade existing repository
 - **[.ai/howto/how-to-add-capability.md](.ai/howto/how-to-add-capability.md)** - Add individual capabilities
 - **[.ai/howto/how-to-discover-and-install-plugins.md](.ai/howto/how-to-discover-and-install-plugins.md)** - Plugin discovery workflow
 
-### Plugin Documentation
+**Plugin Documentation:**
 Each plugin includes:
 - `AGENT_INSTRUCTIONS.md` - Installation instructions for AI agents
 - `README.md` - Human-readable overview and features
 
-### Roadmap
+**Roadmap:**
 - **[roadmap/](roadmap/)** - Framework development roadmap and progress tracking
 
 ## Contributing
