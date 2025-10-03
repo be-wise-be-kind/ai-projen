@@ -28,10 +28,11 @@ This is the **PRIMARY HANDOFF DOCUMENT** for AI agents working on the AI-Projen 
 4. **Update this document** after completing each PR
 
 ## 📍 Current Status
-**Current PR**: PR8 Next - Test Language Plugins
-**Infrastructure State**: PR5-12 complete - Language plugins + Infrastructure plugins (Docker, CI/CD, Terraform/AWS) complete
-**Feature Target**: Modular AI-ready repository template framework with Docker-first development
-**Critical Decision**: All development should prioritize Docker > Isolated Env > Local Direct
+**Current PR**: PR20 Next - Full Stack Integration Test
+**Infrastructure State**: PR5-19 complete - Language, Infrastructure, Standards, and Orchestrators complete
+**Feature Target**: Modular AI-ready repository template framework with intelligent orchestration
+**Recent Milestone**: Phase 5 complete - Orchestrator how-tos created with task routing in agents.md
+**Next Goal**: End-to-end validation with full-stack integration test
 
 ## 📁 Required Documents Location
 ```
@@ -548,11 +549,110 @@ Created comprehensive guide for creating standards plugins using PR13-15 as refe
 
 ---
 
+### ✅ COMPLETED: PR17 - how-to-create-new-ai-repo.md
+
+**Status**: ✅ Complete
+
+**What Was Done**:
+Created comprehensive orchestrator workflow guide for creating brand-new AI-ready repositories from empty directories.
+
+**File Created**:
+- `.ai/howto/how-to-create-new-ai-repo.md` (~34KB)
+
+**Key Features**:
+- **Discovery Phase**: Interactive questions to determine project needs (languages, infrastructure, standards)
+- **Plugin Selection**: Dynamic plugin list building based on PLUGIN_MANIFEST.yaml
+- **Dependency Resolution**: Automatic ordering based on plugin dependencies
+- **Roadmap Generation**: Custom installation plan for progress tracking
+- **Sequential Installation**: Step-by-step plugin installation via AGENT_INSTRUCTIONS.md
+- **Resume Capability**: Track progress for interruption recovery
+- **Validation**: Comprehensive testing after all plugins installed
+
+**Architecture Note**:
+- Initial version is detailed/specific to current plugins
+- **TODO**: Revise to be more abstract and plugin-agnostic (delegate to AGENT_INSTRUCTIONS.md)
+
+---
+
+### ✅ COMPLETED: PR18 - how-to-upgrade-to-ai-repo.md
+
+**Status**: ✅ Complete
+
+**What Was Done**:
+Created comprehensive orchestrator workflow guide for upgrading existing repositories to be AI-ready.
+
+**File Created**:
+- `.ai/howto/how-to-upgrade-to-ai-repo.md` (~32KB)
+
+**Key Features**:
+- **Safety First**: Backup branch creation before any changes
+- **Repository Analysis**: Detect existing languages, tools, infrastructure
+- **Gap Analysis**: Compare existing setup vs available plugins
+- **Conflict Resolution**: Merge configs without overwriting custom settings
+- **Progressive Enhancement**: Add capabilities without breaking existing functionality
+- **Validation**: Ensure existing tests still pass
+- **Rollback Instructions**: Clear undo path if issues arise
+
+**Architecture Note**:
+- Initial version is detailed/specific to current plugins
+- **TODO**: Revise to be more abstract and plugin-agnostic (delegate to AGENT_INSTRUCTIONS.md)
+
+---
+
+### ✅ COMPLETED: PR19 - how-to-add-capability.md
+
+**Status**: ✅ Complete
+
+**What Was Done**:
+Created comprehensive orchestrator workflow guide for adding single capabilities/plugins incrementally.
+
+**File Created**:
+- `.ai/howto/how-to-add-capability.md` (~24KB)
+
+**Key Features**:
+- **Plugin Browsing**: Explore PLUGIN_MANIFEST.yaml for available capabilities
+- **Dependency Checking**: Verify prerequisites before installation
+- **Standalone Installation**: Follow plugin's AGENT_INSTRUCTIONS.md
+- **Integration Validation**: Check for conflicts with existing plugins
+- **Testing**: Validate new capability works
+- **Quick Process**: Optimized for <10 minutes per plugin
+
+**Architecture Note**:
+- Initial version is detailed/specific to current plugins
+- **TODO**: Revise to be more abstract and plugin-agnostic (delegate to AGENT_INSTRUCTIONS.md)
+
+---
+
+### 🔄 ARCHITECTURAL CHANGE: Orchestrators as How-To Guides
+
+**Decision**: Convert orchestrators from standalone markdown files to how-to guides in `.ai/howto/`
+
+**Rationale**:
+- **Consistency**: Uses established how-to framework (PR7.7)
+- **Discoverability**: All guides in `.ai/howto/` not scattered at root
+- **Composability**: agents.md becomes intelligent router with task routing section
+- **Extensibility**: Easy to add new orchestration patterns without structure changes
+- **Dogfooding**: Framework uses its own how-to system
+
+**Changes Made**:
+1. Created 3 orchestrator how-tos in `.ai/howto/`
+2. Added "Task Routing" section to agents.md for intent-based selection
+3. Updated `.ai/index.yaml` with orchestrator references
+4. Moved from `CREATE-NEW-AI-REPO.md` → `how-to-create-new-ai-repo.md`
+
+**Future Work**:
+- Revise all 3 orchestrator how-tos to be more abstract/extensible
+- Focus on **process** not **specific plugins**
+- Delegate installation details to AGENT_INSTRUCTIONS.md
+- Make plugin-agnostic (work regardless of which plugins exist)
+
+---
+
 ## Overall Progress
-**Total Completion**: 80% (20/25 PRs completed)
+**Total Completion**: 92% (23/25 PRs completed)
 
 ```
-[████████████████████░] 80% Complete
+[██████████████████████░] 92% Complete
 ```
 
 ---
@@ -583,9 +683,9 @@ Created comprehensive guide for creating standards plugins using PR13-15 as refe
 | PR14 | Documentation Standards Plugin | 🟢 | 100% | Medium | P2 | Complete - 16 files, 7,608 lines |
 | PR15 | Pre-commit Hooks Plugin | 🟢 | 100% | Medium | P2 | Complete - 9 files, 4,542 lines |
 | PR16 | how-to-create-a-standards-plugin.md | 🟢 | 100% | Low | P2 | Complete - 1,896 lines |
-| PR17 | Complete CREATE-NEW-AI-REPO.md | 🔴 | 0% | High | P3 | Smart orchestration |
-| PR18 | Build UPGRADE-TO-AI-REPO.md | 🔴 | 0% | High | P3 | Repo analysis |
-| PR19 | Build ADD-CAPABILITY.md | 🔴 | 0% | Medium | P3 | Incremental additions |
+| PR17 | Complete how-to-create-new-ai-repo.md | 🟢 | 100% | High | P3 | Orchestrator workflow guide |
+| PR18 | Build how-to-upgrade-to-ai-repo.md | 🟢 | 100% | High | P3 | Upgrade workflow guide |
+| PR19 | Build how-to-add-capability.md | 🟢 | 100% | Medium | P3 | Single plugin workflow |
 | PR20 | Full Stack Integration Test | 🔴 | 0% | High | P4 | End-to-end validation |
 | PR21 | Documentation & Public Launch | 🔴 | 0% | Medium | P4 | CONTRIBUTING, examples, v1.0.0 |
 
@@ -636,11 +736,12 @@ Created comprehensive guide for creating standards plugins using PR13-15 as refe
 - ✅ PR15: Pre-commit Hooks Plugin (9 files, 4,542 lines - dynamic hooks, Docker-first)
 - ✅ PR16: how-to-create-a-standards-plugin.md (1,896 lines - comprehensive guide)
 
-### Phase 5: Orchestrators 🔴 0% Complete (PR17-19)
+### Phase 5: Orchestrators ✅ 100% Complete (PR17-19)
 **Goal**: Intelligent discovery and installation workflows
-- 🔴 PR17: Complete CREATE-NEW-AI-REPO.md
-- 🔴 PR18: Build UPGRADE-TO-AI-REPO.md
-- 🔴 PR19: Build ADD-CAPABILITY.md
+- ✅ PR17: how-to-create-new-ai-repo.md (initial version - needs abstraction)
+- ✅ PR18: how-to-upgrade-to-ai-repo.md (initial version - needs abstraction)
+- ✅ PR19: how-to-add-capability.md (initial version - needs abstraction)
+**Note**: Initial versions complete but need revision to be more abstract/plugin-agnostic
 
 ### Phase 6: Quality & Launch 🔴 0% Complete (PR20-21)
 **Goal**: End-to-end validation and public release

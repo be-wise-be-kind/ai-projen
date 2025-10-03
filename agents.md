@@ -29,6 +29,128 @@ ai-projen is a plugin-based framework for creating AI-ready repositories. We're 
 - **Common Applications**: `plugins/applications/` - Complete application types (python-cli, react-python-fullstack)
 - **Manifest Validation**: `.ai/docs/MANIFEST_VALIDATION.md` - Validation schema
 
+## Task Routing
+
+When you receive a user request related to repository setup or capability addition, analyze the intent and route to the appropriate how-to guide:
+
+### Creating a New AI-Ready Repository
+
+**Intent Signals**:
+- "create new repo", "start from scratch", "empty directory", "new project", "initialize repository"
+- User wants complete development environment from zero
+- No existing code to preserve
+
+**How-To Guide**: `.ai/howto/how-to-create-new-ai-repo.md`
+
+**What This Provides**:
+- Interactive discovery questions to determine project needs
+- Complete plugin installation from foundation through standards
+- Sequential installation with dependency resolution
+- Roadmap generation for progress tracking
+- Resume capability if interrupted
+- Validation that everything works together
+
+**When to Use**:
+- Starting brand new project in empty directory
+- Want full stack (Python/TypeScript/Docker/CI/CD/Terraform)
+- Need production-ready environment quickly (<30 minutes)
+- Prefer guided setup over manual plugin selection
+
+### Upgrading an Existing Repository
+
+**Intent Signals**:
+- "add AI patterns", "upgrade existing", "already have code", "existing repository", "enhance my repo"
+- User has working code they want to preserve
+- Want to add AI-ready patterns without breaking existing functionality
+
+**How-To Guide**: `.ai/howto/how-to-upgrade-to-ai-repo.md`
+
+**What This Provides**:
+- Repository analysis to detect existing setup
+- Gap analysis to identify missing capabilities
+- Safe, non-destructive installation with backups
+- Configuration merging (not replacing)
+- Conflict resolution guidance
+- Validation that existing functionality preserved
+- Rollback instructions
+
+**When to Use**:
+- Have existing repository with code
+- Want to add linting, Docker, CI/CD, or standards
+- Need to preserve custom configurations
+- Can't afford to break existing functionality
+- Want incremental enhancement
+
+### Adding a Single Capability
+
+**Intent Signals**:
+- "add Docker", "install Python plugin", "enable CI/CD", "add one plugin", "just need [specific capability]"
+- User wants granular control over what's installed
+- Want to add one thing at a time
+
+**How-To Guide**: `.ai/howto/how-to-add-capability.md`
+
+**What This Provides**:
+- Plugin browsing and selection
+- Dependency checking before installation
+- Standalone plugin installation (no orchestrator)
+- Integration validation
+- Testing procedures
+- Quick, focused addition (<10 minutes per plugin)
+
+**When to Use**:
+- Want to add single plugin to existing setup
+- Prefer manual control over automated discovery
+- Building custom configuration incrementally
+- Already have some plugins installed
+- Want to understand each plugin before installing
+
+### Decision Matrix
+
+| User Intent | Existing Code? | Preference | Recommended Guide |
+|-------------|----------------|------------|-------------------|
+| Start new project | No | Fast, complete setup | how-to-create-new-ai-repo.md |
+| Enhance existing repo | Yes | Safe upgrade | how-to-upgrade-to-ai-repo.md |
+| Add one plugin | Yes/No | Granular control | how-to-add-capability.md |
+| Try out framework | No | Quick start | how-to-create-new-ai-repo.md |
+| Add AI to legacy code | Yes | Preserve everything | how-to-upgrade-to-ai-repo.md |
+| Experimental setup | Either | Manual control | how-to-add-capability.md |
+
+### Routing Examples
+
+**Example 1**: "I want to create a new Python web app with Docker and CI/CD"
+- **Analysis**: New project, wants multiple capabilities
+- **Route to**: `.ai/howto/how-to-create-new-ai-repo.md`
+- **Why**: Discovery questions will identify Python + Docker + CI/CD, install all with proper dependency order
+
+**Example 2**: "I have an existing Flask app and want to add Docker containerization"
+- **Analysis**: Existing code, specific capability addition
+- **Route to**: `.ai/howto/how-to-upgrade-to-ai-repo.md` OR `.ai/howto/how-to-add-capability.md`
+- **Why**: Upgrade guide if they want full analysis and safe integration; Add capability if they just want Docker
+
+**Example 3**: "I just need to add TypeScript linting to my project"
+- **Analysis**: Specific plugin, granular control
+- **Route to**: `.ai/howto/how-to-add-capability.md`
+- **Why**: Single plugin addition, user knows exactly what they want
+
+**Example 4**: "Set up a full-stack React+Python project from scratch"
+- **Analysis**: New project, full stack
+- **Route to**: `.ai/howto/how-to-create-new-ai-repo.md` OR use application plugin `react-python-fullstack`
+- **Why**: Complete setup needed, discovery will select both languages + infrastructure
+
+**Example 5**: "My repo has Python code but no linting, can you add that?"
+- **Analysis**: Existing code, missing tooling
+- **Route to**: `.ai/howto/how-to-upgrade-to-ai-repo.md`
+- **Why**: Safe upgrade preserving existing code, adds missing Python linting
+
+### Important Notes
+
+- **Always ask for clarification** if user intent is ambiguous
+- **Confirm existing code status** before routing to new-repo vs upgrade guides
+- **Consider user experience level**: Beginners may prefer create-new-ai-repo (more guided), advanced users may prefer add-capability (more control)
+- **Check for backups** before routing to upgrade guide (safety first)
+- **Multiple valid routes**: Some requests can use multiple guides - explain tradeoffs
+
 ## Development Guidelines
 
 ### When Working on ai-projen Itself

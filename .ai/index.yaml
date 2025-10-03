@@ -14,11 +14,13 @@ project:
 
 structure:
   orchestrators:
-    location: .
+    location: .ai/howto/
+    description: Workflow guides for repository setup and capability management
     files:
-      - CREATE-NEW-AI-REPO.md (coming in PR17)
-      - UPGRADE-TO-AI-REPO.md (coming in PR18)
-      - ADD-CAPABILITY.md (coming in PR19)
+      - how-to-create-new-ai-repo.md
+      - how-to-upgrade-to-ai-repo.md
+      - how-to-add-capability.md
+    routing: See agents.md "Task Routing" section for intent-based selection
 
   plugins:
     location: plugins/
@@ -47,12 +49,26 @@ structure:
 
   howto:
     location: .ai/howto/
-    files:
-      - how-to-create-a-template.md
-      - how-to-create-a-plugin.md (coming soon)
-      - how-to-create-a-language-plugin.md
-      - how-to-create-an-infrastructure-plugin.md (coming soon)
-      - how-to-create-a-standards-plugin.md (coming soon)
+
+    orchestration:
+      description: Workflow guides for repository setup and capability addition
+      files:
+        - how-to-create-new-ai-repo.md
+        - how-to-upgrade-to-ai-repo.md
+        - how-to-add-capability.md
+
+    plugin_creation:
+      description: Guides for creating new plugins
+      files:
+        - how-to-create-a-template.md
+        - how-to-create-a-language-plugin.md
+        - how-to-create-an-infrastructure-plugin.md
+        - how-to-create-a-standards-plugin.md (in .ai/docs/)
+
+    plugin_usage:
+      description: Guides for using existing plugins
+      files:
+        - how-to-discover-and-install-plugins.md
 
     framework:
       standards: .ai/docs/HOWTO_STANDARDS.md
@@ -127,9 +143,10 @@ commands:
   validate: "make validate-manifest (coming soon)"
 
 entry_points:
-  new_repo: CREATE-NEW-AI-REPO.md (coming in PR17)
-  upgrade_repo: UPGRADE-TO-AI-REPO.md (coming in PR18)
-  add_capability: ADD-CAPABILITY.md (coming in PR19)
+  primary: agents.md (AI agent entry point with task routing)
+  new_repo: .ai/howto/how-to-create-new-ai-repo.md
+  upgrade_repo: .ai/howto/how-to-upgrade-to-ai-repo.md
+  add_capability: .ai/howto/how-to-add-capability.md
 
 key_files:
   agents: agents.md (primary AI agent entry point)
