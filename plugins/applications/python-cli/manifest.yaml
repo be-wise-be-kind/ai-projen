@@ -14,8 +14,15 @@ metadata:
   complexity: intermediate
   estimated_setup_time: 10-15 minutes
 
+  python_version:
+    default: "3.11"
+    supported: ["3.10", "3.11", "3.12"]
+    ask_user: true
+    prompt: "Which Python version? (3.10, 3.11, 3.12)"
+
   technology_stack:
     primary_language: python
+    dependency_manager: Poetry (isolated venv - doesn't corrupt user machine)
     frameworks:
       - Click 8.x
       - pytest
@@ -25,6 +32,12 @@ metadata:
       - GitHub Actions
 
   application_type: cli
+
+  philosophy:
+    - "Use Poetry for isolated virtual environments"
+    - "Never corrupt the user's machine with global installs"
+    - "Always use Make targets, not direct python/pytest/ruff commands"
+    - "All operations through isolated Poetry venv"
 
 # Plugin dependencies (MUST be installed in this order)
 dependencies:

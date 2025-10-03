@@ -27,26 +27,50 @@ languages:
       - foundation/ai-folder
 
     options:
+      python_version:
+        available: ["3.10", "3.11", "3.12"]
+        recommended: "3.11"
+        description: Python version for the project
+        ask_user: true
+
+      dependency_manager:
+        available: [poetry, pip, pipenv, conda]
+        recommended: poetry
+        description: Dependency management tool
+        note: Poetry provides isolated venvs and prevents corrupting user machine
+
       linter_formatter:
-        available: [ruff]
+        available: [ruff, pylint, flake8, black]
         recommended: ruff
-        description: Fast all-in-one linter and formatter (replaces Black, isort, flake8)
+        description: Code linting and formatting
         note: Ruff handles both linting AND formatting - no separate formatter needed
 
+      formatters_standalone:
+        available: [black, blue, yapf, autopep8]
+        recommended: black
+        description: Code formatters (if not using Ruff)
+        note: Only needed if not using Ruff's formatting
+
       type_checking:
-        available: [mypy, none]
+        available: [mypy, pyright, pyre, none]
         recommended: mypy
         description: Static type checking for catching type errors
 
       security:
-        available: [bandit, none]
+        available: [bandit, safety, pip-audit, semgrep, none]
         recommended: bandit
         description: Security vulnerability scanning for Python code
 
       testing:
-        available: [pytest, unittest]
+        available: [pytest, unittest, nose2, ward]
         recommended: pytest
         description: Testing framework with async support and coverage
+
+    philosophy:
+      - "Use Poetry for isolated virtual environments"
+      - "Never corrupt user's machine with global pip installs"
+      - "Always use Make targets, not direct python/pytest commands"
+      - "All operations through isolated venv (Poetry/pipenv/conda)"
 
     tools_provided:
       - name: Ruff

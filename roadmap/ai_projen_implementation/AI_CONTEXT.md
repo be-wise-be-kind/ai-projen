@@ -73,11 +73,12 @@ AI-Projen emerged from building **durable-code-test**, a full-stack application 
 
 1. **Framework Over Library**: Build the engine, not every possible plugin
 2. **Two-Path Approach**: Quick start with applications OR custom build with plugins
-3. **Standalone First**: Every plugin works independently
-4. **Composable**: Plugins combine without conflicts
-5. **Extensible**: Clear path to add new plugins/applications (<2 hours with docs)
-6. **Production-Ready**: Reference implementations are battle-tested
-7. **Agent-Friendly**: Designed for AI agent consumption (AGENT_INSTRUCTIONS.md)
+3. **Don't Corrupt User Machine**: Use Poetry/isolated venvs, never global pip installs, always Make targets
+4. **Standalone First**: Every plugin works independently
+5. **Composable**: Plugins combine without conflicts
+6. **Extensible**: Clear path to add new plugins/applications (<2 hours with docs)
+7. **Production-Ready**: Reference implementations are battle-tested
+8. **Agent-Friendly**: Designed for AI agent consumption (AGENT_INSTRUCTIONS.md)
 
 ## Current Application Context
 

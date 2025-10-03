@@ -67,35 +67,43 @@ Each plugin contains:
 
 ## Design Philosophy
 
-### 1. Standalone First
+### 1. Don't Corrupt User Machine
+Protect the user's system from pollution:
+- **Use Poetry** for isolated virtual environments (Python)
+- **Never use global pip installs** - all deps in project venv
+- **Always use Make targets** - never direct python/pytest/ruff commands
+- **All operations through isolated environment** (Poetry/pipenv/conda)
+- Philosophy: User's machine should remain clean
+
+### 2. Standalone First
 Every plugin must work independently without requiring the orchestrator. This enables:
 - Incremental adoption ("just add Python linting")
 - Lower barrier to entry
 - Reduced coupling
 - Clear plugin boundaries
 
-### 2. Composable
+### 3. Composable
 Plugins combine without conflicts:
 - Isolated configurations
 - Namespaced Make targets
 - Non-overlapping file paths
 - Clear dependency declarations
 
-### 3. Extensible
+### 4. Extensible
 Framework grows through community contributions:
 - `_template/` directories for each plugin category
 - Clear documentation (how-to-create-a-plugin.md)
 - Low barrier to contribution
 - Examples to follow (Python, TypeScript)
 
-### 4. Production-Ready
+### 5. Production-Ready
 Reference implementations are battle-tested:
 - Extracted from [durable-code-test](https://github.com/steve-e-jackson/durable-code-test)
 - Proven in production
 - Comprehensive (not minimal examples)
 - Best practices baked in
 
-### 5. Agent-Friendly
+### 6. Agent-Friendly
 Designed for AI agent consumption:
 - Clear AGENT_INSTRUCTIONS.md format
 - Structured metadata (YAML)

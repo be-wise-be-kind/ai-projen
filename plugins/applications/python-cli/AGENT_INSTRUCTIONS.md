@@ -219,15 +219,25 @@ sed -i 's/{{PROJECT_NAME}}/my-cli-tool/g' README.md
 sed -i 's/{{PROJECT_DESCRIPTION}}/My awesome CLI tool/g' README.md
 ```
 
-**11. Install Dependencies**
+**11. Install Dependencies with Poetry**
 
 ```bash
-# Install Python dependencies including Click, pytest, Ruff
-pip install -e ".[dev]"
+# Install Poetry if not already installed
+# Poetry manages dependencies in isolated virtual environment
+curl -sSL https://install.python-poetry.org | python3 -
+
+# Configure Poetry to create venv in project directory (optional but recommended)
+poetry config virtualenvs.in-project true
+
+# Install all dependencies (runtime + dev) in isolated venv
+# This does NOT corrupt the user's global Python environment
+poetry install
 
 # Install pre-commit hooks
-pre-commit install
+poetry run pre-commit install
 ```
+
+**Philosophy**: We use Poetry to ensure all dependencies are installed in an isolated virtual environment, preventing corruption of the user's system Python installation.
 
 **12. Update .ai/index.yaml**
 
@@ -248,8 +258,11 @@ application:
 ### Initial Setup
 
 ```bash
+# IMPORTANT: Always use Make targets (don't run python/pytest/ruff directly)
+# Make targets ensure consistent execution in isolated environment
+
 # Verify CLI works
-python -m src.cli --help
+make cli-help
 
 # Should see:
 # Usage: cli [OPTIONS] COMMAND [ARGS]...
@@ -262,23 +275,22 @@ python -m src.cli --help
 #   hello   Print a greeting message
 
 # Run example command
-python -m src.cli hello --name "World"
-# Should output: Hello, World!
+make cli-hello
 
 # Build Docker container
-docker-compose -f docker-compose.cli.yml build
+make docker-build
 
 # Run CLI in container
-docker-compose -f docker-compose.cli.yml run cli --help
+make docker-cli-help
 
-# Run tests
-pytest
+# Run tests (uses Poetry's isolated venv)
+make test
 
-# Run linting
-ruff check src tests
+# Run linting (uses Poetry's isolated venv)
+make lint
 
-# Run formatting
-ruff format src tests
+# Run formatting (uses Poetry's isolated venv)
+make format
 ```
 
 ### Validation

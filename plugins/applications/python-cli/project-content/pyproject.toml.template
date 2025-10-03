@@ -1,72 +1,58 @@
-# Purpose: Python project configuration for CLI application with dependencies and tooling
+# Purpose: Python project configuration for CLI application using Poetry for dependency management
 # Scope: Package metadata, dependencies, build configuration, and development tooling setup
-# Overview: Comprehensive project configuration using modern Python packaging standards (PEP 517/518/621).
-#     Defines package metadata for PyPI distribution, runtime and development dependencies, CLI entry
-#     points for installation, and configuration for development tools (ruff, pytest, mypy). Provides
-#     single source of configuration for building, testing, and distributing the CLI application.
-# Dependencies: setuptools and wheel for building, all runtime deps listed in dependencies section
-# Exports: Package configuration for build tools, pip, and development tooling
-# Interfaces: setuptools build backend, pip installation, ruff/pytest/mypy configuration
-# Environment: Development and production Python environments (>=3.11)
-# Related: setup.py (legacy), requirements.txt, .ai/howtos/python-cli/how-to-package-cli-tool.md
+# Overview: Comprehensive project configuration using Poetry for isolated virtual environments and dependency
+#     management. Defines package metadata for PyPI distribution, runtime and development dependencies,
+#     CLI entry points for installation, and configuration for development tools (ruff, pytest, mypy).
+#     Uses Poetry to ensure isolated environments and prevent corrupting the user's machine.
+# Dependencies: Poetry (>=1.5.0) for dependency management and virtual environment isolation
+# Exports: Package configuration for Poetry, build tools, and development tooling
+# Interfaces: Poetry build backend, isolated venv, ruff/pytest/mypy configuration
+# Environment: Poetry-managed virtual environment (Python {{PYTHON_VERSION}})
+# Related: poetry.lock, .ai/howtos/python-cli/how-to-package-cli-tool.md
+# Philosophy: Don't corrupt the user's machine - all deps in isolated Poetry venv
 
 [build-system]
-requires = ["setuptools>=68.0.0", "wheel"]
-build-backend = "setuptools.build_meta"
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
 
-[project]
+[tool.poetry]
 name = "{{PROJECT_NAME}}"
 version = "1.0.0"
 description = "{{PROJECT_DESCRIPTION}}"
+authors = ["{{AUTHOR_NAME}} <{{AUTHOR_EMAIL}}>"]
+license = "MIT"
 readme = "README.md"
-authors = [
-    {name = "{{AUTHOR_NAME}}", email = "{{AUTHOR_EMAIL}}"}
-]
-license = {text = "MIT"}
-requires-python = ">=3.11"
+homepage = "https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}"
+repository = "https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}"
+documentation = "https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}#readme"
+keywords = ["cli", "command-line", "tool"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: {{PYTHON_VERSION_MAJOR}}",
     "Programming Language :: Python :: 3 :: Only",
     "Topic :: Software Development :: Libraries :: Python Modules",
     "Topic :: Utilities",
     "Environment :: Console",
 ]
-keywords = ["cli", "command-line", "tool"]
+packages = [{include = "src"}]
 
-dependencies = [
-    "click>=8.0.0",
-    "pyyaml>=6.0",
-]
+[tool.poetry.dependencies]
+python = "^{{PYTHON_VERSION}}"
+click = "^8.1.0"
+pyyaml = "^6.0"
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "ruff>=0.1.0",
-    "mypy>=1.0.0",
-    "types-PyYAML>=6.0.0",
-]
+[tool.poetry.group.dev.dependencies]
+pytest = "^7.4.0"
+pytest-cov = "^4.1.0"
+ruff = "^0.1.0"
+mypy = "^1.7.0"
+types-pyyaml = "^6.0.0"
 
-[project.urls]
-Homepage = "https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}"
-Documentation = "https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}#readme"
-Repository = "https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}"
-Issues = "https://github.com/{{GITHUB_USERNAME}}/{{PROJECT_NAME}}/issues"
-
-[project.scripts]
+[tool.poetry.scripts]
 {{PROJECT_NAME}} = "src.cli:cli"
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["src*"]
-
-[tool.setuptools.package-data]
-src = ["py.typed"]
 
 # Ruff configuration
 [tool.ruff]
