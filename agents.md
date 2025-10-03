@@ -35,13 +35,8 @@ ai-projen is a plugin-based framework for creating AI-ready repositories. We're 
 ## Navigation
 
 ### Critical Documents
-- **Project Context**: `.ai/docs/PROJECT_CONTEXT.md` - Architecture and philosophy
-- **Plugin Architecture**: `.ai/docs/PLUGIN_ARCHITECTURE.md` - How plugins work
-- **Plugin Discovery**: `.ai/docs/PLUGIN_DISCOVERY.md` - How orchestrators discover plugins
-- **Manifest Validation**: `.ai/docs/MANIFEST_VALIDATION.md` - Plugin manifest schema
-- **File Header Standards**: `.ai/docs/FILE_HEADER_STANDARDS.md` - File header documentation standards
-- **Index**: `.ai/index.yaml` - Repository structure and navigation
-- **Layout**: `.ai/layout.yaml` - Directory organization
+- **Index**: `.ai/index.yaml` - **START HERE** - Complete repository structure, documentation, and standards
+- **Layout**: `.ai/layout.yaml` - Directory organization rules
 
 ### Plugin System
 - **Plugin Manifest**: `plugins/PLUGIN_MANIFEST.yaml` - All available plugins, applications, and their options

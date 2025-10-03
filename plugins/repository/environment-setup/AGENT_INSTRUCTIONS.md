@@ -93,7 +93,60 @@ else
 fi
 ```
 
-### Step 2: Detect Operating System
+### Step 2: Create Feature Branch (if changes needed)
+
+**IMPORTANT**: Before making any changes, create a feature branch following Git best practices.
+
+```bash
+# Determine if changes are needed based on Step 1 detection
+CHANGES_NEEDED=false
+
+if [ "$HAS_DIRENV" = false ] || [ "$HAS_ENVRC" = false ] || [ "$HAS_ENV_EXAMPLE" = false ] || [ "$GITIGNORE_OK" = false ]; then
+  CHANGES_NEEDED=true
+fi
+
+# If changes are needed, create a feature branch
+if [ "$CHANGES_NEEDED" = true ]; then
+  echo ""
+  echo "Changes are needed - creating feature branch..."
+
+  # Check current branch
+  CURRENT_BRANCH=$(git branch --show-current)
+  echo "Current branch: $CURRENT_BRANCH"
+
+  # Don't create branch if already on a feature branch
+  if [[ "$CURRENT_BRANCH" == "main" ]] || [[ "$CURRENT_BRANCH" == "master" ]] || [[ "$CURRENT_BRANCH" == "develop" ]]; then
+    # Create feature branch
+    BRANCH_NAME="feature/add-environment-setup"
+
+    echo "Creating feature branch: $BRANCH_NAME"
+    git checkout -b "$BRANCH_NAME"
+
+    if [ $? -eq 0 ]; then
+      echo "✓ Created and switched to branch: $BRANCH_NAME"
+    else
+      echo "✗ Failed to create branch - aborting"
+      exit 1
+    fi
+  else
+    echo "ℹ  Already on feature branch: $CURRENT_BRANCH"
+  fi
+else
+  echo ""
+  echo "✓ No changes needed - environment setup is already complete!"
+  echo ""
+  echo "Summary:"
+  [ "$HAS_DIRENV" = true ] && echo "  ✓ direnv installed"
+  [ "$HAS_ENVRC" = true ] && echo "  ✓ .envrc exists"
+  [ "$HAS_ENV_EXAMPLE" = true ] && echo "  ✓ .env.example exists"
+  [ "$GITIGNORE_OK" = true ] && echo "  ✓ .gitignore configured"
+  echo ""
+  echo "Your repository already has proper environment variable handling."
+  exit 0
+fi
+```
+
+### Step 3: Detect Operating System
 
 Determine OS for direnv installation:
 
@@ -150,7 +203,7 @@ else
 fi
 ```
 
-### Step 3: Install direnv (if needed)
+### Step 4: Install direnv (if needed)
 
 If direnv is not installed, install it:
 
@@ -187,7 +240,7 @@ else
 fi
 ```
 
-### Step 4: Configure Shell Integration
+### Step 5: Configure Shell Integration
 
 Add direnv hook to shell configuration:
 
@@ -212,7 +265,7 @@ else
 fi
 ```
 
-### Step 5: Create .envrc File
+### Step 6: Create .envrc File
 
 Create .envrc to automatically load .env:
 
@@ -231,7 +284,7 @@ else
 fi
 ```
 
-### Step 6: Create .env.example Template
+### Step 7: Create .env.example Template
 
 Create comprehensive .env.example file:
 
@@ -262,7 +315,7 @@ else
 fi
 ```
 
-### Step 7: Update .gitignore
+### Step 8: Update .gitignore
 
 Ensure .env is excluded from version control:
 
@@ -284,7 +337,7 @@ else
 fi
 ```
 
-### Step 8: Install gitleaks for Credential Scanning (if needed)
+### Step 9: Install gitleaks for Credential Scanning (if needed)
 
 Offer to install gitleaks if not present:
 
@@ -352,7 +405,7 @@ else
 fi
 ```
 
-### Step 9: Scan for Credential Violations
+### Step 10: Scan for Credential Violations
 
 Check if credentials are already committed to git:
 
@@ -395,7 +448,7 @@ else
 fi
 ```
 
-### Step 10: Offer Remediation (if violations found)
+### Step 11: Offer Remediation (if violations found)
 
 If credentials are found, offer to create a branch and fix them:
 
@@ -442,7 +495,7 @@ if [ "$VIOLATIONS_FOUND" = true ]; then
 fi
 ```
 
-### Step 11: Create .env File (if needed)
+### Step 12: Create .env File (if needed)
 
 Help user create .env from .env.example:
 
@@ -468,7 +521,7 @@ else
 fi
 ```
 
-### Step 12: Activate direnv
+### Step 13: Activate direnv
 
 Allow direnv for this directory:
 
@@ -491,7 +544,7 @@ else
 fi
 ```
 
-### Step 13: Run Validation
+### Step 14: Run Validation
 
 Validate the complete setup:
 
@@ -514,7 +567,7 @@ else
 fi
 ```
 
-### Step 14: Copy Documentation (if .ai folder exists)
+### Step 15: Copy Documentation (if .ai folder exists)
 
 Copy documentation to .ai folder if foundation plugin is installed:
 
@@ -543,7 +596,7 @@ else
 fi
 ```
 
-### Step 15: Update .ai/index.yaml (if .ai folder exists)
+### Step 16: Update .ai/index.yaml (if .ai folder exists)
 
 Add environment setup to project index if foundation plugin is installed:
 
