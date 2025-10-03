@@ -1,0 +1,80 @@
+"""
+Purpose: Test suite for health check endpoints
+
+Scope: Integration tests for /health, /ready, and /live endpoints
+
+Overview: Validates health check endpoints return correct status codes and response formats.
+    Tests basic application health, readiness for traffic, and liveness for orchestration.
+    Uses FastAPI TestClient for integration testing without running server.
+
+Dependencies: pytest, FastAPI TestClient
+
+Exports: Test functions for health endpoints
+
+Implementation: pytest with AAA pattern (Arrange, Act, Assert)
+"""
+
+import pytest
+from fastapi.testclient import TestClient
+from backend.src.main import app
+
+client = TestClient(app)
+
+
+def test_health_check():
+    """Test health check endpoint returns 200 and correct structure"""
+    # Act
+    response = client.get("/health")
+
+    # Assert
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "status" in data
+    assert data["status"] == "healthy"
+    assert "timestamp" in data
+    assert "version" in data
+    assert "python_version" in data
+
+
+def test_readiness_check():
+    """Test readiness check endpoint returns 200"""
+    # Act
+    response = client.get("/ready")
+
+    # Assert
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "ready" in data
+    assert data["ready"] is True
+    assert "timestamp" in data
+
+
+def test_liveness_check():
+    """Test liveness check endpoint returns 200"""
+    # Act
+    response = client.get("/live")
+
+    # Assert
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "alive" in data
+    assert data["alive"] is True
+    assert "timestamp" in data
+
+
+def test_root_endpoint():
+    """Test root endpoint returns API information"""
+    # Act
+    response = client.get("/")
+
+    # Assert
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "message" in data
+    assert "version" in data
+    assert "docs" in data
+    assert "health" in data

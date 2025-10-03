@@ -40,11 +40,12 @@ Setting all this up from scratch takes days/weeks and requires deep expertise. *
 ### The Solution
 
 A **plugin-based framework** where:
-- **Application plugins** (NEW!) compose other plugins into complete, working applications (Python CLI, Full-Stack Web)
+- **Application plugins** compose other plugins into complete, working applications (Python CLI, Full-Stack Web)
 - **Foundation plugin** (ai-folder) is universal - every project needs it
 - **Language plugins** provide language-specific tooling (Python, TypeScript, etc.)
 - **Infrastructure plugins** provide deployment capabilities (Docker, CI/CD, Terraform)
 - **Standards plugins** enforce quality (Security, Documentation, Pre-commit hooks)
+- **Repository plugins** handle repository-level configuration (Environment variables, Git workflows, etc.)
 - **Orchestrators** (CREATE/UPGRADE/ADD) guide users through discovery and installation
 - **Everything is standalone** - plugins work independently or composed together
 
@@ -62,6 +63,7 @@ AI-Projen emerged from building **durable-code-test**, a full-stack application 
 - ✅ **Languages**: Python + TypeScript (full-stack ready)
 - ✅ **Infrastructure**: Docker (frontend + backend), GitHub Actions (CI/CD), Terraform/AWS (cloud deployment)
 - ✅ **Standards**: Pre-commit hooks (quality gates), Security + Documentation standards
+- ✅ **Repository**: Environment variable management (direnv, .env files, credential protection)
 
 **Future (community-driven)**:
 - 🎯 Additional languages (Go, Rust, Java)
@@ -132,10 +134,13 @@ plugins/
 │       │       ├── aws/
 │       │       └── _template/
 │       └── _template/
-└── standards/               # Quality & standards
-    ├── security/
-    ├── documentation/
-    ├── pre-commit-hooks/
+├── standards/               # Quality & standards
+│   ├── security/
+│   ├── documentation/
+│   ├── pre-commit-hooks/
+│   └── _template/
+└── repository/              # Repository-level configuration
+    ├── environment-setup/
     └── _template/
 ```
 
@@ -241,6 +246,35 @@ Agent → Discovery path:
 User → Docker configured without using orchestrator
 ```
 
+#### Journey 5: Repository Setup via Natural Language (NEW - PR19.5)
+```
+User → "Configure my environment variable handling"
+Agent → Recognizes capability addition intent (agents.md task routing)
+Agent → Routes to how-to-add-capability.md orchestrator
+Agent → Discovery flow:
+  1. Parses user intent: "environment variable" → searches PLUGIN_MANIFEST.yaml
+  2. Finds: repository/environment-setup (status: stable)
+  3. Reads: plugins/repository/environment-setup/README.md → Understands features
+  4. Follows: plugins/repository/environment-setup/AGENT_INSTRUCTIONS.md
+Agent → Smart installation:
+  1. Detects current state (no .env, no .envrc, direnv not installed)
+  2. Detects OS: Ubuntu Linux
+  3. Installs direnv: sudo apt install direnv
+  4. Configures shell: adds hook to ~/.bashrc
+  5. Creates files: .envrc, .env.example
+  6. Updates .gitignore: adds .env exclusions
+  7. Scans for violations: runs gitleaks (if security plugin present)
+  8. Finds violation: hardcoded API key in config.py
+  9. Creates fix branch: fix/remove-hardcoded-credentials
+  10. Remediates: replaces with os.getenv('API_KEY')
+  11. Updates .env.example: adds API_KEY placeholder
+  12. Validates: runs 10 automated checks
+  13. Reports: Setup complete + branch created for review
+User → Environment variables configured, direnv auto-loads .env, violation fixed in PR
+```
+
+**Key Pattern**: Natural language → Task routing → Orchestrator discovery → Smart plugin installation with detection/remediation
+
 ### The Discovery System
 
 **Key Components**:
@@ -316,6 +350,22 @@ Files Placed (pyproject.toml, Makefile.python, .ai/docs/PYTHON_STANDARDS.md)
 - Consistent - follows same philosophy
 - Trustworthy - not theoretical patterns
 
+### 7. Repository Plugin Category (NEW)
+**Decision**: Create dedicated "repository" category for repo-level configuration (separate from standards/infrastructure/languages)
+**Rationale**:
+- **Distinct Concern**: Repository-level configuration (env vars, git workflows, commit patterns) is neither standards enforcement nor infrastructure deployment
+- **Cross-cutting**: Applies to all projects regardless of language or infrastructure choices
+- **Setup-focused**: Handles one-time repository setup vs ongoing quality enforcement (standards) or deployment (infrastructure)
+- **Demo-friendly**: Natural language queries like "configure my environment variables" map cleanly to repository plugins
+- **Extensibility**: Clear home for future repo-level concerns (git hooks, commit templates, issue templates, etc.)
+
+**Examples**:
+- Environment variable management (direnv, .env files) - **Implemented in PR19.5**
+- Git workflow configuration (branch protection, commit templates)
+- Issue/PR templates
+- Repository documentation structure
+- Local development setup automation
+
 ## Integration Points
 
 ### With Existing Features (durable-code-test-2)
@@ -359,6 +409,12 @@ Files Placed (pyproject.toml, Makefile.python, .ai/docs/PYTHON_STANDARDS.md)
 - **Extract**: Custom linting framework (future enhancement)
 - **Adapt**: Make rules pluggable
 - **Plugin**: `plugins/standards/custom-linters/` (future)
+
+#### Environment Variable Management
+- **Extract**: direnv setup patterns, .env file structure, credential protection
+- **Adapt**: OS-aware installation, comprehensive .env.example template, validation scripts
+- **Plugin**: `plugins/repository/environment-setup/`
+- **Note**: Based on polaris project patterns, enhanced with smart detection and remediation
 
 ## Success Metrics
 
@@ -418,6 +474,21 @@ Files Placed (pyproject.toml, Makefile.python, .ai/docs/PYTHON_STANDARDS.md)
 3. Update Makefile with new targets
 4. Add documentation to .ai/howto/
 5. Validate installation with simple test
+
+### When Installing Repository Plugin
+1. **Detect current state** - Check what's already configured before making changes
+2. **OS-aware installation** - Detect OS and use appropriate package manager/installation method
+3. **System-level setup** - May install tools (direnv, git hooks) or configure shell
+4. **Repository files** - Create/update repository-level config files (.env, .gitignore, etc.)
+5. **Security scanning** - Check for violations (committed secrets, misconfigurations)
+6. **Validation** - Run comprehensive checks to ensure setup is correct
+7. **Integration** - Work with security plugin if available for enhanced scanning
+
+**Key Differences from Other Plugins**:
+- May modify system configuration (shell config, installed tools)
+- Focuses on repository setup, not language/infrastructure/standards
+- Often includes smart detection and remediation
+- Typically one-time setup vs ongoing enforcement
 
 ### When Generating Roadmaps
 1. Use roadmap templates from durable-code-test-2

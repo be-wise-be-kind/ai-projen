@@ -19,39 +19,14 @@
 
 ---
 
-## 🚀 PROGRESS TRACKER - MUST BE UPDATED AFTER EACH PR!
+## 📋 Note on Progress Tracking
 
-### ✅ Completed PRs
-- ✅ PR0: Bootstrap Roadmap Structure (COMPLETE)
-- ✅ PR1: Repository Structure & Meta Documentation (COMPLETE)
-- ✅ PR2: Foundation Plugin - AI Folder (COMPLETE)
-- ✅ PR3: Plugin Manifest & Discovery Engine (COMPLETE)
-- ✅ PR3.5: agents.md Integration (COMPLETE)
-- ✅ PR4: Plugin Template System (COMPLETE)
+**Progress tracking has been moved to PROGRESS_TRACKER.md**
 
-### 🎯 NEXT PR TO IMPLEMENT
-➡️ **START HERE: PR5** - Python Language Plugin
+For current status, completion percentages, and next steps, see:
+- `roadmap/ai_projen_implementation/PROGRESS_TRACKER.md`
 
-### 📋 Remaining PRs
-- ⬜ PR5: Python Language Plugin
-- ⬜ PR6: TypeScript Language Plugin
-- ⬜ PR7: how-to-create-a-language-plugin.md
-- ⬜ PR8: Test Language Plugins
-- ⬜ PR9: Docker Infrastructure Plugin
-- ⬜ PR10: GitHub Actions CI/CD Plugin
-- ⬜ PR11: Terraform/AWS Infrastructure Plugin
-- ⬜ PR12: how-to-create-an-infrastructure-plugin.md
-- ⬜ PR13: Security Standards Plugin
-- ⬜ PR14: Documentation Standards Plugin
-- ⬜ PR15: Pre-commit Hooks Plugin
-- ⬜ PR16: how-to-create-a-standards-plugin.md
-- ⬜ PR17: Complete CREATE-NEW-AI-REPO.md
-- ⬜ PR18: Build UPGRADE-TO-AI-REPO.md
-- ⬜ PR19: Build ADD-CAPABILITY.md
-- ⬜ PR20: Full Stack Integration Test
-- ⬜ PR21: Documentation & Public Launch
-
-**Progress**: 23% Complete (5/22 PRs including PR0)
+This document (PR_BREAKDOWN.md) contains detailed implementation instructions for each PR.
 
 ---
 
@@ -1213,6 +1188,101 @@ plugins/
 - ✅ Simple plugin addition
 - ✅ Dependency checking
 - ✅ Clean integration
+
+---
+
+### PR19.5: Environment Variable Setup Plugin
+**Goal**: Repository-level plugin for automated environment variable best practices with direnv
+
+**Complexity**: Medium
+**Priority**: P3
+**Estimated Time**: 3-4 hours
+
+#### Implementation Steps
+
+1. **Create Plugin Directory Structure**
+   ```
+   plugins/repository/environment-setup/
+   ├── AGENT_INSTRUCTIONS.md
+   ├── README.md
+   ├── manifest.yaml
+   ├── ai-content/
+   │   ├── docs/
+   │   │   └── environment-variables-best-practices.md
+   │   ├── howtos/
+   │   │   └── README.md
+   │   ├── standards/
+   │   │   └── ENVIRONMENT_STANDARDS.md
+   │   └── templates/
+   │       ├── .envrc.template
+   │       ├── .env.example.template
+   │       └── .gitignore.env.template
+   └── scripts/
+       └── validate-env-setup.sh
+   ```
+
+2. **Write AGENT_INSTRUCTIONS.md**
+   - Detection logic (current state, OS detection)
+   - Direnv installation (OS-specific: apt/brew/dnf/scoop)
+   - File creation (.envrc, .env.example, .gitignore patterns)
+   - Credential scanning (gitleaks if security plugin present)
+   - Violation remediation (create branch, remove hardcoded secrets)
+   - Validation steps
+   - Next steps for user
+
+3. **Create Templates**
+   - `.envrc.template` - Simple `dotenv` command
+   - `.env.example.template` - Comprehensive variable placeholders
+   - `.gitignore.env.template` - Security exclusion patterns
+
+4. **Write Documentation**
+   - `README.md` - Plugin overview and value proposition
+   - `environment-variables-best-practices.md` - Comprehensive guide
+   - `ENVIRONMENT_STANDARDS.md` - Standards and requirements
+
+5. **Create manifest.yaml**
+   - Plugin metadata (repository/configuration category)
+   - Dependencies (foundation/ai-folder required, security recommended)
+   - Features list
+   - Installation guide reference
+
+6. **Update PLUGIN_MANIFEST.yaml**
+   - Add new "repository" category
+   - List environment-setup plugin with features
+
+7. **Create Validation Script**
+   - `validate-env-setup.sh` - Check direnv, .envrc, .env.example, .gitignore
+
+#### Testing
+- ✅ Plugin discoverable via how-to-add-capability.md
+- ✅ Detects OS correctly (macOS, Linux, Windows/WSL)
+- ✅ Installs direnv successfully
+- ✅ Creates all required files
+- ✅ Scans for credential violations
+- ✅ Creates branch when fixes needed
+- ✅ Validation script passes
+- ✅ Demo flow works: "Configure my environment variable handling"
+
+#### Success Criteria
+- ✅ Plugin follows existing structure patterns
+- ✅ Works through standard orchestrator (how-to-add-capability.md)
+- ✅ AGENT_INSTRUCTIONS.md contains smart detection/installation
+- ✅ OS-aware installation
+- ✅ Credential scanning and remediation
+- ✅ Comprehensive templates and documentation
+- ✅ Demo successful with natural language query
+
+#### Demo Scenario
+```
+User: "Please configure my environment variable handling for repo /path/to/repo"
+→ agents.md recognizes capability addition
+→ Routes to how-to-add-capability.md
+→ Discovers environment-setup plugin in manifest
+→ Executes AGENT_INSTRUCTIONS.md
+→ Detects state, installs direnv, creates files, scans violations
+→ Creates branch if needed, validates setup
+→ User has production-ready .env handling
+```
 
 ---
 

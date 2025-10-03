@@ -1,0 +1,334 @@
+version: "1.0"
+
+plugin:
+  name: environment-setup
+  category: repository
+  subcategory: configuration
+  type: standards
+  status: stable
+  description: Automated environment variable management with direnv, .env files, and credential protection
+
+metadata:
+  version: 1.0.0
+  author: ai-projen
+  license: MIT
+  repository: https://github.com/ai-projen/ai-projen
+  documentation: README.md
+  agent_instructions: AGENT_INSTRUCTIONS.md
+
+dependencies:
+  required:
+    - plugin: foundation/ai-folder
+      reason: Requires .ai folder structure for documentation
+  recommended:
+    - plugin: standards/security
+      reason: Enables credential scanning with gitleaks
+  optional:
+    - plugin: standards/pre-commit-hooks
+      reason: Adds automated validation hooks
+
+system_requirements:
+  git:
+    min_version: "2.0.0"
+    required: true
+    reason: Version control for credential scanning
+  direnv:
+    min_version: "2.28.0"
+    required: false
+    reason: Installed automatically by plugin
+  gitleaks:
+    min_version: "8.0.0"
+    required: false
+    reason: Credential scanning (via security plugin)
+
+provides:
+  documentation:
+    - path: ai-content/docs/environment-variables-best-practices.md
+      title: Environment Variables Best Practices
+      description: Comprehensive guide to secure environment variable management
+    - path: ai-content/standards/ENVIRONMENT_STANDARDS.md
+      title: Environment Variable Standards
+      description: Standards and requirements for environment variable handling
+
+  howtos:
+    - path: ai-content/howtos/README.md
+      title: Environment Setup How-Tos
+      difficulty: beginner
+      time_minutes: 5
+      description: Quick reference for environment variable tasks
+
+  templates:
+    envrc:
+      path: ai-content/templates/.envrc.template
+      description: Direnv configuration for auto-loading .env
+      category: configuration
+      placeholders: []
+
+    env_example:
+      path: ai-content/templates/.env.example.template
+      description: Environment variable template with comprehensive placeholders
+      category: configuration
+      placeholders:
+        - name: PROJECT_NAME
+          type: string
+          description: Name of your project
+        - name: SERVICE_NAME
+          type: string
+          description: Name of external service being configured
+
+    gitignore_env:
+      path: ai-content/templates/.gitignore.env.template
+      description: Security patterns for excluding environment files
+      category: configuration
+      placeholders: []
+
+  scripts:
+    validate_env_setup:
+      path: scripts/validate-env-setup.sh
+      description: Validation script for environment variable setup
+      category: validation
+
+features:
+  automatic_direnv_installation:
+    enabled: true
+    description: OS-aware direnv installation (macOS/Linux/Windows)
+    os_support:
+      - macOS (Homebrew)
+      - Ubuntu/Debian (apt)
+      - Fedora/RHEL/CentOS (dnf)
+      - Arch Linux (pacman)
+      - Windows WSL
+      - Generic Linux (curl installer)
+
+  file_creation:
+    enabled: true
+    description: Creates .envrc, .env, .env.example files
+    files:
+      - .envrc (direnv config)
+      - .env (gitignored secrets)
+      - .env.example (committed template)
+
+  gitignore_management:
+    enabled: true
+    description: Updates .gitignore with environment file exclusions
+    patterns:
+      - .env
+      - .env.local
+      - .env.*.local
+      - "*.env"
+      - .envrc.local
+
+  credential_scanning:
+    enabled: true
+    description: Scans repository for hardcoded credentials
+    tools:
+      - gitleaks (if security plugin installed)
+    actions:
+      - Detect committed secrets
+      - Generate violation report
+      - Offer automated remediation
+
+  violation_remediation:
+    enabled: true
+    description: Automated fix for hardcoded credentials
+    process:
+      - Create fix branch
+      - Replace hardcoded values with os.getenv() or process.env
+      - Update .env.example with placeholders
+      - Commit changes
+
+  validation:
+    enabled: true
+    description: Comprehensive setup validation
+    checks:
+      - direnv installed
+      - Shell hook configured
+      - .envrc exists and allowed
+      - .env.example exists
+      - .gitignore excludes .env
+      - No recent credential violations
+
+configuration_options:
+  project_type:
+    type: choice
+    choices:
+      - python
+      - nodejs
+      - fullstack
+      - generic
+    default: generic
+    description: Project type for .env.example customization
+
+  install_direnv:
+    type: boolean
+    default: true
+    description: Automatically install direnv if not present
+
+  scan_for_violations:
+    type: boolean
+    default: true
+    description: Scan repository for credential violations
+
+  create_fix_branch:
+    type: boolean
+    default: true
+    description: Automatically create branch to fix violations
+
+  update_gitignore:
+    type: boolean
+    default: true
+    description: Update .gitignore with environment file patterns
+
+installation:
+  steps:
+    - name: Detect current state
+      command: Check for existing .env, .envrc, .env.example, direnv installation
+      required: true
+
+    - name: Detect operating system
+      command: Determine OS for direnv installation
+      required: true
+
+    - name: Install direnv
+      command: OS-specific direnv installation
+      required: true
+      condition: direnv not installed
+
+    - name: Configure shell integration
+      command: Add direnv hook to ~/.bashrc or ~/.zshrc
+      required: true
+      condition: hook not configured
+
+    - name: Create .envrc file
+      files:
+        - src: ai-content/templates/.envrc.template
+          dest: .envrc
+      required: true
+      condition: .envrc not exists
+
+    - name: Create .env.example file
+      files:
+        - src: ai-content/templates/.env.example.template
+          dest: .env.example
+      required: true
+      condition: .env.example not exists
+
+    - name: Update .gitignore
+      files:
+        - src: ai-content/templates/.gitignore.env.template
+          dest: .gitignore (append)
+      required: true
+      condition: .env not excluded
+
+    - name: Scan for credential violations
+      command: gitleaks detect --source . (if security plugin installed)
+      required: false
+      condition: security plugin installed
+
+    - name: Remediate violations
+      command: Create fix branch and update code
+      required: false
+      condition: violations found
+
+    - name: Create .env file
+      command: cp .env.example .env
+      required: false
+      condition: .env not exists
+
+    - name: Allow direnv
+      command: direnv allow
+      required: true
+
+    - name: Copy documentation
+      files:
+        - src: ai-content/docs/environment-variables-best-practices.md
+          dest: .ai/docs/repository/environment-variables-best-practices.md
+        - src: ai-content/standards/ENVIRONMENT_STANDARDS.md
+          dest: .ai/docs/repository/ENVIRONMENT_STANDARDS.md
+
+    - name: Update .ai/index.yaml
+      command: Add repository/environment-setup section
+      required: true
+
+    - name: Run validation
+      command: bash scripts/validate-env-setup.sh
+      required: true
+
+validation:
+  files_created:
+    - .envrc
+    - .env.example
+    - .ai/docs/repository/environment-variables-best-practices.md
+    - .ai/docs/repository/ENVIRONMENT_STANDARDS.md
+
+  system_checks:
+    - check: direnv_installed
+      description: Verify direnv is installed and in PATH
+      command: command -v direnv
+
+    - check: shell_hook_configured
+      description: Verify direnv hook in shell config
+      command: grep "direnv hook" ~/.bashrc || grep "direnv hook" ~/.zshrc
+
+    - check: envrc_allowed
+      description: Verify directory is allowed by direnv
+      command: direnv status | grep "Found RC allowed true"
+
+    - check: gitignore_patterns
+      description: Verify .gitignore excludes .env
+      command: grep "^\.env$" .gitignore
+
+    - check: no_env_committed
+      description: Verify .env is not tracked by git
+      command: "! git ls-files | grep -q '^\\.env$'"
+
+integration:
+  index_yaml:
+    section: repository
+    entry:
+      - path: docs/repository/environment-variables-best-practices.md
+        title: Environment Variables Best Practices
+      - path: docs/repository/ENVIRONMENT_STANDARDS.md
+        title: Environment Variable Standards
+
+  security_plugin:
+    integration: credential_scanning
+    tools:
+      - gitleaks
+    hooks:
+      - prevent-env-commit
+      - validate-env-example
+
+  pre_commit_hooks:
+    hooks:
+      - id: check-env-not-committed
+        name: Prevent .env from being committed
+      - id: check-env-example-exists
+        name: Ensure .env.example exists
+
+tags:
+  - environment-variables
+  - direnv
+  - dotenv
+  - secrets-management
+  - configuration
+  - security
+  - credential-protection
+  - repository-setup
+
+use_cases:
+  - Secure environment variable management
+  - Automatic environment loading with direnv
+  - Team onboarding with .env.example
+  - Credential violation prevention
+  - Cross-platform development (macOS/Linux/Windows)
+  - Production vs development configuration separation
+
+notes_for_agents:
+  - This plugin automates environment variable best practices
+  - Detects current state before making changes
+  - OS-aware installation (use correct package manager)
+  - Integrates with security plugin for credential scanning
+  - Creates fix branch if violations found
+  - Validates complete setup before finishing
+  - Guides user through next steps after installation

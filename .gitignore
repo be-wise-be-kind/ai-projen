@@ -32,7 +32,7 @@ yarn-error.log*
 .DS_Store
 
 # Test repositories
-tests/
+/tests/
 
 # OS
 Thumbs.db
