@@ -160,15 +160,15 @@ Add capabilities to existing repositories one plugin at a time without disruptin
 
 Want to add support for a new language, cloud provider, tool, or application type?
 
-### Creating New Plugins
+**Simply ask your AI agent:**
 
-1. **Choose the plugin category** - Language, infrastructure, standards, or application
-2. **Copy the template** - Each category has a `_template/` directory to start from
-3. **Fill in the structure** - Complete `AGENT_INSTRUCTIONS.md` and `README.md`
-4. **Add content** - Include configuration files, templates, and examples
-5. **Update the manifest** - Add your plugin to `plugins/PLUGIN_MANIFEST.yaml`
-6. **Test standalone** - Verify the plugin works independently
-7. **Submit a pull request** - Share your contribution with the community
+- "Let's create a new Go language plugin with linting and testing"
+- "Help me build a Rust plugin for ai-projen"
+- "Create an Azure infrastructure plugin"
+- "Add support for GitLab CI/CD"
+- "Build a plugin for pre-commit hooks"
+
+Your AI agent will read the plugin creation guides, use the appropriate template, walk you through the structure, and help you test it. You just provide the specifics and approve the implementation.
 
 ### Plugin Creation Guides
 
