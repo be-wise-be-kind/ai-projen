@@ -4,7 +4,7 @@ A plugin-based framework for creating AI-ready repositories.
 
 ## What is ai-projen?
 
-**ai-projen** is a framework that transforms empty directories into production-ready, AI-assisted development environments through composable, standalone plugins. It provides a systematic approach to building repositories that work seamlessly with AI coding assistants while following industry best practices.
+**ai-projen** is a framework that creates new repositories, upgrades existing ones, and adds capabilities through composable, standalone plugins. It provides a systematic approach to building production-ready, AI-assisted development environments that work seamlessly with AI coding assistants while following industry best practices.
 
 **AI-Ready Definition**: A repository where AI agents can be trusted to generate code that is well-written, durable, scalable, performant, secure, and follows industry best practices.
 
