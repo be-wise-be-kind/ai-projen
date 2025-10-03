@@ -81,6 +81,24 @@ Analyze the user's request and classify it into ONE of these categories:
    - Wants granular control, one capability at a time
    - Route to: `.ai/howto/how-to-add-capability.md`
 
+**Confirm Intent with User**:
+
+After classification, present your understanding to the user and wait for confirmation:
+
+```
+I understand you want to: [CREATE NEW / UPGRADE EXISTING / ADD CAPABILITY]
+
+Specifically:
+- Repository: [path or "new directory to be created"]
+- Goal: [concise description of what will be done]
+- Approach: [which how-to guide will be used]
+
+Is this correct? (yes/no)
+```
+
+**If user says NO**: Ask for clarification and reclassify
+**If user says YES**: Proceed to Step 2
+
 ### Step 2: Verify Repository Context
 
 Before proceeding, confirm:
@@ -129,12 +147,22 @@ Analysis:
 Actions:
 1. Classify as Type 1: Repository Assistant
 2. Read /path/to/ai-projen/.ai/index.yaml (ai-projen's index)
-3. Route to: /path/to/ai-projen/.ai/howto/how-to-add-capability.md
-4. Follow guide to discover environment-setup plugin
-5. Execute plugin's AGENT_INSTRUCTIONS.md in /home/user/my-app
-6. Create feature branch in /home/user/my-app before changes
-7. Validate installation
-8. Report completion and next steps
+3. Present to user:
+   "I understand you want to: ADD CAPABILITY
+
+   Specifically:
+   - Repository: /home/user/my-app
+   - Goal: Setup proper environment variable handling with direnv and .env files
+   - Approach: Use .ai/howto/how-to-add-capability.md to install environment-setup plugin
+
+   Is this correct? (yes/no)"
+4. Wait for user confirmation
+5. Route to: /path/to/ai-projen/.ai/howto/how-to-add-capability.md
+6. Follow guide to discover environment-setup plugin
+7. Execute plugin's AGENT_INSTRUCTIONS.md in /home/user/my-app
+8. Create feature branch in /home/user/my-app before changes
+9. Validate installation
+10. Report completion and next steps
 ```
 
 **Example 2**: "Create a new Python CLI tool"
