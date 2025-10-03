@@ -282,15 +282,83 @@ else
 fi
 ```
 
-### Step 8: Scan for Credential Violations
+### Step 8: Install gitleaks for Credential Scanning (if needed)
+
+Offer to install gitleaks if not present:
+
+```bash
+# Check if gitleaks is installed
+if command -v gitleaks >/dev/null 2>&1; then
+  echo "✓ gitleaks already installed ($(gitleaks version))"
+  HAS_GITLEAKS=true
+else
+  echo "✗ gitleaks not installed"
+  HAS_GITLEAKS=false
+
+  echo ""
+  echo "Gitleaks is a secrets scanning tool that detects hardcoded credentials."
+  echo "Would you like to install gitleaks for credential scanning?"
+  echo ""
+
+  # Detect OS for installation
+  if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo "Installation command: brew install gitleaks"
+    brew install gitleaks
+  elif [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    if [ -f /etc/os-release ]; then
+      . /etc/os-release
+      case "$ID" in
+        ubuntu|debian)
+          echo "Installing gitleaks via apt..."
+          # Download and install latest release
+          GITLEAKS_VERSION=$(curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+          wget -q "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          sudo mv gitleaks /usr/local/bin/
+          rm "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          ;;
+        fedora|rhel|centos)
+          echo "Installing gitleaks via dnf..."
+          GITLEAKS_VERSION=$(curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+          wget -q "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          sudo mv gitleaks /usr/local/bin/
+          rm "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          ;;
+        *)
+          echo "Installing gitleaks from GitHub releases..."
+          GITLEAKS_VERSION=$(curl -s https://api.github.com/repos/gitleaks/gitleaks/releases/latest | grep '"tag_name":' | sed -E 's/.*"v([^"]+)".*/\1/')
+          wget -q "https://github.com/gitleaks/gitleaks/releases/download/v${GITLEAKS_VERSION}/gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          tar -xzf "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          sudo mv gitleaks /usr/local/bin/
+          rm "gitleaks_${GITLEAKS_VERSION}_linux_x64.tar.gz"
+          ;;
+      esac
+    fi
+  else
+    echo "⚠️  Please install gitleaks manually: https://github.com/gitleaks/gitleaks#installation"
+  fi
+
+  # Verify installation
+  if command -v gitleaks >/dev/null 2>&1; then
+    echo "✓ gitleaks installed successfully ($(gitleaks version))"
+    HAS_GITLEAKS=true
+  else
+    echo "ℹ  gitleaks installation skipped or failed - credential scanning will be skipped"
+    HAS_GITLEAKS=false
+  fi
+fi
+```
+
+### Step 9: Scan for Credential Violations
 
 Check if credentials are already committed to git:
 
 ```bash
 echo "Scanning repository for potential credential violations..."
 
-# Use gitleaks if available (from security plugin)
-if command -v gitleaks >/dev/null 2>&1; then
+# Use gitleaks if available
+if [ "$HAS_GITLEAKS" = true ]; then
   echo "Running gitleaks scan..."
 
   if gitleaks detect --source . --no-git --exit-code 0 -r gitleaks-report.json 2>/dev/null; then
@@ -325,7 +393,7 @@ else
 fi
 ```
 
-### Step 9: Offer Remediation (if violations found)
+### Step 10: Offer Remediation (if violations found)
 
 If credentials are found, offer to create a branch and fix them:
 
@@ -372,7 +440,7 @@ if [ "$VIOLATIONS_FOUND" = true ]; then
 fi
 ```
 
-### Step 10: Create .env File (if needed)
+### Step 11: Create .env File (if needed)
 
 Help user create .env from .env.example:
 
@@ -398,7 +466,7 @@ else
 fi
 ```
 
-### Step 11: Activate direnv
+### Step 12: Activate direnv
 
 Allow direnv for this directory:
 
@@ -421,7 +489,7 @@ else
 fi
 ```
 
-### Step 12: Run Validation
+### Step 13: Run Validation
 
 Validate the complete setup:
 
@@ -444,7 +512,7 @@ else
 fi
 ```
 
-### Step 13: Copy Documentation
+### Step 14: Copy Documentation
 
 Copy documentation to .ai folder:
 
@@ -466,7 +534,7 @@ cp plugins/repository/environment-setup/ai-content/howtos/README.md .ai/howtos/r
 echo "✓ Documentation copied to .ai folder"
 ```
 
-### Step 14: Update .ai/index.yaml
+### Step 15: Update .ai/index.yaml
 
 Add environment setup to project index:
 

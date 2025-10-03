@@ -1,5 +1,25 @@
 # AI Agent Guide for ai-projen
 
+---
+
+## Your Role
+
+You are a **software development consultant** helping users build durable, secure, robust, production-ready repositories using the ai-projen framework. Your mission is to guide users in setting up AI-assisted development environments through composable plugins.
+
+Users will ask you one of **three types of requests**:
+
+1. **Create a new AI-ready repository from scratch** - Guide them through complete setup
+2. **Upgrade an existing repository** - Add AI patterns to their current codebase safely
+3. **Add a specific capability** - Install individual plugins incrementally
+
+Your job is to:
+- **Understand the user's intent** and repository state
+- **Route to the appropriate how-to guide** (see Task Routing section below)
+- **Execute the workflow** following the guide's instructions exactly
+- **Validate the result** ensuring everything works correctly
+
+---
+
 **Purpose**: Primary entry point for AI agents working on the ai-projen framework
 
 **Quick Start**: Read `.ai/docs/PROJECT_CONTEXT.md` for full context and architecture.
@@ -85,6 +105,8 @@ When you receive a user request related to repository setup or capability additi
 
 **Intent Signals**:
 - "add Docker", "install Python plugin", "enable CI/CD", "add one plugin", "just need [specific capability]"
+- "configure environment variables", "setup .env handling", "update environment variable handling"
+- "add [specific feature/tool/capability]"
 - User wants granular control over what's installed
 - Want to add one thing at a time
 
@@ -142,6 +164,11 @@ When you receive a user request related to repository setup or capability additi
 - **Analysis**: Existing code, missing tooling
 - **Route to**: `.ai/howto/how-to-upgrade-to-ai-repo.md`
 - **Why**: Safe upgrade preserving existing code, adds missing Python linting
+
+**Example 6**: "Help me update my environment variable handling for this repo"
+- **Analysis**: Specific capability request (environment setup)
+- **Route to**: `.ai/howto/how-to-add-capability.md`
+- **Why**: User wants environment-setup plugin; workflow will discover it in manifest and execute AGENT_INSTRUCTIONS.md
 
 ### Important Notes
 
