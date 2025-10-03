@@ -32,10 +32,21 @@ ai_guidance:
     documentation_placement:
       question: "Where should this documentation go?"
       criteria:
-        is_project_doc: "→ .ai/docs/"
-        is_howto: "→ .ai/howto/"
+        is_howto_guide: "→ .ai/howto/ (step-by-step procedural guides starting with 'how-to-')"
+        is_conceptual_doc: "→ .ai/docs/ (architecture, standards, philosophy, specifications)"
         is_plugin_specific: "→ plugins/{category}/{name}/README.md"
         is_roadmap: "→ roadmap/{feature}/"
+
+      examples:
+        howto_folder:
+          - "how-to-create-new-ai-repo.md (step-by-step workflow)"
+          - "how-to-create-a-language-plugin.md (procedural guide)"
+          - "how-to-upgrade-to-ai-repo.md (action-oriented steps)"
+        docs_folder:
+          - "PROJECT_CONTEXT.md (architectural overview)"
+          - "PLUGIN_ARCHITECTURE.md (system specification)"
+          - "FILE_HEADER_STANDARDS.md (requirements and rules)"
+          - "HOWTO_STANDARDS.md (meta-documentation about how-tos)"
 
     template_placement:
       question: "Where should this template go?"
@@ -49,6 +60,8 @@ ai_guidance:
     docs_in_plugin_root: "Don't put project docs in plugin directories"
     templates_scattered: "Don't scatter templates - use templates/ directories"
     orchestrators_in_plugins: "Don't put CREATE/UPGRADE/ADD in plugins/"
+    howtos_in_docs: "Don't put how-to guides in .ai/docs/ - they belong in .ai/howto/"
+    docs_in_howtos: "Don't put conceptual/architectural docs in .ai/howto/ - they belong in .ai/docs/"
 
   template_structure:
     universal_templates:

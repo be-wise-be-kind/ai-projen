@@ -199,7 +199,7 @@ Reference implementations:
 
 ## Getting Help
 
-- Read: `.ai/docs/how-to-create-a-common-application.md`
+- Read: `.ai/howto/how-to-create-a-common-application.md`
 - Study: Existing application plugins (python-cli, react-python-fullstack)
 - Check: PLUGIN_ARCHITECTURE.md for plugin structure
 - Ask: Open an issue if you have questions

@@ -388,12 +388,12 @@ _templates:
   standards:
     location: plugins/standards/_template/
     description: Template for creating new standards plugins
-    guide: .ai/docs/how-to-create-a-standards-plugin.md
+    guide: .ai/howto/how-to-create-a-standards-plugin.md
 
   application:
     location: plugins/applications/_template/
     description: Template for creating new application plugins
-    guide: .ai/docs/how-to-create-a-common-application.md
+    guide: .ai/howto/how-to-create-a-common-application.md
 
 # Metadata
 metadata:

@@ -526,7 +526,7 @@ Created comprehensive Pre-commit Hooks Plugin with dynamic language detection an
 Created comprehensive guide for creating standards plugins using PR13-15 as reference implementations.
 
 **File Created**:
-- `.ai/docs/how-to-create-a-standards-plugin.md` (1,896 lines)
+- `.ai/howto/how-to-create-a-standards-plugin.md` (1,896 lines)
 
 **Content Sections**:
 - **Overview**: What standards plugins are, why create them, architecture philosophy

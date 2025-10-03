@@ -681,7 +681,7 @@ plugins/infrastructure/{category}/{tool}/
 ```
 
 #### Standards Plugins
-Guide: `.ai/docs/how-to-create-a-standards-plugin.md`
+Guide: `.ai/howto/how-to-create-a-standards-plugin.md`
 
 Structure:
 ```

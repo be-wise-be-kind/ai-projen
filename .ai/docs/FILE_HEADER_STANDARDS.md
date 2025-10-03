@@ -74,6 +74,42 @@ File headers must be written in an atemporal manner - avoiding language that ref
 - ✅ "Exports reusable UI components"
 - ✅ "Integrates with the authentication service"
 
+## Documentation File Placement
+
+Before creating a markdown file, determine its correct location:
+
+### .ai/howto/ - Procedural How-To Guides
+**When to use**: Step-by-step instructions for accomplishing specific tasks
+**Naming**: Must start with `how-to-` prefix
+**Examples**:
+- `how-to-create-new-ai-repo.md` - Workflow with numbered steps
+- `how-to-create-a-language-plugin.md` - Procedural guide
+- `how-to-add-capability.md` - Action-oriented steps
+
+**Characteristics**:
+- Imperative language (do this, then do that)
+- Numbered or ordered steps
+- Focus on "how" not "why"
+- Task completion oriented
+
+### .ai/docs/ - Conceptual Documentation
+**When to use**: Architecture, philosophy, standards, specifications
+**Naming**: Descriptive nouns (no "how-to-" prefix)
+**Examples**:
+- `PROJECT_CONTEXT.md` - Architectural overview
+- `PLUGIN_ARCHITECTURE.md` - System specifications
+- `FILE_HEADER_STANDARDS.md` - Requirements and rules
+- `HOWTO_STANDARDS.md` - Meta-documentation about how-tos
+
+**Characteristics**:
+- Explanatory language (this is, here's why)
+- Conceptual organization
+- Focus on "what" and "why"
+- Reference material
+
+**Common Mistake**: Putting how-to guides in `.ai/docs/`
+**Solution**: If filename starts with `how-to-`, it belongs in `.ai/howto/`
+
 ## Standard Header Formats
 
 ### Markdown Documentation Files (.md)

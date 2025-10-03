@@ -189,8 +189,8 @@ Your AI agent will read the plugin creation guides, use the appropriate template
 
 - **Languages**: `.ai/howto/how-to-create-a-language-plugin.md`
 - **Infrastructure**: `.ai/howto/how-to-create-an-infrastructure-plugin.md`
-- **Standards**: `.ai/docs/how-to-create-a-standards-plugin.md`
-- **Applications**: `.ai/docs/how-to-create-a-common-application.md`
+- **Standards**: `.ai/howto/how-to-create-a-standards-plugin.md`
+- **Applications**: `.ai/howto/how-to-create-a-common-application.md`
 
 Each guide provides detailed instructions, examples from existing plugins, and best practices for that plugin category.
 
