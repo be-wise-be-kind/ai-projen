@@ -60,7 +60,10 @@ ai-projen is a plugin-based framework that helps AI agents create and upgrade re
 
 **When**: User is working on THEIR repository (not ai-projen)
 
-**First Action**: Read `/path/to/ai-projen/.ai/index.yaml` (THIS repository's index) for complete ai-projen structure and available plugins
+**First Actions**: Read these three documents from ai-projen:
+1. `/path/to/ai-projen/.ai/index.yaml` - Complete structure and navigation
+2. `/path/to/ai-projen/.ai/docs/PROJECT_CONTEXT.md` - Architecture and philosophy
+3. `/path/to/ai-projen/.ai/layout.yaml` - Directory organization rules
 
 ### Step 1: Understand User Intent
 
@@ -146,7 +149,10 @@ Analysis:
 
 Actions:
 1. Classify as Type 1: Repository Assistant
-2. Read /path/to/ai-projen/.ai/index.yaml (ai-projen's index)
+2. Read ai-projen's three core documents:
+   - /path/to/ai-projen/.ai/index.yaml
+   - /path/to/ai-projen/.ai/docs/PROJECT_CONTEXT.md
+   - /path/to/ai-projen/.ai/layout.yaml
 3. Present to user:
    "I understand you want to: ADD CAPABILITY
 
@@ -175,7 +181,10 @@ Analysis:
 Actions:
 1. Classify as Type 1: Repository Assistant
 2. Ask user for target directory
-3. Read /path/to/ai-projen/.ai/index.yaml (ai-projen's index)
+3. Read ai-projen's three core documents:
+   - /path/to/ai-projen/.ai/index.yaml
+   - /path/to/ai-projen/.ai/docs/PROJECT_CONTEXT.md
+   - /path/to/ai-projen/.ai/layout.yaml
 4. Route to: /path/to/ai-projen/.ai/howto/how-to-create-new-ai-repo.md
 5. Follow discovery questions
 6. Identify python-cli application plugin
@@ -193,7 +202,10 @@ Analysis:
 Actions:
 1. Classify as Type 1: Repository Assistant
 2. Confirm repository path
-3. Read /path/to/ai-projen/.ai/index.yaml (ai-projen's index)
+3. Read ai-projen's three core documents:
+   - /path/to/ai-projen/.ai/index.yaml
+   - /path/to/ai-projen/.ai/docs/PROJECT_CONTEXT.md
+   - /path/to/ai-projen/.ai/layout.yaml
 4. Route to: /path/to/ai-projen/.ai/howto/how-to-add-capability.md
 5. Discover github-actions CI/CD plugin
 6. Execute plugin's AGENT_INSTRUCTIONS.md in user's Django app
@@ -218,7 +230,10 @@ Actions:
 
 **When**: User is working on ai-projen repository ITSELF
 
-**First Action**: Read `.ai/index.yaml` (in ai-projen root) for complete repository structure
+**First Actions**: Read these three documents from ai-projen:
+1. `.ai/index.yaml` - Complete structure and navigation
+2. `.ai/docs/PROJECT_CONTEXT.md` - Architecture and philosophy
+3. `.ai/layout.yaml` - Directory organization rules
 
 ### Step 1: Determine Development Task Type
 
@@ -400,14 +415,15 @@ START
   ├─ User mentions external repository path?
   │  │
   │  YES → Type 1: Repository Assistant Mode
-  │  │      ├─ Read /path/to/ai-projen/.ai/index.yaml
+  │  │      ├─ Read ai-projen's 3 core docs (index, context, layout)
   │  │      ├─ Classify intent (create/upgrade/add)
+  │  │      ├─ Confirm understanding with user
   │  │      ├─ Route to appropriate ai-projen how-to guide
   │  │      ├─ Execute workflow in USER'S repository
   │  │      └─ Validate and report
   │  │
   │  NO → Type 2: Framework Developer Mode
-  │         ├─ Read ai-projen/.ai/index.yaml
+  │         ├─ Read ai-projen's 3 core docs (index, context, layout)
   │         ├─ Classify task type
   │         ├─ Review relevant standards
   │         ├─ Create feature branch in ai-projen
