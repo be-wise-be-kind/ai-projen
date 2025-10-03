@@ -349,7 +349,8 @@ repository:
     status: stable
     description: Automated environment variable management with direnv and .env files
     location: plugins/repository/environment-setup/
-    dependencies:
+    dependencies: []
+    optional_integrations:
       - foundation/ai-folder
     recommended: true
 

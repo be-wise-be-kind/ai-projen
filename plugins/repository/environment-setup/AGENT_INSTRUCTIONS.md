@@ -28,15 +28,17 @@ Before installing this plugin, verify:
    git rev-parse --git-dir >/dev/null 2>&1 && echo "✓ Git repository" || echo "✗ Initialize git first"
    ```
 
-2. **Foundation Plugin Installed**
+2. **Optional: Foundation Plugin for Documentation**
    ```bash
-   test -d .ai && echo "✓ Foundation plugin installed" || echo "✗ Install foundation/ai-folder first"
+   test -d .ai && echo "✓ Foundation plugin installed - will copy docs to .ai/" || echo "ℹ Foundation plugin not present - docs will be skipped"
    ```
 
 3. **Optional: Security Plugin for Credential Scanning**
    ```bash
-   command -v gitleaks >/dev/null 2>&1 && echo "✓ Gitleaks available" || echo "ℹ Install security plugin for credential scanning"
+   command -v gitleaks >/dev/null 2>&1 && echo "✓ Gitleaks available" || echo "ℹ Gitleaks not installed - will offer installation"
    ```
+
+**Note**: This plugin works standalone without the foundation plugin. The .ai folder integration is optional.
 
 ---
 
@@ -512,39 +514,48 @@ else
 fi
 ```
 
-### Step 14: Copy Documentation
+### Step 14: Copy Documentation (if .ai folder exists)
 
-Copy documentation to .ai folder:
+Copy documentation to .ai folder if foundation plugin is installed:
 
 ```bash
 echo ""
-echo "Copying documentation to .ai folder..."
 
-# Create directories
-mkdir -p .ai/docs/repository
-mkdir -p .ai/howtos/repository
+# Check if .ai folder exists
+if [ -d .ai ]; then
+  echo "Copying documentation to .ai folder..."
 
-# Copy docs
-cp plugins/repository/environment-setup/ai-content/docs/environment-variables-best-practices.md .ai/docs/repository/
-cp plugins/repository/environment-setup/ai-content/standards/ENVIRONMENT_STANDARDS.md .ai/docs/repository/
+  # Create directories
+  mkdir -p .ai/docs/repository
+  mkdir -p .ai/howtos/repository
 
-# Copy howtos
-cp plugins/repository/environment-setup/ai-content/howtos/README.md .ai/howtos/repository/environment-setup-readme.md
+  # Copy docs
+  cp plugins/repository/environment-setup/ai-content/docs/environment-variables-best-practices.md .ai/docs/repository/
+  cp plugins/repository/environment-setup/ai-content/standards/ENVIRONMENT_STANDARDS.md .ai/docs/repository/
 
-echo "✓ Documentation copied to .ai folder"
+  # Copy howtos
+  cp plugins/repository/environment-setup/ai-content/howtos/README.md .ai/howtos/repository/environment-setup-readme.md
+
+  echo "✓ Documentation copied to .ai folder"
+else
+  echo "ℹ  .ai folder not present - skipping documentation copy"
+  echo "   Documentation available in: plugins/repository/environment-setup/ai-content/"
+fi
 ```
 
-### Step 15: Update .ai/index.yaml
+### Step 15: Update .ai/index.yaml (if .ai folder exists)
 
-Add environment setup to project index:
+Add environment setup to project index if foundation plugin is installed:
 
 ```bash
-echo ""
-echo "Updating .ai/index.yaml..."
+# Check if .ai folder exists
+if [ -d .ai ] && [ -f .ai/index.yaml ]; then
+  echo ""
+  echo "Updating .ai/index.yaml..."
 
-# Add to index.yaml under repository section
-# (In practice, agent would parse and update YAML)
-cat >> .ai/index.yaml << 'EOF'
+  # Add to index.yaml under repository section
+  # (In practice, agent would parse and update YAML)
+  cat >> .ai/index.yaml << 'EOF'
 
 repository:
   environment-setup:
@@ -561,7 +572,10 @@ repository:
         description: "Template for environment variables"
 EOF
 
-echo "✓ Updated .ai/index.yaml"
+  echo "✓ Updated .ai/index.yaml"
+else
+  echo "ℹ  .ai/index.yaml not present - skipping index update"
+fi
 ```
 
 ---
