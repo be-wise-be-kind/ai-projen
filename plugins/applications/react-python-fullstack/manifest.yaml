@@ -11,7 +11,7 @@ last_updated: 2025-10-02
 metadata:
   use_case: Production-ready full-stack web applications with modern frontend and scalable backend
   target_users: Full-stack developers building web applications with TypeScript and Python
-  complexity: advanced
+  complexity: production
   estimated_setup_time: 45-60 minutes
 
   technology_stack:
@@ -75,6 +75,12 @@ provides:
       - Comprehensive error handling
       - Logging infrastructure
       - Database migration patterns with Alembic
+      - Comprehensive backend quality tools (9 tools - Ruff, Pylint, Flake8+plugins, MyPy, Bandit, Radon, Xenon, Safety, pip-audit)
+      - Comprehensive frontend quality tools (6 tools - ESLint+plugins, TypeScript strict, Vitest, React Testing Library, Playwright, npm audit)
+      - Production Makefile with progressive quality levels (fast → thorough → comprehensive)
+      - Clean Makefile namespace (lint-backend-*, lint-frontend-*, lint-all, lint-full)
+      - Pre-configured tool settings in pyproject.toml and package.json
+      - Zero manual tool configuration required
 
   documentation:
     architecture: ai-content/docs/fullstack-architecture.md
@@ -130,10 +136,13 @@ installation:
 
 # Common commands
 commands:
-  install_dependencies: docker-compose run backend poetry install && docker-compose run frontend npm install
+  install_dependencies: make install
   run_dev: docker-compose up
-  run_tests: docker-compose run backend pytest && docker-compose run frontend npm test
-  run_lint: docker-compose run backend ruff check && docker-compose run frontend npm run lint
+  run_tests: make test-all
+  run_lint_fast: make lint-backend && make lint-frontend
+  run_lint_comprehensive: make lint-all
+  run_lint_full: make lint-full
+  format: make format
   build: docker-compose build
   deploy: terraform apply
 

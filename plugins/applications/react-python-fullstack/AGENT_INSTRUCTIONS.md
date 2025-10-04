@@ -95,6 +95,37 @@ Installs Python with FastAPI, SQLAlchemy, pytest, ruff, mypy, bandit.
 test -f pyproject.toml && echo "✅ Python configured" || echo "❌ Python plugin failed"
 ```
 
+**2.5. Verify and Install Comprehensive Python Tooling**
+
+Check that comprehensive tooling is present in backend/pyproject.toml, and add if missing:
+
+```bash
+cd backend
+
+# Check if comprehensive tooling is already present
+if ! grep -q "pylint" pyproject.toml || ! grep -q "radon" pyproject.toml; then
+  echo "Adding comprehensive Python tooling..."
+  poetry add --group dev \
+    pylint \
+    flake8 flake8-docstrings flake8-bugbear flake8-comprehensions flake8-simplify \
+    radon xenon \
+    safety pip-audit
+else
+  echo "✅ Comprehensive Python tooling already present"
+fi
+```
+
+**Validation**:
+```bash
+cd backend
+poetry run pylint --version
+poetry run flake8 --version
+poetry run radon --version
+poetry run xenon --version
+poetry run safety --version
+poetry run pip-audit --version
+```
+
 **3. Install languages/typescript plugin**
 
 Follow: `plugins/languages/typescript/core/AGENT_INSTRUCTIONS.md`
@@ -112,6 +143,41 @@ Installs TypeScript with React, Vite, ESLint, Prettier, Vitest.
 **Validation**:
 ```bash
 test -f tsconfig.json && echo "✅ TypeScript configured" || echo "❌ TypeScript plugin failed"
+```
+
+**3.5. Verify and Install Comprehensive TypeScript Tooling**
+
+Check that comprehensive tooling is present in frontend/package.json, and add if missing:
+
+```bash
+cd frontend
+
+# Check if comprehensive tooling is already present
+if ! grep -q "@playwright/test" package.json || ! grep -q "eslint-plugin-jsx-a11y" package.json; then
+  echo "Adding comprehensive TypeScript tooling..."
+  npm install --save-dev \
+    @playwright/test \
+    @testing-library/react \
+    @testing-library/jest-dom \
+    @testing-library/user-event \
+    eslint-plugin-jsx-a11y \
+    eslint-plugin-react-hooks \
+    eslint-plugin-import \
+    eslint-plugin-complexity \
+    vitest @vitest/ui happy-dom \
+    @vitest/coverage-v8
+else
+  echo "✅ Comprehensive TypeScript tooling already present"
+fi
+```
+
+**Validation**:
+```bash
+cd frontend
+npx playwright --version
+npx vitest --version
+npm ls eslint-plugin-jsx-a11y
+npm ls @testing-library/react
 ```
 
 ### Phase 3: Infrastructure Plugin Installation
@@ -211,6 +277,9 @@ test -f .pre-commit-config.yaml && echo "✅ Pre-commit configured" || echo "❌
 Copy backend application from `plugins/applications/react-python-fullstack/project-content/backend/`:
 
 ```bash
+# Copy backend configuration with comprehensive tooling
+cp plugins/applications/react-python-fullstack/project-content/backend/pyproject.toml.template ./backend/pyproject.toml
+
 # Copy backend source
 cp -r plugins/applications/react-python-fullstack/project-content/backend/src ./backend/
 cp -r plugins/applications/react-python-fullstack/project-content/backend/tests ./backend/
@@ -228,25 +297,48 @@ done
 Copy frontend application from `plugins/applications/react-python-fullstack/project-content/frontend/`:
 
 ```bash
+# Copy frontend configuration with comprehensive tooling
+cp plugins/applications/react-python-fullstack/project-content/frontend/package.json.template ./frontend/package.json
+
 # Copy frontend source
 cp -r plugins/applications/react-python-fullstack/project-content/frontend/src ./frontend/
-cp -r plugins/applications/react-python-fullstack/project-content/frontend/public ./frontend/
-
-# Copy frontend configuration
-cp plugins/applications/react-python-fullstack/project-content/frontend/index.html.template ./frontend/index.html
-cp plugins/applications/react-python-fullstack/project-content/frontend/package.json.template ./frontend/package.json
-cp plugins/applications/react-python-fullstack/project-content/frontend/tsconfig.json.template ./frontend/tsconfig.json
-cp plugins/applications/react-python-fullstack/project-content/frontend/vite.config.ts.template ./frontend/vite.config.ts
 
 # Process templates
-for file in frontend/**/*.template; do
+for file in frontend/src/**/*.template; do
   if [ -f "$file" ]; then
     mv "$file" "${file%.template}"
   fi
 done
 ```
 
-**12. Copy Docker Orchestration**
+**12. Copy Production Makefile**
+
+Copy production-ready Makefile with comprehensive quality gates:
+
+```bash
+cp plugins/applications/react-python-fullstack/project-content/Makefile.template ./Makefile
+```
+
+**Validation**:
+```bash
+make help
+
+# Should show composite targets:
+# - lint-backend (fast)
+# - lint-backend-all (comprehensive)
+# - lint-backend-security
+# - lint-backend-complexity
+# - lint-backend-full (everything)
+# - lint-frontend (fast)
+# - lint-frontend-all (comprehensive)
+# - lint-frontend-security
+# - lint-frontend-full (everything)
+# - lint-all (both stacks, comprehensive)
+# - lint-full (ALL 15+ tools)
+# - test-all (all tests)
+```
+
+**13. Copy Docker Orchestration**
 
 ```bash
 # Copy fullstack docker-compose
