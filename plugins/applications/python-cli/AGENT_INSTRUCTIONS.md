@@ -286,9 +286,44 @@ Follow: `plugins/standards/pre-commit-hooks/AGENT_INSTRUCTIONS.md`
 test -f .pre-commit-config.yaml && echo "✅ Pre-commit configured" || echo "❌ Pre-commit plugin failed"
 ```
 
+### Phase 4.5: Install Release Automation
+
+**8. Install GitHub Actions Release Workflow**
+
+**Copy release workflow**:
+```bash
+mkdir -p .github/workflows
+cp plugins/applications/python-cli/project-content/.github/workflows/release.yml.template .github/workflows/release.yml
+
+# Customize for your repository
+sed -i 's/{{PROJECT_NAME}}/my-cli-tool/g' .github/workflows/release.yml
+```
+
+**Configure GitHub Secrets** (if using Docker Hub):
+1. Go to GitHub repository Settings → Secrets → Actions
+2. Add secrets:
+   - `DOCKER_USERNAME`: Your Docker Hub username
+   - `DOCKER_PASSWORD`: Your Docker Hub password/token
+
+**Configure PyPI Trusted Publishing**:
+1. Visit https://pypi.org/manage/account/publishing/
+2. Add pending publisher:
+   - PyPI Project Name: (your CLI tool name)
+   - Owner: (your GitHub username)
+   - Repository: (your repo name)
+   - Workflow: `release.yml`
+
+**Validation**:
+```bash
+test -f .github/workflows/release.yml && echo "✅ Release workflow" || echo "❌ Missing release workflow"
+
+# Test workflow syntax (requires GitHub CLI)
+gh workflow view release.yml || echo "GitHub CLI not installed - skip syntax check"
+```
+
 ### Phase 5: Application-Specific Installation
 
-**8. Copy Application Starter Code**
+**9. Copy Application Starter Code**
 
 Copy files from `plugins/applications/python-cli/project-content/` to project root:
 
@@ -307,7 +342,7 @@ cp plugins/applications/python-cli/project-content/README.md.template ./README.m
 cp plugins/applications/python-cli/project-content/docker-compose.cli.yml ./
 ```
 
-**9. Copy Application Documentation**
+**10. Copy Application Documentation**
 
 Copy files from `plugins/applications/python-cli/ai-content/` to `.ai/`:
 
@@ -324,7 +359,7 @@ mkdir -p .ai/templates/python-cli
 cp -r plugins/applications/python-cli/ai-content/templates/* .ai/templates/python-cli/
 ```
 
-**10. Configure Application**
+**11. Configure Application**
 
 Customize application for this project:
 
@@ -341,7 +376,7 @@ sed -i 's/{{PROJECT_NAME}}/my-cli-tool/g' README.md
 sed -i 's/{{PROJECT_DESCRIPTION}}/My awesome CLI tool/g' README.md
 ```
 
-**11. Install Dependencies with Poetry**
+**12. Install Dependencies with Poetry**
 
 ```bash
 # Install Poetry if not already installed
@@ -361,7 +396,7 @@ poetry run pre-commit install
 
 **Philosophy**: We use Poetry to ensure all dependencies are installed in an isolated virtual environment, preventing corruption of the user's system Python installation.
 
-**12. Update .ai/index.yaml**
+**13. Update .ai/index.yaml**
 
 Add application entry to `.ai/index.yaml`:
 

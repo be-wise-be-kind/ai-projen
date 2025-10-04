@@ -65,6 +65,46 @@
 
 ---
 
+### 4. How to Publish to PyPI
+
+**File**: `how-to-publish-to-pypi.md`
+
+**What You'll Learn**:
+- Set up PyPI account and trusted publishing
+- Configure OIDC authentication (no API tokens needed)
+- Automate PyPI publishing with GitHub Actions
+- Version management best practices
+- Troubleshoot common publishing issues
+
+**When to Use**: Publishing your CLI tool to Python Package Index for pip installation
+
+---
+
+### 5. How to Create GitHub Releases
+
+**File**: `how-to-create-github-release.md`
+
+**What You'll Learn**:
+- Automate GitHub Releases with git tags
+- Attach distribution artifacts (wheel, sdist)
+- Write effective release notes
+- Multi-platform distribution (PyPI, Docker Hub, GitHub)
+- Manual release creation as fallback
+
+**When to Use**: Creating versioned releases with downloadable artifacts and release notes
+
+---
+
+## Distribution & Publishing
+
+### PyPI Publishing
+- [how-to-publish-to-pypi.md](./how-to-publish-to-pypi.md) - Publish CLI tool to Python Package Index
+
+### GitHub Releases
+- [how-to-create-github-release.md](./how-to-create-github-release.md) - Create GitHub Releases with artifacts
+
+---
+
 ## Quick Reference
 
 ### Common Tasks
@@ -76,6 +116,8 @@
 | Load config file | how-to-handle-config-files.md | YAML parsing, defaults |
 | Save config | how-to-handle-config-files.md | Config persistence, paths |
 | Package for pip | how-to-package-cli-tool.md | pyproject.toml, entry points |
+| Publish to PyPI | how-to-publish-to-pypi.md | Trusted publishing, OIDC |
+| Create GitHub Release | how-to-create-github-release.md | Git tags, artifacts, automation |
 | Create Docker image | how-to-package-cli-tool.md | Dockerfile, multi-stage builds |
 | Test commands | how-to-add-cli-command.md | CliRunner, pytest fixtures |
 

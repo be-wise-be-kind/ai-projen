@@ -1,0 +1,170 @@
+# Purpose: Automated release workflow for Python CLI tool
+# Scope: PyPI publishing, Docker Hub multi-arch builds, GitHub Release creation
+# Triggers: Git tags matching v*.*.* pattern
+# Overview: Complete release automation triggered by git tags. Publishes to PyPI using trusted
+#     publishing (OIDC), builds multi-arch Docker images for amd64/arm64, and creates GitHub
+#     Releases with artifacts. All three distribution channels automated from a single git tag push.
+# Dependencies: PyPI trusted publisher configured, Docker Hub secrets in GitHub, GitHub token
+# Exports: PyPI package, Docker Hub images (linux/amd64, linux/arm64), GitHub Release with artifacts
+# Environment: GitHub Actions runners (ubuntu-latest), Poetry, Docker Buildx
+# Related: how-to-publish-to-pypi.md, how-to-create-github-release.md
+
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+env:
+  PYTHON_VERSION: '3.11'
+  REGISTRY: docker.io
+  IMAGE_NAME: ${{ github.repository }}
+
+jobs:
+  # Job 1: Build and publish to PyPI
+  publish-pypi:
+    name: Publish to PyPI
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # Required for trusted publishing
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+        with:
+          version: latest
+          virtualenvs-in-project: true
+
+      - name: Build package
+        run: |
+          poetry build
+          ls -lah dist/
+
+      - name: Publish to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          # Uses OIDC trusted publishing (no password needed)
+          # Configure in PyPI: https://pypi.org/manage/account/publishing/
+
+  # Job 2: Build and push Docker multi-arch images
+  publish-docker:
+    name: Publish to Docker Hub
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Build and push multi-arch image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: |
+            ${{ env.IMAGE_NAME }}:latest
+            ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+  # Job 3: Create GitHub Release
+  create-release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    needs: [publish-pypi, publish-docker]
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Poetry
+        uses: snok/install-poetry@v1
+
+      - name: Build package artifacts
+        run: |
+          poetry build
+          ls -lah dist/
+
+      - name: Extract version from tag
+        id: version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+
+      - name: Create Release Notes
+        id: release_notes
+        run: |
+          cat > release_notes.md <<EOF
+          ## 🚀 Release v${{ steps.version.outputs.VERSION }}
+
+          ### 📦 Installation Methods
+
+          **PyPI (pip)**:
+          \`\`\`bash
+          pip install ${{ github.event.repository.name }}
+          \`\`\`
+
+          **Docker**:
+          \`\`\`bash
+          docker pull ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}
+          docker run --rm ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }} --help
+          \`\`\`
+
+          **From Source**:
+          \`\`\`bash
+          git clone https://github.com/${{ github.repository }}.git
+          cd ${{ github.event.repository.name }}
+          poetry install
+          \`\`\`
+
+          ### 📋 Changes
+          See commit history for detailed changes.
+
+          ### 🔗 Artifacts
+          - Python wheel and sdist attached below
+          - Docker image: \`${{ env.IMAGE_NAME }}:${{ steps.version.outputs.VERSION }}\`
+          - Multi-arch support: linux/amd64, linux/arm64
+          EOF
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body_path: release_notes.md
+          files: dist/*
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
