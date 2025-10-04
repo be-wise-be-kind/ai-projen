@@ -283,6 +283,25 @@ plugin_specific_rules:
     structure: "docs/ for guidelines, templates/ for configs"
     template: "_template/ for creating new standards plugins"
 
+  applications:
+    location: "plugins/applications/"
+    naming: "{application-name}/"
+    required_files:
+      - AGENT_INSTRUCTIONS.md
+      - README.md
+    structure:
+      - "project-content/ for application files"
+      - "project-content/infra/terraform/ for Terraform infrastructure"
+      - "ai-content/howtos/{app-name}/ for application-specific how-tos"
+      - "ai-content/docs/{app-name}/ for application-specific documentation"
+    terraform_structure:
+      - "workspaces/bootstrap/ for S3 backend and OIDC setup"
+      - "workspaces/base/ for VPC, ECR, ALB infrastructure"
+      - "modules/ for reusable Terraform modules (ecs-service, rds, alb)"
+      - "shared/ for common variables and outputs"
+      - "backend-config/ for environment-specific backend configuration"
+    template: "Makefile.infra.template for infrastructure operations"
+
 orchestrator_rules:
   location: "Repository root"
   naming:

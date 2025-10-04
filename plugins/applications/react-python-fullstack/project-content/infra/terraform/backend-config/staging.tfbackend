@@ -1,0 +1,12 @@
+# Purpose: Terraform backend configuration for staging environment
+# Scope: S3 remote state backend settings for staging workspace
+# Overview: Configures Terraform to use S3 for remote state storage with DynamoDB for state locking
+#     in the staging environment. Ensures state isolation from dev and prod environments.
+# Dependencies: Bootstrap workspace must be applied first to create S3 bucket and DynamoDB table
+# Usage: terraform init -backend-config=backend-config/staging.tfbackend
+
+bucket         = "{{PROJECT_NAME}}-terraform-state"
+key            = "staging/terraform.tfstate"
+region         = "us-east-1"
+dynamodb_table = "{{PROJECT_NAME}}-terraform-locks"
+encrypt        = true

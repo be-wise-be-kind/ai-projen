@@ -1,0 +1,234 @@
+# Purpose: Infrastructure management Makefile for Terraform operations via Docker
+# Scope: All Terraform workspace management, deployment, and state operations
+# Overview: Provides Make targets for managing Terraform infrastructure using Docker containers,
+#     eliminating the need for local Terraform installation. Supports multi-environment deployment
+#     via workspaces (dev, staging, prod), remote state management, and comprehensive infrastructure
+#     operations including bootstrap, plan, apply, and destroy workflows.
+# Dependencies: Docker, AWS credentials configured
+# Exports: Make targets for infrastructure lifecycle management
+# Usage: make -f Makefile.infra help
+# Implementation: Docker-based Terraform execution, workspace management, state backend configuration
+
+.PHONY: help init-bootstrap plan-bootstrap apply-bootstrap destroy-bootstrap
+.PHONY: init-base plan-base apply-base destroy-base
+.PHONY: list-workspaces select-workspace show-state
+.PHONY: fmt validate clean
+
+# Terraform Docker image
+TERRAFORM_IMAGE := hashicorp/terraform:1.6
+
+# AWS region and project name (customize these)
+AWS_REGION := us-east-1
+PROJECT_NAME := my-fullstack-app
+
+# Docker run command with AWS credentials
+DOCKER_TF := docker run --rm -it \
+	-v $(PWD)/infra/terraform:/workspace \
+	-v ~/.aws:/root/.aws:ro \
+	-w /workspace \
+	-e AWS_REGION=$(AWS_REGION) \
+	$(TERRAFORM_IMAGE)
+
+# Default target
+.DEFAULT_GOAL := help
+
+help: ## Show this help message
+	@echo "╔════════════════════════════════════════════════════════════╗"
+	@echo "║      Infrastructure Management (Terraform via Docker)     ║"
+	@echo "╚════════════════════════════════════════════════════════════╝"
+	@echo ""
+	@echo "🚀 Quick Start:"
+	@echo "  make infra-bootstrap        - Setup Terraform backend (run once)"
+	@echo "  make infra-init ENV=dev     - Initialize dev environment"
+	@echo "  make infra-plan ENV=dev     - Plan dev infrastructure changes"
+	@echo "  make infra-apply ENV=dev    - Apply dev infrastructure"
+	@echo ""
+	@echo "🏗️  Bootstrap (Run First):"
+	@echo "  make infra-bootstrap        - Create S3 backend and OIDC provider"
+	@echo ""
+	@echo "🌍 Base Infrastructure:"
+	@echo "  make infra-init ENV={env}   - Initialize workspace (dev/staging/prod)"
+	@echo "  make infra-plan ENV={env}   - Preview infrastructure changes"
+	@echo "  make infra-apply ENV={env}  - Apply infrastructure changes"
+	@echo "  make infra-destroy ENV={env}- Destroy infrastructure (careful!)"
+	@echo ""
+	@echo "🔧 Workspace Management:"
+	@echo "  make infra-workspaces       - List all workspaces"
+	@echo "  make infra-show             - Show current state"
+	@echo "  make infra-output           - Show outputs"
+	@echo ""
+	@echo "📊 Utilities:"
+	@echo "  make infra-fmt              - Format all Terraform files"
+	@echo "  make infra-validate         - Validate Terraform configuration"
+	@echo "  make infra-clean            - Clean Terraform cache"
+	@echo ""
+	@echo "Available targets:"
+	@grep -E '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | awk 'BEGIN {FS = ":.*?## "}; {printf "  %-30s %s\n", $$1, $$2}'
+
+# ============================================================================
+# Bootstrap Workspace (S3 Backend + GitHub OIDC)
+# ============================================================================
+
+infra-bootstrap: ## Bootstrap Terraform backend (S3 + DynamoDB + GitHub OIDC)
+	@echo "🔧 Bootstrapping Terraform backend infrastructure..."
+	@echo ""
+	@echo "This will create:"
+	@echo "  - S3 bucket for Terraform state"
+	@echo "  - DynamoDB table for state locking"
+	@echo "  - GitHub OIDC provider for CI/CD"
+	@echo ""
+	@read -p "Project name [$(PROJECT_NAME)]: " proj_name; \
+	proj_name=$${proj_name:-$(PROJECT_NAME)}; \
+	read -p "GitHub org/username: " github_org; \
+	read -p "GitHub repository: " github_repo; \
+	echo ""; \
+	echo "Initializing bootstrap workspace..."; \
+	$(DOCKER_TF) -chdir=workspaces/bootstrap init; \
+	echo ""; \
+	echo "Planning bootstrap infrastructure..."; \
+	$(DOCKER_TF) -chdir=workspaces/bootstrap plan \
+		-var="project_name=$$proj_name" \
+		-var="github_org=$$github_org" \
+		-var="github_repo=$$github_repo" \
+		-var="aws_region=$(AWS_REGION)" \
+		-out=tfplan; \
+	echo ""; \
+	read -p "Apply bootstrap infrastructure? (yes/no): " confirm; \
+	if [ "$$confirm" = "yes" ]; then \
+		$(DOCKER_TF) -chdir=workspaces/bootstrap apply tfplan; \
+		echo ""; \
+		echo "✅ Bootstrap complete!"; \
+		echo ""; \
+		echo "📝 Next steps:"; \
+		echo "  1. Update backend-config files with bucket name: $$proj_name-terraform-state"; \
+		echo "  2. Run: make infra-init ENV=dev"; \
+		$(DOCKER_TF) -chdir=workspaces/bootstrap output; \
+	else \
+		echo "❌ Bootstrap cancelled"; \
+	fi
+
+# ============================================================================
+# Base Infrastructure Workspace (VPC, ECR, ALB)
+# ============================================================================
+
+infra-init: ## Initialize base infrastructure workspace (ENV=dev|staging|prod)
+	@if [ -z "$(ENV)" ]; then \
+		echo "❌ Error: ENV not specified"; \
+		echo "Usage: make infra-init ENV=dev"; \
+		exit 1; \
+	fi
+	@echo "🔧 Initializing $(ENV) environment..."
+	@$(DOCKER_TF) -chdir=workspaces/base init \
+		-backend-config=../../backend-config/$(ENV).tfbackend \
+		-reconfigure
+	@echo "✅ $(ENV) environment initialized"
+
+infra-plan: ## Plan base infrastructure changes (ENV=dev|staging|prod)
+	@if [ -z "$(ENV)" ]; then \
+		echo "❌ Error: ENV not specified"; \
+		echo "Usage: make infra-plan ENV=dev"; \
+		exit 1; \
+	fi
+	@echo "📋 Planning $(ENV) infrastructure changes..."
+	@$(DOCKER_TF) -chdir=workspaces/base plan \
+		-var="project_name=$(PROJECT_NAME)" \
+		-var="aws_region=$(AWS_REGION)" \
+		-out=tfplan-$(ENV)
+
+infra-apply: ## Apply base infrastructure changes (ENV=dev|staging|prod)
+	@if [ -z "$(ENV)" ]; then \
+		echo "❌ Error: ENV not specified"; \
+		echo "Usage: make infra-apply ENV=dev"; \
+		exit 1; \
+	fi
+	@echo "🚀 Applying $(ENV) infrastructure..."
+	@if [ ! -f infra/terraform/workspaces/base/tfplan-$(ENV) ]; then \
+		echo "❌ Error: No plan file found. Run 'make infra-plan ENV=$(ENV)' first"; \
+		exit 1; \
+	fi
+	@$(DOCKER_TF) -chdir=workspaces/base apply tfplan-$(ENV)
+	@rm -f infra/terraform/workspaces/base/tfplan-$(ENV)
+	@echo "✅ $(ENV) infrastructure applied successfully"
+	@echo ""
+	@echo "📊 Infrastructure outputs:"
+	@$(DOCKER_TF) -chdir=workspaces/base output
+
+infra-destroy: ## Destroy base infrastructure (ENV=dev|staging|prod)
+	@if [ -z "$(ENV)" ]; then \
+		echo "❌ Error: ENV not specified"; \
+		echo "Usage: make infra-destroy ENV=dev"; \
+		exit 1; \
+	fi
+	@echo "⚠️  WARNING: This will destroy all $(ENV) infrastructure!"
+	@read -p "Type '$(ENV)' to confirm destruction: " confirm; \
+	if [ "$$confirm" = "$(ENV)" ]; then \
+		echo "🗑️  Destroying $(ENV) infrastructure..."; \
+		$(DOCKER_TF) -chdir=workspaces/base destroy \
+			-var="project_name=$(PROJECT_NAME)" \
+			-var="aws_region=$(AWS_REGION)" \
+			-auto-approve; \
+		echo "✅ $(ENV) infrastructure destroyed"; \
+	else \
+		echo "❌ Destruction cancelled"; \
+	fi
+
+# ============================================================================
+# Workspace Management
+# ============================================================================
+
+infra-workspaces: ## List all Terraform workspaces
+	@echo "📁 Available workspaces:"
+	@$(DOCKER_TF) -chdir=workspaces/base workspace list
+
+infra-show: ## Show current Terraform state
+	@$(DOCKER_TF) -chdir=workspaces/base show
+
+infra-output: ## Show Terraform outputs (ENV=dev|staging|prod)
+	@if [ -z "$(ENV)" ]; then \
+		$(DOCKER_TF) -chdir=workspaces/base output; \
+	else \
+		echo "📊 Outputs for $(ENV):"; \
+		$(DOCKER_TF) -chdir=workspaces/base workspace select $(ENV); \
+		$(DOCKER_TF) -chdir=workspaces/base output; \
+	fi
+
+# ============================================================================
+# Utilities
+# ============================================================================
+
+infra-fmt: ## Format all Terraform files
+	@echo "🎨 Formatting Terraform files..."
+	@$(DOCKER_TF) fmt -recursive .
+	@echo "✅ Formatting complete"
+
+infra-validate: ## Validate Terraform configuration
+	@echo "✓ Validating Terraform configuration..."
+	@$(DOCKER_TF) -chdir=workspaces/bootstrap validate
+	@$(DOCKER_TF) -chdir=workspaces/base validate
+	@echo "✅ Validation complete"
+
+infra-clean: ## Clean Terraform cache and temporary files
+	@echo "🧹 Cleaning Terraform cache..."
+	@find infra/terraform -type d -name ".terraform" -exec rm -rf {} + 2>/dev/null || true
+	@find infra/terraform -type f -name "*.tfstate*" -exec rm -f {} + 2>/dev/null || true
+	@find infra/terraform -type f -name "tfplan*" -exec rm -f {} + 2>/dev/null || true
+	@echo "✅ Clean complete"
+
+# ============================================================================
+# Docker Image Management
+# ============================================================================
+
+infra-pull-image: ## Pull latest Terraform Docker image
+	@echo "📥 Pulling Terraform Docker image..."
+	@docker pull $(TERRAFORM_IMAGE)
+	@echo "✅ Image pulled successfully"
+
+infra-shell: ## Open shell in Terraform Docker container
+	@echo "🐚 Opening shell in Terraform container..."
+	@docker run --rm -it \
+		-v $(PWD)/infra/terraform:/workspace \
+		-v ~/.aws:/root/.aws:ro \
+		-w /workspace \
+		-e AWS_REGION=$(AWS_REGION) \
+		--entrypoint sh \
+		$(TERRAFORM_IMAGE)

@@ -48,6 +48,15 @@ structure:
       - HOWTO_INTEGRATION.md
       - PR7.7_HOWTO_FRAMEWORK_SUMMARY.md
 
+    plugin_docs:
+      react_python_fullstack:
+        location: plugins/applications/react-python-fullstack/ai-content/docs/react-python-fullstack/
+        terraform_docs:
+          - TERRAFORM_ARCHITECTURE.md
+          - DEPLOYMENT_GUIDE.md
+          - INFRASTRUCTURE_PRINCIPLES.md
+        description: Terraform infrastructure architecture and deployment documentation
+
   howto:
     location: .ai/howto/
 
@@ -92,6 +101,15 @@ structure:
         location: plugins/standards/[plugin]/howtos/
         template: plugins/standards/_template/howtos/HOWTO_TEMPLATE.md
         index: plugins/standards/_template/howtos/README.md
+
+      applications:
+        react_python_fullstack:
+          location: plugins/applications/react-python-fullstack/ai-content/howtos/react-python-fullstack/
+          terraform_howtos:
+            - how-to-manage-terraform-infrastructure.md
+            - how-to-deploy-to-aws.md
+            - how-to-setup-terraform-workspaces.md
+          description: Terraform deployment and infrastructure management for fullstack apps
 
     discovery:
       # How AI agents discover available how-tos
