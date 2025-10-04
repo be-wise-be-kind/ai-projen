@@ -491,6 +491,29 @@ pytest -v
 # Should see: All tests passing
 ```
 
+### Phase 6: Validate Complete Setup
+
+**Run validation script**:
+
+```bash
+# Make validation script executable
+chmod +x plugins/applications/python-cli/scripts/validate-cli-setup.sh
+
+# Copy to project
+mkdir -p ./scripts
+cp plugins/applications/python-cli/scripts/validate-cli-setup.sh ./scripts/
+chmod +x ./scripts/validate-cli-setup.sh
+
+# Run validation
+./scripts/validate-cli-setup.sh
+
+# Should see:
+# ✅ All critical checks passed!
+# Your Python CLI setup is complete and production-ready!
+```
+
+If validation fails, follow remediation steps provided by the script.
+
 ## Success Criteria
 
 - [x] All plugin dependencies installed successfully
