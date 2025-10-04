@@ -1,0 +1,107 @@
+/*
+Purpose: Styles for tab-based navigation bar with active state highlighting
+Scope: TabNavigation component styling for horizontal tab links
+Overview: Provides modern tab navigation styling with hover effects, active state highlighting,
+    and smooth transitions. Implements responsive design that adapts to mobile with scrollable
+    horizontal tabs. Includes proper focus states for keyboard accessibility. Supports icon
+    and label display with flexible alignment.
+Dependencies: None - pure CSS
+Exports: Styles for tab-navigation, tab-link, and active state
+Environment: All modern browsers
+Related: TabNavigation.tsx component and React Router integration
+Implementation: Flexbox layout, smooth transitions, responsive horizontal scroll
+*/
+
+.tab-navigation {
+  background: white;
+  border-bottom: 2px solid #e0e0e0;
+  position: sticky;
+  top: 85px;
+  z-index: 90;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.tab-navigation-content {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Hide scrollbar for cleaner look */
+.tab-navigation-content::-webkit-scrollbar {
+  height: 3px;
+}
+
+.tab-navigation-content::-webkit-scrollbar-thumb {
+  background: #667eea;
+  border-radius: 3px;
+}
+
+.tab-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem;
+  text-decoration: none;
+  color: #666;
+  font-weight: 500;
+  font-size: 0.95rem;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+  position: relative;
+}
+
+.tab-link:hover {
+  color: #667eea;
+  background: #f5f7fa;
+}
+
+.tab-link.active {
+  color: #667eea;
+  border-bottom-color: #667eea;
+  background: linear-gradient(to bottom, rgba(102, 126, 234, 0.05), transparent);
+}
+
+.tab-link:focus {
+  outline: 2px solid #667eea;
+  outline-offset: -2px;
+}
+
+.tab-icon {
+  font-size: 1.25rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.tab-label {
+  font-size: 1rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tab-navigation {
+    top: 70px;
+  }
+
+  .tab-link {
+    padding: 0.875rem 1.25rem;
+    font-size: 0.9rem;
+  }
+
+  .tab-icon {
+    font-size: 1.1rem;
+  }
+
+  .tab-label {
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .tab-link {
+    padding: 0.75rem 1rem;
+  }
+}

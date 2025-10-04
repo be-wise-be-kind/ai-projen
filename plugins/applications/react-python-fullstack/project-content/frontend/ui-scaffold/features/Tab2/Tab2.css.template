@@ -1,0 +1,2 @@
+/* Import shared tab page styles from Tab1 */
+@import url('../Tab1/Tab1.css');

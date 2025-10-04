@@ -48,6 +48,20 @@ structure:
       - HOWTO_INTEGRATION.md
       - PR7.7_HOWTO_FRAMEWORK_SUMMARY.md
 
+    plugin_docs:
+      react_python_fullstack:
+        location: plugins/applications/react-python-fullstack/ai-content/docs/
+        ui_docs:
+          - UI_ARCHITECTURE.md
+          - STYLING_SYSTEM.md
+          - COMPONENT_PATTERNS.md
+        ui_description: UI scaffold architecture, styling system, and component patterns
+        terraform_docs:
+          - react-python-fullstack/TERRAFORM_ARCHITECTURE.md
+          - react-python-fullstack/DEPLOYMENT_GUIDE.md
+          - react-python-fullstack/INFRASTRUCTURE_PRINCIPLES.md
+        terraform_description: Terraform infrastructure architecture and deployment documentation
+
   howto:
     location: .ai/howto/
 
@@ -93,6 +107,22 @@ structure:
         template: plugins/standards/_template/howtos/HOWTO_TEMPLATE.md
         index: plugins/standards/_template/howtos/README.md
 
+      applications:
+        react_python_fullstack:
+          location: plugins/applications/react-python-fullstack/ai-content/howtos/
+          ui_howtos:
+            - how-to-modify-hero-section.md
+            - how-to-add-hero-card.md
+            - how-to-add-tab.md
+            - how-to-modify-tab-content.md
+            - how-to-add-principle-card.md
+          ui_description: UI scaffold customization guides for hero banner, tabs, and principles
+          terraform_howtos:
+            - react-python-fullstack/how-to-manage-terraform-infrastructure.md
+            - react-python-fullstack/how-to-deploy-to-aws.md
+            - react-python-fullstack/how-to-setup-terraform-workspaces.md
+          terraform_description: Terraform deployment and infrastructure management for fullstack apps
+
     discovery:
       # How AI agents discover available how-tos
       - Check plugin manifest for howtos section
@@ -108,6 +138,9 @@ structure:
       - roadmap-progress-tracker.md.template (roadmap progress tracking and AI agent handoff)
       - roadmap-pr-breakdown.md.template (feature breakdown into atomic PRs)
       - roadmap-ai-context.md.template (comprehensive feature context for AI agents)
+      - hero-card.tsx.template (template for adding hero cards to HomePage)
+      - tab-component.tsx.template (template for creating new tab components)
+      - principle-card.ts.template (template for adding principle cards to PrinciplesBanner)
 
     purpose: Reusable file templates for code generation and consistency
 

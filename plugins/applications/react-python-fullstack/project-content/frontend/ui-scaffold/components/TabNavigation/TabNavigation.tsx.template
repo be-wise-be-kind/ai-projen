@@ -1,0 +1,43 @@
+/**
+ * Purpose: Tab-based navigation component with routing integration
+ * Scope: Navigation bar for switching between different application tabs/pages
+ * Overview: Renders horizontal tab navigation using configuration-driven tab definitions.
+ *     Integrates with React Router for navigation and active route highlighting. Supports
+ *     icon display, responsive design, and keyboard accessibility. Automatically highlights
+ *     active tab based on current route. Easily extendable through tabs configuration file.
+ * Dependencies: React, React Router (useLocation, Link), tabs configuration
+ * Exports: TabNavigation component as default export
+ * Props/Interfaces: None - configuration driven through tabs.config.ts
+ * State/Behavior: Route-aware active state, React Router navigation
+ */
+
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import './TabNavigation.css';
+import { tabs } from '../../config/tabs.config';
+
+const TabNavigation: React.FC = () => {
+  const location = useLocation();
+
+  return (
+    <nav className="tab-navigation">
+      <div className="tab-navigation-content">
+        {tabs.map((tab) => {
+          const isActive = location.pathname === tab.path;
+          return (
+            <Link
+              key={tab.id}
+              to={tab.path}
+              className={`tab-link ${isActive ? 'active' : ''}`}
+            >
+              {tab.icon && <span className="tab-icon">{tab.icon}</span>}
+              <span className="tab-label">{tab.label}</span>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+};
+
+export default TabNavigation;

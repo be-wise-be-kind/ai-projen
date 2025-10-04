@@ -1,0 +1,91 @@
+/**
+ * Purpose: Configuration for principles banner defining numbered principle cards
+ * Scope: Principles banner configuration for project values and guidelines display
+ * Overview: Defines all principles displayed in the PrinciplesBanner component including numbers,
+ *     titles, short descriptions (for cards), full descriptions (for modals), and optional icons.
+ *     Used by PrinciplesBanner to render principle cards and modal popup content. Easily extendable
+ *     to add, remove, or modify principles by editing the principles array.
+ * Dependencies: None - pure configuration
+ * Exports: principles array with Principle objects
+ * Interfaces: Principle { number, title, shortDescription, fullDescription, icon }
+ * Implementation: Configuration-driven principles display with modal popup support
+ */
+
+export interface Principle {
+  number: number;
+  title: string;
+  shortDescription: string;
+  fullDescription: string;
+  icon?: string;
+}
+
+export const principles: Principle[] = [
+  {
+    number: 1,
+    title: 'Quality First',
+    shortDescription: 'Comprehensive tooling ensures production-ready code from day one',
+    fullDescription: `All code passes through 15+ automated quality gates including linting,
+type checking, security scanning, complexity analysis, and comprehensive testing.
+
+This ensures that every line of code meets production standards before it's committed,
+reducing technical debt and maintaining long-term code quality.`,
+    icon: '✅'
+  },
+  {
+    number: 2,
+    title: 'Developer Experience',
+    shortDescription: 'Fast feedback loops with progressive quality levels',
+    fullDescription: `Development workflow supports progressive quality levels:
+
+• Fast: Ruff + ESLint for instant feedback during development
+• Thorough: All linters + type checking before commits
+• Comprehensive: Full security + complexity analysis before PRs
+
+This approach balances speed during development with thorough validation before deployment.`,
+    icon: '⚡'
+  },
+  {
+    number: 3,
+    title: 'Modern Stack',
+    shortDescription: 'React + FastAPI with TypeScript and Python best practices',
+    fullDescription: `Built on proven, modern technologies:
+
+• Frontend: React 18, TypeScript, Vite, React Router
+• Backend: FastAPI, SQLAlchemy, Pydantic, Alembic
+• Testing: Vitest, React Testing Library, Playwright, pytest
+• Infrastructure: Docker, GitHub Actions, optional AWS/ECS
+
+All configured with industry best practices and comprehensive documentation.`,
+    icon: '🚀'
+  },
+  {
+    number: 4,
+    title: 'Production Ready',
+    shortDescription: 'Zero additional configuration required to deploy',
+    fullDescription: `Everything needed for production deployment is included:
+
+• Docker containerization for consistent environments
+• CI/CD workflows for automated testing and deployment
+• Comprehensive security scanning and dependency auditing
+• Optional Terraform infrastructure for AWS deployment
+• Health checks, logging, and monitoring foundations
+
+Go from development to production without additional setup.`,
+    icon: '🏭'
+  },
+  {
+    number: 5,
+    title: 'AI Agent Friendly',
+    shortDescription: 'Comprehensive documentation enables future AI modifications',
+    fullDescription: `Designed for AI agent collaboration:
+
+• AGENTS.md provides quick reference for AI agents
+• How-to guides for common modification patterns
+• Templates for adding new components and features
+• Clear architecture documentation
+• Consistent code patterns and structure
+
+Future AI agents can understand and modify the codebase systematically.`,
+    icon: '🤖'
+  }
+];

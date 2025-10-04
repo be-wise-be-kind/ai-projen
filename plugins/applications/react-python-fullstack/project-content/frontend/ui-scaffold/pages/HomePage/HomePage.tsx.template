@@ -1,0 +1,98 @@
+/**
+ * Purpose: Modern hero banner homepage with configurable info cards and principles banner
+ * Scope: Main landing page for fullstack application with responsive design
+ * Overview: Displays project branding, key information cards, principles banner with modal popups,
+ *     and serves as the main entry point for the application. Provides responsive layout that adapts
+ *     to mobile and desktop viewports. Integrates with principles configuration for dynamic content
+ *     and supports easy customization through configuration files.
+ * Dependencies: React, PrinciplesBanner component, hero cards configuration
+ * Exports: HomePage component as default export
+ * Props/Interfaces: None - configuration driven through config files
+ * State/Behavior: No internal state, purely presentational with configuration-based content
+ */
+
+import React from 'react';
+import './HomePage.css';
+import PrinciplesBanner from '../../components/PrinciplesBanner/PrinciplesBanner';
+
+interface HeroCard {
+  title: string;
+  description: string;
+  icon?: string;
+}
+
+const heroCards: HeroCard[] = [
+  {
+    title: 'FastAPI Backend',
+    description: 'Production-ready Python API with comprehensive quality tools and testing',
+    icon: '🚀'
+  },
+  {
+    title: 'React Frontend',
+    description: 'Modern TypeScript UI with routing, state management, and responsive design',
+    icon: '⚛️'
+  },
+  {
+    title: 'Full Quality Suite',
+    description: '15+ automated tools for linting, security, testing, and complexity analysis',
+    icon: '✅'
+  },
+  {
+    title: 'Production Ready',
+    description: 'Docker, CI/CD, comprehensive testing, and optional AWS deployment',
+    icon: '🏭'
+  }
+];
+
+const HomePage: React.FC = () => {
+  return (
+    <div className="home-page">
+      {/* Hero Section */}
+      <section className="hero-section">
+        <div className="hero-content">
+          <h1 className="hero-title">Production-Ready Fullstack</h1>
+          <p className="hero-subtitle">
+            React + Python powered by comprehensive quality tools and modern development practices
+          </p>
+        </div>
+
+        {/* Hero Cards Grid */}
+        <div className="hero-cards">
+          {heroCards.map((card, index) => (
+            <div key={index} className="hero-card">
+              {card.icon && <div className="hero-card-icon">{card.icon}</div>}
+              <h3 className="hero-card-title">{card.title}</h3>
+              <p className="hero-card-description">{card.description}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Principles Banner */}
+      <PrinciplesBanner />
+
+      {/* Getting Started Section */}
+      <section className="getting-started">
+        <h2>Getting Started</h2>
+        <div className="command-section">
+          <h3>Development</h3>
+          <code className="command-block">
+            make install<br/>
+            make lint-all<br/>
+            make test-all
+          </code>
+        </div>
+        <div className="command-section">
+          <h3>Quality Gates</h3>
+          <code className="command-block">
+            make lint-backend      # Fast backend check<br/>
+            make lint-frontend     # Fast frontend check<br/>
+            make lint-full         # All 15+ tools
+          </code>
+        </div>
+      </section>
+    </div>
+  );
+};
+
+export default HomePage;

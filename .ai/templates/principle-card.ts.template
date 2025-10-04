@@ -1,0 +1,74 @@
+<!--
+Purpose: Template for adding new principle cards to PrinciplesBanner
+Scope: Principles banner customization in fullstack applications
+Overview: Provides template structure for adding new numbered principle cards to the principles
+    banner. Each principle includes number, title, short description (shown on card), full
+    description (shown in modal popup), and optional icon. Template shows proper TypeScript
+    interface definition and multi-line description formatting.
+
+Placeholders:
+  {{PRINCIPLE_NUMBER}}: Sequential number for the principle
+    - Type: number
+    - Example: 6 or 7
+    - Required: yes
+    - Note: Should be next sequential number in principles array
+
+  {{PRINCIPLE_TITLE}}: Concise title for the principle
+    - Type: string
+    - Example: "Security First" or "Test Coverage"
+    - Required: yes
+
+  {{SHORT_DESCRIPTION}}: Brief description shown on the principle card
+    - Type: string
+    - Example: "Comprehensive security scanning protects against vulnerabilities"
+    - Required: yes
+    - Note: Keep under 100 characters for best display
+
+  {{FULL_DESCRIPTION}}: Detailed explanation shown in modal popup
+    - Type: string (multi-line)
+    - Example: "Security is integrated at every level:\n\n• Automated dependency scanning\n• Code security analysis\n• Regular security updates"
+    - Required: yes
+    - Note: Can include newlines and bullet points
+
+  {{PRINCIPLE_ICON}}: Emoji representing the principle
+    - Type: string (emoji character)
+    - Example: "🔒" or "🛡️" or "🧪"
+    - Required: no
+    - Default: No icon displayed
+
+Usage:
+  1. Copy this principle definition to principles.config.ts principles array:
+     export const principles: Principle[] = [
+       // ... existing principles ...
+       { principle definition here }
+     ];
+
+  2. Replace placeholders with actual values:
+     - {{PRINCIPLE_NUMBER}}: Next sequential number
+     - {{PRINCIPLE_TITLE}}: Clear, concise title
+     - {{SHORT_DESCRIPTION}}: Brief summary for card
+     - {{FULL_DESCRIPTION}}: Detailed explanation (can use \n for line breaks)
+     - {{PRINCIPLE_ICON}}: Relevant emoji
+
+  3. For multi-line full descriptions, use template literals:
+     fullDescription: `Line 1
+
+     Line 2
+
+     • Bullet point 1
+     • Bullet point 2`
+
+  4. Verify principle displays correctly:
+     npm run dev
+     # Click principle card to see modal
+
+Related: PrinciplesBanner.tsx, principles.config.ts, how-to-add-principle-card.md
+-->
+
+{
+  number: {{PRINCIPLE_NUMBER}},
+  title: '{{PRINCIPLE_TITLE}}',
+  shortDescription: '{{SHORT_DESCRIPTION}}',
+  fullDescription: `{{FULL_DESCRIPTION}}`,
+  icon: '{{PRINCIPLE_ICON}}'
+}
