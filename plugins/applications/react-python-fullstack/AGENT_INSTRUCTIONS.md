@@ -427,6 +427,81 @@ application:
   templates: .ai/templates/fullstack/
 ```
 
+### Phase 6: Optional UI Scaffold (Optional)
+
+**IMPORTANT**: This phase is OPTIONAL. Ask the user if they want a modern UI scaffold with hero banner and tabbed navigation.
+
+```bash
+echo ""
+echo "=========================================="
+echo "   Optional: Modern UI Scaffold Setup    "
+echo "=========================================="
+echo ""
+echo "Would you like to install a modern UI scaffold with:"
+echo "  - Hero banner with feature cards"
+echo "  - Principles banner with modal popups"
+echo "  - Tabbed navigation with 3 blank starter tabs"
+echo "  - Responsive design (mobile + desktop)"
+echo ""
+read -p "Install UI scaffold? (yes/no): " ui_response
+echo ""
+
+if [[ "$ui_response" =~ ^[Yy] ]]; then
+  echo "Installing UI scaffold..."
+
+  # Copy UI scaffold components
+  cp -r plugins/applications/react-python-fullstack/project-content/frontend/ui-scaffold/* ./frontend/src/
+
+  # Process templates (remove .template extension)
+  find frontend/src -name "*.template" -type f | while read file; do
+    mv "$file" "${file%.template}"
+  done
+
+  # Update App.tsx to use AppShell
+  cat > frontend/src/App.tsx << 'APPEOF'
+import React from 'react';
+import AppShell from './components/AppShell/AppShell';
+import './App.css';
+
+function App() {
+  return <AppShell />;
+}
+
+export default App;
+APPEOF
+
+  echo "✅ UI scaffold installed!"
+  echo ""
+  echo "UI Scaffold includes:"
+  echo "  ✓ HomePage with hero banner and principle cards"
+  echo "  ✓ AppShell with routing"
+  echo "  ✓ TabNavigation with 3 blank starter tabs"
+  echo "  ✓ PrinciplesBanner with modal popups"
+  echo "  ✓ Configuration files (tabs.config.ts, principles.config.ts)"
+  echo ""
+  echo "Customization guides:"
+  echo "  - .ai/howtos/react-python-fullstack/how-to-modify-hero-section.md"
+  echo "  - .ai/howtos/react-python-fullstack/how-to-add-tab.md"
+  echo "  - .ai/howtos/react-python-fullstack/how-to-modify-tab-content.md"
+  echo "  - .ai/howtos/react-python-fullstack/how-to-add-hero-card.md"
+  echo "  - .ai/howtos/react-python-fullstack/how-to-add-principle-card.md"
+  echo ""
+else
+  echo "Skipping UI scaffold installation."
+  echo "Using basic React app structure."
+  echo ""
+fi
+```
+
+**Validation** (if UI scaffold installed):
+```bash
+# Verify UI scaffold components exist
+test -f frontend/src/components/AppShell/AppShell.tsx && echo "✅ AppShell installed" || echo "❌ UI scaffold missing"
+test -f frontend/src/pages/HomePage/HomePage.tsx && echo "✅ HomePage installed" || echo "❌ UI scaffold missing"
+test -f frontend/src/components/TabNavigation/TabNavigation.tsx && echo "✅ TabNavigation installed" || echo "❌ UI scaffold missing"
+test -f frontend/src/config/tabs.config.ts && echo "✅ Tabs config installed" || echo "❌ UI scaffold missing"
+```
+
 ### Phase 7: Optional Terraform Deployment (Optional)
 
 **IMPORTANT**: This phase is OPTIONAL. Ask the user if they want to deploy to AWS using Terraform.

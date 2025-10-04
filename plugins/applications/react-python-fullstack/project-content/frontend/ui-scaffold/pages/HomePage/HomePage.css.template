@@ -1,0 +1,170 @@
+/*
+Purpose: Styles for modern hero banner homepage with responsive design
+Scope: HomePage component styling for desktop and mobile viewports
+Overview: Provides comprehensive styling for hero section, info cards grid, principles banner,
+    and getting started sections. Implements responsive design patterns with mobile-first approach,
+    flexible grid layouts, and modern CSS features. Ensures accessibility with proper contrast ratios
+    and readable typography. Supports both light and dark color schemes.
+Dependencies: None - pure CSS
+Exports: Styles for HomePage, hero-section, hero-cards, and getting-started sections
+Environment: All browsers with CSS Grid and Flexbox support
+Related: HomePage.tsx component structure
+Implementation: Mobile-first responsive design with CSS Grid and Flexbox, modern color palette
+*/
+
+.home-page {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 4rem 2rem;
+  text-align: center;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+}
+
+.hero-content {
+  max-width: 800px;
+  margin: 0 auto 3rem;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  font-weight: 300;
+  opacity: 0.95;
+  line-height: 1.6;
+}
+
+/* Hero Cards Grid */
+.hero-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 2rem;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.hero-card {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  color: #333;
+  text-align: left;
+}
+
+.hero-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15);
+}
+
+.hero-card-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.hero-card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 0.75rem;
+  color: #667eea;
+}
+
+.hero-card-description {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #666;
+}
+
+/* Getting Started Section */
+.getting-started {
+  max-width: 1200px;
+  margin: 4rem auto;
+  padding: 3rem 2rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.getting-started h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: #333;
+  text-align: center;
+}
+
+.command-section {
+  margin-bottom: 2rem;
+}
+
+.command-section h3 {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  color: #667eea;
+}
+
+.command-block {
+  display: block;
+  background: #f5f7fa;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 1.5rem;
+  font-family: 'Monaco', 'Menlo', 'Courier New', monospace;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #333;
+  overflow-x: auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .hero-cards {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  .hero-section {
+    padding: 3rem 1rem;
+  }
+
+  .getting-started {
+    margin: 2rem 1rem;
+    padding: 2rem 1rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 1.75rem;
+  }
+
+  .hero-card {
+    padding: 1.5rem;
+  }
+
+  .command-block {
+    font-size: 0.85rem;
+    padding: 1rem;
+  }
+}

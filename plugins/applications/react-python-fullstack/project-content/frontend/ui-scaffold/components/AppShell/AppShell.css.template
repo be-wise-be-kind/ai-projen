@@ -1,0 +1,94 @@
+/*
+Purpose: Styles for application shell layout with header, navigation, content, and footer
+Scope: AppShell component providing overall application structure and layout
+Overview: Defines comprehensive layout structure using CSS Flexbox for sticky header, scrollable
+    content area, and sticky footer. Provides consistent spacing, typography, and color scheme
+    across the application shell. Ensures proper z-index layering for header and navigation.
+    Implements responsive design for mobile and desktop viewports.
+Dependencies: None - pure CSS
+Exports: Styles for app-shell, app-header, app-content, and app-footer
+Environment: All modern browsers with Flexbox support
+Related: AppShell.tsx component structure and routing
+Implementation: Flexbox layout with sticky header/footer, responsive spacing
+*/
+
+.app-shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f5f7fa;
+}
+
+/* Header */
+.app-header {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.app-header-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.app-logo {
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 0.25rem 0;
+}
+
+.app-tagline {
+  font-size: 0.95rem;
+  margin: 0;
+  opacity: 0.9;
+  font-weight: 300;
+}
+
+/* Main Content */
+.app-content {
+  flex: 1;
+  padding: 0;
+  width: 100%;
+}
+
+/* Footer */
+.app-footer {
+  background: #333;
+  color: #f5f7fa;
+  padding: 1.5rem 2rem;
+  text-align: center;
+  margin-top: auto;
+}
+
+.app-footer p {
+  margin: 0;
+  font-size: 0.9rem;
+  opacity: 0.9;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .app-header {
+    padding: 1rem 1.5rem;
+  }
+
+  .app-logo {
+    font-size: 1.5rem;
+  }
+
+  .app-tagline {
+    font-size: 0.85rem;
+  }
+
+  .app-footer {
+    padding: 1rem 1.5rem;
+  }
+
+  .app-footer p {
+    font-size: 0.8rem;
+  }
+}

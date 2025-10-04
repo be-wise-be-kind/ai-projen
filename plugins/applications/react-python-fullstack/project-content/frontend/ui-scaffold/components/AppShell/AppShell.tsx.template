@@ -1,0 +1,60 @@
+/**
+ * Purpose: Application shell providing routing structure and tab-based navigation
+ * Scope: Main layout wrapper for fullstack application with tabbed interface
+ * Overview: Implements application routing using React Router with tab-based navigation system.
+ *     Provides consistent layout with header, navigation, and content area. Integrates with
+ *     TabNavigation component for dynamic tab rendering. Supports configuration-driven tab system
+ *     through tabs configuration file. Handles route matching and content rendering based on
+ *     active tab selection.
+ * Dependencies: React, React Router (BrowserRouter, Routes, Route), TabNavigation, tab pages
+ * Exports: AppShell component as default export
+ * Props/Interfaces: None - configuration driven through tabs.config.ts
+ * State/Behavior: Route-based rendering, integration with React Router navigation state
+ */
+
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './AppShell.css';
+import TabNavigation from '../TabNavigation/TabNavigation';
+import HomePage from '../../pages/HomePage/HomePage';
+import Tab1 from '../../features/Tab1/Tab1';
+import Tab2 from '../../features/Tab2/Tab2';
+import Tab3 from '../../features/Tab3/Tab3';
+
+const AppShell: React.FC = () => {
+  return (
+    <Router>
+      <div className="app-shell">
+        {/* Header */}
+        <header className="app-header">
+          <div className="app-header-content">
+            <h1 className="app-logo">⚡ Fullstack App</h1>
+            <p className="app-tagline">Production-Ready React + Python</p>
+          </div>
+        </header>
+
+        {/* Tab Navigation */}
+        <TabNavigation />
+
+        {/* Main Content Area */}
+        <main className="app-content">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/tab1" element={<Tab1 />} />
+            <Route path="/tab2" element={<Tab2 />} />
+            <Route path="/tab3" element={<Tab3 />} />
+          </Routes>
+        </main>
+
+        {/* Footer */}
+        <footer className="app-footer">
+          <p>
+            Built with React + FastAPI | Powered by ai-projen
+          </p>
+        </footer>
+      </div>
+    </Router>
+  );
+};
+
+export default AppShell;

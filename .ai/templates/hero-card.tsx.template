@@ -1,0 +1,51 @@
+<!--
+Purpose: Template for creating new hero cards in HomePage hero section
+Scope: Hero banner customization in fullstack applications
+Overview: Provides template structure for adding new information cards to the hero section
+    of the HomePage component. Cards appear in responsive grid layout below hero title and subtitle.
+    Each card includes optional icon, title, and description. Template shows proper TypeScript
+    interface definition and styling hooks.
+
+Placeholders:
+  {{CARD_TITLE}}: Title text for the hero card
+    - Type: string
+    - Example: "FastAPI Backend" or "Real-time Updates"
+    - Required: yes
+
+  {{CARD_DESCRIPTION}}: Description text explaining the card's feature or capability
+    - Type: string
+    - Example: "Production-ready Python API with comprehensive quality tools"
+    - Required: yes
+
+  {{CARD_ICON}}: Emoji or icon representing the card
+    - Type: string (emoji or icon character)
+    - Example: "🚀" or "⚡" or "📊"
+    - Required: no
+    - Default: No icon displayed
+
+Usage:
+  1. Copy this card definition to HomePage.tsx heroCards array:
+     const heroCards: HeroCard[] = [
+       // ... existing cards ...
+       { title: "{{CARD_TITLE}}", description: "{{CARD_DESCRIPTION}}", icon: "{{CARD_ICON}}" }
+     ];
+
+  2. Replace placeholders with actual values:
+     - {{CARD_TITLE}}: Short, descriptive title
+     - {{CARD_DESCRIPTION}}: 1-2 sentence description
+     - {{CARD_ICON}}: Relevant emoji (optional, can be omitted)
+
+  3. Verify responsive layout works:
+     npm run dev
+     # Check layout on desktop and mobile viewports
+
+  4. Cards automatically arrange in responsive grid (4 columns desktop, 1 column mobile)
+
+Related: HomePage.tsx, HomePage.css, how-to-add-hero-card.md
+-->
+
+{
+  title: '{{CARD_TITLE}}',
+  description: '{{CARD_DESCRIPTION}}',
+  icon: '{{CARD_ICON}}'
+}

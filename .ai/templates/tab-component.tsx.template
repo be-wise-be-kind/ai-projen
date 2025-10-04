@@ -1,0 +1,89 @@
+<!--
+Purpose: Template for creating new tab components in fullstack application
+Scope: Tab page creation for tabbed navigation system
+Overview: Provides complete template for adding new tab pages to the application. Includes proper
+    file header, component structure, TypeScript typing, styling imports, and placeholder content
+    structure. Follow this template to maintain consistency across all tab pages. After creating
+    tab component, remember to register it in tabs.config.ts and add route in AppShell.tsx.
+
+Placeholders:
+  {{TAB_NAME}}: Name of the tab component in PascalCase
+    - Type: string (valid TypeScript component name)
+    - Example: "Analytics" or "Settings" or "UserProfile"
+    - Required: yes
+
+  {{TAB_TITLE}}: Display title for the tab page
+    - Type: string
+    - Example: "Analytics Dashboard" or "User Settings"
+    - Required: yes
+
+  {{TAB_DESCRIPTION}}: Brief description of tab purpose and content
+    - Type: string
+    - Example: "View comprehensive analytics and metrics for your application"
+    - Required: yes
+
+  {{TAB_ICON}}: Emoji icon representing the tab
+    - Type: string (emoji character)
+    - Example: "📊" or "⚙️" or "👤"
+    - Required: yes
+
+Usage:
+  1. Copy to new file:
+     cp .ai/templates/tab-component.tsx.template src/features/{{TAB_NAME}}/{{TAB_NAME}}.tsx
+
+  2. Replace all placeholders with actual values
+
+  3. Create corresponding CSS file:
+     touch src/features/{{TAB_NAME}}/{{TAB_NAME}}.css
+     # Or import shared tab styles: @import url('../Tab1/Tab1.css');
+
+  4. Register tab in tabs.config.ts:
+     { id: '{{tab_name_lowercase}}', path: '/{{tab-name-kebab}}', label: '{{TAB_TITLE}}', icon: '{{TAB_ICON}}' }
+
+  5. Add route in AppShell.tsx:
+     import {{TAB_NAME}} from '../features/{{TAB_NAME}}/{{TAB_NAME}}';
+     <Route path="/{{tab-name-kebab}}" element={<{{TAB_NAME}} />} />
+
+  6. Verify tab appears in navigation and content renders
+
+Related: AppShell.tsx, tabs.config.ts, TabNavigation.tsx, how-to-add-tab.md
+-->
+
+/**
+ * Purpose: {{TAB_DESCRIPTION}}
+ * Scope: {{TAB_TITLE}} tab page in tabbed navigation system
+ * Overview: Provides interface for {{TAB_DESCRIPTION}}. Includes interactive elements,
+ *     data displays, and user controls specific to {{TAB_TITLE}} functionality. Follows
+ *     consistent page layout pattern with responsive design support.
+ * Dependencies: React
+ * Exports: {{TAB_NAME}} component as default export
+ * Props/Interfaces: None - customize as needed for tab content
+ * State/Behavior: Add state management and behavior as needed for tab functionality
+ */
+
+import React from 'react';
+import './{{TAB_NAME}}.css';
+
+const {{TAB_NAME}}: React.FC = () => {
+  return (
+    <div className="tab-page">
+      <div className="tab-content">
+        <h1 className="tab-title">{{TAB_TITLE}}</h1>
+        <p className="tab-description">
+          {{TAB_DESCRIPTION}}
+        </p>
+
+        {/* Add your custom content here */}
+        <div className="tab-placeholder">
+          <div className="placeholder-icon">{{TAB_ICON}}</div>
+          <h2>{{TAB_TITLE}} Content</h2>
+          <p>
+            Add your components, data visualizations, forms, or other interactive elements here.
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default {{TAB_NAME}};

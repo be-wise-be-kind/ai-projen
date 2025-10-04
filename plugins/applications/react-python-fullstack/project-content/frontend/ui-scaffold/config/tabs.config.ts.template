@@ -1,0 +1,46 @@
+/**
+ * Purpose: Configuration for tab navigation system defining available tabs and routing
+ * Scope: Tab navigation configuration across the application
+ * Overview: Defines all available tabs in the tabbed navigation interface including route paths,
+ *     display labels, icons, and unique identifiers. Used by TabNavigation component to render
+ *     navigation links and by AppShell for route configuration. Easily extendable to add new tabs
+ *     by adding entries to the tabs array. Supports icon display and custom labels.
+ * Dependencies: None - pure configuration
+ * Exports: tabs array with TabConfig objects
+ * Interfaces: TabConfig { id, path, label, icon }
+ * Implementation: Configuration-driven navigation with centralized tab definitions
+ */
+
+export interface TabConfig {
+  id: string;
+  path: string;
+  label: string;
+  icon?: string;
+}
+
+export const tabs: TabConfig[] = [
+  {
+    id: 'home',
+    path: '/',
+    label: 'Home',
+    icon: '🏠'
+  },
+  {
+    id: 'tab1',
+    path: '/tab1',
+    label: 'Tab 1',
+    icon: '📊'
+  },
+  {
+    id: 'tab2',
+    path: '/tab2',
+    label: 'Tab 2',
+    icon: '📈'
+  },
+  {
+    id: 'tab3',
+    path: '/tab3',
+    label: 'Tab 3',
+    icon: '🎯'
+  }
+];

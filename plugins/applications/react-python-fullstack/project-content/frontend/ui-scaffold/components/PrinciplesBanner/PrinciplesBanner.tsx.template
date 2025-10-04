@@ -1,0 +1,118 @@
+/**
+ * Purpose: Principles banner displaying numbered principle cards with modal popup details
+ * Scope: Reusable principles display component for showcasing project principles or values
+ * Overview: Renders a horizontal banner of numbered principle cards that open detailed modal popups
+ *     on click. Supports configuration-driven content through principles config file. Implements
+ *     responsive grid layout for mobile and desktop. Includes accessible modal with keyboard
+ *     navigation (Escape to close) and click-outside-to-close behavior. Fully customizable
+ *     through principles configuration.
+ * Dependencies: React, useState for modal state, principles configuration
+ * Exports: PrinciplesBanner component as default export
+ * Props/Interfaces: None - configuration driven through principles.config.ts
+ * State/Behavior: Modal state management, click handlers, keyboard event handling
+ */
+
+import React, { useState } from 'react';
+import './PrinciplesBanner.css';
+import { principles } from '../../config/principles.config';
+
+interface Principle {
+  number: number;
+  title: string;
+  shortDescription: string;
+  fullDescription: string;
+  icon?: string;
+}
+
+const PrinciplesBanner: React.FC = () => {
+  const [selectedPrinciple, setSelectedPrinciple] = useState<Principle | null>(null);
+
+  const openModal = (principle: Principle) => {
+    setSelectedPrinciple(principle);
+  };
+
+  const closeModal = () => {
+    setSelectedPrinciple(null);
+  };
+
+  const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) {
+      closeModal();
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      closeModal();
+    }
+  };
+
+  return (
+    <>
+      <section className="principles-banner">
+        <h2 className="principles-title">Core Principles</h2>
+        <div className="principles-grid">
+          {principles.map((principle) => (
+            <div
+              key={principle.number}
+              className="principle-card"
+              onClick={() => openModal(principle)}
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  openModal(principle);
+                }
+              }}
+            >
+              <div className="principle-number">{principle.number}</div>
+              {principle.icon && <div className="principle-icon">{principle.icon}</div>}
+              <h3 className="principle-title-text">{principle.title}</h3>
+              <p className="principle-short-desc">{principle.shortDescription}</p>
+              <span className="principle-learn-more">Click to learn more →</span>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* Modal */}
+      {selectedPrinciple && (
+        <div
+          className="modal-backdrop"
+          onClick={handleBackdropClick}
+          onKeyDown={handleKeyDown}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="modal-title"
+        >
+          <div className="modal-content">
+            <button
+              className="modal-close"
+              onClick={closeModal}
+              aria-label="Close modal"
+            >
+              ×
+            </button>
+            <div className="modal-header">
+              <div className="modal-number">{selectedPrinciple.number}</div>
+              {selectedPrinciple.icon && (
+                <div className="modal-icon">{selectedPrinciple.icon}</div>
+              )}
+              <h2 id="modal-title" className="modal-title">
+                {selectedPrinciple.title}
+              </h2>
+            </div>
+            <div className="modal-body">
+              <p className="modal-description">
+                {selectedPrinciple.fullDescription}
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  );
+};
+
+export default PrinciplesBanner;

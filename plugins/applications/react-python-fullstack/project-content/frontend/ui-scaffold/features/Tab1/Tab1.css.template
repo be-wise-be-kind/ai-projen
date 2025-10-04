@@ -1,0 +1,92 @@
+/*
+Purpose: Shared styles for tab pages with consistent layout and spacing
+Scope: Tab page components (Tab1, Tab2, Tab3) styling
+Overview: Provides consistent styling for all tab pages including padding, max-width constraints,
+    title typography, and placeholder content styling. Implements responsive design with mobile-
+    friendly spacing. Establishes visual hierarchy with proper heading sizes and spacing.
+Dependencies: None - pure CSS
+Exports: Styles for tab-page, tab-content, tab-title, and tab-placeholder
+Environment: All modern browsers
+Related: Tab component structure and content layout
+Implementation: Centered content layout, responsive padding, placeholder patterns
+*/
+
+.tab-page {
+  min-height: calc(100vh - 200px);
+  padding: 2rem;
+}
+
+.tab-content {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.tab-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.tab-description {
+  font-size: 1.125rem;
+  color: #666;
+  line-height: 1.6;
+  margin-bottom: 2rem;
+}
+
+.tab-placeholder {
+  background: white;
+  border-radius: 12px;
+  padding: 3rem 2rem;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 2rem;
+}
+
+.placeholder-icon {
+  font-size: 4rem;
+  margin-bottom: 1rem;
+}
+
+.tab-placeholder h2 {
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 1rem;
+}
+
+.tab-placeholder p {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.6;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .tab-page {
+    padding: 1.5rem 1rem;
+  }
+
+  .tab-title {
+    font-size: 2rem;
+  }
+
+  .tab-description {
+    font-size: 1rem;
+  }
+
+  .tab-placeholder {
+    padding: 2rem 1.5rem;
+  }
+
+  .placeholder-icon {
+    font-size: 3rem;
+  }
+
+  .tab-placeholder h2 {
+    font-size: 1.5rem;
+  }
+}
