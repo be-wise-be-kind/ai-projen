@@ -90,6 +90,128 @@ Installs Python with linting, formatting, type checking, testing.
 test -f pyproject.toml && echo "✅ Python configured" || echo "❌ Python plugin failed"
 ```
 
+### Phase 2.5: Install Comprehensive Python Tooling Suite
+
+**Follow**: `plugins/languages/python/core/AGENT_INSTRUCTIONS.md` Step 11 (Comprehensive Tooling)
+
+**What Gets Installed**:
+- **Additional Linters**: Pylint (comprehensive code quality), Flake8 + plugins (style guide + docstrings, bugbear, comprehensions, simplify)
+- **Complexity Analysis**: Radon (cyclomatic complexity, maintainability index), Xenon (complexity enforcement)
+- **Comprehensive Security**: Safety (CVE database), pip-audit (OSV database)
+
+**Installation**:
+```bash
+# Using Poetry (recommended)
+poetry add --group dev \
+  pylint \
+  flake8 flake8-docstrings flake8-bugbear flake8-comprehensions flake8-simplify \
+  radon xenon \
+  safety pip-audit
+```
+
+**Validation**:
+```bash
+# Check all tools installed
+poetry run pylint --version
+poetry run flake8 --version
+poetry run radon --version
+poetry run xenon --version
+poetry run safety --version
+poetry run pip-audit --version
+```
+
+### Phase 2.6: Install Python Makefile Targets
+
+**Create composite Makefile with clean lint-* namespace**:
+
+```bash
+# Create Makefile with composite targets for clean organization
+cat > Makefile <<'EOF'
+# Python CLI Application Makefile
+# Composite lint-* targets for clean namespace
+
+.PHONY: help lint lint-all lint-security lint-complexity lint-full format test test-coverage install clean
+
+help: ## Show available targets
+	@echo "Available targets:"
+	@echo "  make lint              - Fast linting (Ruff)"
+	@echo "  make lint-all          - Comprehensive linting (Ruff + Pylint + Flake8 + MyPy)"
+	@echo "  make lint-security     - Security scanning (Bandit + Safety + pip-audit)"
+	@echo "  make lint-complexity   - Complexity analysis (Radon + Xenon)"
+	@echo "  make lint-full         - ALL quality checks"
+	@echo "  make format            - Auto-fix formatting and linting issues"
+	@echo "  make test              - Run tests"
+	@echo "  make test-coverage     - Run tests with coverage"
+	@echo "  make install           - Install dependencies"
+	@echo "  make clean             - Clean cache and artifacts"
+
+lint: ## Fast linting (Ruff - use during development)
+	@echo "Running fast linting (Ruff)..."
+	@poetry run ruff check src/ tests/
+	@poetry run ruff format --check src/ tests/
+
+lint-all: ## Comprehensive linting (Ruff + Pylint + Flake8 + MyPy)
+	@echo "Running comprehensive linting..."
+	@poetry run ruff check src/ tests/
+	@poetry run ruff format --check src/ tests/
+	@poetry run pylint src/
+	@poetry run flake8 src/ tests/
+	@poetry run mypy src/
+
+lint-security: ## Security scanning (Bandit + Safety + pip-audit)
+	@echo "Running security scans..."
+	@poetry run bandit -r src/ -q
+	@poetry run safety check --json || true
+	@poetry run pip-audit || true
+
+lint-complexity: ## Complexity analysis (Radon + Xenon)
+	@echo "Analyzing code complexity..."
+	@poetry run radon cc src/ -a -s
+	@poetry run radon mi src/ -s
+	@poetry run xenon --max-absolute B --max-modules B --max-average A src/
+
+lint-full: lint-all lint-security lint-complexity ## ALL quality checks
+	@echo "✅ All linting checks complete!"
+
+format: ## Auto-fix formatting and linting issues
+	@poetry run ruff format src/ tests/
+	@poetry run ruff check --fix src/ tests/
+
+test: ## Run tests
+	@poetry run pytest -v
+
+test-coverage: ## Run tests with coverage
+	@poetry run pytest --cov=src --cov-report=term --cov-report=html -v
+
+install: ## Install dependencies
+	@poetry install
+
+clean: ## Clean cache and artifacts
+	@find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type d -name "*.egg-info" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type d -name ".pytest_cache" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type d -name ".mypy_cache" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type d -name ".ruff_cache" -exec rm -rf {} + 2>/dev/null || true
+	@find . -type f -name "*.pyc" -delete 2>/dev/null || true
+	@rm -rf htmlcov/ .coverage 2>/dev/null || true
+	@echo "✓ Cleaned cache and artifacts"
+EOF
+```
+
+**Validation**:
+```bash
+# Verify Makefile targets available
+make help
+
+# Should show composite targets:
+# - lint (fast - Ruff only)
+# - lint-all (comprehensive - all linters + MyPy)
+# - lint-security (Bandit + Safety + pip-audit)
+# - lint-complexity (Radon + Xenon)
+# - lint-full (everything)
+# - format, test, test-coverage, install, clean
+```
+
 ### Phase 3: Infrastructure Plugin Installation
 
 **3. Install infrastructure/containerization/docker plugin**
@@ -304,9 +426,24 @@ test -f src/cli.py && echo "✅ CLI entrypoint" || echo "❌ Missing src/cli.py"
 test -f src/config.py && echo "✅ Config handler" || echo "❌ Missing src/config.py"
 test -d tests && echo "✅ Application tests" || echo "❌ Missing tests/"
 test -f pyproject.toml && echo "✅ Python config" || echo "❌ Missing pyproject.toml"
+test -f Makefile && echo "✅ Makefile" || echo "❌ Missing Makefile"
 test -f docker-compose.cli.yml && echo "✅ Docker compose" || echo "❌ Missing docker-compose.cli.yml"
 test -d .github/workflows && echo "✅ CI/CD workflows" || echo "❌ Missing .github/workflows/"
 test -f .ai/howtos/python-cli/README.md && echo "✅ Application how-tos" || echo "❌ Missing how-tos"
+
+# Check composite Makefile targets installed
+make help | grep -q "lint-all" && echo "✅ lint-all target" || echo "❌ Missing lint-all"
+make help | grep -q "lint-security" && echo "✅ lint-security target" || echo "❌ Missing lint-security"
+make help | grep -q "lint-complexity" && echo "✅ lint-complexity target" || echo "❌ Missing lint-complexity"
+make help | grep -q "lint-full" && echo "✅ lint-full target" || echo "❌ Missing lint-full"
+
+# Run composite quality checks (may fail on starter code - that's expected)
+make lint              # Fast linting (Ruff)
+make lint-all          # All linters (Ruff + Pylint + Flake8 + MyPy)
+make lint-security     # All security tools (Bandit + Safety + pip-audit)
+make lint-complexity   # Complexity analysis (Radon + Xenon)
+make lint-full         # EVERYTHING
+make test              # pytest tests
 
 # Run CLI tool
 python -m src.cli hello --name "Test"

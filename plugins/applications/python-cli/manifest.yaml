@@ -56,6 +56,37 @@ dependencies:
 
 # What this application provides
 provides:
+  comprehensive_tooling:
+    description: Complete Python quality tooling suite automatically installed
+    tools:
+      - name: Ruff
+        purpose: Fast linting and formatting
+      - name: MyPy
+        purpose: Static type checking
+      - name: Bandit
+        purpose: Security vulnerability scanning
+      - name: Pylint
+        purpose: Comprehensive code quality linting
+      - name: Flake8
+        purpose: Style guide enforcement with plugins
+      - name: Radon
+        purpose: Cyclomatic complexity and maintainability analysis
+      - name: Xenon
+        purpose: Complexity enforcement (fails build if too complex)
+      - name: Safety
+        purpose: Dependency vulnerability scanning (CVE database)
+      - name: pip-audit
+        purpose: Dependency security audit (OSV database)
+
+  makefile_targets:
+    description: Composite Makefile with clean lint-* namespace for all quality checks
+    file: Makefile
+    includes:
+      - Fast Development: lint, format, test
+      - Comprehensive Quality: lint-all, lint-security, lint-complexity, lint-full
+      - Testing: test, test-coverage
+      - Utilities: install, clean, help
+
   starter_application:
     description: Production-ready Python CLI tool with Click framework, config management, logging, and Docker packaging
     structure:

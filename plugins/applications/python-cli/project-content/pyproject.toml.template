@@ -45,11 +45,30 @@ click = "^8.1.0"
 pyyaml = "^6.0"
 
 [tool.poetry.group.dev.dependencies]
-pytest = "^7.4.0"
+# Core testing and linting
+pytest = "^8.4.2"
+pytest-asyncio = "^0.23.0"
 pytest-cov = "^4.1.0"
-ruff = "^0.1.0"
-mypy = "^1.7.0"
+ruff = "^0.13.0"
+mypy = "^1.18.1"
 types-pyyaml = "^6.0.0"
+bandit = "^1.7.5"
+
+# Comprehensive linters
+pylint = "^3.3.3"
+flake8 = "^7.1.0"
+flake8-docstrings = "^1.7.0"
+flake8-bugbear = "^24.11.19"
+flake8-comprehensions = "^3.15.0"
+flake8-simplify = "^0.21.0"
+
+# Complexity analysis
+radon = "^6.0.1"
+xenon = "^0.9.3"
+
+# Comprehensive security
+safety = "^3.2.11"
+pip-audit = "^2.8.0"
 
 [tool.poetry.scripts]
 {{PROJECT_NAME}} = "src.cli:cli"
@@ -129,3 +148,32 @@ strict_equality = true
 [[tool.mypy.overrides]]
 module = "tests.*"
 disallow_untyped_defs = false
+
+# Pylint configuration
+[tool.pylint.messages_control]
+disable = [
+    "C0111",  # missing-docstring (handled by flake8-docstrings)
+    "R0903",  # too-few-public-methods (often fine for CLIs)
+]
+
+[tool.pylint.format]
+max-line-length = 120
+
+# Flake8 configuration (in .flake8 file, not pyproject.toml)
+# Note: Flake8 doesn't support pyproject.toml natively
+# Create .flake8 file with:
+# [flake8]
+# max-line-length = 120
+# extend-ignore = E203, E501
+# docstring-convention = google
+
+# Radon configuration
+[tool.radon]
+cc_min = "C"  # Warn on complexity >= C
+show_complexity = true
+
+# Xenon configuration
+[tool.xenon]
+max-absolute = "B"
+max-modules = "B"
+max-average = "A"
