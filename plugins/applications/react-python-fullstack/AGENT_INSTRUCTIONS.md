@@ -427,6 +427,148 @@ application:
   templates: .ai/templates/fullstack/
 ```
 
+### Phase 7: Optional Terraform Deployment (Optional)
+
+**IMPORTANT**: This phase is OPTIONAL. Ask the user if they want to deploy to AWS using Terraform.
+
+```bash
+echo ""
+echo "=========================================="
+echo "   Optional: Terraform Deployment Setup  "
+echo "=========================================="
+echo ""
+echo "Would you like to set up AWS deployment infrastructure using Terraform?"
+echo ""
+echo "This will add:"
+echo "  - Terraform workspaces (bootstrap, base) for multi-environment deployment"
+echo "  - AWS infrastructure (VPC, ECR, ECS, ALB, RDS)"
+echo "  - Makefile.infra for Docker-based Terraform operations"
+echo "  - Complete deployment documentation and how-tos"
+echo ""
+read -p "Deploy to AWS with Terraform? (yes/no): " TERRAFORM_CHOICE
+
+if [ "$TERRAFORM_CHOICE" = "yes" ]; then
+  echo "Installing Terraform deployment infrastructure..."
+else
+  echo "Skipping Terraform deployment. You can add it later if needed."
+  echo "Infrastructure setup complete without Terraform."
+fi
+```
+
+**If user chooses "yes", proceed with Terraform installation:**
+
+**17. Copy Terraform Infrastructure**
+
+Copy Terraform configuration from plugin:
+
+```bash
+# Create infrastructure directory
+mkdir -p infra/terraform
+
+# Copy all Terraform workspaces
+cp -r plugins/applications/react-python-fullstack/project-content/infra/terraform/workspaces ./infra/terraform/
+cp -r plugins/applications/react-python-fullstack/project-content/infra/terraform/modules ./infra/terraform/
+cp -r plugins/applications/react-python-fullstack/project-content/infra/terraform/shared ./infra/terraform/
+cp -r plugins/applications/react-python-fullstack/project-content/infra/terraform/backend-config ./infra/terraform/
+
+# Copy infrastructure Makefile
+cp plugins/applications/react-python-fullstack/project-content/infra/Makefile.infra.template ./infra/Makefile.infra
+```
+
+**18. Copy Terraform Documentation**
+
+Copy Terraform how-tos and documentation:
+
+```bash
+# Copy Terraform how-tos
+mkdir -p .ai/howtos/react-python-fullstack
+cp plugins/applications/react-python-fullstack/ai-content/howtos/react-python-fullstack/how-to-manage-terraform-infrastructure.md .ai/howtos/react-python-fullstack/
+cp plugins/applications/react-python-fullstack/ai-content/howtos/react-python-fullstack/how-to-deploy-to-aws.md .ai/howtos/react-python-fullstack/
+cp plugins/applications/react-python-fullstack/ai-content/howtos/react-python-fullstack/how-to-setup-terraform-workspaces.md .ai/howtos/react-python-fullstack/
+
+# Copy Terraform documentation
+mkdir -p .ai/docs/react-python-fullstack
+cp plugins/applications/react-python-fullstack/ai-content/docs/react-python-fullstack/TERRAFORM_ARCHITECTURE.md .ai/docs/react-python-fullstack/
+cp plugins/applications/react-python-fullstack/ai-content/docs/react-python-fullstack/DEPLOYMENT_GUIDE.md .ai/docs/react-python-fullstack/
+cp plugins/applications/react-python-fullstack/ai-content/docs/react-python-fullstack/INFRASTRUCTURE_PRINCIPLES.md .ai/docs/react-python-fullstack/
+```
+
+**19. Update .ai/index.yaml for Terraform**
+
+If Terraform was installed, add Terraform entries to `.ai/index.yaml`:
+
+```yaml
+infrastructure:
+  terraform:
+    location: infra/terraform/
+    workspaces:
+      - bootstrap (S3 backend, DynamoDB, GitHub OIDC)
+      - base (VPC, ECR, ALB, security groups)
+    modules:
+      - ecs-service (Fargate deployment with auto-scaling)
+      - rds (PostgreSQL with backups)
+    makefile: infra/Makefile.infra
+    howtos:
+      - .ai/howtos/react-python-fullstack/how-to-manage-terraform-infrastructure.md
+      - .ai/howtos/react-python-fullstack/how-to-deploy-to-aws.md
+      - .ai/howtos/react-python-fullstack/how-to-setup-terraform-workspaces.md
+    docs:
+      - .ai/docs/react-python-fullstack/TERRAFORM_ARCHITECTURE.md
+      - .ai/docs/react-python-fullstack/DEPLOYMENT_GUIDE.md
+      - .ai/docs/react-python-fullstack/INFRASTRUCTURE_PRINCIPLES.md
+```
+
+**20. Display Terraform Next Steps**
+
+If Terraform was installed, display next steps:
+
+```bash
+if [ "$TERRAFORM_CHOICE" = "yes" ]; then
+  echo ""
+  echo "✅ Terraform deployment infrastructure installed!"
+  echo ""
+  echo "📝 Next Steps for AWS Deployment:"
+  echo "  1. Configure AWS credentials: aws configure"
+  echo "  2. Bootstrap Terraform backend:"
+  echo "     cd infra && make -f Makefile.infra infra-bootstrap"
+  echo "  3. Initialize dev environment:"
+  echo "     make -f Makefile.infra infra-init ENV=dev"
+  echo "  4. Plan infrastructure:"
+  echo "     make -f Makefile.infra infra-plan ENV=dev"
+  echo "  5. Apply infrastructure:"
+  echo "     make -f Makefile.infra infra-apply ENV=dev"
+  echo ""
+  echo "📖 Documentation:"
+  echo "  - How to manage Terraform: .ai/howtos/react-python-fullstack/how-to-manage-terraform-infrastructure.md"
+  echo "  - How to deploy to AWS: .ai/howtos/react-python-fullstack/how-to-deploy-to-aws.md"
+  echo "  - Architecture guide: .ai/docs/react-python-fullstack/TERRAFORM_ARCHITECTURE.md"
+  echo ""
+fi
+```
+
+**Validation**:
+
+If Terraform was installed:
+```bash
+# Verify Terraform files
+test -d infra/terraform/workspaces/bootstrap && echo "✅ Bootstrap workspace present" || echo "❌ Missing bootstrap"
+test -d infra/terraform/workspaces/base && echo "✅ Base workspace present" || echo "❌ Missing base"
+test -d infra/terraform/modules/ecs-service && echo "✅ ECS module present" || echo "❌ Missing ECS module"
+test -f infra/Makefile.infra && echo "✅ Infrastructure Makefile present" || echo "❌ Missing Makefile.infra"
+
+# Verify documentation
+test -f .ai/howtos/react-python-fullstack/how-to-manage-terraform-infrastructure.md && echo "✅ Terraform how-tos present" || echo "❌ Missing how-tos"
+test -f .ai/docs/react-python-fullstack/TERRAFORM_ARCHITECTURE.md && echo "✅ Terraform docs present" || echo "❌ Missing docs"
+
+# Show Terraform help
+cd infra && make -f Makefile.infra help
+```
+
+If Terraform was skipped:
+```bash
+echo "✅ Terraform deployment skipped - installation complete without AWS infrastructure"
+```
+
 ## Post-Installation
 
 ### Initial Setup
