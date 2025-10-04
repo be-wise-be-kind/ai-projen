@@ -1,0 +1,148 @@
+# Purpose: Python FastAPI backend configuration for React-Python fullstack application
+# Scope: Package metadata, dependencies, build configuration, and comprehensive development tooling
+# Overview: Poetry-based project configuration for FastAPI backend with SQLAlchemy ORM, comprehensive
+#     quality tooling suite (9 tools), and production-ready dependencies. Includes fast development
+#     linters (Ruff) and comprehensive pre-PR validation (Pylint, Flake8, Radon, Xenon, Security tools).
+# Dependencies: Poetry (>=1.5.0), Python {{PYTHON_VERSION}}
+# Exports: FastAPI backend package configuration, comprehensive tooling configuration
+# Interfaces: Poetry build backend, isolated venv, FastAPI, SQLAlchemy ORM
+# Environment: Poetry-managed virtual environment (Python {{PYTHON_VERSION}})
+# Related: poetry.lock, Makefile (comprehensive quality targets)
+# Philosophy: Progressive quality levels - fast feedback during dev, comprehensive validation before PR
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+name = "{{PROJECT_NAME}}-backend"
+version = "1.0.0"
+description = "{{PROJECT_DESCRIPTION}} - FastAPI Backend"
+authors = ["{{AUTHOR_NAME}} <{{AUTHOR_EMAIL}}>"]
+license = "MIT"
+readme = "README.md"
+packages = [{include = "src"}]
+
+[tool.poetry.dependencies]
+python = "^{{PYTHON_VERSION}}"
+fastapi = "^0.104.0"
+uvicorn = {extras = ["standard"], version = "^0.24.0"}
+sqlalchemy = "^2.0.0"
+alembic = "^1.12.0"
+pydantic = "^2.4.0"
+pydantic-settings = "^2.0.0"
+psycopg2-binary = "^2.9.9"
+python-multipart = "^0.0.6"
+python-jose = {extras = ["cryptography"], version = "^3.3.0"}
+passlib = {extras = ["bcrypt"], version = "^1.7.4"}
+python-dotenv = "^1.0.0"
+
+[tool.poetry.group.dev.dependencies]
+# Core testing and fast linting
+pytest = "^8.4.2"
+pytest-asyncio = "^0.23.0"
+pytest-cov = "^4.1.0"
+ruff = "^0.13.0"
+mypy = "^1.18.1"
+bandit = "^1.7.5"
+
+# Comprehensive Linting Suite
+pylint = "^3.0.0"
+flake8 = "^7.0.0"
+flake8-docstrings = "^1.7.0"
+flake8-bugbear = "^23.0.0"
+flake8-comprehensions = "^3.14.0"
+flake8-simplify = "^0.21.0"
+
+# Complexity Analysis
+radon = "^6.0.0"
+xenon = "^0.9.0"
+
+# Comprehensive Security
+safety = "^3.0.0"
+pip-audit = "^2.6.0"
+
+# Testing utilities
+httpx = "^0.25.0"  # For FastAPI TestClient
+faker = "^20.0.0"  # For test data generation
+
+# Ruff configuration - Fast linting for development
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "N",   # pep8-naming
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "PTH", # flake8-use-pathlib
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D", "S101"]  # Allow assert in tests
+
+# Pylint configuration - Comprehensive quality checking
+[tool.pylint.main]
+max-line-length = 100
+disable = ["C0111"]  # Missing docstring - covered by flake8-docstrings
+
+# Flake8 configuration - Style and docstring checking
+[tool.flake8]
+max-line-length = 100
+extend-ignore = ["E203", "W503"]
+per-file-ignores = ["__init__.py:F401"]
+
+# MyPy configuration - Type checking
+[tool.mypy]
+python_version = "3.11"
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+ignore_missing_imports = true
+
+# Radon configuration - Complexity metrics
+[tool.radon]
+cc_min = "B"
+mi_min = "B"
+
+# Xenon configuration - Complexity enforcement
+[tool.xenon]
+max-absolute = "B"
+max-modules = "B"
+max-average = "A"
+
+# pytest configuration
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--cov=src",
+    "--cov-report=term-missing",
+    "--cov-report=html",
+    "--cov-fail-under=80",
+]
+
+# Coverage configuration
+[tool.coverage.run]
+source = ["src"]
+omit = ["*/tests/*", "*/__init__.py"]
+
+[tool.coverage.report]
+precision = 2
+show_missing = true
+skip_covered = false
