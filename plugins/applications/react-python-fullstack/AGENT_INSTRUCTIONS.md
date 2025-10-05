@@ -646,6 +646,30 @@ echo "✅ Terraform deployment skipped - installation complete without AWS infra
 
 ## Post-Installation
 
+### Phase 8: Install AI Agent Guide and Validation Script
+
+**Copy AGENTS.md template to repository**:
+```bash
+# Copy AGENTS.md template
+cp plugins/applications/react-python-fullstack/ai-content/AGENTS.md.template .ai/AGENTS.md
+
+echo "✅ AI agent guide installed at .ai/AGENTS.md"
+```
+
+**Copy validation script**:
+```bash
+# Create scripts directory if it doesn't exist
+mkdir -p scripts
+
+# Copy validation script
+cp plugins/applications/react-python-fullstack/project-content/scripts/validate-fullstack-setup.sh ./scripts/
+
+# Make executable
+chmod +x ./scripts/validate-fullstack-setup.sh
+
+echo "✅ Validation script installed at scripts/validate-fullstack-setup.sh"
+```
+
 ### Initial Setup
 
 ```bash
@@ -664,34 +688,57 @@ docker-compose run backend pytest
 docker-compose run frontend npm test
 
 # Run linting
-docker-compose run backend ruff check
-docker-compose run frontend npm run lint
+make lint-all
 ```
 
 ### Validation
 
-Run complete validation:
+**Run complete setup validation**:
 
 ```bash
-# Check all files created
-test -d backend/src && echo "✅ Backend source" || echo "❌ Missing backend/src/"
-test -d backend/tests && echo "✅ Backend tests" || echo "❌ Missing backend/tests/"
-test -d frontend/src && echo "✅ Frontend source" || echo "❌ Missing frontend/src/"
-test -f docker-compose.fullstack.yml && echo "✅ Docker compose" || echo "❌ Missing docker-compose.fullstack.yml"
-test -d .github/workflows && echo "✅ CI/CD workflows" || echo "❌ Missing .github/workflows/"
-test -f .ai/howtos/fullstack/README.md && echo "✅ Application how-tos" || echo "❌ Missing how-tos"
+# Run validation script to check all 15+ tools and infrastructure
+./scripts/validate-fullstack-setup.sh
 
+# For verbose output showing tool versions
+./scripts/validate-fullstack-setup.sh --verbose
+```
+
+The validation script checks:
+- ✅ All 9 backend tools (Ruff, Pylint, Flake8+plugins, MyPy, Bandit, Radon, Xenon, Safety, pip-audit)
+- ✅ All 6 frontend tools (ESLint+plugins, TypeScript, Vitest, React Testing Library, Playwright, npm audit)
+- ✅ All Makefile targets functional
+- ✅ Docker Compose configuration
+- ✅ CI/CD workflows
+- ✅ Optional features (UI scaffold, Terraform) if installed
+- ✅ Documentation completeness
+
+**Manual checks** (if services are running):
+
+```bash
 # Check services running
-docker-compose ps | grep -q "backend.*Up" && echo "✅ Backend running" || echo "❌ Backend not running"
-docker-compose ps | grep -q "frontend.*Up" && echo "✅ Frontend running" || echo "❌ Frontend not running"
-docker-compose ps | grep -q "db.*Up" && echo "✅ Database running" || echo "❌ Database not running"
+docker-compose ps
 
 # Check health endpoints
-curl -f http://localhost:8000/health && echo "✅ Backend health check" || echo "❌ Backend health check failed"
-curl -f http://localhost:5173 && echo "✅ Frontend accessible" || echo "❌ Frontend not accessible"
+curl http://localhost:8000/health
+curl http://localhost:5173
 
 # Check API documentation
-curl -f http://localhost:8000/docs && echo "✅ API docs accessible" || echo "❌ API docs not accessible"
+curl http://localhost:8000/docs
+```
+
+**Run quality gates**:
+
+```bash
+# Fast check (during development)
+make lint-backend   # ~3 seconds
+make lint-frontend  # ~3 seconds
+
+# Thorough check (before commit)
+make lint-all       # ~30 seconds
+
+# Full quality gate (before PR)
+make lint-full      # ~2 minutes (all 15+ tools)
+make test-all       # All tests with coverage
 ```
 
 ## Success Criteria

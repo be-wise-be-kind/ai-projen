@@ -51,6 +51,9 @@ structure:
     plugin_docs:
       react_python_fullstack:
         location: plugins/applications/react-python-fullstack/ai-content/docs/
+        production_standards:
+          - PRODUCTION_READY_STANDARDS.md
+        production_description: Production-ready standards for fullstack applications with comprehensive tooling and quality gates
         ui_docs:
           - UI_ARCHITECTURE.md
           - STYLING_SYSTEM.md
@@ -61,6 +64,9 @@ structure:
           - react-python-fullstack/DEPLOYMENT_GUIDE.md
           - react-python-fullstack/INFRASTRUCTURE_PRINCIPLES.md
         terraform_description: Terraform infrastructure architecture and deployment documentation
+        ai_agent_guide:
+          - AGENTS.md (template - copied to installed repositories)
+        ai_agent_description: Quick reference guide for AI agents working on fullstack applications
 
   howto:
     location: .ai/howto/
