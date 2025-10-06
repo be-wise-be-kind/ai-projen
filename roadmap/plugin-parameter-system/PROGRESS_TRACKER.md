@@ -76,7 +76,7 @@ Update react-python-fullstack meta-plugin to calculate and pass parameters to at
 |----|-------|--------|------------|------------|----------|-------|
 | PR1 | Define Plugin Parameter Standard | 🟢 Complete | 100% | Low | P0 | Standard defined with user input pattern |
 | PR2 | Update Python Plugin | 🟢 Complete | 100% | Medium | P0 | INSTALL_PATH parameter added (commit c124b88) |
-| PR3 | Update TypeScript Plugin | 🟡 Partial | 95% | Medium | P0 | Branch issues, needs recommit |
+| PR3 | Update TypeScript Plugin | 🟢 Complete | 100% | Medium | P0 | INSTALL_PATH parameter added (commit aefb1a2) |
 | PR4 | Update Docker Plugin | 🟢 Complete | 100% | Medium | P1 | LANGUAGES, SERVICES, INSTALL_PATH added (commit 1ba65ad) |
 | PR5 | Update Foundation Plugin | 🟢 Complete | 100% | Low | P1 | INSTALL_PATH parameter added (commit 43824fa) |
 | PR6 | Update Application Plugin | 🔴 Not Started | 0% | High | P0 | Passes parameters |
