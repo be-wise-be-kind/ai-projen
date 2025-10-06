@@ -134,38 +134,77 @@
 
    **STOP and WAIT for user's answer.**
 
-4. **After ALL three answers received**, proceed to create roadmap
+4. **After ALL three answers received**, proceed to create roadmap and calculate parameters
 
-2. Create roadmap file from template:
+2. Calculate parameter values:
+   ```bash
+   # Extract repository name and calculate paths
+   REPO_NAME=$(basename "${TARGET_REPO_PATH}")  # e.g., "teamgames.biz"
+   APP_NAME="${REPO_NAME%%.*}"                   # e.g., "teamgames"
+
+   # Calculate installation paths for atomic plugins
+   BACKEND_PATH="${APP_NAME}-app/backend"
+   FRONTEND_PATH="${APP_NAME}-app/frontend"
+   FOUNDATION_INSTALL_PATH="."
+   DOCKER_INSTALL_PATH=".docker"
+
+   # Calculate plugin parameters
+   LANGUAGES="python,typescript"
+   SERVICES="backend,frontend,database"
+
+   echo "✅ Parameters calculated:"
+   echo "   APP_NAME: ${APP_NAME}"
+   echo "   BACKEND_PATH: ${BACKEND_PATH}"
+   echo "   FRONTEND_PATH: ${FRONTEND_PATH}"
+   echo "   LANGUAGES: ${LANGUAGES}"
+   echo "   SERVICES: ${SERVICES}"
+   ```
+
+3. Create roadmap file from template:
    ```bash
    mkdir -p roadmap/react-python-fullstack-install
    cp .ai/templates/roadmap-meta-plugin-installation.md.template \
       roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
    ```
 
-3. Fill in template variables:
-   - `{{PLUGIN_NAME}}` → `react-python-fullstack`
-   - `{{TOTAL_PLUGINS}}` → `9`
-   - `{{TOTAL_PRS}}` → `9` (8 phases + 1 planning)
-   - `{{TARGET_REPO_PATH}}` → User's repository path
-   - `{{PROJECT_NAME}}` → Extracted from repository name
-   - `{{DOCKER_CHOICE}}` → User's answer
-   - `{{UI_SCAFFOLD_CHOICE}}` → User's answer
-   - `{{TERRAFORM_CHOICE}}` → User's answer
+4. Fill in template variables using sed:
+   ```bash
+   # Replace metadata variables
+   sed -i "s|{{PLUGIN_NAME}}|react-python-fullstack|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TOTAL_PLUGINS}}|9|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TOTAL_PRS}}|9|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TARGET_REPO_PATH}}|${TARGET_REPO_PATH}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
 
-4. Initialize PR status dashboard:
+   # Replace user choice variables
+   sed -i "s|{{DOCKER_CHOICE}}|${DOCKER_CHOICE}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{UI_SCAFFOLD_CHOICE}}|${UI_SCAFFOLD_CHOICE}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TERRAFORM_CHOICE}}|${TERRAFORM_CHOICE}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+
+   # Replace parameter variables (for plugin installation paths)
+   sed -i "s|{{PYTHON_INSTALL_PATH}}|${BACKEND_PATH}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TYPESCRIPT_INSTALL_PATH}}|${FRONTEND_PATH}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{FOUNDATION_INSTALL_PATH}}|${FOUNDATION_INSTALL_PATH}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{DOCKER_INSTALL_PATH}}|${DOCKER_INSTALL_PATH}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{LANGUAGES}}|${LANGUAGES}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{SERVICES}}|${SERVICES}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+
+   echo "✅ Template variables replaced with calculated values"
+   ```
+
+5. Initialize PR status dashboard:
    - Mark PR0 as ✅ Complete
    - Mark PRs 1-5, 8 as 🔴 Not Started
    - Mark PR6 as 🔴 Not Started or ⏭️ Skipped (based on UI choice)
    - Mark PR7 as 🔴 Not Started or ⏭️ Skipped (based on Terraform choice)
 
-5. Commit roadmap:
+6. Commit roadmap:
    ```bash
    git add roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
    git commit -m "chore: Create roadmap for react-python-fullstack installation"
    ```
 
-6. Inform user:
+7. Inform user:
    ```
    ✅ Roadmap created at: roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
 
@@ -259,9 +298,12 @@ docker compose version && echo "✅ Docker Compose" || echo "❌ Install Docker 
 
 ### Phase 1: Foundation Setup
 
+**NOTE**: When executed via roadmap (recommended), parameters calculated in PR0 will be passed to plugins. See roadmap template for parameter passing syntax.
+
 **1. Install foundation/ai-folder plugin**
 
 Follow: `plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md`
+  with INSTALL_PATH={{FOUNDATION_INSTALL_PATH}}
 
 Creates `.ai/` directory structure for AI navigation.
 
@@ -275,6 +317,7 @@ test -d .ai && echo "✅ .ai folder created" || echo "❌ Foundation plugin fail
 **2. Install languages/python plugin**
 
 Follow: `plugins/languages/python/core/AGENT_INSTRUCTIONS.md`
+  with INSTALL_PATH={{PYTHON_INSTALL_PATH}}
 
 Installs Python with FastAPI, SQLAlchemy, pytest, ruff, mypy, bandit.
 
@@ -325,6 +368,7 @@ poetry run pip-audit --version
 **3. Install languages/typescript plugin**
 
 Follow: `plugins/languages/typescript/core/AGENT_INSTRUCTIONS.md`
+  with INSTALL_PATH={{TYPESCRIPT_INSTALL_PATH}}
 
 Installs TypeScript with React, Vite, ESLint, Prettier, Vitest.
 
@@ -425,6 +469,9 @@ Then SKIP to Phase 4 (Standards Plugin Installation).
 **4. Install infrastructure/containerization/docker plugin**
 
 Follow: `plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md`
+  with LANGUAGES={{LANGUAGES}}
+  with SERVICES={{SERVICES}}
+  with INSTALL_PATH={{DOCKER_INSTALL_PATH}}
 
 **Options**:
 - Services: [backend, frontend, database]
