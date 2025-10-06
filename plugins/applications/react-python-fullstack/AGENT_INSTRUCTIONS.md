@@ -222,10 +222,33 @@
    sed -i "s|{{TOTAL_PRS}}|9|g" .roadmap/react-python-fullstack-install/PR_BREAKDOWN.md
    sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" .roadmap/react-python-fullstack-install/PR_BREAKDOWN.md
 
-   # AI_CONTEXT.md variables
+   # AI_CONTEXT.md - Fill all placeholders
    sed -i "s|{{FEATURE_NAME}}|react-python-fullstack installation|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
-   sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
-   sed -i "s|{{DESCRIPTION}}|Complete installation of React+Python fullstack application with Docker, CI/CD, and optional UI scaffold and Terraform|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{FEATURE_SCOPE}}|Complete installation of fullstack web application with all dependencies|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{FEATURE_OVERVIEW}}|Systematic installation of react-python-fullstack meta-plugin via up to 9 sequential PRs with user choices|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{DEPENDENCIES_LIST}}|ai-projen framework, Git, Python 3.11+, Node.js 18+, Docker, Poetry|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{EXPORTS_DESCRIPTION}}|Production-ready fullstack application with React frontend, FastAPI backend, Docker, CI/CD, optional UI and Terraform|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{ADDITIONAL_RELATIONS}}||g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{IMPLEMENTATION_APPROACH}}|Roadmap-based meta-plugin installation with user choices|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{DETAILED_OVERVIEW}}|The fullstack installation creates a complete web application with React+Vite frontend, FastAPI backend, PostgreSQL database, Docker Compose orchestration, CI/CD workflows, and optional UI scaffold and Terraform infrastructure. User choices in PR0 determine which optional features are installed.|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{PROJECT_BACKGROUND}}|Installing react-python-fullstack meta-plugin for ${APP_NAME} project|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{FEATURE_VISION_POINTS}}|Modern fullstack web app with React+TypeScript frontend, FastAPI+Python backend, PostgreSQL database, Docker deployment, GitHub Actions CI/CD, optional modern UI and AWS infrastructure|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{CURRENT_APP_CONTEXT}}|Initial setup - no application code exists yet|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{CORE_COMPONENTS}}|React frontend (Vite+TypeScript), FastAPI backend, PostgreSQL database, Docker Compose, GitHub Actions, optional UI scaffold, optional Terraform|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{USER_JOURNEY_STEPS}}|1. Run docker-compose up 2. Access frontend at localhost:3000 3. API at localhost:8000 4. Develop features 5. Deploy to AWS (if Terraform enabled)|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{ADDITIONAL_ARCHITECTURE_SECTION}}||g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{KEY_DECISIONS_SECTIONS}}|React+Vite (fast, modern), FastAPI (async, type-safe), Docker Compose (multi-service), User choices (UI/Terraform optional), Poetry (isolated Python deps), npm (frontend deps)|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{EXISTING_FEATURE_INTEGRATIONS}}|None - initial setup|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{ADDITIONAL_INTEGRATION_SECTIONS}}||g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{SUCCESS_METRICS}}|All required PRs complete, optional PRs complete or skipped per user choice, validation passes, services start, frontend and backend communicate|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{TECHNICAL_CONSTRAINTS}}|Python 3.11+ required, Node.js 18+ required, Docker required, Poetry required, Git required|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{PRIMARY_ACTION}}|executing PRs|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{PRIMARY_ACTION_GUIDANCE}}|Execute ONE PR at a time, respect user choices for optional PRs, validate, update tracker, commit, then STOP|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{SECONDARY_ACTION}}|following plugin instructions|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{SECONDARY_ACTION_GUIDANCE}}|Read entire AGENT_INSTRUCTIONS.md before starting, follow steps sequentially, validate after each step, handle multi-language setup correctly|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{COMMON_PATTERNS}}|Multi-language setup (Python in backend/, TypeScript in frontend/), Docker Compose orchestration, Environment variable management, API integration patterns|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{RISK_MITIGATION_STRATEGIES}}|Roadmap prevents shortcuts, User choices prevent unwanted features, Poetry prevents Python system corruption, Validation gates ensure service communication, Docker ensures consistent environments|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{FUTURE_ENHANCEMENTS}}|Post-installation: develop API endpoints, create React components, add database models, implement authentication, deploy to AWS|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
 
    echo "✅ Template variables replaced with calculated values"
    ```

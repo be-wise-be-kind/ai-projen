@@ -88,10 +88,33 @@
    sed -i "s|{{TOTAL_PRS}}|7|g" .roadmap/python-cli-install/PR_BREAKDOWN.md
    sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" .roadmap/python-cli-install/PR_BREAKDOWN.md
 
-   # AI_CONTEXT.md variables
+   # AI_CONTEXT.md - Fill all placeholders
    sed -i "s|{{FEATURE_NAME}}|python-cli installation|g" .roadmap/python-cli-install/AI_CONTEXT.md
-   sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" .roadmap/python-cli-install/AI_CONTEXT.md
-   sed -i "s|{{DESCRIPTION}}|Complete installation of Python CLI application plugin with all dependencies|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{FEATURE_SCOPE}}|Complete installation of Python CLI application with all dependencies|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{FEATURE_OVERVIEW}}|Systematic installation of python-cli meta-plugin via 7 sequential PRs|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{DEPENDENCIES_LIST}}|ai-projen framework, Git, Python 3.11+, Docker, Poetry|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{EXPORTS_DESCRIPTION}}|Production-ready Python CLI application with Click, Docker, CI/CD, testing|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{ADDITIONAL_RELATIONS}}||g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{IMPLEMENTATION_APPROACH}}|Roadmap-based meta-plugin installation|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{DETAILED_OVERVIEW}}|The python-cli installation creates a complete CLI application infrastructure with Click framework, comprehensive testing, linting, security scanning, Docker packaging, and CI/CD automation. Installation proceeds through 7 PRs: Planning, Foundation, Languages, Infrastructure, Standards, Application, Finalization.|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{PROJECT_BACKGROUND}}|Installing python-cli meta-plugin for ${APP_NAME} project|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{FEATURE_VISION_POINTS}}|Professional CLI application with Click, comprehensive tooling (Ruff, pytest, mypy), Docker packaging, CI/CD automation, security scanning, pre-commit hooks|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{CURRENT_APP_CONTEXT}}|Initial setup - no application code exists yet|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{CORE_COMPONENTS}}|CLI entrypoint (src/cli.py), configuration handler (src/config.py), test suite (tests/), Docker setup, CI/CD workflows|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{USER_JOURNEY_STEPS}}|1. Install via pip or Docker 2. Run CLI commands 3. Configure via YAML/JSON 4. Extend with new commands|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{ADDITIONAL_ARCHITECTURE_SECTION}}||g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{KEY_DECISIONS_SECTIONS}}|Click framework (mature, decorator-based), Poetry (isolated deps), Ruff (fast linting), Docker (cross-platform distribution)|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{EXISTING_FEATURE_INTEGRATIONS}}|None - initial setup|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{ADDITIONAL_INTEGRATION_SECTIONS}}||g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{SUCCESS_METRICS}}|All PRs complete, validation passes, CLI runs, tests pass, Docker builds|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{TECHNICAL_CONSTRAINTS}}|Python 3.11+ required, Poetry required, Docker required, Git required|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{PRIMARY_ACTION}}|executing PRs|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{PRIMARY_ACTION_GUIDANCE}}|Execute ONE PR at a time, validate, update tracker, commit, then STOP|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{SECONDARY_ACTION}}|following plugin instructions|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{SECONDARY_ACTION_GUIDANCE}}|Read entire AGENT_INSTRUCTIONS.md before starting, follow steps sequentially, validate after each step|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{COMMON_PATTERNS}}|State detection before changes, branching before installation, validation after installation, Make target organization|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{RISK_MITIGATION_STRATEGIES}}|Roadmap prevents shortcuts, Poetry prevents system corruption, validation gates ensure completeness, Git branches enable rollback|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{FUTURE_ENHANCEMENTS}}|Post-installation: develop CLI commands, add language-specific features, integrate with other tools|g" .roadmap/python-cli-install/AI_CONTEXT.md
 
    echo "✅ Template variables replaced with calculated values"
    ```
