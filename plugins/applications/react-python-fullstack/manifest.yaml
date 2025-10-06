@@ -40,14 +40,14 @@ dependencies:
     - foundation/ai-folder
     - languages/python
     - languages/typescript
-    - infrastructure/containerization/docker
+    - infrastructure/containerization/docker  # REQUIRED - Docker-first architecture
     - infrastructure/ci-cd/github-actions
-    - infrastructure/iac/terraform-aws
     - standards/security
     - standards/documentation
     - standards/pre-commit-hooks
 
   optional:
+    - infrastructure/iac/terraform-aws  # OPTIONAL - AWS deployment (ask user first)
     - standards/code-quality
 
 # What this application provides

@@ -1,0 +1,159 @@
+################################################################################
+# Makefile.lint - Docker-First Linting and Code Quality Targets
+################################################################################
+#
+# Comprehensive linting targets for backend (Python) and frontend (TypeScript/React)
+# Includes: code quality checks, type checking, security scanning, and formatting
+#
+# Docker-first approach: Uses dedicated linting containers from .docker/compose/lint.yml
+# Fallback: If Docker not available, falls back to host-based linting
+#
+
+.PHONY: lint lint-backend lint-frontend lint-all format format-backend format-frontend
+.PHONY: lint-ensure-containers lint-start lint-stop
+
+# Colors
+LINT_GREEN = \033[0;32m
+LINT_YELLOW = \033[0;33m
+LINT_RED = \033[0;31m
+LINT_CYAN = \033[0;36m
+LINT_NC = \033[0m
+
+# Detect which docker compose command to use (for CI compatibility)
+DOCKER_COMPOSE := $(shell which docker-compose 2>/dev/null || echo "docker compose")
+
+# Check if Docker is available
+HAS_DOCKER := $(shell docker ps >/dev/null 2>&1 && echo "yes" || echo "no")
+HAS_DOCKER_COMPOSE := $(shell test -f .docker/compose/lint.yml && echo "yes" || echo "no")
+USE_DOCKER := $(shell [ "$(HAS_DOCKER)" = "yes" ] && [ "$(HAS_DOCKER_COMPOSE)" = "yes" ] && echo "yes" || echo "no")
+
+# Ensure linting containers are running (auto-start if needed)
+lint-ensure-containers: ## Ensure linting containers are running
+ifeq ($(USE_DOCKER),yes)
+	@if ! docker ps | grep -q "{{PROJECT_NAME}}-python-linter-$(BRANCH_NAME)"; then \
+		echo "$(CYAN)Starting Python linting container...$(NC)"; \
+		$(DOCKER_COMPOSE) -f .docker/compose/lint.yml up -d python-linter; \
+	fi
+	@if ! docker ps | grep -q "{{PROJECT_NAME}}-js-linter-$(BRANCH_NAME)"; then \
+		echo "$(CYAN)Starting JS linting container...$(NC)"; \
+		$(DOCKER_COMPOSE) -f .docker/compose/lint.yml up -d js-linter; \
+	fi
+	@echo "$(LINT_GREEN)✓ Linting containers ready$(LINT_NC)"
+else
+	@echo "$(LINT_YELLOW)⚠ Docker not available, using host-based linting$(LINT_NC)"
+endif
+
+# Start dedicated linting containers (force start)
+lint-start: ## Start dedicated linting containers
+ifeq ($(USE_DOCKER),yes)
+	@echo "$(LINT_CYAN)Starting dedicated linting containers...$(LINT_NC)"
+	@$(DOCKER_COMPOSE) -f .docker/compose/lint.yml up -d --build
+	@echo "$(LINT_GREEN)✓ Linting containers started$(LINT_NC)"
+else
+	@echo "$(LINT_YELLOW)Docker not configured. Use host-based linting instead.$(LINT_NC)"
+endif
+
+# Stop dedicated linting containers
+lint-stop: ## Stop dedicated linting containers
+ifeq ($(USE_DOCKER),yes)
+	@echo "$(LINT_CYAN)Stopping dedicated linting containers...$(LINT_NC)"
+	@$(DOCKER_COMPOSE) -f .docker/compose/lint.yml down
+	@echo "$(LINT_GREEN)✓ Linting containers stopped$(LINT_NC)"
+else
+	@echo "$(LINT_YELLOW)Docker not configured.$(LINT_NC)"
+endif
+
+# Backend linting - Docker-first with host fallback
+lint-backend: ## Run backend linting (ruff, mypy, bandit)
+ifeq ($(USE_DOCKER),yes)
+	@$(MAKE) -s lint-ensure-containers
+	@echo "$(LINT_YELLOW)━━━ Python Linters (Docker) ━━━$(LINT_NC)"
+	@docker exec -u root {{PROJECT_NAME}}-python-linter-$(BRANCH_NAME) bash -c "cd /workspace/backend && \
+		mkdir -p /tmp/.cache/ruff /tmp/.cache/mypy && \
+		echo '• Ruff (format + lint)...' && RUFF_CACHE_DIR=/tmp/.cache/ruff ruff format --check app && RUFF_CACHE_DIR=/tmp/.cache/ruff ruff check app && \
+		echo '• MyPy...' && MYPY_CACHE_DIR=/tmp/.cache/mypy mypy app && \
+		echo '• Bandit...' && bandit -r app -q && \
+		echo '• Pylint...' && pylint app 2>&1 | tail -3 && \
+		echo '• Flake8...' && flake8 app --count" || (echo "$(LINT_RED)✗ Python linting failed$(LINT_NC)" && exit 1)
+	@echo "$(LINT_GREEN)✓ Backend linting passed$(LINT_NC)"
+else
+	@echo "$(LINT_CYAN)Running backend linting (host)...$(LINT_NC)"
+	@cd {{PROJECT_NAME}}-app/backend && poetry run ruff check app/ test/
+	@cd {{PROJECT_NAME}}-app/backend && poetry run mypy app/
+	@cd {{PROJECT_NAME}}-app/backend && poetry run bandit -r app/
+	@echo "$(LINT_GREEN)✓ Backend linting complete!$(LINT_NC)"
+endif
+
+# Frontend linting - Docker-first with host fallback
+lint-frontend: ## Run frontend linting (ESLint, Prettier, TypeScript)
+ifeq ($(USE_DOCKER),yes)
+	@$(MAKE) -s lint-ensure-containers
+	@echo "$(LINT_YELLOW)━━━ TypeScript/React Linters (Docker) ━━━$(LINT_NC)"
+	@docker exec {{PROJECT_NAME}}-js-linter-$(BRANCH_NAME) sh -c "cd /workspace/frontend && \
+		echo '• TypeScript...' && npm run type-check && \
+		echo '• ESLint...' && npm run lint && \
+		echo '• Prettier...' && npm run prettier:check" || (echo "$(LINT_RED)✗ Frontend linting failed$(LINT_NC)" && exit 1)
+	@echo "$(LINT_GREEN)✓ Frontend linting passed$(LINT_NC)"
+else
+	@echo "$(LINT_CYAN)Running frontend linting (host)...$(LINT_NC)"
+	@cd {{PROJECT_NAME}}-app/frontend && npm run lint
+	@cd {{PROJECT_NAME}}-app/frontend && npm run type-check
+	@cd {{PROJECT_NAME}}-app/frontend && npm run prettier:check
+	@echo "$(LINT_GREEN)✓ Frontend linting complete!$(LINT_NC)"
+endif
+
+# All linting
+lint-all: ## Run ALL linters (Python, JS/TS) in parallel
+ifeq ($(USE_DOCKER),yes)
+	@echo "$(LINT_CYAN)╔════════════════════════════════════════════════════════════╗$(LINT_NC)"
+	@echo "$(LINT_CYAN)║        Running ALL Linters (Docker, Parallel)             ║$(LINT_NC)"
+	@echo "$(LINT_CYAN)╚════════════════════════════════════════════════════════════╝$(LINT_NC)"
+	@echo ""
+	@$(MAKE) -s lint-ensure-containers
+	@$(MAKE) -j2 lint-backend lint-frontend || (echo "$(LINT_RED)✗ Linting failed$(LINT_NC)" && exit 1)
+	@echo ""
+	@echo "$(LINT_GREEN)✅ ALL linting checks passed!$(LINT_NC)"
+else
+	@echo "$(LINT_CYAN)Running all linting (host)...$(LINT_NC)"
+	@$(MAKE) lint-backend
+	@$(MAKE) lint-frontend
+	@echo "$(LINT_GREEN)✓ All linting complete!$(LINT_NC)"
+endif
+
+lint: lint-all ## Alias for lint-all
+
+# Backend formatting - Docker-first with host fallback
+format-backend: ## Format backend code (ruff)
+ifeq ($(USE_DOCKER),yes)
+	@$(MAKE) -s lint-ensure-containers
+	@echo "$(LINT_CYAN)Formatting backend code (Docker)...$(LINT_NC)"
+	@docker exec {{PROJECT_NAME}}-python-linter-$(BRANCH_NAME) bash -c "cd /workspace/backend && \
+		ruff format app test && \
+		ruff check --fix app test"
+	@echo "$(LINT_GREEN)✓ Backend formatting complete!$(LINT_NC)"
+else
+	@echo "$(LINT_CYAN)Formatting backend code (host)...$(LINT_NC)"
+	@cd {{PROJECT_NAME}}-app/backend && poetry run ruff format app/ test/
+	@cd {{PROJECT_NAME}}-app/backend && poetry run ruff check --fix app/ test/
+	@echo "$(LINT_GREEN)✓ Backend formatting complete!$(LINT_NC)"
+endif
+
+# Frontend formatting - Docker-first with host fallback
+format-frontend: ## Format frontend code (Prettier)
+ifeq ($(USE_DOCKER),yes)
+	@$(MAKE) -s lint-ensure-containers
+	@echo "$(LINT_CYAN)Formatting frontend code (Docker)...$(LINT_NC)"
+	@docker exec {{PROJECT_NAME}}-js-linter-$(BRANCH_NAME) sh -c "cd /workspace/frontend && \
+		npm run prettier:write && \
+		npm run lint:fix"
+	@echo "$(LINT_GREEN)✓ Frontend formatting complete!$(LINT_NC)"
+else
+	@echo "$(LINT_CYAN)Formatting frontend code (host)...$(LINT_NC)"
+	@cd {{PROJECT_NAME}}-app/frontend && npm run prettier:write
+	@cd {{PROJECT_NAME}}-app/frontend && npm run lint:fix
+	@echo "$(LINT_GREEN)✓ Frontend formatting complete!$(LINT_NC)"
+endif
+
+# All formatting
+format: format-backend format-frontend ## Format all code
+	@echo "$(LINT_GREEN)✓ All formatting complete!$(LINT_NC)"

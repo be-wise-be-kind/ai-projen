@@ -55,7 +55,7 @@ This creates:
 
 ### Step 3: Create index.yaml
 
-Copy `template/index.yaml.template` to `.ai/index.yaml` and replace variables:
+Copy `ai-content/templates/index.yaml.template` to `.ai/index.yaml` and replace variables:
 
 **Variables to replace:**
 - `{{PROJECT_NAME}}` → Actual project name
@@ -75,7 +75,7 @@ project:
 
 ### Step 4: Create layout.yaml
 
-Copy `template/layout.yaml.template` to `.ai/layout.yaml` and replace variables:
+Copy `ai-content/templates/layout.yaml.template` to `.ai/layout.yaml` and replace variables:
 
 **Variables to replace:**
 - `{{PROJECT_TYPE}}` → Actual project type
@@ -99,7 +99,7 @@ ai_navigation:
 
 ### Step 5: Create agents.md
 
-Copy `template/agents.md.template` to `agents.md` in the repository root and replace variables:
+Copy `ai-content/templates/agents.md.template` to `agents.md` in the repository root and replace variables:
 
 **Variables to replace:**
 - `{{PROJECT_NAME}}` → Actual project name

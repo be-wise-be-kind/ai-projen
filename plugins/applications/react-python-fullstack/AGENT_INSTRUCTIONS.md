@@ -38,7 +38,43 @@
 - Security scanning and pre-commit hooks
 - Complete documentation and how-to guides
 
+## How Meta-Plugins Work
+
+**CRITICAL CONCEPT**: This is a **meta-plugin** that orchestrates multiple atomic plugins.
+
+**What this means:**
+- This plugin does NOT contain pre-built infrastructure that can be copied wholesale
+- Each phase MUST execute its referenced plugin's AGENT_INSTRUCTIONS.md file
+- The `PROJECT_NAME-app/` directory contains APPLICATION CODE, not infrastructure
+- You CANNOT skip plugin installations just because application files exist
+
+**The "Follow:" directive is MANDATORY:**
+When you see: `Follow: plugins/some-plugin/AGENT_INSTRUCTIONS.md`
+- This means: Execute that plugin's installation completely
+- NOT: "This is optional" or "I can skip this"
+- NOT: "The files are already here, so I don't need to install it"
+
+**Example of WRONG reasoning:**
+❌ "The react-python-fullstack plugin has a PROJECT_NAME-app/ directory with backend/frontend code, so I can skip installing the Docker plugin and just copy the files."
+
+**Example of CORRECT reasoning:**
+✅ "Phase 3 says 'Follow: plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md' so I must execute the Docker plugin's installation process, which will create .docker/ folder, Dockerfiles, and docker-compose files. THEN in Phase 5, I'll copy the application code that uses this Docker infrastructure."
+
+---
+
 ## Installation Steps
+
+**CRITICAL: Execute ALL phases in sequential order. Do NOT skip any phase unless explicitly marked OPTIONAL.**
+
+**Phase Execution Order:**
+1. Phase 1: Foundation Setup - REQUIRED
+2. Phase 2: Language Plugin Installation - REQUIRED
+3. Phase 3: Docker Infrastructure Setup - REQUIRED (ASK USER FIRST)
+4. Phase 4: Standards Plugin Installation - REQUIRED
+5. Phase 5: Application-Specific Installation - REQUIRED
+6. Phase 6: Optional UI Scaffold (ask user)
+7. Phase 7: Optional Terraform (ask user)
+8. Phase 8: Post-Installation - REQUIRED
 
 ### Prerequisites Check
 
@@ -180,7 +216,51 @@ npm ls eslint-plugin-jsx-a11y
 npm ls @testing-library/react
 ```
 
-### Phase 3: Infrastructure Plugin Installation
+### Phase 3: Docker Infrastructure Setup (REQUIRED)
+
+**IMPORTANT: This phase is REQUIRED for production-ready applications.**
+
+**STOP and ASK THE USER:**
+
+Present this question to the user and WAIT for their response:
+
+```
+==========================================
+   Docker Infrastructure Setup (REQUIRED)
+==========================================
+
+This is a Docker-first application. All development, testing, and linting
+should happen in Docker containers for consistency and reproducibility.
+
+Would you like to set up Docker infrastructure? (Recommended: yes)
+
+If you choose 'yes':
+  - .docker/ folder with multi-stage Dockerfiles will be created
+  - docker-compose files for dev, lint, and test will be configured
+  - All Makefile targets will use 'docker compose run' commands
+  - Hot reload will work via volume mounts
+
+If you choose 'no':
+  - Host-based development (requires Python, Node.js, Poetry, npm on host)
+  - No container isolation or consistency guarantees
+  - Makefile targets will use direct 'poetry run' and 'npm run' commands
+
+Set up Docker infrastructure? (yes/no)
+```
+
+**If user answers "no":**
+Display this warning:
+```
+⚠️  WARNING: Skipping Docker setup. You will need to:
+   - Install Python 3.11+, Poetry, Node.js 18+, and npm on your host
+   - Manage dependencies manually with 'poetry install' and 'npm install'
+   - Run tests and linting on your host environment
+
+Docker setup can be added later by manually running the Docker plugin.
+```
+Then SKIP to Phase 4 (Standards Plugin Installation).
+
+**If user answers "yes" (RECOMMENDED), proceed with Docker installation:**
 
 **4. Install infrastructure/containerization/docker plugin**
 
@@ -272,51 +352,87 @@ test -f .pre-commit-config.yaml && echo "✅ Pre-commit configured" || echo "❌
 
 ### Phase 5: Application-Specific Installation
 
-**10. Copy Backend Starter Code**
+**CRITICAL CONTEXT**: You will be given a TARGET_REPO_PATH (e.g., `/home/stevejackson/Projects/teamgames.biz`). This directory ALREADY EXISTS. DO NOT create a directory with the same name as the repository - that would cause double-nesting (e.g., `teamgames.biz/teamgames.biz/`).
 
-Copy backend application from `plugins/applications/react-python-fullstack/project-content/backend/`:
+**10. Create Application Wrapper Directory**
+
+Create the `<app-name>-app/` wrapper directory INSIDE the target repository:
 
 ```bash
-# Copy backend configuration with comprehensive tooling
-cp plugins/applications/react-python-fullstack/project-content/backend/pyproject.toml.template ./backend/pyproject.toml
+# TARGET_REPO_PATH should be provided (e.g., /home/stevejackson/Projects/teamgames.biz)
+# Extract base name and strip domain extensions (.biz, .com, etc.)
+REPO_NAME=$(basename "${TARGET_REPO_PATH}")  # e.g., "teamgames.biz"
+APP_NAME="${REPO_NAME%%.*}"                   # e.g., "teamgames"
 
-# Copy backend source
-cp -r plugins/applications/react-python-fullstack/project-content/backend/src ./backend/
-cp -r plugins/applications/react-python-fullstack/project-content/backend/tests ./backend/
+# Create app wrapper INSIDE the target repo (not a nested repo directory!)
+mkdir -p "${TARGET_REPO_PATH}/${APP_NAME}-app"
 
-# Process templates (replace .template extension)
-for file in backend/src/**/*.template backend/tests/**/*.template; do
-  if [ -f "$file" ]; then
+echo "✅ Created ${TARGET_REPO_PATH}/${APP_NAME}-app/ wrapper directory"
+```
+
+**11. Copy Application Structure**
+
+Copy the complete application structure from plugin to target repository:
+
+```bash
+# Copy from ai-projen's literal "PROJECT_NAME-app" directory to target repo
+# Note: PROJECT_NAME-app is the actual directory name in the plugin, not a placeholder
+cp -r plugins/applications/react-python-fullstack/project-content/PROJECT_NAME-app/* "${TARGET_REPO_PATH}/${APP_NAME}-app/"
+
+echo "✅ Application structure copied to ${TARGET_REPO_PATH}/${APP_NAME}-app/"
+```
+
+**12. Process Template Files**
+
+Process all `.template` files by removing the extension:
+
+```bash
+# Process backend templates
+find "${TARGET_REPO_PATH}/${APP_NAME}-app/backend" -name "*.template" -type f | while read file; do
+  mv "$file" "${file%.template}"
+done
+
+# Process frontend templates
+find "${TARGET_REPO_PATH}/${APP_NAME}-app/frontend" -name "*.template" -type f | while read file; do
+  mv "$file" "${file%.template}"
+done
+
+echo "✅ Template files processed"
+```
+
+**13. Copy Root-Level Files**
+
+Copy root-level configuration files to target repository:
+
+```bash
+# Copy split Makefiles to target repo
+cp plugins/applications/react-python-fullstack/project-content/Makefile.template "${TARGET_REPO_PATH}/Makefile"
+cp plugins/applications/react-python-fullstack/project-content/Makefile.lint.template "${TARGET_REPO_PATH}/Makefile.lint"
+cp plugins/applications/react-python-fullstack/project-content/Makefile.test.template "${TARGET_REPO_PATH}/Makefile.test"
+cp plugins/applications/react-python-fullstack/project-content/Makefile.gh.template "${TARGET_REPO_PATH}/Makefile.gh"
+cp plugins/applications/react-python-fullstack/project-content/Makefile.infra.template "${TARGET_REPO_PATH}/Makefile.infra"
+
+# Copy environment files to target repo
+cp plugins/applications/react-python-fullstack/project-content/.env.example.template "${TARGET_REPO_PATH}/.env.example"
+cp plugins/applications/react-python-fullstack/project-content/.envrc.template "${TARGET_REPO_PATH}/.envrc"
+cp plugins/applications/react-python-fullstack/project-content/.actrc.template "${TARGET_REPO_PATH}/.actrc"
+cp plugins/applications/react-python-fullstack/project-content/.htmlhintrc.template "${TARGET_REPO_PATH}/.htmlhintrc"
+
+# Change to target repo to process templates
+cd "${TARGET_REPO_PATH}"
+
+# Remove .template extensions
+for file in Makefile*.template .env*.template .envrc.template .actrc.template .htmlhintrc.template; do
+  if [ -f "${file}" ]; then
     mv "$file" "${file%.template}"
   fi
 done
-```
 
-**11. Copy Frontend Starter Code**
+# Replace {{PROJECT_NAME}} placeholder in Makefiles and .env files with actual app name
+sed -i "s/{{PROJECT_NAME}}/${APP_NAME}/g" Makefile*
+sed -i "s/{{PROJECT_NAME}}/${APP_NAME}/g" .env.example
 
-Copy frontend application from `plugins/applications/react-python-fullstack/project-content/frontend/`:
-
-```bash
-# Copy frontend configuration with comprehensive tooling
-cp plugins/applications/react-python-fullstack/project-content/frontend/package.json.template ./frontend/package.json
-
-# Copy frontend source
-cp -r plugins/applications/react-python-fullstack/project-content/frontend/src ./frontend/
-
-# Process templates
-for file in frontend/src/**/*.template; do
-  if [ -f "$file" ]; then
-    mv "$file" "${file%.template}"
-  fi
-done
-```
-
-**12. Copy Production Makefile**
-
-Copy production-ready Makefile with comprehensive quality gates:
-
-```bash
-cp plugins/applications/react-python-fullstack/project-content/Makefile.template ./Makefile
+echo "✅ Root-level files copied and configured"
 ```
 
 **Validation**:
@@ -365,53 +481,37 @@ mkdir -p .ai/templates/fullstack
 cp plugins/applications/react-python-fullstack/ai-content/templates/*.template .ai/templates/fullstack/
 ```
 
-**14. Configure Application**
+**14. Configure Environment**
 
-Create environment files:
+Create .env file from .env.example at the root level:
 
 ```bash
-# Backend environment
-cat > backend/.env << 'EOF'
-# Database
-DATABASE_URL=postgresql://postgres:postgres@db:5432/app_db
+# Copy .env.example to .env in target repo
+cd "${TARGET_REPO_PATH}"
+cp .env.example .env
 
-# API
-API_HOST=0.0.0.0
-API_PORT=8000
-API_RELOAD=true
-
-# CORS
-CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-
-# Security
-SECRET_KEY=change-me-in-production
-ALGORITHM=HS256
-ACCESS_TOKEN_EXPIRE_MINUTES=30
-
-# Logging
-LOG_LEVEL=INFO
-EOF
-
-# Frontend environment
-cat > frontend/.env << 'EOF'
-VITE_API_URL=http://localhost:8000
-VITE_API_TIMEOUT=30000
-EOF
+echo "✅ Environment file created"
+echo "⚠️  IMPORTANT: Edit .env and fill in real values for your environment"
+echo "   - Database credentials"
+echo "   - API keys (Claude, GitHub, etc.)"
+echo "   - AWS configuration (if deploying)"
 ```
 
 **15. Install Dependencies**
 
 ```bash
 # Install backend dependencies
-docker-compose run --rm backend poetry install
+cd "${TARGET_REPO_PATH}/${APP_NAME}-app/backend" && poetry install && cd -
 
 # Install frontend dependencies
-docker-compose run --rm frontend npm install
+cd "${TARGET_REPO_PATH}/${APP_NAME}-app/frontend" && npm install && cd -
+
+echo "✅ All dependencies installed"
 ```
 
 **16. Update .ai/index.yaml**
 
-Add application entry to `.ai/index.yaml`:
+Add application entry to `.ai/index.yaml` with correct structure paths:
 
 ```yaml
 application:
@@ -421,11 +521,22 @@ application:
     frontend: React + TypeScript + Vite
     database: PostgreSQL
     infrastructure: Docker + AWS ECS
+  structure:
+    application:
+      location: ${APP_NAME}-app/
+      description: Main application wrapper
+      components:
+        backend: ${APP_NAME}-app/backend/app/
+        frontend: ${APP_NAME}-app/frontend/src/
+        backend_tests: ${APP_NAME}-app/backend/test/
+        frontend_tests: ${APP_NAME}-app/frontend/src/test/
   architecture: .ai/docs/fullstack-architecture.md
   integration: .ai/docs/api-frontend-integration.md
   howtos: .ai/howtos/fullstack/
   templates: .ai/templates/fullstack/
 ```
+
+Note: Replace `${APP_NAME}` with the actual app name (e.g., "teamgames") when updating the file.
 
 ### Phase 6: Optional UI Scaffold (Optional)
 

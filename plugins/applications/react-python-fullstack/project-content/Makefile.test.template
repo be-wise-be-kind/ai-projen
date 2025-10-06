@@ -1,0 +1,165 @@
+################################################################################
+# Makefile.test - Docker-First Testing Targets
+################################################################################
+#
+# Comprehensive testing targets for backend and frontend with coverage support
+# Includes: unit tests, integration tests, coverage reports, and watch mode
+#
+# Docker-first approach: Uses dedicated test containers from .docker/compose/test.yml
+# Fallback: If Docker not available, falls back to host-based testing
+#
+
+.PHONY: test test-backend test-frontend test-all test-coverage test-watch
+.PHONY: test-ensure-containers test-start test-stop
+
+# Colors
+TEST_GREEN = \033[0;32m
+TEST_YELLOW = \033[0;33m
+TEST_RED = \033[0;31m
+TEST_CYAN = \033[0;36m
+TEST_NC = \033[0m
+
+# Detect which docker compose command to use (for CI compatibility)
+DOCKER_COMPOSE := $(shell which docker-compose 2>/dev/null || echo "docker compose")
+
+# Check if Docker is available
+HAS_DOCKER := $(shell docker ps >/dev/null 2>&1 && echo "yes" || echo "no")
+HAS_DOCKER_COMPOSE := $(shell test -f .docker/compose/test.yml && echo "yes" || echo "no")
+USE_DOCKER := $(shell [ "$(HAS_DOCKER)" = "yes" ] && [ "$(HAS_DOCKER_COMPOSE)" = "yes" ] && echo "yes" || echo "no")
+
+# Ensure test containers are running (auto-start if needed)
+test-ensure-containers: ## Ensure test containers are running
+ifeq ($(USE_DOCKER),yes)
+	@if ! docker ps | grep -q "{{PROJECT_NAME}}-python-tester-$(BRANCH_NAME)"; then \
+		echo "$(TEST_CYAN)Starting Python test container...$(TEST_NC)"; \
+		$(DOCKER_COMPOSE) -f .docker/compose/test.yml up -d python-tester; \
+	fi
+	@if ! docker ps | grep -q "{{PROJECT_NAME}}-js-tester-$(BRANCH_NAME)"; then \
+		echo "$(TEST_CYAN)Starting JS test container...$(TEST_NC)"; \
+		$(DOCKER_COMPOSE) -f .docker/compose/test.yml up -d js-tester; \
+	fi
+	@echo "$(TEST_GREEN)✓ Test containers ready$(TEST_NC)"
+else
+	@echo "$(TEST_YELLOW)⚠ Docker not available, using host-based testing$(TEST_NC)"
+endif
+
+# Start dedicated test containers (force start)
+test-start: ## Start dedicated test containers
+ifeq ($(USE_DOCKER),yes)
+	@echo "$(TEST_CYAN)Starting dedicated test containers...$(TEST_NC)"
+	@$(DOCKER_COMPOSE) -f .docker/compose/test.yml up -d --build
+	@echo "$(TEST_GREEN)✓ Test containers started$(TEST_NC)"
+else
+	@echo "$(TEST_YELLOW)Docker not configured. Use host-based testing instead.$(TEST_NC)"
+endif
+
+# Stop dedicated test containers
+test-stop: ## Stop dedicated test containers
+ifeq ($(USE_DOCKER),yes)
+	@echo "$(TEST_CYAN)Stopping dedicated test containers...$(TEST_NC)"
+	@$(DOCKER_COMPOSE) -f .docker/compose/test.yml down
+	@echo "$(TEST_GREEN)✓ Test containers stopped$(TEST_NC)"
+else
+	@echo "$(TEST_YELLOW)Docker not configured.$(TEST_NC)"
+endif
+
+# Backend testing - Docker-first with host fallback
+test-backend: ## Run backend tests
+ifeq ($(USE_DOCKER),yes)
+	@$(MAKE) -s test-ensure-containers
+	@echo "$(TEST_YELLOW)━━━ Python Tests (Docker) ━━━$(TEST_NC)"
+	@docker exec {{PROJECT_NAME}}-python-tester-$(BRANCH_NAME) bash -c "cd /app && \
+		pytest test/ -v --tb=short" || (echo "$(TEST_RED)✗ Backend tests failed$(TEST_NC)" && exit 1)
+	@echo "$(TEST_GREEN)✓ Backend tests passed$(TEST_NC)"
+else
+	@echo "$(TEST_CYAN)Running backend tests (host)...$(TEST_NC)"
+	@cd {{PROJECT_NAME}}-app/backend && poetry run pytest test/ -v
+	@echo "$(TEST_GREEN)✓ Backend tests complete!$(TEST_NC)"
+endif
+
+# Backend coverage - Docker-first with host fallback
+test-backend-coverage: ## Run backend tests with coverage
+ifeq ($(USE_DOCKER),yes)
+	@$(MAKE) -s test-ensure-containers
+	@echo "$(TEST_CYAN)Running backend tests with coverage (Docker)...$(TEST_NC)"
+	@docker exec {{PROJECT_NAME}}-python-tester-$(BRANCH_NAME) bash -c "cd /app && \
+		pytest test/ --cov=app --cov-report=html --cov-report=term --cov-report=term-missing"
+	@echo "$(TEST_GREEN)✓ Backend coverage report generated!$(TEST_NC)"
+	@echo "$(TEST_YELLOW)View report: {{PROJECT_NAME}}-app/backend/htmlcov/index.html$(TEST_NC)"
+else
+	@echo "$(TEST_CYAN)Running backend tests with coverage (host)...$(TEST_NC)"
+	@cd {{PROJECT_NAME}}-app/backend && poetry run pytest test/ --cov=app --cov-report=html --cov-report=term
+	@echo "$(TEST_GREEN)✓ Backend coverage report generated!$(TEST_NC)"
+	@echo "$(TEST_YELLOW)View report: {{PROJECT_NAME}}-app/backend/htmlcov/index.html$(TEST_NC)"
+endif
+
+# Frontend testing - Docker-first with host fallback
+test-frontend: ## Run frontend tests
+ifeq ($(USE_DOCKER),yes)
+	@$(MAKE) -s test-ensure-containers
+	@echo "$(TEST_YELLOW)━━━ Frontend Tests (Docker) ━━━$(TEST_NC)"
+	@docker exec {{PROJECT_NAME}}-js-tester-$(BRANCH_NAME) sh -c "cd /app && \
+		npm test -- --run" || (echo "$(TEST_RED)✗ Frontend tests failed$(TEST_NC)" && exit 1)
+	@echo "$(TEST_GREEN)✓ Frontend tests passed$(TEST_NC)"
+else
+	@echo "$(TEST_CYAN)Running frontend tests (host)...$(TEST_NC)"
+	@cd {{PROJECT_NAME}}-app/frontend && npm test
+	@echo "$(TEST_GREEN)✓ Frontend tests complete!$(TEST_NC)"
+endif
+
+# Frontend coverage - Docker-first with host fallback
+test-frontend-coverage: ## Run frontend tests with coverage
+ifeq ($(USE_DOCKER),yes)
+	@$(MAKE) -s test-ensure-containers
+	@echo "$(TEST_CYAN)Running frontend tests with coverage (Docker)...$(TEST_NC)"
+	@docker exec {{PROJECT_NAME}}-js-tester-$(BRANCH_NAME) sh -c "cd /app && \
+		npm run test:coverage"
+	@echo "$(TEST_GREEN)✓ Frontend coverage report generated!$(TEST_NC)"
+	@echo "$(TEST_YELLOW)View report: {{PROJECT_NAME}}-app/frontend/coverage/index.html$(TEST_NC)"
+else
+	@echo "$(TEST_CYAN)Running frontend tests with coverage (host)...$(TEST_NC)"
+	@cd {{PROJECT_NAME}}-app/frontend && npm run test:coverage
+	@echo "$(TEST_GREEN)✓ Frontend coverage report generated!$(TEST_NC)"
+	@echo "$(TEST_YELLOW)View report: {{PROJECT_NAME}}-app/frontend/coverage/index.html$(TEST_NC)"
+endif
+
+# All tests - Docker-first with parallel execution
+test-all: ## Run all tests (Python + Frontend) in parallel
+ifeq ($(USE_DOCKER),yes)
+	@echo "$(TEST_CYAN)╔════════════════════════════════════════════════════════════╗$(TEST_NC)"
+	@echo "$(TEST_CYAN)║           Running ALL Tests (Docker, Parallel)            ║$(TEST_NC)"
+	@echo "$(TEST_CYAN)╚════════════════════════════════════════════════════════════╝$(TEST_NC)"
+	@echo ""
+	@$(MAKE) -s test-ensure-containers
+	@$(MAKE) -j2 test-backend test-frontend || (echo "$(TEST_RED)✗ Tests failed$(TEST_NC)" && exit 1)
+	@echo ""
+	@echo "$(TEST_GREEN)✅ ALL tests passed!$(TEST_NC)"
+else
+	@echo "$(TEST_CYAN)Running all tests (host)...$(TEST_NC)"
+	@$(MAKE) test-backend
+	@$(MAKE) test-frontend
+	@echo "$(TEST_GREEN)✓ All tests complete!$(TEST_NC)"
+endif
+
+test: test-all ## Alias for test-all
+
+# Test coverage for both - Docker-first
+test-coverage: ## Run all tests with coverage
+ifeq ($(USE_DOCKER),yes)
+	@$(MAKE) -s test-ensure-containers
+	@$(MAKE) -j2 test-backend-coverage test-frontend-coverage
+	@echo "$(TEST_GREEN)✓ All coverage reports generated!$(TEST_NC)"
+else
+	@$(MAKE) test-backend-coverage
+	@$(MAKE) test-frontend-coverage
+	@echo "$(TEST_GREEN)✓ All coverage reports generated!$(TEST_NC)"
+endif
+
+# Watch mode for development (host-only, requires terminal interaction)
+test-watch-backend: ## Run backend tests in watch mode (host-only)
+	@echo "$(TEST_CYAN)Running backend tests in watch mode (host)...$(TEST_NC)"
+	@cd {{PROJECT_NAME}}-app/backend && poetry run pytest-watch test/
+
+test-watch-frontend: ## Run frontend tests in watch mode (host-only)
+	@echo "$(TEST_CYAN)Running frontend tests in watch mode (host)...$(TEST_NC)"
+	@cd {{PROJECT_NAME}}-app/frontend && npm run test:watch

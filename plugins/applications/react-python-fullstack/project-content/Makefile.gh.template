@@ -1,0 +1,33 @@
+################################################################################
+# Makefile.gh - GitHub Integration Targets
+################################################################################
+#
+# GitHub CLI integration targets for PR management and CI monitoring
+#
+
+.PHONY: gh-watch-checks gh-pr-create
+
+# Variables
+GH_PR_NUMBER := $(shell gh pr view --json number -q .number 2>/dev/null)
+GH_CURRENT_BRANCH := $(shell git branch --show-current)
+
+# Colors
+GH_GREEN = \033[0;32m
+GH_YELLOW = \033[0;33m
+GH_RED = \033[0;31m
+GH_CYAN = \033[0;36m
+GH_NC = \033[0m
+
+# Watch GitHub Actions checks
+gh-watch-checks: ## Watch GitHub Actions checks for current PR
+	@if [ -z "$(GH_PR_NUMBER)" ]; then \
+		echo "$(GH_RED)❌ No PR found for current branch$(GH_NC)"; \
+		exit 1; \
+	fi
+	@echo "$(GH_CYAN)Watching checks for PR #$(GH_PR_NUMBER)...$(GH_NC)"
+	@gh pr checks $(GH_PR_NUMBER) --watch
+
+# Create pull request
+gh-pr-create: ## Create a pull request for current branch
+	@echo "$(GH_CYAN)Creating pull request...$(GH_NC)"
+	@gh pr create --fill
