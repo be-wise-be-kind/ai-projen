@@ -18,6 +18,32 @@
 
 ---
 
+## Parameters
+
+This plugin accepts the following parameters:
+
+- **INSTALL_PATH** - Directory where .ai/ folder will be created
+  - Default: `.` (current directory)
+  - Example: `backend/`, `services/api/`, `app/`
+  - Notes: Creates the .ai/ directory and agents.md at this location
+
+### Usage
+
+Standalone (creates .ai/ in current directory):
+```
+Follow: plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md
+```
+
+With custom path:
+```
+Follow: plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md
+  with INSTALL_PATH=backend/
+```
+
+Result: Creates `backend/.ai/` directory structure and `backend/agents.md`
+
+---
+
 ## Prerequisites
 
 Before installing this plugin, ensure:
@@ -40,22 +66,23 @@ Ask the user (or infer from context):
 
 ### Step 2: Create .ai Directory Structure
 
-Create the following directory structure in the repository root:
+Set the installation path and create the directory structure:
 
 ```bash
-mkdir -p .ai/{docs,features,howto,templates}
+INSTALL_PATH="${INSTALL_PATH:-.}"
+mkdir -p "${INSTALL_PATH}/.ai/{docs,features,howto,templates}"
 ```
 
 This creates:
-- `.ai/` - Root AI navigation folder
-- `.ai/docs/` - Project documentation for AI understanding
-- `.ai/features/` - Feature-specific documentation
-- `.ai/howto/` - How-to guides for common tasks
-- `.ai/templates/` - Reusable file templates
+- `${INSTALL_PATH}/.ai/` - Root AI navigation folder
+- `${INSTALL_PATH}/.ai/docs/` - Project documentation for AI understanding
+- `${INSTALL_PATH}/.ai/features/` - Feature-specific documentation
+- `${INSTALL_PATH}/.ai/howto/` - How-to guides for common tasks
+- `${INSTALL_PATH}/.ai/templates/` - Reusable file templates
 
 ### Step 3: Create index.yaml
 
-Copy `ai-content/templates/index.yaml.template` to `.ai/index.yaml` and replace variables:
+Copy `ai-content/templates/index.yaml.template` to `${INSTALL_PATH}/.ai/index.yaml` and replace variables:
 
 **Variables to replace:**
 - `{{PROJECT_NAME}}` → Actual project name
@@ -75,7 +102,7 @@ project:
 
 ### Step 4: Create layout.yaml
 
-Copy `ai-content/templates/layout.yaml.template` to `.ai/layout.yaml` and replace variables:
+Copy `ai-content/templates/layout.yaml.template` to `${INSTALL_PATH}/.ai/layout.yaml` and replace variables:
 
 **Variables to replace:**
 - `{{PROJECT_TYPE}}` → Actual project type
@@ -99,7 +126,7 @@ ai_navigation:
 
 ### Step 5: Create agents.md
 
-Copy `ai-content/templates/agents.md.template` to `agents.md` in the repository root and replace variables:
+Copy `ai-content/templates/agents.md.template` to `${INSTALL_PATH}/agents.md` and replace variables:
 
 **Variables to replace:**
 - `{{PROJECT_NAME}}` → Actual project name
@@ -111,11 +138,11 @@ Copy `ai-content/templates/agents.md.template` to `agents.md` in the repository 
 - `{{DOCS_DIR}}` → Documentation directory (e.g., docs/)
 - `{{LOG_DIR}}` → Log directory (e.g., logs/ or leave blank)
 
-**Important**: This file goes in the **repository root**, not in `.ai/`. It's the primary entry point for AI agents.
+**Important**: This file goes in `${INSTALL_PATH}/` (at the same level as `.ai/`). It's the primary entry point for AI agents.
 
 ### Step 6: Create Initial Documentation
 
-Create `.ai/docs/PROJECT_CONTEXT.md` with:
+Create `${INSTALL_PATH}/.ai/docs/PROJECT_CONTEXT.md` with:
 
 ```markdown
 # {{PROJECT_NAME}} - Project Context
@@ -160,15 +187,16 @@ Replace `{{PROJECT_NAME}}` with the actual project name and fill in the sections
 Verify the following structure exists:
 
 ```
-agents.md              # Repository root - primary agent entry point
-.ai/
-├── docs/
-│   └── PROJECT_CONTEXT.md
-├── features/
-├── howto/
-├── templates/
-├── index.yaml
-└── layout.yaml
+${INSTALL_PATH}/
+├── agents.md              # Primary agent entry point
+└── .ai/
+    ├── docs/
+    │   └── PROJECT_CONTEXT.md
+    ├── features/
+    ├── howto/
+    ├── templates/
+    ├── index.yaml
+    └── layout.yaml
 ```
 
 ### Step 8: Verify YAML Files
@@ -177,15 +205,15 @@ Ensure both YAML files parse correctly:
 
 ```bash
 # Check if YAML is valid (should produce no errors)
-python3 -c "import yaml; yaml.safe_load(open('.ai/index.yaml'))"
-python3 -c "import yaml; yaml.safe_load(open('.ai/layout.yaml'))"
+python3 -c "import yaml; yaml.safe_load(open('${INSTALL_PATH}/.ai/index.yaml'))"
+python3 -c "import yaml; yaml.safe_load(open('${INSTALL_PATH}/.ai/layout.yaml'))"
 ```
 
 Or if Python is not available:
 ```bash
 # Basic syntax check (look for obvious errors)
-cat .ai/index.yaml
-cat .ai/layout.yaml
+cat "${INSTALL_PATH}/.ai/index.yaml"
+cat "${INSTALL_PATH}/.ai/layout.yaml"
 ```
 
 ## Post-Installation
@@ -255,10 +283,10 @@ This plugin works standalone without the orchestrator:
 ## Success Criteria
 
 Installation is successful when:
-- ✅ `agents.md` exists in repository root with project-specific content
-- ✅ `.ai/` directory exists
+- ✅ `${INSTALL_PATH}/agents.md` exists with project-specific content
+- ✅ `${INSTALL_PATH}/.ai/` directory exists
 - ✅ All subdirectories (docs, features, howto, templates) exist
-- ✅ `index.yaml` exists and parses correctly
-- ✅ `layout.yaml` exists and parses correctly
-- ✅ `PROJECT_CONTEXT.md` exists with project-specific content
+- ✅ `${INSTALL_PATH}/.ai/index.yaml` exists and parses correctly
+- ✅ `${INSTALL_PATH}/.ai/layout.yaml` exists and parses correctly
+- ✅ `${INSTALL_PATH}/.ai/docs/PROJECT_CONTEXT.md` exists with project-specific content
 - ✅ User understands the purpose of agents.md and the .ai folder
