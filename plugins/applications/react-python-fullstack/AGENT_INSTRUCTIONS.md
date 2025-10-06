@@ -38,27 +38,21 @@
 - Security scanning and pre-commit hooks
 - Complete documentation and how-to guides
 
-## How Meta-Plugins Work
+## How This Meta-Plugin Works
 
-**CRITICAL CONCEPT**: This is a **meta-plugin** that orchestrates multiple atomic plugins.
+**IMPORTANT**: This is a **meta-plugin** that orchestrates the installation of 9+ atomic plugins in a specific order.
 
 **What this means:**
-- This plugin does NOT contain pre-built infrastructure that can be copied wholesale
-- Each phase MUST execute its referenced plugin's AGENT_INSTRUCTIONS.md file
-- The `PROJECT_NAME-app/` directory contains APPLICATION CODE, not infrastructure
-- You CANNOT skip plugin installations just because application files exist
+- Each "Follow:" directive MUST be executed - you cannot skip plugin installations
+- The `PROJECT_NAME-app/` directory contains APPLICATION CODE that depends on infrastructure
+- Infrastructure (`.docker/`, CI/CD configs, etc.) is created by executing the plugins in Phases 1-4
+- Application code (Phase 5) will NOT work without the infrastructure from Phases 1-4
 
-**The "Follow:" directive is MANDATORY:**
-When you see: `Follow: plugins/some-plugin/AGENT_INSTRUCTIONS.md`
-- This means: Execute that plugin's installation completely
-- NOT: "This is optional" or "I can skip this"
-- NOT: "The files are already here, so I don't need to install it"
+**Common mistake to avoid:**
+❌ WRONG: "I see PROJECT_NAME-app/ has backend/frontend code, so I'll skip plugin installations and just copy the files"
+✅ CORRECT: "I must execute all 'Follow:' directives in Phases 1-4 to create infrastructure, THEN copy application code in Phase 5"
 
-**Example of WRONG reasoning:**
-❌ "The react-python-fullstack plugin has a PROJECT_NAME-app/ directory with backend/frontend code, so I can skip installing the Docker plugin and just copy the files."
-
-**Example of CORRECT reasoning:**
-✅ "Phase 3 says 'Follow: plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md' so I must execute the Docker plugin's installation process, which will create .docker/ folder, Dockerfiles, and docker-compose files. THEN in Phase 5, I'll copy the application code that uses this Docker infrastructure."
+**Reference**: See AGENTS.md "Critical Rules for Repository Assistant Mode" for general guidance on following plugin instructions.
 
 ---
 
@@ -75,6 +69,29 @@ When you see: `Follow: plugins/some-plugin/AGENT_INSTRUCTIONS.md`
 6. Phase 6: Optional UI Scaffold (ask user)
 7. Phase 7: Optional Terraform (ask user)
 8. Phase 8: Post-Installation - REQUIRED
+
+**How to Track Progress with Todo Items:**
+
+Create separate todo items for EACH phase. Do NOT create a single "Execute react-python-fullstack plugin installation" item.
+
+**WRONG:**
+```
+☐ Execute react-python-fullstack plugin installation
+```
+
+**CORRECT:**
+```
+☐ Phase 1: Install foundation/ai-folder plugin
+☐ Phase 2: Install Python and TypeScript language plugins
+☐ Phase 3: Ask user about Docker, then install Docker plugin
+☐ Phase 4: Install standards plugins (security, docs, pre-commit)
+☐ Phase 5: Copy application structure and configure
+☐ Phase 6: Ask user about UI scaffold (optional)
+☐ Phase 7: Ask user about Terraform (optional)
+☐ Phase 8: Validate installation and create AGENTS.md
+```
+
+This ensures you execute each phase sequentially and don't skip steps.
 
 ### Prerequisites Check
 

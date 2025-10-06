@@ -216,13 +216,74 @@ Actions:
 
 ### Critical Rules for Repository Assistant Mode
 
-1. **NEVER work directly on main branch** - Always create feature branch per plugin instructions
-2. **ALWAYS validate prerequisites** before starting
-3. **FOLLOW plugin AGENT_INSTRUCTIONS.md EXACTLY** - No improvisation
-4. **ASK for clarification** if intent is ambiguous
-5. **REPORT results** with clear next steps for user
-6. **EXIT early** if prerequisites not met
-7. **PRESERVE existing code** in upgrade scenarios - never break working functionality
+#### Core Behavioral Rules
+
+**⚠️ ANTI-SHORTCUT WARNING:**
+
+If you are thinking any of the following, STOP immediately:
+- "I can just copy the files and get this working quickly"
+- "I'll skip asking the user to save time"
+- "The end result is the same, so I can skip steps"
+- "Following all these steps is too slow, let me take a shortcut"
+- "I see the final application files, so I don't need to run the plugins"
+- "This is taking too long, I need to wrap it up"
+- "We are using too many tokens, I should stop or skip steps"
+
+**You are about to make a critical error that will create a broken installation.**
+
+**Token usage and time are NOT valid reasons to skip steps.** The user expects:
+- Complete, correct installations even if they take time
+- All questions to be asked even if it requires more tokens
+- Full process adherence regardless of token count or duration
+
+**Why shortcuts ALWAYS fail:**
+1. **Missing Infrastructure**: Plugins create infrastructure (like `.docker/` folders, CI/CD configs, etc.) that application code depends on - copying files WITHOUT running plugins creates broken systems
+2. **User Control**: Users MUST be asked about optional features - skipping questions violates their autonomy
+3. **Repeatability**: Shortcuts create unpredictable, non-repeatable results
+4. **Hidden Dependencies**: Plugin execution order matters - shortcuts break dependency chains
+
+**The correct priority order is:**
+1. FIRST: Follow instructions exactly as written
+2. SECOND: Ask all required questions
+3. THIRD: Execute all steps in order
+4. LAST: Achieve the end goal
+
+**Process correctness > Speed > End result**
+
+#### Mandatory Directives
+
+1. **"Follow:" directive is MANDATORY**
+   - When you see: `Follow: plugins/some-plugin/AGENT_INSTRUCTIONS.md`
+   - This means: Execute that plugin's installation completely
+   - NOT: "This is optional" or "I can skip this" or "Files exist, so I don't need to"
+
+2. **"ASK USER" means STOP and ASK**
+   - When instructions say "Ask the user" or "STOP and ASK THE USER"
+   - You MUST stop execution and present the question to the user
+   - You MUST wait for their response before proceeding
+   - Do NOT assume answers or skip questions to "save time"
+
+3. **Create granular todo items for multi-phase tasks**
+   - For meta-plugins or complex installations, create separate todo items for EACH phase
+   - WRONG: `☐ Execute react-python-fullstack plugin installation`
+   - CORRECT:
+     ```
+     ☐ Phase 1: Install foundation plugin
+     ☐ Phase 2: Install language plugins
+     ☐ Phase 3: Ask user about Docker, then install if yes
+     ☐ Phase 4: Install standards plugins
+     ...
+     ```
+
+#### General Rules
+
+4. **NEVER work directly on main branch** - Always create feature branch per plugin instructions
+5. **ALWAYS validate prerequisites** before starting
+6. **FOLLOW plugin AGENT_INSTRUCTIONS.md EXACTLY** - No improvisation, no shortcuts
+7. **ASK for clarification** if intent is ambiguous
+8. **REPORT results** with clear next steps for user
+9. **EXIT early** if prerequisites not met
+10. **PRESERVE existing code** in upgrade scenarios - never break working functionality
 
 ---
 
