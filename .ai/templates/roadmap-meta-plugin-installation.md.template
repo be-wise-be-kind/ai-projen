@@ -143,19 +143,25 @@ grep "DOCKER_CHOICE" roadmap/{{PLUGIN_NAME}}-install/PROGRESS_TRACKER.md && echo
 
 **Objective**: Create `.ai/` directory structure for AI navigation
 
-**Instructions**: Follow `plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md`
-
 **Key Steps**:
 1. Create feature branch: `git checkout -b feature/pr1-foundation`
-2. Execute foundation plugin installation
-3. Validate .ai/ folder exists with index.yaml, layout.yaml
-4. Update this PROGRESS_TRACKER.md: mark PR1 as ✅ Complete
+2. Create installation directory:
+   ```bash
+   mkdir -p {{FOUNDATION_INSTALL_PATH}}
+   ```
+3. Execute foundation plugin:
+   ```
+   Follow: plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md
+     with INSTALL_PATH={{FOUNDATION_INSTALL_PATH}}
+   ```
+4. Validate .ai/ folder exists with index.yaml, layout.yaml
+5. Update this PROGRESS_TRACKER.md: mark PR1 as ✅ Complete
 
 **Validation**:
 ```bash
-test -d .ai && echo "✅ .ai folder created"
-test -f .ai/index.yaml && echo "✅ index.yaml exists"
-test -f .ai/layout.yaml && echo "✅ layout.yaml exists"
+test -d {{FOUNDATION_INSTALL_PATH}}.ai && echo "✅ .ai folder created"
+test -f {{FOUNDATION_INSTALL_PATH}}.ai/index.yaml && echo "✅ index.yaml exists"
+test -f {{FOUNDATION_INSTALL_PATH}}.ai/layout.yaml && echo "✅ layout.yaml exists"
 ```
 
 **Mark complete when**: All validation passes, PROGRESS_TRACKER updated
@@ -166,30 +172,43 @@ test -f .ai/layout.yaml && echo "✅ layout.yaml exists"
 
 **Objective**: Install Python and TypeScript language tooling
 
-**Instructions**:
-1. Follow `plugins/languages/python/core/AGENT_INSTRUCTIONS.md`
-2. Follow `plugins/languages/typescript/core/AGENT_INSTRUCTIONS.md`
-
 **Key Steps**:
 1. Create feature branch: `git checkout -b feature/pr2-languages`
-2. Execute Python plugin installation
-3. Execute TypeScript plugin installation
-4. Validate pyproject.toml and package.json exist
-5. Update PROGRESS_TRACKER.md: mark PR2 as ✅ Complete
+2. Create language directories:
+   ```bash
+   mkdir -p {{PYTHON_INSTALL_PATH}}
+   mkdir -p {{TYPESCRIPT_INSTALL_PATH}}
+   ```
+3. Install Python:
+   ```
+   Follow: plugins/languages/python/core/AGENT_INSTRUCTIONS.md
+     with INSTALL_PATH={{PYTHON_INSTALL_PATH}}
+   ```
+4. Install TypeScript:
+   ```
+   Follow: plugins/languages/typescript/core/AGENT_INSTRUCTIONS.md
+     with INSTALL_PATH={{TYPESCRIPT_INSTALL_PATH}}
+   ```
+5. Validate configuration files exist in correct locations
+6. Update PROGRESS_TRACKER.md: mark PR2 as ✅ Complete
 
 **Validation**:
 ```bash
-# Verify configuration files created (this PR creates configs, NOT installs dependencies)
-test -f pyproject.toml && echo "✅ pyproject.toml created"
-test -f package.json && echo "✅ package.json created"
-test -f tsconfig.json && echo "✅ tsconfig.json created"
-test -f .flake8 && echo "✅ Python linter configs created"
+# Verify configuration files created in subdirectories
+test -f {{PYTHON_INSTALL_PATH}}pyproject.toml && echo "✅ pyproject.toml created"
+test -f {{TYPESCRIPT_INSTALL_PATH}}package.json && echo "✅ package.json created"
+test -f {{TYPESCRIPT_INSTALL_PATH}}tsconfig.json && echo "✅ tsconfig.json created"
+test -f {{PYTHON_INSTALL_PATH}}.flake8 && echo "✅ Python linter configs created"
+
+# Verify NO configuration files at root (critical check)
+! test -f pyproject.toml && echo "✅ No root pyproject.toml"
+! test -f package.json && echo "✅ No root package.json"
 
 # Note: Poetry and npm should already be installed (verified in Prerequisites Check)
 # Dependencies will be installed in PR5 when application structure exists
 ```
 
-**Mark complete when**: All config files exist, PROGRESS_TRACKER updated
+**Mark complete when**: All config files exist in correct locations, no root configs, PROGRESS_TRACKER updated
 
 ---
 
@@ -199,22 +218,26 @@ test -f .flake8 && echo "✅ Python linter configs created"
 
 **Condition**: Only execute if user chose "Docker Infrastructure = yes" in PR0
 
-**Instructions**: Follow `plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md`
-
 **Key Steps**:
 1. Create feature branch: `git checkout -b feature/pr3-docker`
-2. Execute Docker plugin installation
+2. Execute Docker plugin:
+   ```
+   Follow: plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md
+     with LANGUAGES={{LANGUAGES}}
+     with SERVICES={{SERVICES}}
+     with INSTALL_PATH={{DOCKER_INSTALL_PATH}}
+   ```
 3. Validate .docker/ folder and docker-compose.yml exist
 4. Update PROGRESS_TRACKER.md: mark PR3 as ✅ Complete or ⏭️ Skipped
 
 **Validation**:
 ```bash
 # Verify Docker infrastructure files created
-test -d .docker && echo "✅ .docker folder created"
-test -f .docker/dockerfiles/Dockerfile.backend && echo "✅ Backend Dockerfile exists"
-test -f .docker/dockerfiles/Dockerfile.frontend && echo "✅ Frontend Dockerfile exists"
-test -f .docker/compose/lint.yml && echo "✅ Lint compose file exists"
-test -f .docker/compose/test.yml && echo "✅ Test compose file exists"
+test -d {{DOCKER_INSTALL_PATH}} && echo "✅ .docker folder created"
+test -f {{DOCKER_INSTALL_PATH}}dockerfiles/Dockerfile.backend && echo "✅ Backend Dockerfile exists"
+test -f {{DOCKER_INSTALL_PATH}}dockerfiles/Dockerfile.frontend && echo "✅ Frontend Dockerfile exists"
+test -f {{DOCKER_INSTALL_PATH}}compose/lint.yml && echo "✅ Lint compose file exists"
+test -f {{DOCKER_INSTALL_PATH}}compose/test.yml && echo "✅ Test compose file exists"
 
 # Note: Docker Compose tool availability was verified in Prerequisites Check
 ```

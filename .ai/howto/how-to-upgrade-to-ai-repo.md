@@ -66,6 +66,89 @@ This workflow safely adds AI-ready patterns by:
 
 ---
 
+## Using Plugin Parameters
+
+Plugins accept optional parameters to customize installation behavior. When upgrading existing repositories, parameters are especially valuable for integrating AI patterns into your established directory structure without disrupting existing layouts.
+
+**Parameter Syntax**:
+```
+Follow: plugins/path/to/plugin/AGENT_INSTRUCTIONS.md
+  with PARAM_NAME=value
+  with ANOTHER_PARAM=value
+```
+
+**Key Points**:
+- **All parameters are optional** - Every parameter has a sensible default
+- **Plugins work standalone** - You can install plugins without providing any parameters
+- **Documentation in AGENT_INSTRUCTIONS.md** - Each plugin documents its accepted parameters in its AGENT_INSTRUCTIONS.md file
+- **Integration flexibility** - Parameters help plugins adapt to your existing structure
+
+**Common Parameter Examples for Upgrades**:
+
+**Installing Python tooling in existing backend directory**:
+```
+Follow: plugins/languages/python/core/AGENT_INSTRUCTIONS.md
+  with INSTALL_PATH=src/backend/
+```
+This creates `src/backend/pyproject.toml` alongside your existing Python code, rather than at root.
+
+**Installing TypeScript tooling where your frontend already lives**:
+```
+Follow: plugins/languages/typescript/core/AGENT_INSTRUCTIONS.md
+  with INSTALL_PATH=client/
+```
+This creates `client/package.json` and `client/tsconfig.json` in your existing frontend directory.
+
+**Adding Docker to multi-language existing project**:
+```
+Follow: plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md
+  with LANGUAGES=python,typescript
+  with SERVICES=api,webapp,worker
+  with INSTALL_PATH=.docker/
+```
+This generates Dockerfiles for your existing languages and creates docker-compose matching your service architecture.
+
+**When to Use Parameters (Upgrades)**:
+- Your code is already organized in subdirectories
+- Adding tooling to existing multi-language project
+- Preserving established directory conventions
+- Avoiding root-level config file conflicts
+- Matching team's existing layout patterns
+
+**When to Skip Parameters (Upgrades)**:
+- Simple single-language project with root configs
+- Default plugin behavior matches current structure
+- First time testing plugin (learn default behavior first)
+- Planning to restructure anyway
+
+**Finding Available Parameters**:
+To see what parameters a plugin accepts, read its AGENT_INSTRUCTIONS.md:
+```bash
+# Example: Check Python plugin parameters
+cat /path/to/ai-projen/plugins/languages/python/core/AGENT_INSTRUCTIONS.md | grep -A 10 "## Parameters"
+
+# Example: Check Docker plugin parameters
+cat /path/to/ai-projen/plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md | grep -A 10 "## Parameters"
+```
+
+Each plugin's AGENT_INSTRUCTIONS.md contains a "Parameters" section with:
+- Complete list of accepted parameters
+- Default value for each parameter
+- Usage examples showing common scenarios
+
+**Using Parameters During Config Merges**:
+When merging plugin configs with your existing configs, parameters help place new files where they make sense:
+```bash
+# If your existing pyproject.toml is at src/pyproject.toml
+# Use INSTALL_PATH=src/ so plugin enhances existing location
+Follow: plugins/languages/python/core/AGENT_INSTRUCTIONS.md
+  with INSTALL_PATH=src/
+
+# Then merge plugin's config with your existing src/pyproject.toml
+```
+
+---
+
 ## Steps
 
 ### Step 1: Create Safety Backup
