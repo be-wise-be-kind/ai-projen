@@ -68,10 +68,73 @@
 **How it works:**
 
 ### Step 1: Create Installation Roadmap (PR0)
-1. Ask user ALL questions upfront:
-   - "Set up Docker infrastructure? (yes/no)"
-   - "Install UI scaffold? (yes/no)"
-   - "Deploy to AWS with Terraform? (yes/no)"
+
+**Ask user questions ONE AT A TIME. Wait for each answer before asking the next question.**
+
+1. **Question 1: Docker Infrastructure (REQUIRED)**
+
+   Present this question and WAIT for user's answer:
+   ```
+   Docker Infrastructure Setup (REQUIRED for Production)
+
+   This is a Docker-first application. All development, testing, and linting
+   should happen in Docker containers for consistency and reproducibility.
+
+   Would you like to set up Docker infrastructure? (Recommended: yes)
+
+   If 'yes':
+   - .docker/ folder with multi-stage Dockerfiles will be created
+   - docker-compose files for dev, lint, and test will be configured
+   - All Makefile targets will use 'docker compose run' commands
+   - Hot reload will work via volume mounts
+
+   If 'no':
+   - Host-based development (requires Python, Node.js, Poetry, npm on host)
+   - No container isolation or consistency guarantees
+   - Makefile targets will use direct 'poetry run' and 'npm run' commands
+
+   Set up Docker infrastructure? (yes/no)
+   ```
+
+   **STOP and WAIT for user's answer. Do NOT ask the next question yet.**
+
+2. **Question 2: UI Scaffold (OPTIONAL)**
+
+   After receiving Docker answer, present this question and WAIT:
+   ```
+   Modern UI Scaffold (Optional)
+
+   Would you like to install a modern UI scaffold with:
+   - Hero banner with feature cards
+   - Principles banner with modal popups
+   - Tabbed navigation with 3 blank starter tabs
+   - Responsive design (mobile + desktop)
+
+   Install UI scaffold? (yes/no)
+   ```
+
+   **STOP and WAIT for user's answer. Do NOT ask the next question yet.**
+
+3. **Question 3: Terraform Deployment (OPTIONAL)**
+
+   After receiving UI scaffold answer, present this question and WAIT:
+   ```
+   Terraform AWS Deployment (Optional)
+
+   Would you like to set up AWS deployment infrastructure using Terraform?
+
+   This will add:
+   - Terraform workspaces (bootstrap, base) for multi-environment deployment
+   - AWS infrastructure (VPC, ECR, ECS, ALB, RDS)
+   - Makefile.infra for Docker-based Terraform operations
+   - Complete deployment documentation and how-tos
+
+   Deploy to AWS with Terraform? (yes/no)
+   ```
+
+   **STOP and WAIT for user's answer.**
+
+4. **After ALL three answers received**, proceed to create roadmap
 
 2. Create roadmap file from template:
    ```bash
