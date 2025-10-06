@@ -43,6 +43,16 @@ This document breaks down the {{FEATURE_NAME}} feature into manageable, atomic P
 ### Documentation Standards
 {{DOCUMENTATION_STANDARDS}}
 
+### Progress Tracking Standards
+After completing each PR:
+1. **Record commit hash in PROGRESS_TRACKER.md**:
+   - Get the short commit hash: `git log --oneline -1`
+   - Add to Notes column in PR Status Dashboard
+   - Format: "Brief description (commit abc1234)"
+   - Example: "INSTALL_PATH parameter added (commit c124b88)"
+2. This creates a clear audit trail of when each PR was completed
+3. Makes it easy to reference specific changes or revert if needed
+
 ### Security Considerations
 {{SECURITY_CONSIDERATIONS}}
 

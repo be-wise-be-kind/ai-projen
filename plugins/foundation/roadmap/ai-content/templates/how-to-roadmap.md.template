@@ -227,15 +227,23 @@ Go to `PR_BREAKDOWN.md` and find the PR number from PROGRESS_TRACKER.md. Follow 
 **After completing each PR**, update:
 
 1. Change PR status from 🔴 Not Started → 🟢 Complete
-2. Add completion percentage
-3. Add any notes or learnings
-4. Update "Next PR to Implement" to the next PR
-5. Update overall progress percentage
-6. Commit the changes
+2. **Add commit hash to Notes column**:
+   ```bash
+   # Get the short commit hash from the PR you just completed
+   git log --oneline -1
+
+   # Add to Notes in format: "Description (commit abc1234)"
+   # Example: "INSTALL_PATH parameter added (commit c124b88)"
+   ```
+3. Add completion percentage (100%)
+4. Add any additional notes or learnings
+5. Update "Next PR to Implement" to the next PR
+6. Update overall progress percentage
+7. Commit the changes
 
 Example update:
 ```markdown
-| PR1 | Setup Infrastructure | 🟢 Complete | 100% | Low | P0 | Completed 2025-01-15 |
+| PR1 | Setup Infrastructure | 🟢 Complete | 100% | Low | P0 | Infrastructure setup complete (commit a1b2c3d) |
 ```
 
 ## Completing a Roadmap

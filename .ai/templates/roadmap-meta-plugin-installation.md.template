@@ -59,10 +59,12 @@
 **After completing this PR**:
 1. Run validation commands listed in PR instructions
 2. Mark PR as ✅ Complete in "PR Status Dashboard" below
-3. Update "Current PR" to next PR number
-4. Commit this updated PROGRESS_TRACKER.md
-5. Merge PR branch to main
-6. User will then request next PR execution
+3. **Add commit hash to Notes column**: Get short hash with `git log --oneline -1`
+   - Format: "Description (commit abc1234)"
+4. Update "Current PR" to next PR number
+5. Commit this updated PROGRESS_TRACKER.md
+6. Merge PR branch to main
+7. User will then request next PR execution
 
 ---
 
