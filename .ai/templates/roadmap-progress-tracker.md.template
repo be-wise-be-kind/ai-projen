@@ -100,11 +100,15 @@ roadmap/{{FEATURE_FOLDER}}/
 
 After completing each PR:
 1. Update the PR status to 🟢 Complete
-2. Fill in completion percentage
-3. Add any important notes or blockers
-4. Update the "Next PR to Implement" section
-5. Update overall progress percentage
-6. Commit changes to the progress document
+2. Fill in completion percentage (100%)
+3. **Add commit hash to Notes column**: Use format "Description (commit abc1234)"
+   - Get short commit hash: `git log --oneline -1` shows most recent commit
+   - Example: "INSTALL_PATH parameter added (commit c124b88)"
+   - Example: "Parameter placeholders added (commit a7fa797)"
+4. Add any important notes or blockers
+5. Update the "Next PR to Implement" section
+6. Update overall progress percentage
+7. Commit changes to the progress document
 
 ## 📝 Notes for AI Agents
 
