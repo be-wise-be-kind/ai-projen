@@ -35,7 +35,7 @@ ai_guidance:
         is_howto_guide: "→ .ai/howto/ (step-by-step procedural guides starting with 'how-to-')"
         is_conceptual_doc: "→ .ai/docs/ (architecture, standards, philosophy, specifications)"
         is_plugin_specific: "→ plugins/{category}/{name}/README.md"
-        is_roadmap: "→ roadmap/{feature}/"
+        is_roadmap: "→ .roadmap/{feature}/"
 
       examples:
         howto_folder:
@@ -182,14 +182,14 @@ linter_rules:
         - 'test_'
         - '_test\.'
 
-    roadmap/:
+    .roadmap/:
       description: "Implementation roadmaps"
       allow:
-        - '^roadmap/ROADMAP\.md$'
-        - '^roadmap/[^/]+/PROGRESS_TRACKER\.md$'
-        - '^roadmap/[^/]+/AI_CONTEXT\.md$'
-        - '^roadmap/[^/]+/PR_BREAKDOWN\.md$'
-        - '^roadmap/[^/]+/.*\.md$'
+        - '^\.roadmap/ROADMAP\.md$'
+        - '^\.roadmap/[^/]+/PROGRESS_TRACKER\.md$'
+        - '^\.roadmap/[^/]+/AI_CONTEXT\.md$'
+        - '^\.roadmap/[^/]+/PR_BREAKDOWN\.md$'
+        - '^\.roadmap/[^/]+/.*\.md$'
       deny:
         - '\.py$'
         - '\.js$'
@@ -226,7 +226,7 @@ linter_rules:
         - '^plugins/.*/README\.md$'
         - '^plugins/.*/AGENT_INSTRUCTIONS\.md$'
         - '^plugins/.*/docs/.*\.md$'
-        - '^roadmap/.*\.md$'
+        - '^\.roadmap/.*\.md$'
 
     yaml_files:
       patterns:

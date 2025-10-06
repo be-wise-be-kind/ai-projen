@@ -1,7 +1,7 @@
 <!--
 Purpose: Template for generating the roadmap workflow guide (how-to-roadmap.md)
 
-Scope: Used by roadmap plugin to create how-to-roadmap.md in .roadmaps/ directory during installation
+Scope: Used by roadmap plugin to create how-to-roadmap.md in .roadmap/ directory during installation
 
 Overview: Generates the how-to-roadmap.md guide that provides comprehensive instructions for using roadmaps
     in the project. Covers when to use roadmaps, how to create them, roadmap lifecycle management, and best
@@ -15,8 +15,8 @@ Placeholders:
     - Required: yes
 
 Usage:
-  1. Copy template to repository's .roadmaps/ directory:
-     cp plugins/foundation/roadmap/ai-content/templates/how-to-roadmap.md.template .roadmaps/how-to-roadmap.md
+  1. Copy template to repository's .roadmap/ directory:
+     cp plugins/foundation/roadmap/ai-content/templates/how-to-roadmap.md.template .roadmap/how-to-roadmap.md
 
   2. Replace all placeholders with project-specific values
 
@@ -99,7 +99,7 @@ PLANNING → IN-PROGRESS → COMPLETE
 ```
 
 ### 1. Planning Phase
-**Location**: `.roadmaps/planning/[feature-name]/`
+**Location**: `.roadmap/planning/[feature-name]/`
 
 Activities:
 - Create roadmap from templates
@@ -109,7 +109,7 @@ Activities:
 - Review and refine plan
 
 ### 2. In-Progress Phase
-**Location**: `.roadmaps/in-progress/[feature-name]/`
+**Location**: `.roadmap/in-progress/[feature-name]/`
 
 Activities:
 - Implement PRs sequentially
@@ -119,7 +119,7 @@ Activities:
 - Adjust plan if needed
 
 ### 3. Complete Phase
-**Location**: `.roadmaps/complete/[feature-name]/`
+**Location**: `.roadmap/complete/[feature-name]/`
 
 Activities:
 - Archive completed roadmap
@@ -132,7 +132,7 @@ Activities:
 ### Step 1: Create Roadmap Directory
 
 ```bash
-mkdir -p .roadmaps/planning/[feature-name]
+mkdir -p .roadmap/planning/[feature-name]
 ```
 
 Replace `[feature-name]` with your feature name (use kebab-case, e.g., `user-authentication`).
@@ -140,9 +140,9 @@ Replace `[feature-name]` with your feature name (use kebab-case, e.g., `user-aut
 ### Step 2: Copy Templates
 
 ```bash
-cp .ai/templates/roadmap-progress-tracker.md.template .roadmaps/planning/[feature-name]/PROGRESS_TRACKER.md
-cp .ai/templates/roadmap-pr-breakdown.md.template .roadmaps/planning/[feature-name]/PR_BREAKDOWN.md
-cp .ai/templates/roadmap-ai-context.md.template .roadmaps/planning/[feature-name]/AI_CONTEXT.md
+cp .ai/templates/roadmap-progress-tracker.md.template .roadmap/planning/[feature-name]/PROGRESS_TRACKER.md
+cp .ai/templates/roadmap-pr-breakdown.md.template .roadmap/planning/[feature-name]/PR_BREAKDOWN.md
+cp .ai/templates/roadmap-ai-context.md.template .roadmap/planning/[feature-name]/AI_CONTEXT.md
 ```
 
 ### Step 3: Fill in Placeholders
@@ -193,7 +193,7 @@ Review the roadmap for:
 When ready to start implementation:
 
 ```bash
-mv .roadmaps/planning/[feature-name] .roadmaps/in-progress/
+mv .roadmap/planning/[feature-name] .roadmap/in-progress/
 ```
 
 ## Continuing an Existing Roadmap
@@ -201,7 +201,7 @@ mv .roadmaps/planning/[feature-name] .roadmaps/in-progress/
 ### Step 1: Find Active Roadmaps
 
 ```bash
-ls .roadmaps/in-progress/
+ls .roadmap/in-progress/
 ```
 
 ### Step 2: Read PROGRESS_TRACKER.md
@@ -209,7 +209,7 @@ ls .roadmaps/in-progress/
 **Always read this document FIRST:**
 
 ```bash
-cat .roadmaps/in-progress/[feature-name]/PROGRESS_TRACKER.md
+cat .roadmap/in-progress/[feature-name]/PROGRESS_TRACKER.md
 ```
 
 Key sections to review:
@@ -259,7 +259,7 @@ When all PRs are implemented and tested:
 ### Step 2: Move to Complete
 
 ```bash
-mv .roadmaps/in-progress/[feature-name] .roadmaps/complete/
+mv .roadmap/in-progress/[feature-name] .roadmap/complete/
 ```
 
 ### Step 3: Update Documentation
@@ -281,7 +281,7 @@ When user says:
 **AI Agent Actions**:
 1. Read this guide (how-to-roadmap.md)
 2. Ask user for feature details
-3. Create roadmap in `.roadmaps/planning/[feature-name]/`
+3. Create roadmap in `.roadmap/planning/[feature-name]/`
 4. Use the three templates
 5. Help user break down into PRs
 6. Review and refine together
@@ -294,7 +294,7 @@ When user says:
 - "Resume work on..."
 
 **AI Agent Actions**:
-1. Check `.roadmaps/in-progress/` for active roadmaps
+1. Check `.roadmap/in-progress/` for active roadmaps
 2. Read the roadmap's PROGRESS_TRACKER.md FIRST
 3. Go to "Next PR to Implement" section
 4. Reference PR_BREAKDOWN.md for detailed steps
@@ -331,7 +331,7 @@ When user says:
 ## Troubleshooting
 
 ### Issue: Can't find active roadmaps
-**Check**: `.roadmaps/in-progress/` directory
+**Check**: `.roadmap/in-progress/` directory
 **Solution**: If empty, no roadmaps are active. Check planning/ or complete/
 
 ### Issue: PROGRESS_TRACKER.md doesn't show next PR
@@ -354,7 +354,7 @@ When user says:
 
 ### Directory Structure
 ```
-.roadmaps/in-progress/user-authentication/
+.roadmap/in-progress/user-authentication/
 ├── PROGRESS_TRACKER.md    # Current: PR3 - OAuth Integration
 ├── PR_BREAKDOWN.md        # 5 PRs total with detailed steps
 └── AI_CONTEXT.md          # Security architecture, auth flow
@@ -375,8 +375,8 @@ When user says:
 
 - **Roadmap Templates**: `.ai/templates/roadmap-*.md.template`
 - **Workflow Documentation**: `.ai/docs/ROADMAP_WORKFLOW.md`
-- **Active Roadmaps**: `.roadmaps/in-progress/`
-- **Completed Roadmaps**: `.roadmaps/complete/` (reference examples)
+- **Active Roadmaps**: `.roadmap/in-progress/`
+- **Completed Roadmaps**: `.roadmap/complete/` (reference examples)
 
 ---
 

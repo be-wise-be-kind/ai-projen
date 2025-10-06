@@ -96,15 +96,15 @@
 
 | PR | Phase | Title | Status | Dependencies | Notes |
 |----|-------|-------|--------|--------------|-------|
-| PR0 | Planning | Ask user questions & create roadmap | {{PR0_STATUS}} | None | MUST be completed first |
-| PR1 | Foundation | Install foundation/ai-folder plugin | {{PR1_STATUS}} | PR0 complete | Creates .ai/ structure |
-| PR2 | Languages | Install Python & TypeScript plugins | {{PR2_STATUS}} | PR1 complete | Creates pyproject.toml, package.json |
-| PR3 | Docker | Install Docker infrastructure | {{PR3_STATUS}} | PR2 complete | Creates .docker/, docker-compose.yml |
-| PR4 | Standards | Install security, docs, pre-commit plugins | {{PR4_STATUS}} | PR3 complete | Sets up quality gates |
-| PR5 | Application | Copy application structure & configure | {{PR5_STATUS}} | PR4 complete | Installs app code |
-| PR6 | UI (optional) | Install UI scaffold | {{PR6_STATUS}} | PR5 complete | Only if user chose "yes" |
-| PR7 | Terraform (optional) | Install Terraform infrastructure | {{PR7_STATUS}} | PR5 complete | Only if user chose "yes" |
-| PR8 | Finalization | Validate installation & create AGENTS.md | {{PR8_STATUS}} | All previous complete | Final validation |
+| PR0 | Planning | {{PR0_TITLE}} | {{PR0_STATUS}} | None | MUST be completed first |
+| PR1 | Foundation | {{PR1_TITLE}} | {{PR1_STATUS}} | PR0 complete | {{PR1_NOTES}} |
+| PR2 | Languages | {{PR2_TITLE}} | {{PR2_STATUS}} | PR1 complete | {{PR2_NOTES}} |
+| PR3 | Infrastructure | {{PR3_TITLE}} | {{PR3_STATUS}} | PR2 complete | {{PR3_NOTES}} |
+| PR4 | Standards | {{PR4_TITLE}} | {{PR4_STATUS}} | PR3 complete | {{PR4_NOTES}} |
+| PR5 | Application | {{PR5_TITLE}} | {{PR5_STATUS}} | PR4 complete | {{PR5_NOTES}} |
+| PR6 | {{PR6_PHASE}} | {{PR6_TITLE}} | {{PR6_STATUS}} | PR5 complete | {{PR6_NOTES}} |
+| PR7 | {{PR7_PHASE}} | {{PR7_TITLE}} | {{PR7_STATUS}} | PR5 complete | {{PR7_NOTES}} |
+| PR8 | {{PR8_PHASE}} | {{PR8_TITLE}} | {{PR8_STATUS}} | All previous complete | {{PR8_NOTES}} |
 
 ### Status Legend
 - 🔴 Not Started
@@ -126,15 +126,15 @@
 3. Present Terraform deployment question to user
 4. Record answers in "User Choices" section above
 5. Update PR status dashboard based on answers (mark skipped PRs)
-6. Create this PROGRESS_TRACKER.md in `roadmap/{{PLUGIN_NAME}}-install/`
+6. Create this PROGRESS_TRACKER.md in `.roadmap/{{PLUGIN_NAME}}-install/`
 
 **Validation**:
 ```bash
 # Verify roadmap created
-test -f roadmap/{{PLUGIN_NAME}}-install/PROGRESS_TRACKER.md && echo "✅ Roadmap created"
+test -f .roadmap/{{PLUGIN_NAME}}-install/PROGRESS_TRACKER.md && echo "✅ Roadmap created"
 
 # Verify user choices recorded
-grep "DOCKER_CHOICE" roadmap/{{PLUGIN_NAME}}-install/PROGRESS_TRACKER.md && echo "✅ Choices recorded"
+grep "DOCKER_CHOICE" .roadmap/{{PLUGIN_NAME}}-install/PROGRESS_TRACKER.md && echo "✅ Choices recorded"
 ```
 
 **Mark complete when**: All 3 questions answered, roadmap file created with user choices

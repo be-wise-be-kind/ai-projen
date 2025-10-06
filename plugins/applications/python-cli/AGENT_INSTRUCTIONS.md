@@ -13,6 +13,180 @@
 
 ---
 
+## Installation Approach: Roadmap-Based (REQUIRED)
+
+**CRITICAL**: This meta-plugin installation MUST use a roadmap-based approach.
+
+**Why?**
+- Meta-plugin installations are complex (6 phases, 7+ plugin installations)
+- Agents tend to rush, skip phases, or take shortcuts when given all phases at once
+- Breaking into separate PRs prevents shortcuts and ensures systematic execution
+
+**How it works:**
+
+### Step 1: Create Installation Roadmap (PR0)
+
+**Your task RIGHT NOW is to create the roadmap, not execute the full installation.**
+
+1. Calculate parameter values:
+   ```bash
+   # Extract repository name from target path
+   REPO_NAME=$(basename "${TARGET_REPO_PATH}")  # e.g., "my-cli-tool"
+   APP_NAME="${REPO_NAME}"                      # CLI tools use simple name
+
+   # Calculate installation paths
+   INSTALL_PATH="."
+
+   echo "✅ Parameters calculated:"
+   echo "   APP_NAME: ${APP_NAME}"
+   echo "   INSTALL_PATH: ${INSTALL_PATH}"
+   ```
+
+2. Create roadmap files from templates:
+   ```bash
+   mkdir -p .roadmap/python-cli-install
+
+   # Copy all three roadmap templates
+   cp .ai/templates/roadmap-meta-plugin-installation.md.template \
+      .roadmap/python-cli-install/PROGRESS_TRACKER.md
+
+   cp .ai/templates/roadmap-pr-breakdown.md.template \
+      .roadmap/python-cli-install/PR_BREAKDOWN.md
+
+   cp .ai/templates/roadmap-ai-context.md.template \
+      .roadmap/python-cli-install/AI_CONTEXT.md
+   ```
+
+3. Fill in template variables using sed:
+   ```bash
+   # PROGRESS_TRACKER.md - Metadata variables
+   sed -i "s|{{PLUGIN_NAME}}|python-cli|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TOTAL_PLUGINS}}|7|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TOTAL_PRS}}|7|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TARGET_REPO_PATH}}|${TARGET_REPO_PATH}|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{INSTALL_PATH}}|${INSTALL_PATH}|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+
+   # PROGRESS_TRACKER.md - PR Titles and Notes (python-cli specific)
+   sed -i "s|{{PR0_TITLE}}|Create roadmap|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR1_TITLE}}|Install foundation/ai-folder plugin|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR1_NOTES}}|Creates .ai/ structure|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR2_TITLE}}|Install Python plugin|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR2_NOTES}}|Creates pyproject.toml|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR3_TITLE}}|Install Docker + CI/CD plugins|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR3_NOTES}}|Creates docker-compose.yml|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR4_TITLE}}|Install security, docs, pre-commit plugins|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR4_NOTES}}|Sets up quality gates|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR5_TITLE}}|Copy CLI code, configure, install deps|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR5_NOTES}}|Installs app code|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR6_PHASE}}|Finalization|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR6_TITLE}}|Validate setup, create AGENTS.md|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR6_NOTES}}|Final validation|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+
+   # PR_BREAKDOWN.md variables
+   sed -i "s|{{FEATURE_NAME}}|python-cli installation|g" .roadmap/python-cli-install/PR_BREAKDOWN.md
+   sed -i "s|{{TOTAL_PRS}}|7|g" .roadmap/python-cli-install/PR_BREAKDOWN.md
+   sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" .roadmap/python-cli-install/PR_BREAKDOWN.md
+
+   # AI_CONTEXT.md variables
+   sed -i "s|{{FEATURE_NAME}}|python-cli installation|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{DESCRIPTION}}|Complete installation of Python CLI application plugin with all dependencies|g" .roadmap/python-cli-install/AI_CONTEXT.md
+
+   echo "✅ Template variables replaced with calculated values"
+   ```
+
+4. Initialize PR status dashboard and remove unused rows:
+   ```bash
+   # Mark PR0 as complete (we just did it!)
+   sed -i "s|{{PR0_STATUS}}|✅ Complete|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+
+   # Mark PRs 1-6 as not started
+   sed -i "s|{{PR1_STATUS}}|🔴 Not Started|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR2_STATUS}}|🔴 Not Started|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR3_STATUS}}|🔴 Not Started|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR4_STATUS}}|🔴 Not Started|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR5_STATUS}}|🔴 Not Started|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR6_STATUS}}|🔴 Not Started|g" .roadmap/python-cli-install/PROGRESS_TRACKER.md
+
+   # Remove PR7 and PR8 rows (python-cli only has 7 PRs: PR0-PR6)
+   sed -i '/| PR7 |/d' .roadmap/python-cli-install/PROGRESS_TRACKER.md
+   sed -i '/| PR8 |/d' .roadmap/python-cli-install/PROGRESS_TRACKER.md
+
+   echo "✅ PR status dashboard initialized"
+   ```
+
+5. Commit roadmap:
+   ```bash
+   git add .roadmap/python-cli-install/
+   git commit -m "chore: Create roadmap for python-cli installation"
+   ```
+
+7. Inform user:
+   ```
+   ✅ Roadmap created at: .roadmap/python-cli-install/
+
+   Three-document structure created:
+   - PROGRESS_TRACKER.md (primary handoff - current status and next PR)
+   - PR_BREAKDOWN.md (detailed PR implementation steps)
+   - AI_CONTEXT.md (installation context and architecture)
+
+   Next steps:
+   1. Review PROGRESS_TRACKER.md to understand the installation plan
+   2. Execute one PR at a time by requesting: "Execute PR1 from roadmap"
+   3. Each PR will install one phase and update the roadmap
+   ```
+
+### Step 2: User Executes PRs One at a Time
+
+User will request execution like:
+- "Execute PR1 from .roadmap/python-cli-install"
+- "Execute PR2 from .roadmap/python-cli-install"
+- etc.
+
+Each PR execution:
+1. Agent reads PROGRESS_TRACKER.md
+2. Checks "Next PR to Implement" section
+3. Executes ONLY that PR's instructions
+4. Validates completion
+5. Updates PROGRESS_TRACKER.md (mark PR complete, update "Next PR")
+6. Commits and merges PR branch
+7. STOPS - does NOT continue to next PR
+
+**DO NOT execute multiple PRs in one session.**
+
+---
+
+## Roadmap PR Breakdown
+
+When creating the roadmap, ensure it includes these PRs:
+
+- **PR0**: Planning (create roadmap) - YOU DO THIS NOW
+- **PR1**: Foundation (install ai-folder plugin)
+- **PR2**: Languages (install Python plugin)
+- **PR3**: Infrastructure (install Docker + CI/CD plugins)
+- **PR4**: Standards (install security, docs, pre-commit plugins)
+- **PR5**: Application (copy CLI code, configure, install dependencies)
+- **PR6**: Finalization (validate setup, create AGENTS.md)
+
+**Note**: Python-cli has NO optional features. All PRs are required.
+
+---
+
+## If You Are Being Asked to "Install python-cli Plugin"
+
+**STOP. You should NOT execute the full installation in one go.**
+
+Instead, your task is:
+1. **Create the roadmap** (PR0 instructions above)
+2. **Calculate parameters** (TARGET_REPO_PATH, APP_NAME)
+3. **Create PROGRESS_TRACKER.md**
+4. **Inform user to execute PRs one at a time**
+
+The detailed phase instructions below are for REFERENCE ONLY. They will be executed incrementally via the roadmap PRs, not all at once.
+
+---
+
 ## What This Application Provides
 
 **Use Case**: Build professional command-line tools and utilities with modern Python practices
@@ -35,7 +209,15 @@
 - Security and documentation standards
 - Pre-commit hooks for code quality
 
-## Installation Steps
+---
+
+## Detailed Phase Instructions (For Roadmap PR Execution Only)
+
+**NOTE**: These instructions are used by individual roadmap PRs. Do NOT execute all phases in one session.
+
+When executing a specific PR from the roadmap, follow only that PR's phase instructions below.
+
+---
 
 ### Prerequisites Check
 

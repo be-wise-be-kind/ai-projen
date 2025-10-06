@@ -310,7 +310,7 @@ Create a progress-tracking document for resumability using the roadmap templates
 **Create Roadmap Using Templates**:
 ```bash
 # Create roadmap directory
-mkdir -p roadmap/setup
+mkdir -p .roadmap/setup
 
 # Use the progress tracker template for tracking installation
 # Note: For simple installations, you may create a simplified version

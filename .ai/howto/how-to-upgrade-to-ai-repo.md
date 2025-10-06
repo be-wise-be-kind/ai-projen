@@ -261,10 +261,10 @@ git commit -m "Add repository analysis"
 **Create Upgrade Roadmap** (Optional but recommended):
 ```bash
 # For tracking upgrade progress, create a roadmap
-mkdir -p roadmap/upgrade-to-ai-ready
+mkdir -p .roadmap/upgrade-to-ai-ready
 
 # Use simplified progress tracker for upgrades
-cat > roadmap/upgrade-to-ai-ready/PROGRESS_TRACKER.md << EOF
+cat > .roadmap/upgrade-to-ai-ready/PROGRESS_TRACKER.md << EOF
 # Upgrade to AI-Ready - Progress Tracker
 
 **Purpose**: Track progress of upgrading existing repository to AI-ready patterns

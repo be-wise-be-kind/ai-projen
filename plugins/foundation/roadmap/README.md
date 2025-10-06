@@ -10,7 +10,7 @@
 
 **Dependencies**: foundation/ai-folder plugin
 
-**Exports**: .roadmaps/ directory, roadmap templates, workflow documentation, and AGENTS.md integration
+**Exports**: .roadmap/ directory, roadmap templates, workflow documentation, and AGENTS.md integration
 
 **Related**: Foundation for roadmap-driven development in AI-ready repositories
 
@@ -41,7 +41,7 @@ Roadmaps are essential for:
 ## Files and Directories Created
 
 ```
-.roadmaps/
+.roadmap/
 ├── planning/              # Roadmaps being planned (not started)
 ├── in-progress/           # Currently active roadmaps
 ├── complete/              # Completed roadmaps (archived)
@@ -102,7 +102,7 @@ Roadmaps progress through three phases:
 ```
 1. PLANNING              2. IN-PROGRESS           3. COMPLETE
    ↓                        ↓                        ↓
-.roadmaps/planning/    .roadmaps/in-progress/   .roadmaps/complete/
+.roadmap/planning/    .roadmap/in-progress/   .roadmap/complete/
    ↓                        ↓                        ↓
 Creating roadmap       Implementing PRs         Archived for reference
 Using templates        Following PROGRESS_      Learn from past work
@@ -133,7 +133,7 @@ Using templates        Following PROGRESS_      Learn from past work
 An AI agent can install this plugin by following [AGENT_INSTRUCTIONS.md](./AGENT_INSTRUCTIONS.md).
 
 Quick summary:
-1. Create `.roadmaps/` directory structure
+1. Create `.roadmap/` directory structure
 2. Copy roadmap templates to `.ai/templates/`
 3. Create `how-to-roadmap.md` guide
 4. Add roadmap documentation
@@ -149,12 +149,12 @@ When using orchestration workflows, this plugin can be installed as part of the 
 
 ### Creating a New Roadmap
 
-1. **Copy templates** to `.roadmaps/planning/[feature-name]/`:
+1. **Copy templates** to `.roadmap/planning/[feature-name]/`:
    ```bash
-   mkdir -p .roadmaps/planning/my-feature
-   cp .ai/templates/roadmap-progress-tracker.md.template .roadmaps/planning/my-feature/PROGRESS_TRACKER.md
-   cp .ai/templates/roadmap-pr-breakdown.md.template .roadmaps/planning/my-feature/PR_BREAKDOWN.md
-   cp .ai/templates/roadmap-ai-context.md.template .roadmaps/planning/my-feature/AI_CONTEXT.md
+   mkdir -p .roadmap/planning/my-feature
+   cp .ai/templates/roadmap-progress-tracker.md.template .roadmap/planning/my-feature/PROGRESS_TRACKER.md
+   cp .ai/templates/roadmap-pr-breakdown.md.template .roadmap/planning/my-feature/PR_BREAKDOWN.md
+   cp .ai/templates/roadmap-ai-context.md.template .roadmap/planning/my-feature/AI_CONTEXT.md
    ```
 
 2. **Replace placeholders** with feature-specific values
@@ -163,19 +163,19 @@ When using orchestration workflows, this plugin can be installed as part of the 
 
 4. **Move to in-progress** when ready to start:
    ```bash
-   mv .roadmaps/planning/my-feature .roadmaps/in-progress/
+   mv .roadmap/planning/my-feature .roadmap/in-progress/
    ```
 
 ### Continuing an Existing Roadmap
 
 1. **Check in-progress roadmaps**:
    ```bash
-   ls .roadmaps/in-progress/
+   ls .roadmap/in-progress/
    ```
 
 2. **Read PROGRESS_TRACKER.md** first:
    ```bash
-   cat .roadmaps/in-progress/my-feature/PROGRESS_TRACKER.md
+   cat .roadmap/in-progress/my-feature/PROGRESS_TRACKER.md
    ```
 
 3. **Follow "Next PR to Implement"** section
@@ -187,7 +187,7 @@ When using orchestration workflows, this plugin can be installed as part of the 
 When all PRs are done:
 
 ```bash
-mv .roadmaps/in-progress/my-feature .roadmaps/complete/
+mv .roadmap/in-progress/my-feature .roadmap/complete/
 ```
 
 Completed roadmaps serve as reference for similar future work.
@@ -211,7 +211,7 @@ AI agents automatically detect roadmap requests:
 ### Routing Behavior
 
 When detected, AI agents:
-1. Read `.roadmaps/how-to-roadmap.md` for guidance
+1. Read `.roadmap/how-to-roadmap.md` for guidance
 2. Use templates from `.ai/templates/roadmap-*.md.template`
 3. Follow the three-document structure
 4. Update PROGRESS_TRACKER.md after each PR
@@ -241,7 +241,7 @@ When detected, AI agents:
 ### Example Roadmap Structure
 
 ```
-.roadmaps/in-progress/user-authentication/
+.roadmap/in-progress/user-authentication/
 ├── PROGRESS_TRACKER.md      # Current: PR3 - OAuth Integration
 ├── PR_BREAKDOWN.md          # 5 PRs total, detailed steps
 └── AI_CONTEXT.md            # Security architecture, auth flow
@@ -252,8 +252,8 @@ When detected, AI agents:
 **User**: "I want to plan out a new user dashboard feature"
 
 **AI Agent**:
-1. Reads `.roadmaps/how-to-roadmap.md`
-2. Creates `.roadmaps/planning/user-dashboard/`
+1. Reads `.roadmap/how-to-roadmap.md`
+2. Creates `.roadmap/planning/user-dashboard/`
 3. Copies three templates
 4. Asks questions to fill in placeholders
 5. Creates comprehensive roadmap
@@ -280,7 +280,7 @@ The roadmap plugin works with:
 ## Troubleshooting
 
 ### Roadmap directory exists but structure is wrong
-Check `.roadmaps/how-to-roadmap.md` exists and subdirectories (planning, in-progress, complete) are present.
+Check `.roadmap/how-to-roadmap.md` exists and subdirectories (planning, in-progress, complete) are present.
 
 ### Templates missing in .ai/templates/
 Re-run plugin installation or manually copy templates from `plugins/foundation/roadmap/ai-content/templates/`.
@@ -289,7 +289,7 @@ Re-run plugin installation or manually copy templates from `plugins/foundation/r
 Verify the roadmap section was added to AGENTS.md. Look for "Roadmap-Driven Development" section.
 
 ### Can't find active roadmaps
-Check `.roadmaps/in-progress/` directory. If empty, no roadmaps are currently active.
+Check `.roadmap/in-progress/` directory. If empty, no roadmaps are currently active.
 
 ## Version History
 

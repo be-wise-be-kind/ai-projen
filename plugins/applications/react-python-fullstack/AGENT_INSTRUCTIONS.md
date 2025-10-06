@@ -160,56 +160,122 @@
    echo "   SERVICES: ${SERVICES}"
    ```
 
-3. Create roadmap file from template:
+3. Create roadmap files from templates:
    ```bash
-   mkdir -p roadmap/react-python-fullstack-install
+   mkdir -p .roadmap/react-python-fullstack-install
+
+   # Copy PROGRESS_TRACKER template (meta-plugin specific)
    cp .ai/templates/roadmap-meta-plugin-installation.md.template \
-      roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+      .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+
+   # Copy PR_BREAKDOWN template
+   cp .ai/templates/roadmap-pr-breakdown.md.template \
+      .roadmap/react-python-fullstack-install/PR_BREAKDOWN.md
+
+   # Copy AI_CONTEXT template
+   cp .ai/templates/roadmap-ai-context.md.template \
+      .roadmap/react-python-fullstack-install/AI_CONTEXT.md
    ```
 
 4. Fill in template variables using sed:
    ```bash
-   # Replace metadata variables
-   sed -i "s|{{PLUGIN_NAME}}|react-python-fullstack|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{TOTAL_PLUGINS}}|9|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{TOTAL_PRS}}|9|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{TARGET_REPO_PATH}}|${TARGET_REPO_PATH}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   # PROGRESS_TRACKER.md - Metadata variables
+   sed -i "s|{{PLUGIN_NAME}}|react-python-fullstack|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TOTAL_PLUGINS}}|9|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TOTAL_PRS}}|9|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TARGET_REPO_PATH}}|${TARGET_REPO_PATH}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{DOCKER_CHOICE}}|${DOCKER_CHOICE}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{UI_SCAFFOLD_CHOICE}}|${UI_SCAFFOLD_CHOICE}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TERRAFORM_CHOICE}}|${TERRAFORM_CHOICE}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PYTHON_INSTALL_PATH}}|${BACKEND_PATH}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{TYPESCRIPT_INSTALL_PATH}}|${FRONTEND_PATH}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{FOUNDATION_INSTALL_PATH}}|${FOUNDATION_INSTALL_PATH}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{DOCKER_INSTALL_PATH}}|${DOCKER_INSTALL_PATH}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{LANGUAGES}}|${LANGUAGES}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{SERVICES}}|${SERVICES}|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
 
-   # Replace user choice variables
-   sed -i "s|{{DOCKER_CHOICE}}|${DOCKER_CHOICE}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{UI_SCAFFOLD_CHOICE}}|${UI_SCAFFOLD_CHOICE}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{TERRAFORM_CHOICE}}|${TERRAFORM_CHOICE}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   # PROGRESS_TRACKER.md - PR Titles and Notes (fullstack specific)
+   sed -i "s|{{PR0_TITLE}}|Ask user questions & create roadmap|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR1_TITLE}}|Install foundation/ai-folder plugin|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR1_NOTES}}|Creates .ai/ structure|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR2_TITLE}}|Install Python & TypeScript plugins|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR2_NOTES}}|Creates pyproject.toml, package.json|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR3_TITLE}}|Install Docker infrastructure|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR3_NOTES}}|Creates .docker/, docker-compose.yml|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR4_TITLE}}|Install security, docs, pre-commit plugins|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR4_NOTES}}|Sets up quality gates|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR5_TITLE}}|Copy application structure & configure|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR5_NOTES}}|Installs app code|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR6_PHASE}}|UI (optional)|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR6_TITLE}}|Install UI scaffold|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR6_NOTES}}|Only if user chose yes|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR7_PHASE}}|Terraform (optional)|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR7_TITLE}}|Install Terraform infrastructure|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR7_NOTES}}|Only if user chose yes|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR8_PHASE}}|Finalization|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR8_TITLE}}|Validate installation & create AGENTS.md|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR8_NOTES}}|Final validation|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
 
-   # Replace parameter variables (for plugin installation paths)
-   sed -i "s|{{PYTHON_INSTALL_PATH}}|${BACKEND_PATH}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{TYPESCRIPT_INSTALL_PATH}}|${FRONTEND_PATH}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{FOUNDATION_INSTALL_PATH}}|${FOUNDATION_INSTALL_PATH}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{DOCKER_INSTALL_PATH}}|${DOCKER_INSTALL_PATH}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{LANGUAGES}}|${LANGUAGES}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
-   sed -i "s|{{SERVICES}}|${SERVICES}|g" roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   # PR_BREAKDOWN.md variables
+   sed -i "s|{{FEATURE_NAME}}|react-python-fullstack installation|g" .roadmap/react-python-fullstack-install/PR_BREAKDOWN.md
+   sed -i "s|{{TOTAL_PRS}}|9|g" .roadmap/react-python-fullstack-install/PR_BREAKDOWN.md
+   sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" .roadmap/react-python-fullstack-install/PR_BREAKDOWN.md
+
+   # AI_CONTEXT.md variables
+   sed -i "s|{{FEATURE_NAME}}|react-python-fullstack installation|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{PROJECT_NAME}}|${APP_NAME}|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
+   sed -i "s|{{DESCRIPTION}}|Complete installation of React+Python fullstack application with Docker, CI/CD, and optional UI scaffold and Terraform|g" .roadmap/react-python-fullstack-install/AI_CONTEXT.md
 
    echo "✅ Template variables replaced with calculated values"
    ```
 
-5. Initialize PR status dashboard:
-   - Mark PR0 as ✅ Complete
-   - Mark PRs 1-5, 8 as 🔴 Not Started
-   - Mark PR6 as 🔴 Not Started or ⏭️ Skipped (based on UI choice)
-   - Mark PR7 as 🔴 Not Started or ⏭️ Skipped (based on Terraform choice)
+5. Initialize PR status dashboard in PROGRESS_TRACKER.md:
+   ```bash
+   # Mark PR0 as complete (we just did it!)
+   sed -i "s|{{PR0_STATUS}}|✅ Complete|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+
+   # Mark required PRs as not started
+   sed -i "s|{{PR1_STATUS}}|🔴 Not Started|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR2_STATUS}}|🔴 Not Started|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR3_STATUS}}|🔴 Not Started|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR4_STATUS}}|🔴 Not Started|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR5_STATUS}}|🔴 Not Started|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   sed -i "s|{{PR8_STATUS}}|🔴 Not Started|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+
+   # Mark optional PRs based on user choices
+   if [ "${UI_SCAFFOLD_CHOICE}" = "yes" ]; then
+     sed -i "s|{{PR6_STATUS}}|🔴 Not Started|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   else
+     sed -i "s|{{PR6_STATUS}}|⏭️ Skipped|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   fi
+
+   if [ "${TERRAFORM_CHOICE}" = "yes" ]; then
+     sed -i "s|{{PR7_STATUS}}|🔴 Not Started|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   else
+     sed -i "s|{{PR7_STATUS}}|⏭️ Skipped|g" .roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   fi
+
+   echo "✅ PR status dashboard initialized"
+   ```
 
 6. Commit roadmap:
    ```bash
-   git add roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   git add .roadmap/react-python-fullstack-install/
    git commit -m "chore: Create roadmap for react-python-fullstack installation"
    ```
 
 7. Inform user:
    ```
-   ✅ Roadmap created at: roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   ✅ Roadmap created at: .roadmap/react-python-fullstack-install/
+
+   Three-document structure created:
+   - PROGRESS_TRACKER.md (primary handoff - current status and next PR)
+   - PR_BREAKDOWN.md (detailed PR implementation steps)
+   - AI_CONTEXT.md (installation context and architecture)
 
    Next steps:
-   1. Review the roadmap to understand the installation plan
+   1. Review PROGRESS_TRACKER.md to understand the installation plan
    2. Execute one PR at a time by requesting: "Execute PR1 from roadmap"
    3. Each PR will install one phase and update the roadmap
 
@@ -222,8 +288,8 @@
 ### Step 2: User Executes PRs One at a Time
 
 User will request execution like:
-- "Execute PR1 from roadmap/react-python-fullstack-install"
-- "Execute PR2 from roadmap/react-python-fullstack-install"
+- "Execute PR1 from .roadmap/react-python-fullstack-install"
+- "Execute PR2 from .roadmap/react-python-fullstack-install"
 - etc.
 
 Each PR execution:

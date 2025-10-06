@@ -225,7 +225,16 @@ This plugin is ideal for:
 
 ### For AI Agents
 
+**Installation uses a roadmap-based approach** to ensure systematic, error-free setup.
+
 Follow: `plugins/applications/python-cli/AGENT_INSTRUCTIONS.md`
+
+This will:
+1. Create an installation roadmap (PR0)
+2. Guide you through 6 separate PRs (PR1-PR6)
+3. Each PR installs one phase with validation checkpoints
+
+**Do not attempt to execute all phases at once.** The roadmap approach prevents shortcuts and ensures complete, correct installation.
 
 ### For Humans
 

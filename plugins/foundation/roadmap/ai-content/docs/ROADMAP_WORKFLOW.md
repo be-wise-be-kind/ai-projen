@@ -92,7 +92,7 @@ Every roadmap consists of three documents, each serving a specific purpose:
 ## Roadmap Lifecycle
 
 ### Phase 1: Planning
-**Location**: `.roadmaps/planning/[feature-name]/`
+**Location**: `.roadmap/planning/[feature-name]/`
 
 **Activities**:
 1. Create roadmap directory
@@ -110,10 +110,10 @@ Every roadmap consists of three documents, each serving a specific purpose:
 - Success criteria defined
 - Ready to start implementation
 
-**Transition**: Move to `.roadmaps/in-progress/` when ready
+**Transition**: Move to `.roadmap/in-progress/` when ready
 
 ### Phase 2: In-Progress
-**Location**: `.roadmaps/in-progress/[feature-name]/`
+**Location**: `.roadmap/in-progress/[feature-name]/`
 
 **Activities**:
 1. Read PROGRESS_TRACKER.md to identify next PR
@@ -137,10 +137,10 @@ Every roadmap consists of three documents, each serving a specific purpose:
 - No blockers remain
 - Success metrics achieved
 
-**Transition**: Move to `.roadmaps/complete/` when done
+**Transition**: Move to `.roadmap/complete/` when done
 
 ### Phase 3: Complete
-**Location**: `.roadmaps/complete/[feature-name]/`
+**Location**: `.roadmap/complete/[feature-name]/`
 
 **Activities**:
 1. Final PROGRESS_TRACKER.md update
@@ -161,7 +161,7 @@ Every roadmap consists of three documents, each serving a specific purpose:
 ### Handoff Protocol
 
 **Starting Work**:
-1. Check `.roadmaps/in-progress/` for active roadmaps
+1. Check `.roadmap/in-progress/` for active roadmaps
 2. Read PROGRESS_TRACKER.md FIRST
 3. Note "Next PR to Implement"
 4. Read PR_BREAKDOWN.md for that PR
@@ -208,12 +208,12 @@ User Request → Detection → Routing → Action
 
 Planning Request:
   → Read how-to-roadmap.md
-  → Create .roadmaps/planning/[feature]/
+  → Create .roadmap/planning/[feature]/
   → Copy templates
   → Guide user through planning
 
 Continuation Request:
-  → Read .roadmaps/in-progress/[feature]/PROGRESS_TRACKER.md
+  → Read .roadmap/in-progress/[feature]/PROGRESS_TRACKER.md
   → Identify next PR
   → Read PR_BREAKDOWN.md for steps
   → Implement PR
@@ -309,7 +309,7 @@ Status Request:
 ✅ **DO**:
 - Update PROGRESS_TRACKER.md with final status
 - Document learnings and insights
-- Archive promptly to `.roadmaps/complete/`
+- Archive promptly to `.roadmap/complete/`
 - Extract reusable patterns
 - Update project documentation if needed
 
@@ -336,8 +336,8 @@ Roadmap plugin updates AGENTS.md with:
 Roadmap resources added to index.yaml:
 ```yaml
 roadmaps:
-  location: .roadmaps/
-  guide: .roadmaps/how-to-roadmap.md
+  location: .roadmap/
+  guide: .roadmap/how-to-roadmap.md
   workflow_docs: .ai/docs/ROADMAP_WORKFLOW.md
   templates: .ai/templates/roadmap-*.md.template
 ```
@@ -368,7 +368,7 @@ Used to create new roadmaps consistently.
 ### Scenario 2: Resuming Work After Break
 
 1. User says "continue with authentication"
-2. AI reads `.roadmaps/in-progress/authentication/PROGRESS_TRACKER.md`
+2. AI reads `.roadmap/in-progress/authentication/PROGRESS_TRACKER.md`
 3. AI identifies next PR from "Next PR to Implement"
 4. AI reads PR_BREAKDOWN.md for that PR
 5. AI implements PR
@@ -436,7 +436,7 @@ Used to create new roadmaps consistently.
 **Solution**: Move all but one to planning/, focus on single roadmap in in-progress/
 
 ### Issue: Can't find completed roadmaps
-**Location**: `.roadmaps/complete/`
+**Location**: `.roadmap/complete/`
 **Solution**: Check complete/ directory for archived roadmaps
 
 ## Version History
@@ -445,7 +445,7 @@ Used to create new roadmaps consistently.
 
 ## References
 
-- **User Guide**: `.roadmaps/how-to-roadmap.md`
+- **User Guide**: `.roadmap/how-to-roadmap.md`
 - **Templates**: `.ai/templates/roadmap-*.md.template`
 - **Plugin Docs**: `plugins/foundation/roadmap/README.md`
 - **Agent Instructions**: `plugins/foundation/roadmap/AGENT_INSTRUCTIONS.md`

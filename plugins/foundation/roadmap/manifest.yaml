@@ -24,7 +24,7 @@ dependencies:
 
 features:
   provides:
-    - .roadmaps/ directory structure with lifecycle phases
+    - .roadmap/ directory structure with lifecycle phases
     - Three-document roadmap structure (PROGRESS_TRACKER, PR_BREAKDOWN, AI_CONTEXT)
     - Roadmap templates in .ai/templates/
     - Workflow documentation in .ai/docs/
@@ -32,10 +32,10 @@ features:
     - how-to-roadmap.md guide
 
   directory_structure:
-    - .roadmaps/planning/ (roadmaps being planned)
-    - .roadmaps/in-progress/ (active roadmaps)
-    - .roadmaps/complete/ (archived roadmaps)
-    - .roadmaps/how-to-roadmap.md (workflow guide)
+    - .roadmap/planning/ (roadmaps being planned)
+    - .roadmap/in-progress/ (active roadmaps)
+    - .roadmap/complete/ (archived roadmaps)
+    - .roadmap/how-to-roadmap.md (workflow guide)
 
   templates:
     - roadmap-progress-tracker.md.template (primary handoff document)
@@ -44,14 +44,14 @@ features:
 
   documentation:
     - ROADMAP_WORKFLOW.md (workflow documentation in .ai/docs/)
-    - how-to-roadmap.md (user guide in .roadmaps/)
+    - how-to-roadmap.md (user guide in .roadmap/)
 
 installation:
   guide: AGENT_INSTRUCTIONS.md
   type: foundational
 
   steps_summary:
-    - Create .roadmaps/ directory with lifecycle subdirectories
+    - Create .roadmap/ directory with lifecycle subdirectories
     - Copy roadmap templates to .ai/templates/
     - Create how-to-roadmap.md guide
     - Add ROADMAP_WORKFLOW.md documentation
@@ -82,8 +82,8 @@ integration:
   index_yaml:
     section: roadmaps
     resources:
-      - location: .roadmaps/
-      - guide: .roadmaps/how-to-roadmap.md
+      - location: .roadmap/
+      - guide: .roadmap/how-to-roadmap.md
       - workflow_docs: .ai/docs/ROADMAP_WORKFLOW.md
       - templates: .ai/templates/roadmap-*.md.template
 
@@ -96,8 +96,8 @@ philosophy:
 
 validation:
   success_criteria:
-    - .roadmaps/ directory exists with three subdirectories
-    - how-to-roadmap.md exists in .roadmaps/
+    - .roadmap/ directory exists with three subdirectories
+    - how-to-roadmap.md exists in .roadmap/
     - Three roadmap templates in .ai/templates/
     - ROADMAP_WORKFLOW.md exists in .ai/docs/
     - AGENTS.md updated with roadmap section
