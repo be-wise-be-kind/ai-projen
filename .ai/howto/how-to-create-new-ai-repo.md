@@ -63,6 +63,73 @@ This workflow creates a production-ready repository by:
 
 ---
 
+## Using Plugin Parameters
+
+Plugins accept optional parameters to customize installation behavior. This allows you to control where files are created and how plugins are configured.
+
+**Parameter Syntax**:
+```
+Follow: plugins/path/to/plugin/AGENT_INSTRUCTIONS.md
+  with PARAM_NAME=value
+  with ANOTHER_PARAM=value
+```
+
+**Key Points**:
+- **All parameters are optional** - Every parameter has a sensible default
+- **Plugins work standalone** - You can install plugins without providing any parameters
+- **Documentation in AGENT_INSTRUCTIONS.md** - Each plugin documents its accepted parameters in its AGENT_INSTRUCTIONS.md file
+- **Custom control** - Parameters let you override defaults when needed
+
+**Common Parameter Examples**:
+
+**Installing Python in a subdirectory**:
+```
+Follow: plugins/languages/python/core/AGENT_INSTRUCTIONS.md
+  with INSTALL_PATH=backend/
+```
+This creates `backend/pyproject.toml` instead of root-level `pyproject.toml`.
+
+**Installing TypeScript in a custom path**:
+```
+Follow: plugins/languages/typescript/core/AGENT_INSTRUCTIONS.md
+  with INSTALL_PATH=frontend/
+```
+This creates `frontend/package.json` and `frontend/tsconfig.json` in the specified directory.
+
+**Using Docker with specific languages**:
+```
+Follow: plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md
+  with LANGUAGES=python,typescript
+  with SERVICES=backend,frontend,database
+  with INSTALL_PATH=.docker/
+```
+This generates Dockerfiles for specified languages and creates docker-compose with named services.
+
+**When to Use Parameters**:
+- Multi-language projects where each language needs its own directory
+- Monorepo structures with multiple services
+- Custom project layouts that differ from defaults
+- Integrating with existing directory structures
+
+**When to Skip Parameters**:
+- Single-language projects in simple structure
+- When defaults match your needs
+- First time trying a plugin (use defaults to understand behavior)
+
+**Finding Available Parameters**:
+To see what parameters a plugin accepts, read its AGENT_INSTRUCTIONS.md:
+```bash
+# Example: Check Python plugin parameters
+cat /path/to/ai-projen/plugins/languages/python/core/AGENT_INSTRUCTIONS.md | grep -A 10 "## Parameters"
+
+# Example: Check Docker plugin parameters
+cat /path/to/ai-projen/plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md | grep -A 10 "## Parameters"
+```
+
+Each plugin's AGENT_INSTRUCTIONS.md contains a "Parameters" section documenting all available parameters, their defaults, and usage examples.
+
+---
+
 ## Steps
 
 ### Step 1: Initialize Repository
