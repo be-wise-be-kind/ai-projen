@@ -509,7 +509,7 @@ Follow: `plugins/standards/documentation/AGENT_INSTRUCTIONS.md`
 
 **Validation**:
 ```bash
-test -f .ai/docs/file-headers.md && echo "✅ Documentation configured" || echo "❌ Documentation plugin failed"
+test -f .ai/docs/FILE_HEADER_STANDARDS.md && echo "✅ Documentation configured" || echo "❌ Documentation plugin failed"
 ```
 
 **7. Install standards/pre-commit-hooks plugin**

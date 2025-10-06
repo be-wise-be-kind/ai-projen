@@ -60,7 +60,7 @@ Copy the documentation reference guides to .ai/docs/:
 mkdir -p .ai/docs
 
 # Copy documentation guides
-cp plugins/standards/documentation/ai-content/docs/file-headers.md .ai/docs/
+# Note: file-headers.md not copied - FILE_HEADER_STANDARDS.md already installed in Step 2
 cp plugins/standards/documentation/ai-content/docs/readme-standards.md .ai/docs/
 cp plugins/standards/documentation/ai-content/docs/api-documentation.md .ai/docs/
 ```
@@ -105,7 +105,7 @@ Update .ai/index.yaml to include documentation standards:
 ```yaml
 standards:
   documentation:
-    file_headers: .ai/docs/file-headers.md
+    file_headers: .ai/docs/FILE_HEADER_STANDARDS.md
     readme_standards: .ai/docs/readme-standards.md
     api_documentation: .ai/docs/api-documentation.md
 
@@ -178,8 +178,7 @@ Verify the following structure exists:
 ```
 .ai/
 ├── docs/
-│   ├── FILE_HEADER_STANDARDS.md (or DOCUMENTATION_STANDARDS.md)
-│   ├── file-headers.md
+│   ├── FILE_HEADER_STANDARDS.md
 │   ├── readme-standards.md
 │   └── api-documentation.md
 ├── howto/
@@ -219,7 +218,7 @@ After successful installation:
 2. **Explain file header requirements** for new files
 3. **Reference the how-to guides** for practical guidance
 4. **Suggest next steps**:
-   - Review .ai/docs/file-headers.md for header standards
+   - Review .ai/docs/FILE_HEADER_STANDARDS.md for header standards
    - Use templates when creating new files
    - Apply headers to existing critical files
    - Review README.md against readme-standards.md
@@ -448,7 +447,7 @@ Installation is successful when:
 
 After installation, users should reference:
 
-1. **File Headers**: .ai/docs/file-headers.md or .ai/docs/FILE_HEADER_STANDARDS.md
+1. **File Headers**: .ai/docs/FILE_HEADER_STANDARDS.md
 2. **README Standards**: .ai/docs/readme-standards.md
 3. **API Documentation**: .ai/docs/api-documentation.md
 4. **How-To Guides**: .ai/howto/how-to-write-file-headers.md, how-to-create-readme.md, how-to-document-api.md
