@@ -80,7 +80,7 @@ Feature-specific documentation:
 - Related files
 - Testing notes
 
-#### `.ai/howto/`
+#### `.ai/howtos/`
 How-to guides for common tasks:
 - Setup instructions
 - Development workflows
@@ -226,7 +226,7 @@ ai_navigation:
 
 You can customize the .ai folder by:
 1. Adding more documentation to `.ai/docs/`
-2. Creating how-to guides in `.ai/howto/`
+2. Creating how-to guides in `.ai/howtos/`
 3. Adding templates to `.ai/templates/`
 4. Updating `index.yaml` with project-specific metadata
 5. Updating `layout.yaml` with your directory structure

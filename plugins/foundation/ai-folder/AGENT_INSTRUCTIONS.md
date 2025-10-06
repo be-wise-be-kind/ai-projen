@@ -70,14 +70,14 @@ Set the installation path and create the directory structure:
 
 ```bash
 INSTALL_PATH="${INSTALL_PATH:-.}"
-mkdir -p "${INSTALL_PATH}/.ai/{docs,features,howto,templates}"
+mkdir -p "${INSTALL_PATH}/.ai/{docs,features,howtos,templates}"
 ```
 
 This creates:
 - `${INSTALL_PATH}/.ai/` - Root AI navigation folder
 - `${INSTALL_PATH}/.ai/docs/` - Project documentation for AI understanding
 - `${INSTALL_PATH}/.ai/features/` - Feature-specific documentation
-- `${INSTALL_PATH}/.ai/howto/` - How-to guides for common tasks
+- `${INSTALL_PATH}/.ai/howtos/` - How-to guides for common tasks
 - `${INSTALL_PATH}/.ai/templates/` - Reusable file templates
 
 ### Step 3: Create index.yaml
@@ -120,7 +120,7 @@ directories:
 ai_navigation:
   index: .ai/index.yaml
   docs: .ai/docs/
-  howto: .ai/howto/
+  howtos: .ai/howtos/
   templates: .ai/templates/
 ```
 
@@ -242,7 +242,7 @@ Basic header requirements:
 
 This plugin is the foundation. Other plugins will:
 - Add documentation to `.ai/docs/`
-- Add how-to guides to `.ai/howto/`
+- Add how-to guides to `.ai/howtos/`
 - Add templates to `.ai/templates/`
 - Update `index.yaml` with new resources
 - Update `layout.yaml` with new directory mappings
@@ -253,7 +253,7 @@ This plugin is the foundation. Other plugins will:
 
 **Example**: Python plugin would add linting commands and PEP 8 guidelines to agents.md between the LANGUAGE_SPECIFIC_GUIDELINES markers.
 
-**Template Creation**: When plugins add templates, follow the template creation guide at `.ai/howto/how-to-create-a-template.md` and use `.ai/templates/TEMPLATE_FILE_TEMPLATE.md` as a reference.
+**Template Creation**: When plugins add templates, follow the template creation guide at `.ai/howtos/how-to-create-a-template.md` and use `.ai/templates/TEMPLATE_FILE_TEMPLATE.md` as a reference.
 
 ## Troubleshooting
 
