@@ -60,13 +60,14 @@ These templates are:
 
 ### Step 3: Create how-to-roadmap.md Guide
 
-Copy the roadmap workflow guide to .roadmap/:
+Copy the roadmap workflow guide to .ai/howtos/ (following convention that all how-tos go in .ai/howtos/):
 
 ```bash
-cp plugins/foundation/roadmap/ai-content/templates/how-to-roadmap.md.template .roadmap/how-to-roadmap.md
+mkdir -p .ai/howtos
+cp plugins/foundation/roadmap/ai-content/templates/how-to-roadmap.md.template .ai/howtos/how-to-roadmap.md
 ```
 
-Then replace these variables in `.roadmap/how-to-roadmap.md`:
+Then replace these variables in `.ai/howtos/how-to-roadmap.md`:
 - `{{PROJECT_NAME}}` → Actual project name
 - Any other project-specific placeholders
 
@@ -95,7 +96,7 @@ If the user says any of the following:
 - "Break down the feature..."
 
 **Your Actions**:
-1. **Read** `.roadmap/how-to-roadmap.md` for roadmap workflow guidance
+1. **Read** `.ai/howtos/how-to-roadmap.md` for roadmap workflow guidance
 2. **Use templates** from `.ai/templates/roadmap-*.md.template`
 3. **Create roadmap** in `.roadmap/planning/[feature-name]/`
 4. **Follow** the three-document structure:
@@ -125,7 +126,7 @@ planning/ → in-progress/ → complete/
 Created      Implementing    Archived
 ```
 
-See `.roadmap/how-to-roadmap.md` for detailed workflow instructions.
+See `.ai/howtos/how-to-roadmap.md` for detailed workflow instructions.
 ```
 
 ### Step 6: Update .ai/index.yaml
@@ -135,7 +136,7 @@ Add roadmap resources to the project's `.ai/index.yaml`:
 ```yaml
 roadmaps:
   location: .roadmap/
-  guide: .roadmap/how-to-roadmap.md
+  guide: .ai/howtos/how-to-roadmap.md
   workflow_docs: .ai/docs/ROADMAP_WORKFLOW.md
 
   structure:
@@ -176,11 +177,12 @@ Verify the following structure exists:
 │   └── .gitkeep
 ├── in-progress/
 │   └── .gitkeep
-├── complete/
-│   └── .gitkeep
-└── how-to-roadmap.md
+└── complete/
+    └── .gitkeep
 
 .ai/
+├── howtos/
+│   └── how-to-roadmap.md
 ├── templates/
 │   ├── roadmap-progress-tracker.md.template
 │   ├── roadmap-pr-breakdown.md.template
@@ -198,7 +200,7 @@ After successful installation:
 
 1. **Inform the user** that roadmap-driven development is now available
 2. **Explain the roadmap lifecycle**: planning → in-progress → complete
-3. **Highlight** the how-to guide at `.roadmap/how-to-roadmap.md`
+3. **Highlight** the how-to guide at `.ai/howtos/how-to-roadmap.md`
 4. **Suggest** creating their first roadmap if they have a complex feature to plan
 
 ## Integration with Other Plugins
@@ -244,7 +246,7 @@ This plugin works standalone without the orchestrator:
 
 Installation is successful when:
 - ✅ `.roadmap/` directory exists with three subdirectories
-- ✅ `.roadmap/how-to-roadmap.md` guide exists and is populated
+- ✅ `.ai/howtos/how-to-roadmap.md` guide exists and is populated
 - ✅ Three roadmap templates in `.ai/templates/`
 - ✅ `AGENTS.md` updated with roadmap detection and routing
 - ✅ `.ai/docs/ROADMAP_WORKFLOW.md` exists
