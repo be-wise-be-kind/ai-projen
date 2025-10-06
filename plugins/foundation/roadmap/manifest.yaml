@@ -1,0 +1,111 @@
+# Purpose: Plugin manifest for the roadmap foundation plugin
+# Scope: Plugin metadata, dependencies, options, and installation configuration
+# Overview: Defines the roadmap plugin configuration including status, dependencies, features provided,
+#     and installation instructions. Used by the ai-projen framework for plugin discovery and orchestration.
+
+version: "1.0"
+plugin:
+  id: roadmap
+  name: Roadmap Plugin
+  category: foundation
+  status: stable
+  description: Roadmap-based development workflow for complex, multi-PR features
+
+metadata:
+  author: ai-projen
+  created: "2025-10-05"
+  version: "1.0.0"
+  license: MIT
+
+dependencies:
+  required:
+    - foundation/ai-folder
+  optional: []
+
+features:
+  provides:
+    - .roadmaps/ directory structure with lifecycle phases
+    - Three-document roadmap structure (PROGRESS_TRACKER, PR_BREAKDOWN, AI_CONTEXT)
+    - Roadmap templates in .ai/templates/
+    - Workflow documentation in .ai/docs/
+    - AGENTS.md integration for roadmap detection
+    - how-to-roadmap.md guide
+
+  directory_structure:
+    - .roadmaps/planning/ (roadmaps being planned)
+    - .roadmaps/in-progress/ (active roadmaps)
+    - .roadmaps/complete/ (archived roadmaps)
+    - .roadmaps/how-to-roadmap.md (workflow guide)
+
+  templates:
+    - roadmap-progress-tracker.md.template (primary handoff document)
+    - roadmap-pr-breakdown.md.template (PR implementation guide)
+    - roadmap-ai-context.md.template (feature architecture context)
+
+  documentation:
+    - ROADMAP_WORKFLOW.md (workflow documentation in .ai/docs/)
+    - how-to-roadmap.md (user guide in .roadmaps/)
+
+installation:
+  guide: AGENT_INSTRUCTIONS.md
+  type: foundational
+
+  steps_summary:
+    - Create .roadmaps/ directory with lifecycle subdirectories
+    - Copy roadmap templates to .ai/templates/
+    - Create how-to-roadmap.md guide
+    - Add ROADMAP_WORKFLOW.md documentation
+    - Update AGENTS.md with roadmap routing
+    - Update .ai/index.yaml with roadmap resources
+    - Validate installation
+
+use_cases:
+  - Multi-PR features requiring coordinated implementation
+  - Large repository upgrades with phased rollout
+  - Complex features with multiple dependencies
+  - Team coordination across AI agent sessions
+  - Progress tracking for long-running development
+
+integration:
+  agents_md:
+    section: "Roadmap-Driven Development"
+    detection_patterns:
+      planning:
+        - "I want to plan out..."
+        - "Create a roadmap for..."
+        - "Plan the implementation of..."
+      continuation:
+        - "Continue with..."
+        - "What's next in..."
+        - "Resume work on..."
+
+  index_yaml:
+    section: roadmaps
+    resources:
+      - location: .roadmaps/
+      - guide: .roadmaps/how-to-roadmap.md
+      - workflow_docs: .ai/docs/ROADMAP_WORKFLOW.md
+      - templates: .ai/templates/roadmap-*.md.template
+
+philosophy:
+  - "Complex features require structured planning"
+  - "Roadmaps enable AI agent coordination across sessions"
+  - "Three-document structure provides complete context"
+  - "Lifecycle management (planning → in-progress → complete)"
+  - "Progress tracking is essential for multi-PR features"
+
+validation:
+  success_criteria:
+    - .roadmaps/ directory exists with three subdirectories
+    - how-to-roadmap.md exists in .roadmaps/
+    - Three roadmap templates in .ai/templates/
+    - ROADMAP_WORKFLOW.md exists in .ai/docs/
+    - AGENTS.md updated with roadmap section
+    - .ai/index.yaml includes roadmap resources
+
+notes_for_agents:
+  - This plugin is foundational for complex feature development
+  - Always read PROGRESS_TRACKER.md first when continuing roadmap work
+  - Update PROGRESS_TRACKER.md immediately after completing each PR
+  - Use AI_CONTEXT.md for features with complex architecture
+  - Archive completed roadmaps for future reference

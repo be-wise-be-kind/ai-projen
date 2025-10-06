@@ -17,6 +17,22 @@ foundation:
     dependencies: []
     installation_guide: plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md
 
+  roadmap:
+    status: stable
+    required: false
+    description: Roadmap-based development workflow for complex, multi-PR features
+    location: plugins/foundation/roadmap/
+    dependencies:
+      - foundation/ai-folder
+    installation_guide: plugins/foundation/roadmap/AGENT_INSTRUCTIONS.md
+
+    features:
+      - .roadmaps/ directory structure (planning, in-progress, complete)
+      - Three-document roadmap structure (PROGRESS_TRACKER, PR_BREAKDOWN, AI_CONTEXT)
+      - Roadmap templates in .ai/templates/
+      - Workflow documentation and how-to guide
+      - AGENTS.md integration for roadmap detection
+
 # Language plugins (language-specific tooling)
 languages:
   python:
@@ -398,14 +414,14 @@ _templates:
 # Metadata
 metadata:
   version: "1.0"
-  last_updated: "2025-10-02"
+  last_updated: "2025-10-05"
   total_plugins:
-    stable: 12  # 9 existing + 2 applications + 1 repository
+    stable: 13  # 2 foundation + 2 languages + 3 infrastructure + 3 standards + 2 applications + 1 repository
     planned: 8
     community: 0
 
   plugin_categories:
-    - foundation (1 stable)
+    - foundation (2 stable)
     - languages (2 stable, 3 planned)
     - infrastructure (3 stable, 3 planned)
     - standards (3 stable, 1 planned)
