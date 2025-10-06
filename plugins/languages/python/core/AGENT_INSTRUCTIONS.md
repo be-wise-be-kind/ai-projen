@@ -47,6 +47,12 @@ Before installing this plugin, ensure:
 
 ## Installation Steps
 
+**Initialize INSTALL_PATH parameter**:
+```bash
+INSTALL_PATH="${INSTALL_PATH:-.}"
+mkdir -p "${INSTALL_PATH}"
+```
+
 ### Step 1: Gather User Preferences
 
 Ask the user (or use recommended defaults):
@@ -113,7 +119,7 @@ See `standards/comprehensive-tooling.md` for detailed tool documentation.
 2. Copy Ruff configuration:
    ```bash
    # If pyproject.toml doesn't exist
-   cp plugins/languages/python/linters/ruff/config/pyproject.toml ./pyproject.toml
+   cp plugins/languages/python/linters/ruff/config/pyproject.toml "${INSTALL_PATH}/pyproject.toml"
 
    # If pyproject.toml exists, merge [tool.ruff] sections
    ```
@@ -137,7 +143,7 @@ See `standards/comprehensive-tooling.md` for detailed tool documentation.
 
 2. Copy configuration:
    ```bash
-   cp plugins/languages/python/linters/mypy/config/mypy.ini ./mypy.ini
+   cp plugins/languages/python/linters/mypy/config/mypy.ini "${INSTALL_PATH}/mypy.ini"
    ```
 
 3. Verify:
@@ -158,7 +164,7 @@ See `standards/comprehensive-tooling.md` for detailed tool documentation.
 
 2. Copy configuration:
    ```bash
-   cp plugins/languages/python/linters/bandit/config/.bandit ./.bandit
+   cp plugins/languages/python/linters/bandit/config/.bandit "${INSTALL_PATH}/.bandit"
    ```
 
 3. Verify:
@@ -179,13 +185,13 @@ See `standards/comprehensive-tooling.md` for detailed tool documentation.
 
 2. Copy configuration:
    ```bash
-   cp plugins/languages/python/testing/pytest/config/pytest.ini ./pytest.ini
+   cp plugins/languages/python/testing/pytest/config/pytest.ini "${INSTALL_PATH}/pytest.ini"
    ```
 
 3. Create tests directory:
    ```bash
-   mkdir -p tests
-   touch tests/__init__.py
+   mkdir -p "${INSTALL_PATH}/tests"
+   touch "${INSTALL_PATH}/tests/__init__.py"
    ```
 
 4. Verify:
@@ -206,13 +212,13 @@ Add Python-specific targets to Makefile (create if doesn't exist):
 
 Then copy the file:
 ```bash
-cp plugins/languages/python/templates/makefile-python.mk ./Makefile.python
+cp plugins/languages/python/templates/makefile-python.mk "${INSTALL_PATH}/Makefile.python"
 ```
 
 **Option B**: Copy targets directly into main Makefile
 ```bash
 # Append Python targets to existing Makefile
-cat plugins/languages/python/templates/makefile-python.mk >> Makefile
+cat plugins/languages/python/templates/makefile-python.mk >> "${INSTALL_PATH}/Makefile"
 ```
 
 **Customize** the `PYTHON_SRC_DIRS` variable in the Makefile to match your project structure:
@@ -259,8 +265,8 @@ cat plugins/languages/python/templates/agents-md-extension.txt
 Create `.ai/docs/PYTHON_STANDARDS.md`:
 
 ```bash
-mkdir -p .ai/docs
-cp plugins/languages/python/standards/python-standards.md .ai/docs/PYTHON_STANDARDS.md
+mkdir -p "${INSTALL_PATH}/.ai/docs"
+cp plugins/languages/python/standards/python-standards.md "${INSTALL_PATH}/.ai/docs/PYTHON_STANDARDS.md"
 ```
 
 Update `.ai/index.yaml` to reference this documentation:
@@ -279,8 +285,8 @@ If `.github/workflows/` exists:
 
 1. Copy the Python workflow:
    ```bash
-   mkdir -p .github/workflows
-   cp plugins/languages/python/templates/github-workflow-python.yml .github/workflows/python.yml
+   mkdir -p "${INSTALL_PATH}/.github/workflows"
+   cp plugins/languages/python/templates/github-workflow-python.yml "${INSTALL_PATH}/.github/workflows/python.yml"
    ```
 
 2. Customize for repository structure:
@@ -321,7 +327,7 @@ pytest-cov>=4.1.0
 Using the comprehensive pyproject.toml template:
 ```bash
 # Copy the comprehensive template (includes all tools)
-cp plugins/languages/python/templates/pyproject.toml.template ./pyproject.toml
+cp plugins/languages/python/templates/pyproject.toml.template "${INSTALL_PATH}/pyproject.toml"
 
 # Customize placeholders in pyproject.toml:
 # - {{PROJECT_NAME}} → your project name
@@ -349,13 +355,13 @@ poetry add --group dev safety pip-audit
 
 ```bash
 # Flake8 configuration
-cp plugins/languages/python/standards/.flake8 ./.flake8
+cp plugins/languages/python/standards/.flake8 "${INSTALL_PATH}/.flake8"
 
 # Pylint configuration (optional if using pyproject.toml)
-cp plugins/languages/python/standards/.pylintrc ./.pylintrc
+cp plugins/languages/python/standards/.pylintrc "${INSTALL_PATH}/.pylintrc"
 
 # Radon configuration (optional)
-cp plugins/languages/python/standards/radon.cfg ./radon.cfg
+cp plugins/languages/python/standards/radon.cfg "${INSTALL_PATH}/radon.cfg"
 ```
 
 #### Verify Comprehensive Tooling
@@ -385,18 +391,18 @@ make security-full         # All security tools
 
 1. Create source directory:
    ```bash
-   mkdir -p src
+   mkdir -p "${INSTALL_PATH}/src"
    ```
 
 2. Copy example Python file:
    ```bash
-   cp plugins/languages/python/templates/example.py src/example.py
+   cp plugins/languages/python/templates/example.py "${INSTALL_PATH}/src/example.py"
    ```
 
 3. Copy example test file:
    ```bash
    mkdir -p tests
-   cp plugins/languages/python/templates/test_example.py tests/test_example.py
+   cp plugins/languages/python/templates/test_example.py "${INSTALL_PATH}/tests/test_example.py"
    ```
 
 4. Verify everything works:
@@ -426,9 +432,9 @@ safety --version || echo "Safety not installed (optional)"
 pip-audit --version || echo "pip-audit not installed (optional)"
 
 # 3. Verify config files exist
-ls -la pyproject.toml  # Comprehensive config with all tools
-ls -la .flake8         # Flake8 config (if comprehensive tooling installed)
-ls -la .pylintrc       # Pylint config (if using standalone file)
+ls -la "${INSTALL_PATH}/pyproject.toml"  # Comprehensive config with all tools
+ls -la "${INSTALL_PATH}/.flake8"         # Flake8 config (if comprehensive tooling installed)
+ls -la "${INSTALL_PATH}/.pylintrc"       # Pylint config (if using standalone file)
 
 # 4. Run quality checks
 make lint-python       # Should pass or show expected warnings
@@ -598,7 +604,7 @@ Installation is successful when:
 - ✅ MyPy installed and configured (if selected)
 - ✅ Bandit installed and configured (if selected)
 - ✅ Pytest installed and configured
-- ✅ All configuration files exist (pyproject.toml, mypy.ini, .bandit, pytest.ini)
+- ✅ All configuration files exist in INSTALL_PATH (`${INSTALL_PATH}/pyproject.toml`, `${INSTALL_PATH}/mypy.ini`, `${INSTALL_PATH}/.bandit`, `${INSTALL_PATH}/pytest.ini`)
 - ✅ Makefile targets work (`make lint-python`, etc.)
 - ✅ agents.md updated with Python guidelines
 - ✅ `.ai/docs/PYTHON_STANDARDS.md` exists
