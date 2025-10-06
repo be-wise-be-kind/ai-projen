@@ -17,6 +17,29 @@
 
 ---
 
+## Parameters
+
+This plugin accepts the following parameters:
+
+- **INSTALL_PATH** - Directory where TypeScript tooling will be installed
+  - Default: `.` (current directory)
+  - Example: `frontend/`, `web/client/`
+
+### Usage
+
+**Standalone (uses current directory)**:
+```
+Follow: plugins/languages/typescript/core/AGENT_INSTRUCTIONS.md
+```
+
+**With custom path**:
+```
+Follow: plugins/languages/typescript/core/AGENT_INSTRUCTIONS.md
+  with INSTALL_PATH=frontend/
+```
+
+---
+
 ## Environment Strategy
 
 **IMPORTANT**: This plugin follows the Docker-first development hierarchy established in PR7.5:
@@ -45,6 +68,12 @@ Before installing this plugin, ensure:
 
 ## Installation Steps
 
+**Initialize INSTALL_PATH parameter**:
+```bash
+INSTALL_PATH="${INSTALL_PATH:-.}"
+mkdir -p "${INSTALL_PATH}"
+```
+
 ### Step 1: Gather User Preferences
 
 Ask the user (or use recommended defaults):
@@ -71,14 +100,14 @@ Ask the user (or use recommended defaults):
 
 ### Step 2: Install Docker Templates (Docker-First Approach)
 
-**If Docker is available**, copy Docker templates to project root:
+**If Docker is available**, copy Docker templates to installation path:
 
 ```bash
 # Copy Dockerfile
-cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/Dockerfile.typescript Dockerfile
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/Dockerfile.typescript "${INSTALL_PATH}/Dockerfile"
 
 # Copy docker-compose configuration
-cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/docker-compose.typescript.yml docker-compose.yml
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/docker-compose.typescript.yml "${INSTALL_PATH}/docker-compose.yml"
 ```
 
 **Note**: These templates support multi-stage builds for dev, lint, test, and production environments.
@@ -88,7 +117,7 @@ cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/
 If `package.json` doesn't exist, create it:
 
 ```bash
-npm init -y
+cd "${INSTALL_PATH}" && npm init -y
 ```
 
 Update `package.json` type to module:
@@ -145,12 +174,12 @@ This will:
 
 **For non-React projects**:
 ```bash
-cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/tsconfig.json tsconfig.json
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/tsconfig.json "${INSTALL_PATH}/tsconfig.json"
 ```
 
 **For React projects**:
 ```bash
-cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/tsconfig.react.json tsconfig.json
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/tsconfig.react.json "${INSTALL_PATH}/tsconfig.json"
 ```
 
 ### Step 9: Add package.json Scripts
@@ -185,7 +214,7 @@ Ensure `package.json` has these scripts (should be added by sub-steps):
 If Makefile doesn't exist, create it. Then append TypeScript targets:
 
 ```bash
-cat /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/makefile-typescript.mk >> Makefile
+cat /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/makefile-typescript.mk >> "${INSTALL_PATH}/Makefile"
 ```
 
 If Makefile already exists, manually merge the contents to avoid duplicates.
@@ -256,7 +285,7 @@ If Makefile already exists, manually merge the contents to avoid duplicates.
 Create `.ai/docs/TYPESCRIPT_STANDARDS.md`:
 
 ```bash
-cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/standards/typescript-standards.md .ai/docs/TYPESCRIPT_STANDARDS.md
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/standards/typescript-standards.md "${INSTALL_PATH}/.ai/docs/TYPESCRIPT_STANDARDS.md"
 ```
 
 Update `.ai/index.yaml` to reference this documentation:
@@ -274,13 +303,13 @@ If `.github/workflows/` exists, add TypeScript workflows:
 
 **Linting workflow**:
 ```bash
-mkdir -p .github/workflows
-cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/github-workflow-typescript-lint.yml .github/workflows/typescript-lint.yml
+mkdir -p "${INSTALL_PATH}/.github/workflows"
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/github-workflow-typescript-lint.yml "${INSTALL_PATH}/.github/workflows/typescript-lint.yml"
 ```
 
 **Testing workflow**:
 ```bash
-cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/github-workflow-typescript-test.yml .github/workflows/typescript-test.yml
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/github-workflow-typescript-test.yml "${INSTALL_PATH}/.github/workflows/typescript-test.yml"
 ```
 
 ### Step 14: Create Example Files (Optional)
@@ -288,9 +317,9 @@ cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/
 If user requested example files (or project has no src/ directory):
 
 ```bash
-mkdir -p src
-cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/example.ts src/example.ts
-cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/example.test.ts src/example.test.ts
+mkdir -p "${INSTALL_PATH}/src"
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/example.ts "${INSTALL_PATH}/src/example.ts"
+cp /home/stevejackson/Projects/ai-projen/plugins/languages/typescript/templates/example.test.ts "${INSTALL_PATH}/src/example.test.ts"
 ```
 
 ### Step 15: Validate Installation
@@ -441,14 +470,14 @@ This plugin works standalone without the orchestrator:
 ## Success Criteria
 
 Installation is successful when:
-- ESLint config exists and linting works
-- Prettier config exists and formatting works
+- ESLint config exists at `${INSTALL_PATH}` and linting works
+- Prettier config exists at `${INSTALL_PATH}` and formatting works
 - Vitest installed and tests run
 - TypeScript compiler works
-- `tsconfig.json` exists
-- Makefile targets work
-- agents.md updated with TypeScript guidelines
-- `.ai/docs/TYPESCRIPT_STANDARDS.md` exists
+- `${INSTALL_PATH}/tsconfig.json` exists
+- `${INSTALL_PATH}/Makefile` targets work
+- `${INSTALL_PATH}/agents.md` updated with TypeScript guidelines
+- `${INSTALL_PATH}/.ai/docs/TYPESCRIPT_STANDARDS.md` exists
 - All validation commands pass
 - User can start developing with TypeScript
 
