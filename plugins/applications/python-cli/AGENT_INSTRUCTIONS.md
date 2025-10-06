@@ -92,7 +92,7 @@
    sed -i "s|{{FEATURE_NAME}}|python-cli installation|g" .roadmap/python-cli-install/AI_CONTEXT.md
    sed -i "s|{{FEATURE_SCOPE}}|Complete installation of Python CLI application with all dependencies|g" .roadmap/python-cli-install/AI_CONTEXT.md
    sed -i "s|{{FEATURE_OVERVIEW}}|Systematic installation of python-cli meta-plugin via 7 sequential PRs|g" .roadmap/python-cli-install/AI_CONTEXT.md
-   sed -i "s|{{DEPENDENCIES_LIST}}|ai-projen framework, Git, Python 3.11+, Docker, Poetry|g" .roadmap/python-cli-install/AI_CONTEXT.md
+   sed -i "s|{{DEPENDENCIES_LIST}}|ai-projen framework, Git, Python 3.11+, Docker, Poetry. See pyproject.toml for Python package dependencies.|g" .roadmap/python-cli-install/AI_CONTEXT.md
    sed -i "s|{{EXPORTS_DESCRIPTION}}|Production-ready Python CLI application with Click, Docker, CI/CD, testing|g" .roadmap/python-cli-install/AI_CONTEXT.md
    sed -i "s|{{ADDITIONAL_RELATIONS}}||g" .roadmap/python-cli-install/AI_CONTEXT.md
    sed -i "s|{{IMPLEMENTATION_APPROACH}}|Roadmap-based meta-plugin installation|g" .roadmap/python-cli-install/AI_CONTEXT.md
@@ -177,6 +177,40 @@ Each PR execution:
 7. STOPS - does NOT continue to next PR
 
 **DO NOT execute multiple PRs in one session.**
+
+---
+
+## Important: Creating Atemporal AGENTS.md (PR6)
+
+When creating AGENTS.md in PR6, follow these rules to avoid temporal information:
+
+**❌ NEVER include temporal language**:
+- "will be added after PR5"
+- "currently supports"
+- "planned for future"
+- "coming soon"
+- Specific dependency versions
+
+**✅ ALWAYS use atemporal references**:
+- Reference configuration files: "See `pyproject.toml` for Python dependencies managed by Poetry"
+- Reference directories generically: "See `.ai/howtos/python-cli/` for guides"
+- Avoid listing specific files unless they're guaranteed to exist
+- Point to package manifests as source of truth for dependencies
+
+**Example - External Dependencies Section**:
+```markdown
+### External Dependencies
+See `pyproject.toml` for the complete and authoritative list of Python dependencies managed by Poetry.
+```
+
+**NOT**:
+```markdown
+### External Dependencies
+- **Click**: CLI framework - https://click.palletsprojects.com/
+- **Ruff**: Linting - https://docs.astral.sh/ruff/
+```
+
+Dependencies change frequently. Always point to the package manifest (pyproject.toml, package.json, Cargo.toml) as the source of truth.
 
 ---
 

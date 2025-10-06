@@ -201,6 +201,11 @@ Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
 
 ### External Dependencies
 <!-- List key dependencies and their documentation -->
+<!-- IMPORTANT: Never list dependencies inline - they change over time -->
+<!-- For Python: Reference pyproject.toml (Poetry) or requirements.txt -->
+<!-- For Node.js: Reference package.json -->
+<!-- For Rust: Reference Cargo.toml -->
+<!-- Example: "See pyproject.toml for Python dependencies managed by Poetry" -->
 
 ## Getting Help
 
