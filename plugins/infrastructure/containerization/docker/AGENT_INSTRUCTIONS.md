@@ -18,6 +18,42 @@
 **Implementation**: Multi-stage Docker pattern with development orchestration
 
 ---
+## Parameters
+
+This plugin accepts the following parameters:
+
+- **LANGUAGES** - Comma-separated list of languages in use
+  - Default: `auto-detect` (detects from existing project files)
+  - Example: `python`, `typescript`, `python,typescript`
+  - Notes: Determines which Dockerfiles to generate
+
+- **SERVICES** - Comma-separated list of service names
+  - Default: `app`
+  - Example: `backend,frontend,database`
+  - Notes: Used for docker-compose service naming
+
+- **INSTALL_PATH** - Directory where .docker/ will be created
+  - Default: `.` (current directory)
+  - Example: `.docker/`, `infrastructure/`
+  - Notes: Determines location of Docker configuration files
+
+### Usage
+
+Standalone (auto-detect languages):
+```
+Follow: plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md
+```
+
+With parameters:
+```
+Follow: plugins/infrastructure/containerization/docker/AGENT_INSTRUCTIONS.md
+  with LANGUAGES=python,typescript
+  with SERVICES=backend,frontend,database
+  with INSTALL_PATH=.docker/
+```
+
+---
+
 
 ## Prerequisites
 
