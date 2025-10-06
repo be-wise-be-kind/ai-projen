@@ -179,13 +179,17 @@ test -f .ai/layout.yaml && echo "✅ layout.yaml exists"
 
 **Validation**:
 ```bash
-test -f pyproject.toml && echo "✅ Python configured"
-test -f package.json && echo "✅ TypeScript configured"
-poetry --version && echo "✅ Poetry installed"
-npm --version && echo "✅ npm installed"
+# Verify configuration files created (this PR creates configs, NOT installs dependencies)
+test -f pyproject.toml && echo "✅ pyproject.toml created"
+test -f package.json && echo "✅ package.json created"
+test -f tsconfig.json && echo "✅ tsconfig.json created"
+test -f .flake8 && echo "✅ Python linter configs created"
+
+# Note: Poetry and npm should already be installed (verified in Prerequisites Check)
+# Dependencies will be installed in PR5 when application structure exists
 ```
 
-**Mark complete when**: All validation passes, PROGRESS_TRACKER updated
+**Mark complete when**: All config files exist, PROGRESS_TRACKER updated
 
 ---
 
@@ -205,12 +209,14 @@ npm --version && echo "✅ npm installed"
 
 **Validation**:
 ```bash
+# Verify Docker infrastructure files created
 test -d .docker && echo "✅ .docker folder created"
 test -f .docker/dockerfiles/Dockerfile.backend && echo "✅ Backend Dockerfile exists"
 test -f .docker/dockerfiles/Dockerfile.frontend && echo "✅ Frontend Dockerfile exists"
 test -f .docker/compose/lint.yml && echo "✅ Lint compose file exists"
 test -f .docker/compose/test.yml && echo "✅ Test compose file exists"
-docker compose version && echo "✅ Docker Compose available"
+
+# Note: Docker Compose tool availability was verified in Prerequisites Check
 ```
 
 **Mark complete when**: All validation passes (or marked Skipped if user chose "no")

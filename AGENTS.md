@@ -284,6 +284,12 @@ If you are thinking any of the following, STOP immediately:
 8. **REPORT results** with clear next steps for user
 9. **EXIT early** if prerequisites not met
 10. **PRESERVE existing code** in upgrade scenarios - never break working functionality
+11. **ROADMAP validation overrides plugin instructions** - When executing a roadmap PR:
+   - Primary source: PROGRESS_TRACKER.md validation section for that PR
+   - Reference only: Individual plugin AGENT_INSTRUCTIONS.md for understanding
+   - Rule: Validate what the ROADMAP says, not what the plugin says
+   - If roadmap validation checks file existence, do NOT run tool commands
+   - Prerequisites (poetry/npm installed) are checked once at start, not per-PR
 
 ---
 
