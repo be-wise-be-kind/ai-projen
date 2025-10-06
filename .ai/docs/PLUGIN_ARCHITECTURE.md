@@ -241,6 +241,12 @@ Format:
 ```markdown
 # {Plugin Name} - Agent Instructions
 
+## Parameters (Optional but Recommended)
+- Parameter name and description
+- Default values
+- Usage examples
+- See PLUGIN_PARAMETER_STANDARD.md for details
+
 ## Prerequisites
 - System requirements
 - Tool versions
@@ -265,6 +271,8 @@ Format:
 - [ ] Checklist of requirements
 - [ ] For completion
 ```
+
+**Note on Parameters**: Language and infrastructure plugins should support parameters (especially INSTALL_PATH) to enable flexible installation locations. See `.ai/docs/PLUGIN_PARAMETER_STANDARD.md` for complete parameter implementation guidance. Standards plugins typically don't need parameters as they install to fixed locations.
 
 #### 2. README.md
 Format:
