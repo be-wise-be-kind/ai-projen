@@ -56,42 +56,122 @@
 
 ---
 
-## Installation Steps
+## Installation Approach: Roadmap-Based (REQUIRED)
 
-**CRITICAL: Execute ALL phases in sequential order. Do NOT skip any phase unless explicitly marked OPTIONAL.**
+**CRITICAL**: This meta-plugin installation MUST use a roadmap-based approach.
 
-**Phase Execution Order:**
-1. Phase 1: Foundation Setup - REQUIRED
-2. Phase 2: Language Plugin Installation - REQUIRED
-3. Phase 3: Docker Infrastructure Setup - REQUIRED (ASK USER FIRST)
-4. Phase 4: Standards Plugin Installation - REQUIRED
-5. Phase 5: Application-Specific Installation - REQUIRED
-6. Phase 6: Optional UI Scaffold (ask user)
-7. Phase 7: Optional Terraform (ask user)
-8. Phase 8: Post-Installation - REQUIRED
+**Why?**
+- Meta-plugin installations are complex (8 phases, 9+ plugin installations)
+- Agents tend to rush, skip phases, or take shortcuts when given all phases at once
+- Breaking into separate PRs prevents shortcuts and ensures systematic execution
 
-**How to Track Progress with Todo Items:**
+**How it works:**
 
-Create separate todo items for EACH phase. Do NOT create a single "Execute react-python-fullstack plugin installation" item.
+### Step 1: Create Installation Roadmap (PR0)
+1. Ask user ALL questions upfront:
+   - "Set up Docker infrastructure? (yes/no)"
+   - "Install UI scaffold? (yes/no)"
+   - "Deploy to AWS with Terraform? (yes/no)"
 
-**WRONG:**
-```
-☐ Execute react-python-fullstack plugin installation
-```
+2. Create roadmap file from template:
+   ```bash
+   mkdir -p roadmap/react-python-fullstack-install
+   cp .ai/templates/roadmap-meta-plugin-installation.md.template \
+      roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   ```
 
-**CORRECT:**
-```
-☐ Phase 1: Install foundation/ai-folder plugin
-☐ Phase 2: Install Python and TypeScript language plugins
-☐ Phase 3: Ask user about Docker, then install Docker plugin
-☐ Phase 4: Install standards plugins (security, docs, pre-commit)
-☐ Phase 5: Copy application structure and configure
-☐ Phase 6: Ask user about UI scaffold (optional)
-☐ Phase 7: Ask user about Terraform (optional)
-☐ Phase 8: Validate installation and create AGENTS.md
-```
+3. Fill in template variables:
+   - `{{PLUGIN_NAME}}` → `react-python-fullstack`
+   - `{{TOTAL_PLUGINS}}` → `9`
+   - `{{TOTAL_PRS}}` → `9` (8 phases + 1 planning)
+   - `{{TARGET_REPO_PATH}}` → User's repository path
+   - `{{PROJECT_NAME}}` → Extracted from repository name
+   - `{{DOCKER_CHOICE}}` → User's answer
+   - `{{UI_SCAFFOLD_CHOICE}}` → User's answer
+   - `{{TERRAFORM_CHOICE}}` → User's answer
 
-This ensures you execute each phase sequentially and don't skip steps.
+4. Initialize PR status dashboard:
+   - Mark PR0 as ✅ Complete
+   - Mark PRs 1-5, 8 as 🔴 Not Started
+   - Mark PR6 as 🔴 Not Started or ⏭️ Skipped (based on UI choice)
+   - Mark PR7 as 🔴 Not Started or ⏭️ Skipped (based on Terraform choice)
+
+5. Commit roadmap:
+   ```bash
+   git add roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+   git commit -m "chore: Create roadmap for react-python-fullstack installation"
+   ```
+
+6. Inform user:
+   ```
+   ✅ Roadmap created at: roadmap/react-python-fullstack-install/PROGRESS_TRACKER.md
+
+   Next steps:
+   1. Review the roadmap to understand the installation plan
+   2. Execute one PR at a time by requesting: "Execute PR1 from roadmap"
+   3. Each PR will install one phase and update the roadmap
+
+   User choices recorded:
+   - Docker Infrastructure: {{DOCKER_CHOICE}}
+   - UI Scaffold: {{UI_SCAFFOLD_CHOICE}}
+   - Terraform: {{TERRAFORM_CHOICE}}
+   ```
+
+### Step 2: User Executes PRs One at a Time
+
+User will request execution like:
+- "Execute PR1 from roadmap/react-python-fullstack-install"
+- "Execute PR2 from roadmap/react-python-fullstack-install"
+- etc.
+
+Each PR execution:
+1. Agent reads PROGRESS_TRACKER.md
+2. Checks "Next PR to Implement" section
+3. Executes ONLY that PR's instructions
+4. Validates completion
+5. Updates PROGRESS_TRACKER.md (mark PR complete, update "Next PR")
+6. Commits and merges PR branch
+7. STOPS - does NOT continue to next PR
+
+**DO NOT execute multiple PRs in one session.**
+
+---
+
+## Roadmap PR Breakdown
+
+When creating the roadmap, ensure it includes these PRs:
+
+- **PR0**: Planning (ask questions, create roadmap) - YOU DO THIS NOW
+- **PR1**: Foundation (install ai-folder plugin)
+- **PR2**: Languages (install Python + TypeScript plugins)
+- **PR3**: Docker (install Docker infrastructure) - conditional on user choice
+- **PR4**: Standards (install security, docs, pre-commit plugins)
+- **PR5**: Application (copy app structure, configure, install deps)
+- **PR6**: UI Scaffold (optional) - conditional on user choice
+- **PR7**: Terraform (optional) - conditional on user choice
+- **PR8**: Finalization (validate, create AGENTS.md)
+
+**See the roadmap template for detailed instructions for each PR.**
+
+---
+
+## If You Are Being Asked to "Install react-python-fullstack Plugin"
+
+**STOP. You should NOT execute the full installation in one go.**
+
+Instead, your task is:
+1. **Create the roadmap** (PR0 instructions above)
+2. **Ask the user questions**
+3. **Create PROGRESS_TRACKER.md**
+4. **Inform user to execute PRs one at a time**
+
+The detailed phase instructions below are for REFERENCE ONLY. They will be executed incrementally via the roadmap PRs, not all at once.
+
+---
+
+## Detailed Phase Instructions (For Roadmap PR Execution Only)
+
+**NOTE**: These instructions are used by individual roadmap PRs. Do NOT execute all phases in one session.
 
 ### Prerequisites Check
 
