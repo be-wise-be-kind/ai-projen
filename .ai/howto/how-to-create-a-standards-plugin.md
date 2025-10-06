@@ -1631,6 +1631,20 @@ pre-commit-hooks/
 
 ✅ **Support gradual adoption** - Allow progressive implementation
 
+### Parameter Awareness
+
+Standards plugins typically don't use parameters like language plugins do, since they install documentation to fixed locations (`.ai/docs/`, `.ai/howto/`). However:
+
+✅ **Be aware of the parameter standard** - Understand how language and infrastructure plugins use parameters, as you may need to reference or coordinate with them
+
+✅ **Reference the standard** - Link to `.ai/docs/PLUGIN_PARAMETER_STANDARD.md` in documentation when explaining integration with language plugins
+
+✅ **Document integration patterns** - If your standard interacts with parameterized plugins, explain how it detects and adapts to their configurations
+
+✅ **No INSTALL_PATH needed** - Standards documentation always goes to `.ai/docs/` and `.ai/howto/` regardless of where language files are installed
+
+**Note**: See `.ai/docs/PLUGIN_PARAMETER_STANDARD.md` for complete parameter documentation used by language and infrastructure plugins.
+
 ### Don'ts
 
 ❌ **Don't be overly prescriptive** - Allow flexibility where appropriate

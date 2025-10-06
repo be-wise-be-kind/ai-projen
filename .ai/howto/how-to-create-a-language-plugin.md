@@ -438,9 +438,47 @@ export default defineConfig({
 });
 ```
 
-### Step 6: Write AGENT_INSTRUCTIONS.md
+### Step 6: Add Plugin Parameters Support
 
-The main plugin AGENT_INSTRUCTIONS.md coordinates the entire installation:
+Language plugins should support parameters to enable flexible installation paths. This allows meta-plugins to install language tooling in subdirectories rather than the repository root.
+
+**Why Parameters Matter**: When creating full-stack applications, you need Python files in `backend/` and TypeScript files in `frontend/`, not at the root. Parameters enable this flexibility while maintaining standalone functionality.
+
+#### Parameter Standard
+
+See `.ai/docs/PLUGIN_PARAMETER_STANDARD.md` for complete parameter implementation guidance. Key points:
+
+- **INSTALL_PATH parameter**: Specifies where language files/config should be installed
+- **Default to current directory**: Use `${INSTALL_PATH:-.}` for standalone compatibility
+- **Update all file operations**: Prepend `"${INSTALL_PATH}/"` to all file paths
+- **Validate correctly**: Check files are in INSTALL_PATH, not orphaned at root
+
+#### Implementation Steps
+
+When writing your AGENT_INSTRUCTIONS.md in the next step, include:
+
+1. **Parameters section** (before Prerequisites):
+   - Document INSTALL_PATH parameter
+   - Show default value and examples
+   - Demonstrate usage with and without parameter
+
+2. **Installation path setup** (first installation step):
+   - Accept parameter with default: `INSTALL_PATH="${INSTALL_PATH:-.}"`
+   - Create directory: `mkdir -p "${INSTALL_PATH}"`
+   - Echo for visibility: `echo "Installing to: ${INSTALL_PATH}"`
+
+3. **File operations** (throughout installation):
+   - Use `"${INSTALL_PATH}/filename"` for all file creation
+   - Examples: `cat > "${INSTALL_PATH}/package.json"`, `cp config "${INSTALL_PATH}/.eslintrc.json"`
+
+4. **Validation** (final step):
+   - Check files exist in INSTALL_PATH: `test -f "${INSTALL_PATH}/config"`
+   - Verify no orphans when using custom path
+   - Test both standalone and parameterized modes
+
+### Step 7: Write AGENT_INSTRUCTIONS.md
+
+The main plugin AGENT_INSTRUCTIONS.md coordinates the entire installation and implements parameter support:
 
 **File**: `AGENT_INSTRUCTIONS.md`
 
@@ -464,6 +502,29 @@ The main plugin AGENT_INSTRUCTIONS.md coordinates the entire installation:
 
 ---
 
+## Parameters
+
+This plugin accepts the following parameters:
+
+- **INSTALL_PATH** - Directory where <Language> tooling will be installed
+  - Default: `.` (current directory)
+  - Example: `backend/`, `services/api/`, `src/`
+
+### Usage
+
+Standalone (uses current directory):
+```
+Follow: plugins/languages/<language>/core/AGENT_INSTRUCTIONS.md
+```
+
+With custom path:
+```
+Follow: plugins/languages/<language>/core/AGENT_INSTRUCTIONS.md
+  with INSTALL_PATH=backend/
+```
+
+---
+
 ## Prerequisites
 
 Before installing this plugin, ensure:
@@ -474,7 +535,19 @@ Before installing this plugin, ensure:
 
 ## Installation Steps
 
-### Step 1: Gather User Preferences
+### Step 1: Set Installation Path
+
+```bash
+# Accept INSTALL_PATH parameter with default to current directory
+INSTALL_PATH="${INSTALL_PATH:-.}"
+
+# Create installation directory if it doesn't exist
+mkdir -p "${INSTALL_PATH}"
+
+echo "Installing <Language> plugin to: ${INSTALL_PATH}"
+```
+
+### Step 2: Gather User Preferences
 
 Ask the user (or use recommended defaults):
 
@@ -493,28 +566,47 @@ Ask the user (or use recommended defaults):
    - <framework2> (<reason>)
    - Default: <framework1>
 
-### Step 2: Install Linter
+### Step 3: Install Linter
 
 Based on user's choice, follow the appropriate sub-instructions:
 
 - For <linter1>: See `linters/<linter1>/AGENT_INSTRUCTIONS.md`
 - For <linter2>: See `linters/<linter2>/AGENT_INSTRUCTIONS.md`
 
-### Step 3: Install Formatter
+### Step 4: Install Formatter
 
 Based on user's choice:
 
 - For <formatter1>: See `formatters/<formatter1>/AGENT_INSTRUCTIONS.md`
 - For <formatter2>: See `formatters/<formatter2>/AGENT_INSTRUCTIONS.md`
 
-### Step 4: Install Test Framework
+### Step 5: Install Test Framework
 
 Based on user's choice:
 
 - For <framework1>: See `testing/<framework1>/AGENT_INSTRUCTIONS.md`
 - For <framework2>: See `testing/<framework2>/AGENT_INSTRUCTIONS.md`
 
-### Step 5: Create Makefile Targets
+### Step 6: Create Configuration Files
+
+```bash
+# Create linter configuration in INSTALL_PATH
+cat > "${INSTALL_PATH}/<linter-config>" << 'EOF'
+<configuration content>
+EOF
+
+# Create formatter configuration in INSTALL_PATH
+cat > "${INSTALL_PATH}/<formatter-config>" << 'EOF'
+<configuration content>
+EOF
+
+# Create package configuration in INSTALL_PATH
+cat > "${INSTALL_PATH}/package.json" << 'EOF'
+<package configuration>
+EOF
+```
+
+### Step 7: Create Makefile Targets
 
 Add <language>-specific targets to Makefile (create if doesn't exist):
 
@@ -536,21 +628,26 @@ test-<lang>:
 	@echo "✓ <Language> checks passed"
 \`\`\`
 
-### Step 6: Extend agents.md
+### Step 8: Extend agents.md
 
 Add <Language>-specific guidelines to agents.md between the
 `### LANGUAGE_SPECIFIC_GUIDELINES` markers.
 
-### Step 7: Add .ai Documentation
+### Step 9: Add .ai Documentation
 
 Create `.ai/docs/<LANGUAGE>_STANDARDS.md` with coding standards.
 Update `.ai/index.yaml` to reference this documentation.
 
-### Step 8: Validate Installation
+### Step 10: Validate Installation
 
 Run the following commands to verify:
 
 \`\`\`bash
+# Check configuration files exist in correct location
+test -f "${INSTALL_PATH}/<linter-config>" && echo "✅ Linter configured"
+test -f "${INSTALL_PATH}/<formatter-config>" && echo "✅ Formatter configured"
+test -f "${INSTALL_PATH}/package.json" && echo "✅ Package configured"
+
 # Run linting
 make lint-<lang>
 
@@ -559,17 +656,24 @@ make format-<lang>
 
 # Run tests
 make test-<lang>
+
+# Verify no orphaned files at root (when INSTALL_PATH is not current dir)
+if [ "${INSTALL_PATH}" != "." ]; then
+  ! test -f package.json && echo "✅ No root package file"
+  ! test -f <linter-config> && echo "✅ No root linter config"
+fi
 \`\`\`
 
 ## Success Criteria
 
 Installation is successful when:
-- ✅ Linter config exists and linting works
-- ✅ Formatter config exists and formatting works
-- ✅ Test framework installed and tests run
+- ✅ Linter config exists in INSTALL_PATH and linting works
+- ✅ Formatter config exists in INSTALL_PATH and formatting works
+- ✅ Test framework installed in INSTALL_PATH and tests run
 - ✅ Makefile targets work
 - ✅ agents.md updated with <Language> guidelines
 - ✅ `.ai/docs/<LANGUAGE>_STANDARDS.md` exists
+- ✅ Files created in INSTALL_PATH, not orphaned at root (when using custom path)
 ```
 
 ### Step 7: Create Makefile Integration
@@ -1306,6 +1410,28 @@ test-<lang>:     # Run tests only
 ✅ **Follow conventions** - Use established file naming and directory structure
 
 ✅ **Version lock critical tools** - Specify minimum versions for consistency
+
+### Parameter Best Practices
+
+When implementing parameters in your plugin:
+
+✅ **Always provide defaults** - Plugins must work without any parameters. Default INSTALL_PATH to `.` (current directory)
+
+✅ **Document all parameters** - Include a Parameters section at the top of AGENT_INSTRUCTIONS.md with clear descriptions, defaults, and examples
+
+✅ **Use meaningful names** - Follow UPPER_SNAKE_CASE convention. Use INSTALL_PATH not PATH or DIR
+
+✅ **Test standalone mode** - The most important use case is standalone (no parameters). Test this first
+
+✅ **Test with parameters** - Also test with INSTALL_PATH set to subdirectories like `backend/`, `src/`, etc.
+
+✅ **Validate file locations** - In validation, check files are in INSTALL_PATH and NOT at root when using custom path
+
+✅ **Consider composition** - Your plugin might be called by meta-plugins. Make sure it works when INSTALL_PATH is passed from upstream
+
+✅ **Update all file operations** - Every file creation must use `"${INSTALL_PATH}/filename"` not just `filename`
+
+✅ **Reference the standard** - Link to `.ai/docs/PLUGIN_PARAMETER_STANDARD.md` in your plugin's README for full parameter documentation
 
 ### Don'ts
 
