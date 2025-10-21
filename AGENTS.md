@@ -2,6 +2,63 @@
 
 ---
 
+## MANDATORY: First Action for Every Task
+
+**BEFORE working on ANY task, you MUST:**
+
+1. ✅ **READ** `.ai/index.yaml` to understand available resources
+2. ✅ **IDENTIFY** relevant documentation, howtos, templates, and roadmaps for your task
+3. ✅ **READ** all applicable documents completely before proceeding
+4. ✅ **INFORM** the user which documents you are using to solve the problem
+
+**Process:**
+```
+1. Scan .ai/index.yaml sections:
+   - howto: (orchestration guides like how-to-create-new-ai-repo.md)
+   - documentation: (architectural context and standards)
+   - templates: (roadmap and file templates)
+   - roadmap: (active feature roadmaps)
+
+2. Read applicable documents in this order:
+   - Roadmap documents first (if continuing roadmap work)
+   - How-to guides second
+   - Standards/documentation third
+   - Templates fourth
+
+3. Tell the user:
+   "I will use these resources to solve this problem:
+    - [document 1]: [why it's relevant]
+    - [document 2]: [why it's relevant]"
+
+4. Then proceed with the task following the guidance
+```
+
+**Examples:**
+
+- **Task: "Continue with PR2 on roadmap X"** →
+  1. Read `.ai/index.yaml` to locate roadmap
+  2. Read roadmap's `PROGRESS_TRACKER.md`, `PR_BREAKDOWN.md`, `AI_CONTEXT.md`
+  3. Inform user: "Using roadmap X/PROGRESS_TRACKER.md for PR2 implementation"
+
+- **Task: "Create new AI repo"** →
+  1. Read `.ai/index.yaml`
+  2. Read `how-to-create-new-ai-repo.md`
+  3. Inform user: "Using how-to-create-new-ai-repo.md orchestration guide"
+
+- **Task: "Add capability to repo"** →
+  1. Read `.ai/index.yaml`
+  2. Read `how-to-add-capability.md`
+  3. Inform user: "Using how-to-add-capability.md for adding capabilities"
+
+- **Task: "Improve ai-projen plugin"** →
+  1. Read `.ai/index.yaml`
+  2. Read `PLUGIN_GIT_WORKFLOW_STANDARD.md`
+  3. Inform user: "Using PLUGIN_GIT_WORKFLOW_STANDARD.md for framework development"
+
+**This is NOT optional.** Skipping this step leads to incomplete work and not following established patterns.
+
+---
+
 ## What This Repository Does
 
 ai-projen is a plugin-based framework that helps AI agents create and upgrade repositories to be "AI-ready."
@@ -324,7 +381,16 @@ Classify the request:
 
 5. **Continue Roadmap**
    - Intent: Implement next PR from roadmap
-   - **FIRST**: Ask user for roadmap path if not provided (e.g., `roadmap/my-feature/`)
+   - **Detection signals**: User says "continue with PR", "lets continue", provides roadmap directory path, or mentions "roadmap"
+   - **CRITICAL**: When user provides a DIRECTORY PATH (not a file), this is likely a roadmap directory
+   - **Process**:
+     1. Check if path is a directory containing roadmap documents
+     2. Read `PROGRESS_TRACKER.md` from that directory
+     3. Read `PR_BREAKDOWN.md` from that directory
+     4. Read `AI_CONTEXT.md` from that directory (if exists)
+     5. Inform user: "Using roadmap at [path] for PR[N] implementation"
+     6. Follow the "Next PR to Implement" section in PROGRESS_TRACKER.md
+   - **If roadmap path not provided**: Ask user for roadmap directory path (e.g., `.roadmap/in-progress/my-feature/`)
    - Guide: Use roadmap's `PR_BREAKDOWN.md` and `PROGRESS_TRACKER.md` from provided path
 
 6. **Create New Feature Roadmap**
@@ -421,7 +487,29 @@ Actions:
 8. Merge to main
 ```
 
-**Example 2**: "Continue with next PR from roadmap"
+**Example 2**: "Continue with PR2 on roadmap at .roadmap/in-progress/my-feature/"
+```
+Analysis:
+- Working directory: /path/to/ai-projen (THIS repo = Type 2)
+- Task: Continue roadmap implementation
+- Roadmap path: PROVIDED as directory path
+
+Actions:
+1. Classify as Type 2: Framework Developer
+2. Detect directory path → likely roadmap
+3. Read .ai/index.yaml to confirm roadmap location
+4. Read .roadmap/in-progress/my-feature/PROGRESS_TRACKER.md
+5. Read .roadmap/in-progress/my-feature/PR_BREAKDOWN.md
+6. Read .roadmap/in-progress/my-feature/AI_CONTEXT.md (if exists)
+7. Inform user: "Using roadmap at .roadmap/in-progress/my-feature/ for PR2 implementation"
+8. Identify next PR from "Next PR to Implement" section
+9. Create branch: feature/pr2-<description>
+10. Follow PR implementation steps exactly from PR_BREAKDOWN.md
+11. Update PROGRESS_TRACKER.md when complete
+12. Commit and merge
+```
+
+**Example 3**: "Continue with next PR from roadmap" (no path provided)
 ```
 Analysis:
 - Working directory: /path/to/ai-projen (THIS repo = Type 2)
@@ -430,14 +518,9 @@ Analysis:
 
 Actions:
 1. Classify as Type 2: Framework Developer
-2. Ask user: "What is the roadmap directory path?" (e.g., roadmap/my-feature/)
-3. Read <roadmap-path>/PROGRESS_TRACKER.md for current state
-4. Identify next PR to implement
-5. Read <roadmap-path>/PR_BREAKDOWN.md for that PR's requirements
-6. Create branch: feature/pr<N>-<description>
-7. Follow PR implementation steps exactly
-8. Update <roadmap-path>/PROGRESS_TRACKER.md when complete
-9. Commit and merge
+2. Ask user: "What is the roadmap directory path?" (e.g., .roadmap/in-progress/my-feature/)
+3. Wait for user to provide path
+4. Then follow Example 2 process
 ```
 
 ### Critical Rules for Framework Developer Mode
