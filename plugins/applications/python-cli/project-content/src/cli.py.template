@@ -1,28 +1,34 @@
 """
-Purpose: Main CLI entrypoint with Click framework for command-line interface
+Purpose: Main CLI entrypoint with Typer framework for command-line interface
 
 Scope: CLI command definitions, option parsing, and command execution coordination
 
-Overview: Provides the main CLI application using Click decorators for command definition, option
-    parsing, and help text generation. Includes example commands (hello, config management) that
-    demonstrate best practices for CLI design including error handling, logging configuration,
-    context management, and user-friendly output. Serves as the entry point for the installed
-    CLI tool and coordinates between user input and application logic.
+Overview: Provides the main CLI application using Typer with type hints for command definition,
+    automatic option parsing, and Rich integration for styled output. Includes example commands
+    (hello, config management) that demonstrate best practices for CLI design including error
+    handling, logging configuration, state management, and user-friendly output with Rich
+    styling. Serves as the entry point for the installed CLI tool and coordinates between
+    user input and application logic.
 
-Dependencies: click for CLI framework, logging for structured output, pathlib for file paths
+Dependencies: typer for CLI framework, rich for styled output, logging for structured output
 
-Exports: cli (main command group), hello command, config command group
+Exports: app (main Typer application), hello command, config command group
 
-Interfaces: Click CLI commands, configuration context via Click ctx, logging integration
+Interfaces: Typer CLI commands, configuration state via State class, logging integration
 
-Implementation: Click decorators for commands, context passing for shared state, comprehensive help text
+Implementation: Typer decorators with Annotated type hints, Rich console output, state management
 """
 
-import click
+import typer
 import logging
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Annotated, Any
+from enum import Enum
+
+from rich import print as rprint
+from rich.console import Console
+from rich.table import Table
 
 from src.config import load_config, save_config, validate_config, ConfigError
 from src import __version__
@@ -30,8 +36,32 @@ from src import __version__
 # Configure module logger
 logger = logging.getLogger(__name__)
 
+# Rich console for styled output
+console = Console()
 
-def setup_logging(verbose: bool = False):
+
+class State:
+    """Application state shared across commands (replaces Click's ctx.obj)."""
+
+    def __init__(self) -> None:
+        self.config: dict[str, Any] = {}
+        self.config_path: Optional[Path] = None
+        self.verbose: bool = False
+
+
+# Global state instance
+state = State()
+
+
+class OutputFormat(str, Enum):
+    """Output format choices for config display."""
+
+    text = "text"
+    json = "json"
+    yaml = "yaml"
+
+
+def setup_logging(verbose: bool = False) -> None:
     """
     Configure logging for the CLI application.
 
@@ -48,268 +78,279 @@ def setup_logging(verbose: bool = False):
     )
 
 
-@click.group()
-@click.version_option(version=__version__)
-@click.option('--verbose', '-v', is_flag=True, help='Enable verbose output')
-@click.option('--config', '-c', type=click.Path(), help='Path to config file')
-@click.pass_context
-def cli(ctx, verbose: bool, config: Optional[str]):
+def version_callback(value: bool) -> None:
+    """Show version and exit."""
+    if value:
+        rprint(f"[cyan]{{PROJECT_NAME}}[/cyan] version [green]{__version__}[/green]")
+        raise typer.Exit()
+
+
+# Create main app
+app = typer.Typer(
+    name="{{PROJECT_NAME}}",
+    help="{{PROJECT_DESCRIPTION}} - A professional command-line tool built with Python and Typer.",
+    add_completion=True,
+    rich_markup_mode="rich",
+)
+
+# Create config subcommand group
+config_app = typer.Typer(
+    help="Configuration management commands.",
+    rich_markup_mode="rich",
+)
+app.add_typer(config_app, name="config")
+
+
+@app.callback()
+def main(
+    verbose: Annotated[bool, typer.Option(
+        "--verbose", "-v",
+        help="Enable verbose output"
+    )] = False,
+    config: Annotated[Optional[Path], typer.Option(
+        "--config", "-c",
+        help="Path to config file",
+    )] = None,
+    version: Annotated[bool, typer.Option(
+        "--version",
+        help="Show version and exit",
+        callback=version_callback,
+        is_eager=True,
+    )] = False,
+) -> None:
     """
-    {{PROJECT_NAME}} - {{PROJECT_DESCRIPTION}}
+    [bold cyan]{{PROJECT_NAME}}[/bold cyan] - {{PROJECT_DESCRIPTION}}
 
-    A professional command-line tool built with Python and Click.
+    A professional command-line tool built with Python and Typer.
 
-    Examples:
+    [bold]Examples:[/bold]
 
-        \b
-        # Show help
+        [dim]# Show help[/dim]
         {{PROJECT_NAME}} --help
 
-        \b
-        # Run with verbose output
+        [dim]# Run with verbose output[/dim]
         {{PROJECT_NAME}} --verbose hello --name World
 
-        \b
-        # Use custom config
+        [dim]# Use custom config[/dim]
         {{PROJECT_NAME}} --config myconfig.yaml config show
     """
-    # Ensure context object exists
-    ctx.ensure_object(dict)
-
     # Setup logging
     setup_logging(verbose)
 
     # Load configuration
     try:
         if config:
-            ctx.obj['config'] = load_config(Path(config))
-            ctx.obj['config_path'] = Path(config)
+            state.config = load_config(config)
+            state.config_path = config
         else:
-            ctx.obj['config'] = load_config()
-            ctx.obj['config_path'] = None
+            state.config = load_config()
+            state.config_path = None
 
         logger.debug("Configuration loaded successfully")
     except ConfigError as e:
-        click.echo(f"Error loading configuration: {e}", err=True)
-        sys.exit(2)
+        rprint(f"[red]Error loading configuration: {e}[/red]")
+        raise typer.Exit(code=2)
 
-    ctx.obj['verbose'] = verbose
+    state.verbose = verbose
 
 
-@cli.command()
-@click.option('--name', '-n', default='World', help='Name to greet')
-@click.option('--uppercase', '-u', is_flag=True, help='Convert greeting to uppercase')
-@click.pass_context
-def hello(ctx, name: str, uppercase: bool):
+@app.command()
+def hello(
+    name: Annotated[str, typer.Option(
+        "--name", "-n",
+        help="Name to greet"
+    )] = "World",
+    uppercase: Annotated[bool, typer.Option(
+        "--uppercase", "-u",
+        help="Convert greeting to uppercase"
+    )] = False,
+) -> None:
     """
     Print a greeting message.
 
     This is a simple example command demonstrating CLI basics.
 
-    Examples:
+    [bold]Examples:[/bold]
 
-        \b
-        # Basic greeting
+        [dim]# Basic greeting[/dim]
         {{PROJECT_NAME}} hello
 
-        \b
-        # Custom name
+        [dim]# Custom name[/dim]
         {{PROJECT_NAME}} hello --name Alice
 
-        \b
-        # Uppercase output
+        [dim]# Uppercase output[/dim]
         {{PROJECT_NAME}} hello --name Bob --uppercase
     """
-    config = ctx.obj['config']
-    verbose = ctx.obj.get('verbose', False)
-
-    # Get greeting from config or use default
-    greeting_template = config.get('greeting', 'Hello')
-
-    # Build greeting message
+    greeting_template = state.config.get('greeting', 'Hello')
     message = f"{greeting_template}, {name}!"
 
     if uppercase:
         message = message.upper()
 
-    # Output greeting
-    click.echo(message)
+    # Use Rich for styled output
+    rprint(f"[green]{message}[/green]")
 
-    if verbose:
+    if state.verbose:
         logger.info(f"Greeted {name} with template '{greeting_template}'")
 
 
-@cli.group()
-def config():
-    """Configuration management commands."""
-    pass
-
-
-@config.command('show')
-@click.option('--format', '-f', type=click.Choice(['text', 'json', 'yaml']),
-              default='text', help='Output format')
-@click.pass_context
-def config_show(ctx, format: str):
+@config_app.command("show")
+def config_show(
+    format: Annotated[OutputFormat, typer.Option(
+        "--format", "-f",
+        help="Output format"
+    )] = OutputFormat.text,
+) -> None:
     """
     Display current configuration.
 
     Shows all configuration values in the specified format.
 
-    Examples:
+    [bold]Examples:[/bold]
 
-        \b
-        # Show as text
+        [dim]# Show as text table[/dim]
         {{PROJECT_NAME}} config show
 
-        \b
-        # Show as JSON
+        [dim]# Show as JSON[/dim]
         {{PROJECT_NAME}} config show --format json
 
-        \b
-        # Show as YAML
+        [dim]# Show as YAML[/dim]
         {{PROJECT_NAME}} config show --format yaml
     """
-    cfg = ctx.obj['config']
+    cfg = state.config
 
-    if format == 'json':
+    if format == OutputFormat.json:
         import json
-        click.echo(json.dumps(cfg, indent=2))
-    elif format == 'yaml':
+        rprint(json.dumps(cfg, indent=2))
+    elif format == OutputFormat.yaml:
         import yaml
-        click.echo(yaml.dump(cfg, default_flow_style=False, sort_keys=False))
+        rprint(yaml.dump(cfg, default_flow_style=False, sort_keys=False))
     else:
-        # Text format
-        click.echo("Current Configuration:")
-        click.echo("-" * 40)
+        # Rich table for text format
+        table = Table(title="Current Configuration", show_header=True, header_style="bold cyan")
+        table.add_column("Key", style="cyan", width=20)
+        table.add_column("Value", style="green")
         for key, value in cfg.items():
-            click.echo(f"{key:20} : {value}")
+            table.add_row(str(key), str(value))
+        console.print(table)
 
 
-@config.command('get')
-@click.argument('key')
-@click.pass_context
-def config_get(ctx, key: str):
+@config_app.command("get")
+def config_get(
+    key: Annotated[str, typer.Argument(help="Configuration key to retrieve")],
+) -> None:
     """
     Get specific configuration value.
 
-    KEY: Configuration key to retrieve
+    [bold]Examples:[/bold]
 
-    Examples:
-
-        \b
-        # Get log level
+        [dim]# Get log level[/dim]
         {{PROJECT_NAME}} config get log_level
 
-        \b
-        # Get greeting template
+        [dim]# Get greeting template[/dim]
         {{PROJECT_NAME}} config get greeting
     """
-    cfg = ctx.obj['config']
+    cfg = state.config
 
     if key not in cfg:
-        click.echo(f"Configuration key not found: {key}", err=True)
-        sys.exit(1)
+        rprint(f"[red]Configuration key not found: {key}[/red]")
+        raise typer.Exit(code=1)
 
-    click.echo(cfg[key])
+    rprint(cfg[key])
 
 
-@config.command('set')
-@click.argument('key')
-@click.argument('value')
-@click.pass_context
-def config_set(ctx, key: str, value: str):
+@config_app.command("set")
+def config_set(
+    key: Annotated[str, typer.Argument(help="Configuration key to set")],
+    value: Annotated[str, typer.Argument(help="New value for the key")],
+) -> None:
     """
     Set configuration value.
 
-    KEY: Configuration key to set
+    [bold]Examples:[/bold]
 
-    VALUE: New value for the key
-
-    Examples:
-
-        \b
-        # Set log level
+        [dim]# Set log level[/dim]
         {{PROJECT_NAME}} config set log_level DEBUG
 
-        \b
-        # Set greeting template
+        [dim]# Set greeting template[/dim]
         {{PROJECT_NAME}} config set greeting "Hi"
 
-        \b
-        # Set numeric value
+        [dim]# Set numeric value[/dim]
         {{PROJECT_NAME}} config set max_retries 5
     """
-    cfg = ctx.obj['config']
+    cfg = state.config
 
     # Type conversion for common types
+    converted_value: Any = value
     if value.lower() in ['true', 'false']:
-        value = value.lower() == 'true'
+        converted_value = value.lower() == 'true'
     elif value.isdigit():
-        value = int(value)
+        converted_value = int(value)
     elif value.replace('.', '', 1).isdigit() and value.count('.') == 1:
-        value = float(value)
+        converted_value = float(value)
 
     # Update config
-    cfg[key] = value
+    cfg[key] = converted_value
 
     # Validate updated config
     try:
         is_valid, errors = validate_config(cfg)
         if not is_valid:
-            click.echo("Invalid configuration:", err=True)
+            rprint("[red]Invalid configuration:[/red]")
             for error in errors:
-                click.echo(f"  - {error}", err=True)
-            sys.exit(1)
+                rprint(f"  [red]• {error}[/red]")
+            raise typer.Exit(code=1)
     except Exception as e:
-        click.echo(f"Validation error: {e}", err=True)
-        sys.exit(1)
+        rprint(f"[red]Validation error: {e}[/red]")
+        raise typer.Exit(code=1)
 
     # Save config
     try:
-        config_path = ctx.obj.get('config_path')
-        save_config(cfg, config_path)
-        click.echo(f"✓ Set {key} = {value}")
+        save_config(cfg, state.config_path)
+        rprint(f"[green]✓ Set {key} = {converted_value}[/green]")
 
-        if ctx.obj.get('verbose'):
-            logger.info(f"Configuration updated: {key}={value}")
+        if state.verbose:
+            logger.info(f"Configuration updated: {key}={converted_value}")
     except ConfigError as e:
-        click.echo(f"Error saving configuration: {e}", err=True)
-        sys.exit(1)
+        rprint(f"[red]Error saving configuration: {e}[/red]")
+        raise typer.Exit(code=1)
 
 
-@config.command('reset')
-@click.option('--yes', '-y', is_flag=True, help='Skip confirmation prompt')
-@click.pass_context
-def config_reset(ctx, yes: bool):
+@config_app.command("reset")
+def config_reset(
+    yes: Annotated[bool, typer.Option(
+        "--yes", "-y",
+        help="Skip confirmation prompt"
+    )] = False,
+) -> None:
     """
     Reset configuration to defaults.
 
-    Examples:
+    [bold]Examples:[/bold]
 
-        \b
-        # Reset with confirmation
+        [dim]# Reset with confirmation[/dim]
         {{PROJECT_NAME}} config reset
 
-        \b
-        # Reset without confirmation
+        [dim]# Reset without confirmation[/dim]
         {{PROJECT_NAME}} config reset --yes
     """
     if not yes:
-        click.confirm('Reset configuration to defaults?', abort=True)
+        confirm = typer.confirm("Reset configuration to defaults?")
+        if not confirm:
+            raise typer.Abort()
 
     from src.config import DEFAULT_CONFIG
 
     try:
-        config_path = ctx.obj.get('config_path')
-        save_config(DEFAULT_CONFIG.copy(), config_path)
-        click.echo("✓ Configuration reset to defaults")
+        save_config(DEFAULT_CONFIG.copy(), state.config_path)
+        rprint("[green]✓ Configuration reset to defaults[/green]")
 
-        if ctx.obj.get('verbose'):
+        if state.verbose:
             logger.info("Configuration reset to defaults")
     except ConfigError as e:
-        click.echo(f"Error resetting configuration: {e}", err=True)
-        sys.exit(1)
+        rprint(f"[red]Error resetting configuration: {e}[/red]")
+        raise typer.Exit(code=1)
 
 
-if __name__ == '__main__':
-    cli()
+if __name__ == "__main__":
+    app()

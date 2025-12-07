@@ -3,7 +3,7 @@
 name: python-cli
 version: 1.0.0
 type: meta-plugin
-description: Complete Python CLI application with Click framework, Docker packaging, and comprehensive tooling
+description: Complete Python CLI application with Typer framework, Rich output, Docker packaging, and comprehensive tooling
 author: ai-projen framework
 last_updated: 2025-10-02
 
@@ -24,7 +24,8 @@ metadata:
     primary_language: python
     dependency_manager: Poetry (isolated venv - doesn't corrupt user machine)
     frameworks:
-      - Click 8.x
+      - Typer 0.12.x
+      - Rich 13.x
       - pytest
       - Ruff
     infrastructure:
@@ -88,19 +89,20 @@ provides:
       - Utilities: install, clean, help
 
   starter_application:
-    description: Production-ready Python CLI tool with Click framework, config management, logging, and Docker packaging
+    description: Production-ready Python CLI tool with Typer framework, Rich output, config management, logging, and Docker packaging
     structure:
       - src/                                  # Application source code
       - tests/                                # Comprehensive test suite
       - docker-compose.cli.yml                # CLI-specific Docker setup
 
     features:
-      - Click-based CLI with multiple commands
+      - Typer-based CLI with type hints and automatic help
+      - Rich integration for styled output, tables, and progress bars
       - YAML/JSON configuration file support
       - Structured logging with configurable levels
-      - Comprehensive error handling
+      - Comprehensive error handling with colored messages
       - Docker containerization for distribution
-      - Example commands (hello, config show/set)
+      - Example commands (hello, config show/get/set/reset)
       - Complete test coverage with pytest
       - Type hints throughout
 
@@ -206,8 +208,11 @@ references:
       file: ai-content/docs/python-cli-architecture.md
 
   external:
-    - name: "Click Documentation"
-      url: "https://click.palletsprojects.com/"
+    - name: "Typer Documentation"
+      url: "https://typer.tiangolo.com/"
+
+    - name: "Rich Documentation"
+      url: "https://rich.readthedocs.io/"
 
     - name: "pytest Documentation"
       url: "https://docs.pytest.org/"

@@ -1,21 +1,21 @@
 # Python CLI Application Architecture
 
-**Purpose**: Architectural documentation for Python CLI applications built with Click framework
+**Purpose**: Architectural documentation for Python CLI applications built with Typer framework
 
 **Scope**: Design patterns, component structure, and best practices for CLI application development
 
 **Overview**: This document describes the architecture of Python CLI applications created with this plugin.
-    It covers the Click-based command structure, configuration management patterns, error handling strategies,
+    It covers the Typer-based command structure, configuration management patterns, error handling strategies,
     testing approaches, and Docker packaging. The architecture emphasizes modularity, testability, and
-    production-ready practices for building professional command-line tools.
+    production-ready practices for building professional command-line tools with Rich-styled output.
 
-**Dependencies**: Click framework, Python 3.11+, pytest, Docker
+**Dependencies**: Typer framework, Rich library, Python 3.11+, pytest, Docker
 
 **Exports**: Architectural patterns, component descriptions, design decisions, extension points
 
 **Related**: .ai/howtos/python-cli/, plugins/languages/python/, Python CLI plugin README
 
-**Implementation**: Click command groups, YAML configuration, structured logging, Docker multi-stage builds
+**Implementation**: Typer commands with Annotated type hints, Rich console output, Docker multi-stage builds
 
 ---
 
@@ -23,11 +23,12 @@
 
 The Python CLI application architecture provides a production-ready foundation for building command-line tools with:
 
-- **Modular Command Structure**: Click-based commands organized hierarchically
+- **Modular Command Structure**: Typer-based commands with type hints and automatic validation
+- **Rich Integration**: Styled console output with colors, tables, and progress bars
 - **Configuration Management**: YAML/JSON config with validation and defaults
 - **Comprehensive Error Handling**: User-friendly error messages and exit codes
 - **Structured Logging**: Configurable logging with multiple levels
-- **Testing Framework**: pytest with Click testing utilities
+- **Testing Framework**: pytest with Typer testing utilities
 - **Container Packaging**: Docker-based distribution
 
 ## Architecture Diagram
@@ -62,6 +63,14 @@ The Python CLI application architecture provides a production-ready foundation f
 │  │  └────────────┘  └────────────┘  └────────────┘     │  │
 │  └────────────────────────────────────────────────────────┘  │
 │                                                               │
+│  ┌────────────────────────────────────────────────────────┐  │
+│  │                Rich Output Layer                        │  │
+│  │  ┌────────────┐  ┌────────────┐  ┌────────────┐     │  │
+│  │  │   Tables   │  │   Colors   │  │  Progress  │     │  │
+│  │  │            │  │  & Styles  │  │    Bars    │     │  │
+│  │  └────────────┘  └────────────┘  └────────────┘     │  │
+│  └────────────────────────────────────────────────────────┘  │
+│                                                               │
 └─────────────────────────────────────────────────────────────┘
                             │
                             │ Packaged as
@@ -80,61 +89,96 @@ The Python CLI application architecture provides a production-ready foundation f
 
 ### 1. CLI Entrypoint (src/cli.py)
 
-The main CLI interface using Click framework.
+The main CLI interface using Typer framework with Rich integration.
 
 **Responsibilities**:
-- Define CLI commands and subcommands
-- Handle command-line arguments and options
+- Define CLI commands and subcommands using Typer
+- Handle command-line arguments and options with type hints
 - Coordinate between commands and business logic
-- Manage Click context for shared state
+- Manage application state for shared data
 - Configure logging based on verbosity flags
+- Provide styled output with Rich
 
 **Key Patterns**:
 
 ```python
-import click
+import typer
 import logging
+from typing import Annotated, Optional
+from pathlib import Path
+from enum import Enum
 
-@click.group()
-@click.option('--verbose', '-v', is_flag=True, help='Enable verbose output')
-@click.option('--config', '-c', type=click.Path(), help='Config file path')
-@click.pass_context
-def cli(ctx, verbose, config):
+from rich import print as rprint
+from rich.console import Console
+
+console = Console()
+
+# State class for sharing data between commands
+class State:
+    def __init__(self):
+        self.config: dict = {}
+        self.verbose: bool = False
+
+state = State()
+
+# Create main app
+app = typer.Typer(
+    name="mycli",
+    help="My CLI application",
+    rich_markup_mode="rich",
+)
+
+# Create subcommand group
+config_app = typer.Typer(help="Configuration commands.")
+app.add_typer(config_app, name="config")
+
+@app.callback()
+def main(
+    verbose: Annotated[bool, typer.Option(
+        "--verbose", "-v",
+        help="Enable verbose output"
+    )] = False,
+    config: Annotated[Optional[Path], typer.Option(
+        "--config", "-c",
+        help="Config file path"
+    )] = None,
+):
     """Main CLI entrypoint with shared options."""
-    # Setup logging
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(level=level)
 
-    # Load config and store in context
-    ctx.ensure_object(dict)
-    ctx.obj['config'] = load_config(config)
+    state.config = load_config(config)
+    state.verbose = verbose
 
-@cli.command()
-@click.option('--name', '-n', required=True, help='Name to greet')
-@click.pass_context
-def hello(ctx, name):
+@app.command()
+def hello(
+    name: Annotated[str, typer.Option(
+        "--name", "-n",
+        help="Name to greet"
+    )] = "World",
+):
     """Print a greeting message."""
-    config = ctx.obj['config']
-    greeting = config.get('greeting', 'Hello')
-    click.echo(f"{greeting}, {name}!")
+    greeting = state.config.get('greeting', 'Hello')
+    rprint(f"[green]{greeting}, {name}![/green]")
 
-@cli.group()
-def config():
-    """Configuration management commands."""
-    pass
-
-@config.command('show')
+@config_app.command("show")
 def config_show():
     """Display current configuration."""
-    # Implementation
-    pass
+    from rich.table import Table
+    table = Table(title="Configuration")
+    table.add_column("Key", style="cyan")
+    table.add_column("Value", style="green")
+    for k, v in state.config.items():
+        table.add_row(k, str(v))
+    console.print(table)
 ```
 
 **Design Decisions**:
-- **Click Groups**: Organize related commands hierarchically
-- **Context Passing**: Share configuration and state between commands
-- **Decorators**: Clean, declarative command definitions
-- **Help Text**: Comprehensive help for all commands and options
+- **Typer App**: Modern CLI framework built on Click with type hints
+- **State Class**: Module-level state object replaces Click's context passing
+- **Annotated Types**: Clean, type-safe parameter definitions
+- **Rich Integration**: Styled output for professional appearance
+- **Subcommand Groups**: Organize related commands with `add_typer()`
 
 ### 2. Configuration Management (src/config.py)
 
@@ -187,34 +231,41 @@ def save_config(config: Dict[str, Any], config_path: Optional[Path] = None):
     path.parent.mkdir(parents=True, exist_ok=True)
 
     with open(path, 'w') as f:
-        yaml.dump(config, f, default_flow_style=False)
+        yaml.dump(config, default_flow_style=False)
 
-def validate_config(config: Dict[str, Any]) -> bool:
+def validate_config(config: Dict[str, Any]) -> tuple[bool, list[str]]:
     """Validate configuration schema."""
+    errors = []
     required_keys = ['greeting', 'log_level']
-    return all(key in config for key in required_keys)
+    for key in required_keys:
+        if key not in config:
+            errors.append(f"Missing required key: {key}")
+    return len(errors) == 0, errors
 ```
 
 **Design Decisions**:
 - **Multiple Locations**: Check multiple paths for config files
 - **Defaults**: Always have working defaults
 - **Merging**: User config overrides defaults
-- **Validation**: Ensure required keys present
+- **Validation**: Fail early with clear messages
 - **Type Safety**: Use type hints throughout
 
 ### 3. Error Handling
 
-Comprehensive error handling with user-friendly messages.
+Comprehensive error handling with user-friendly messages and Rich styling.
 
 **Responsibilities**:
 - Catch and handle exceptions gracefully
-- Provide informative error messages
+- Provide informative error messages with colors
 - Use appropriate exit codes
 - Log errors for debugging
 
 **Key Patterns**:
 
 ```python
+import typer
+from rich import print as rprint
+
 class CLIError(Exception):
     """Base exception for CLI errors."""
     exit_code = 1
@@ -227,25 +278,22 @@ class ValidationError(CLIError):
     """Input validation errors."""
     exit_code = 3
 
-def handle_errors(func):
-    """Decorator to handle errors uniformly."""
-    def wrapper(*args, **kwargs):
-        try:
-            return func(*args, **kwargs)
-        except CLIError as e:
-            logging.error(str(e))
-            sys.exit(e.exit_code)
-        except Exception as e:
-            logging.exception("Unexpected error occurred")
-            sys.exit(1)
-    return wrapper
-
-@cli.command()
-@handle_errors
+@app.command()
 def risky_operation():
     """Command that might fail."""
-    # Implementation with potential errors
-    pass
+    try:
+        # Operation logic
+        result = perform_operation()
+        rprint(f"[green]✓ Success: {result}[/green]")
+    except ConfigError as e:
+        rprint(f"[red]Configuration error: {e}[/red]")
+        raise typer.Exit(code=2)
+    except ValidationError as e:
+        rprint(f"[red]Validation error: {e}[/red]")
+        raise typer.Exit(code=3)
+    except Exception as e:
+        rprint(f"[red]Unexpected error: {e}[/red]")
+        raise typer.Exit(code=1)
 ```
 
 **Exit Codes**:
@@ -256,7 +304,58 @@ def risky_operation():
 - `4`: File not found
 - `5`: Network error
 
-### 4. Logging
+### 4. Rich Output Integration
+
+Styled console output using Rich library.
+
+**Responsibilities**:
+- Provide colored and styled text output
+- Display data in tables
+- Show progress bars for long operations
+- Format error messages prominently
+
+**Key Patterns**:
+
+```python
+from rich import print as rprint
+from rich.console import Console
+from rich.table import Table
+from rich.progress import track
+from rich.panel import Panel
+
+console = Console()
+
+# Colored text
+rprint("[green]Success![/green]")
+rprint("[red]Error occurred[/red]")
+rprint("[yellow]Warning: proceed with caution[/yellow]")
+rprint("[bold cyan]Important information[/bold cyan]")
+
+# Tables for structured data
+def show_config(config: dict):
+    table = Table(title="Configuration", show_header=True)
+    table.add_column("Key", style="cyan", width=20)
+    table.add_column("Value", style="green")
+    for key, value in config.items():
+        table.add_row(str(key), str(value))
+    console.print(table)
+
+# Progress bars for iterations
+def process_items(items: list):
+    for item in track(items, description="Processing..."):
+        process(item)
+    rprint("[green]✓ Complete![/green]")
+
+# Panels for important messages
+def show_error(message: str):
+    console.print(Panel(
+        f"[red]{message}[/red]",
+        title="Error",
+        border_style="red"
+    ))
+```
+
+### 5. Logging
 
 Structured logging with configurable levels and formats.
 
@@ -270,7 +369,8 @@ Structured logging with configurable levels and formats.
 
 ```python
 import logging
-from datetime import datetime
+from pathlib import Path
+from typing import Optional
 
 def setup_logging(verbose: bool = False, log_file: Optional[Path] = None):
     """Configure logging for the application."""
@@ -298,9 +398,9 @@ def setup_logging(verbose: bool = False, log_file: Optional[Path] = None):
         root_logger.addHandler(file_handler)
 ```
 
-### 5. Testing Framework
+### 6. Testing Framework
 
-Comprehensive testing using pytest and Click's testing utilities.
+Comprehensive testing using pytest and Typer's testing utilities.
 
 **Responsibilities**:
 - Test CLI commands in isolation
@@ -311,14 +411,23 @@ Comprehensive testing using pytest and Click's testing utilities.
 **Key Patterns**:
 
 ```python
-from click.testing import CliRunner
+from typer.testing import CliRunner
 import pytest
-from src.cli import cli
+from src.cli import app, state
 
 @pytest.fixture
 def runner():
-    """Provide Click test runner."""
+    """Provide Typer test runner."""
     return CliRunner()
+
+@pytest.fixture(autouse=True)
+def reset_state():
+    """Reset global state before each test."""
+    state.config = {}
+    state.verbose = False
+    yield
+    state.config = {}
+    state.verbose = False
 
 @pytest.fixture
 def temp_config(tmp_path):
@@ -329,13 +438,13 @@ def temp_config(tmp_path):
 
 def test_hello_command(runner):
     """Test basic hello command."""
-    result = runner.invoke(cli, ['hello', '--name', 'Test'])
+    result = runner.invoke(app, ['hello', '--name', 'Test'])
     assert result.exit_code == 0
     assert 'Hello, Test!' in result.output
 
 def test_hello_with_custom_config(runner, temp_config):
     """Test hello command with custom config."""
-    result = runner.invoke(cli, [
+    result = runner.invoke(app, [
         '--config', str(temp_config),
         'hello', '--name', 'Test'
     ])
@@ -344,7 +453,7 @@ def test_hello_with_custom_config(runner, temp_config):
 
 def test_config_show_command(runner):
     """Test config show command."""
-    result = runner.invoke(cli, ['config', 'show'])
+    result = runner.invoke(app, ['config', 'show'])
     assert result.exit_code == 0
     assert 'greeting' in result.output
 ```
@@ -417,11 +526,13 @@ services:
 Simple CLIs with few commands:
 
 ```python
-@cli.command()
+app = typer.Typer()
+
+@app.command()
 def command1():
     pass
 
-@cli.command()
+@app.command()
 def command2():
     pass
 ```
@@ -431,23 +542,23 @@ def command2():
 Complex CLIs with related command groups:
 
 ```python
-@cli.group()
-def group1():
-    """Group 1 commands."""
-    pass
+app = typer.Typer()
 
-@group1.command()
+# Group 1
+group1_app = typer.Typer(help="Group 1 commands.")
+app.add_typer(group1_app, name="group1")
+
+@group1_app.command()
 def subcommand1():
     pass
 
-@group1.command()
+@group1_app.command()
 def subcommand2():
     pass
 
-@cli.group()
-def group2():
-    """Group 2 commands."""
-    pass
+# Group 2
+group2_app = typer.Typer(help="Group 2 commands.")
+app.add_typer(group2_app, name="group2")
 ```
 
 ### Plugin-Based Structure
@@ -457,13 +568,13 @@ Extensible CLIs with plugin support:
 ```python
 # In src/plugins/
 class PluginBase:
-    def register_commands(self, cli_group):
+    def register_commands(self, app: typer.Typer):
         raise NotImplementedError
 
 # In src/cli.py
 def load_plugins():
     for plugin in discover_plugins():
-        plugin.register_commands(cli)
+        plugin.register_commands(app)
 ```
 
 ## Extension Points
@@ -472,19 +583,18 @@ def load_plugins():
 
 1. **Simple Command**:
    ```python
-   @cli.command()
-   @click.option('--option', help='Description')
-   def new_command(option):
+   @app.command()
+   def new_command(
+       option: Annotated[str, typer.Option(help="Description")] = "default",
+   ):
        """Command description."""
-       # Implementation
+       rprint(f"[green]Running with {option}[/green]")
    ```
 
 2. **Command Group**:
    ```python
-   @cli.group()
-   def new_group():
-       """Group description."""
-       pass
+   new_group = typer.Typer(help="Group description.")
+   app.add_typer(new_group, name="new-group")
 
    @new_group.command()
    def subcommand():
@@ -504,25 +614,39 @@ class ConfigSchema(BaseModel):
     log_level: str = "INFO"
     custom_field: int = 42
 
-def load_config(path):
+def load_config(path: Path) -> ConfigSchema:
     data = yaml.safe_load(open(path))
     return ConfigSchema(**data)
 ```
 
-### Custom Output Formats
+### Output Format Enum
 
-Support multiple output formats:
+Support multiple output formats with type-safe enums:
 
 ```python
-import json
+from enum import Enum
 
-def format_output(data, format_type):
-    if format_type == 'json':
-        return json.dumps(data, indent=2)
-    elif format_type == 'yaml':
-        return yaml.dump(data)
+class OutputFormat(str, Enum):
+    json = "json"
+    yaml = "yaml"
+    text = "text"
+
+@app.command()
+def export(
+    format: Annotated[OutputFormat, typer.Option(
+        "--format", "-f",
+        help="Output format"
+    )] = OutputFormat.text,
+):
+    """Export data in specified format."""
+    if format == OutputFormat.json:
+        import json
+        rprint(json.dumps(data, indent=2))
+    elif format == OutputFormat.yaml:
+        import yaml
+        rprint(yaml.dump(data))
     else:
-        return str(data)
+        rprint(str(data))
 ```
 
 ## Best Practices
@@ -540,6 +664,7 @@ def format_output(data, format_type):
 - **Context**: Include relevant information (file paths, values)
 - **Suggestions**: Offer alternatives when possible
 - **Exit Codes**: Use appropriate exit codes for different error types
+- **Color Coding**: Red for errors, yellow for warnings, green for success
 
 ### Configuration
 
@@ -550,15 +675,16 @@ def format_output(data, format_type):
 
 ### Testing
 
-- **Test in Isolation**: Use Click's CliRunner for isolated testing
+- **Test in Isolation**: Use Typer's CliRunner for isolated testing
+- **Reset State**: Always reset global state between tests
 - **Test Errors**: Verify error handling and messages
 - **Test Edge Cases**: Boundary conditions, missing inputs, invalid data
 - **Integration Tests**: Test command combinations and workflows
 
 ### Documentation
 
-- **Help Text**: Comprehensive help for all commands
-- **Examples**: Include usage examples in help
+- **Help Text**: Comprehensive help for all commands with Rich markup
+- **Examples**: Include usage examples in docstrings
 - **README**: Quick start guide in project README
 - **How-Tos**: Detailed guides for common tasks
 
@@ -574,7 +700,7 @@ def format_output(data, format_type):
 
 - **Streaming**: Stream large outputs instead of loading into memory
 - **Pagination**: Paginate long output
-- **Progress Bars**: Show progress for long-running operations
+- **Progress Bars**: Show progress with Rich's `track()` for long operations
 
 ### Concurrent Operations
 
@@ -679,7 +805,7 @@ pyinstaller --onefile src/cli.py
 Handle config schema changes:
 
 ```python
-def migrate_config(old_config):
+def migrate_config(old_config: dict) -> dict:
     """Migrate old config format to new."""
     if 'old_field' in old_config:
         old_config['new_field'] = old_config.pop('old_field')
@@ -695,7 +821,8 @@ def migrate_config(old_config):
 
 ## References
 
-- **Click Documentation**: https://click.palletsprojects.com/
+- **Typer Documentation**: https://typer.tiangolo.com/
+- **Rich Documentation**: https://rich.readthedocs.io/
 - **pytest Documentation**: https://docs.pytest.org/
 - **Python Packaging**: https://packaging.python.org/
 - **Docker Best Practices**: https://docs.docker.com/develop/dev-best-practices/

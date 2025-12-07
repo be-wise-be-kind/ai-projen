@@ -1,14 +1,14 @@
 # Python CLI Application Plugin
 
-**Purpose**: Meta-plugin providing complete Python CLI application with Click framework, Docker packaging, and production-ready tooling
+**Purpose**: Meta-plugin providing complete Python CLI application with Typer framework, Rich output, Docker packaging, and production-ready tooling
 
 **Scope**: End-to-end CLI application setup for developers building command-line tools and utilities
 
 **Overview**: This application plugin composes foundation, language, infrastructure, and standards plugins
     to deliver a complete, production-ready Python CLI application. It includes a functional starter application
-    built with Click framework, configuration file management, structured logging, comprehensive testing,
-    Docker packaging, and CI/CD pipeline. The plugin simplifies CLI development by providing battle-tested
-    architecture with application-specific how-to guides and code generation templates.
+    built with Typer framework with Rich integration for styled output, configuration file management, structured
+    logging, comprehensive testing, Docker packaging, and CI/CD pipeline. The plugin simplifies CLI development
+    by providing battle-tested architecture with application-specific how-to guides and code generation templates.
 
 **Dependencies**: foundation/ai-folder, languages/python, infrastructure/containerization/docker,
     infrastructure/ci-cd/github-actions, standards/security, standards/documentation, standards/pre-commit-hooks
@@ -27,7 +27,7 @@
 
 A complete, production-ready CLI application including:
 
-- **Click Framework Integration**: Modern CLI with subcommands, options, and help text
+- **Typer Framework Integration**: Modern CLI with type hints, subcommands, options, and Rich-styled help text
 - **Configuration Management**: YAML/JSON config file support with validation
 - **Structured Logging**: Configurable logging with levels and formatters
 - **Error Handling**: Comprehensive exception handling patterns
@@ -63,7 +63,7 @@ When you install the python-cli plugin, you get a **fully turnkey Python CLI app
 - ✅ **pytest** - Modern testing framework with:
   - pytest-asyncio (async test support)
   - pytest-cov (coverage reporting)
-  - Click.testing.CliRunner (CLI testing utilities)
+  - typer.testing.CliRunner (CLI testing utilities)
 
 ### 🛠️ Clean Makefile with lint-* Namespace
 All tools accessible via clean, intuitive targets:
@@ -173,8 +173,9 @@ The starter application includes:
 ### Technology Stack
 
 - **Python**: 3.11+ with modern language features
-- **Click**: 8.x for CLI framework
-- **pytest**: Testing framework with Click testing utilities
+- **Typer**: 0.12.x for CLI framework with type hints
+- **Rich**: Styled console output with colors, tables, and progress bars
+- **pytest**: Testing framework with Typer testing utilities
 - **Ruff**: Fast linting and formatting
 - **Docker**: Container packaging for distribution
 - **GitHub Actions**: Automated testing and releases
@@ -185,7 +186,7 @@ The starter application includes:
 your-project/
 ├── src/
 │   ├── __init__.py              # Package initialization
-│   ├── cli.py                   # Main CLI entrypoint with Click
+│   ├── cli.py                   # Main CLI entrypoint with Typer
 │   └── config.py                # Configuration file management
 │
 ├── tests/
@@ -331,14 +332,18 @@ See: `.ai/howtos/python-cli/how-to-add-cli-command.md`
 Quick example:
 ```python
 # In src/cli.py
+from typing import Annotated
+from rich import print as rprint
 
-@cli.command()
-@click.option('--input', '-i', required=True, help='Input file')
-@click.option('--output', '-o', required=True, help='Output file')
-def process(input: str, output: str):
+@app.command()
+def process(
+    input: Annotated[str, typer.Option("--input", "-i", help="Input file")],
+    output: Annotated[str, typer.Option("--output", "-o", help="Output file")],
+):
     """Process input file and write to output."""
-    click.echo(f"Processing {input} -> {output}")
+    rprint(f"[cyan]Processing {input} -> {output}[/cyan]")
     # Your processing logic here
+    rprint("[green]✓ Complete![/green]")
 ```
 
 ### Handle Configuration Files
@@ -373,7 +378,7 @@ Options:
 
 All how-to guides are in `.ai/howtos/python-cli/`:
 
-1. **how-to-add-cli-command.md** - Add new Click commands and subcommands
+1. **how-to-add-cli-command.md** - Add new Typer commands and subcommands
 2. **how-to-handle-config-files.md** - Configuration file management patterns
 3. **how-to-package-cli-tool.md** - Package and distribute your CLI tool
 
@@ -391,16 +396,17 @@ See: `.ai/docs/python-cli-architecture.md` for detailed architecture documentati
 
 ### Key Components
 
-- **src/cli.py**: Main CLI entrypoint using Click decorators
+- **src/cli.py**: Main CLI entrypoint using Typer with Annotated type hints
 - **src/config.py**: Configuration file loading and validation
-- **tests/test_cli.py**: CLI testing using Click's CliRunner
+- **tests/test_cli.py**: CLI testing using Typer's CliRunner
 
 ### Design Patterns
 
-- **Click Command Groups**: Organize commands hierarchically
+- **Typer App Groups**: Organize commands hierarchically with `add_typer()`
+- **State Class**: Module-level state for sharing data between commands
 - **Configuration Management**: YAML/JSON with defaults and validation
-- **Dependency Injection**: Pass config and dependencies through Click context
-- **Error Handling**: Custom exceptions with user-friendly messages
+- **Rich Output**: Styled console output with colors, tables, and progress bars
+- **Error Handling**: Custom exceptions with user-friendly Rich-styled messages
 - **Logging**: Structured logging with configurable levels
 
 ## Configuration
@@ -409,23 +415,18 @@ See: `.ai/docs/python-cli-architecture.md` for detailed architecture documentati
 
 Main project configuration:
 ```toml
-[project]
-name = "my-cli-tool"
-version = "0.1.0"
-dependencies = [
-    "click>=8.0.0",
-    "pyyaml>=6.0",
-]
+[tool.poetry.dependencies]
+python = "^3.11"
+typer = {extras = ["all"], version = "^0.12.0"}
+pyyaml = "^6.0"
 
-[project.optional-dependencies]
-dev = [
-    "pytest>=7.0.0",
-    "pytest-cov>=4.0.0",
-    "ruff>=0.1.0",
-]
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.4.2"
+pytest-cov = "^4.0.0"
+ruff = "^0.13.0"
 
-[project.scripts]
-my-cli-tool = "src.cli:cli"
+[tool.poetry.scripts]
+my-cli-tool = "src.cli:app"
 ```
 
 ### docker-compose.cli.yml
@@ -444,14 +445,14 @@ services:
 
 ### Test Structure
 
-Tests use pytest with Click's testing utilities:
+Tests use pytest with Typer's testing utilities:
 ```python
-from click.testing import CliRunner
-from src.cli import cli
+from typer.testing import CliRunner
+from src.cli import app
 
 def test_hello_command():
     runner = CliRunner()
-    result = runner.invoke(cli, ['hello', '--name', 'Test'])
+    result = runner.invoke(app, ['hello', '--name', 'Test'])
     assert result.exit_code == 0
     assert 'Hello, Test!' in result.output
 ```
@@ -563,7 +564,8 @@ To improve this plugin:
 
 ## References
 
-- [Click Documentation](https://click.palletsprojects.com/)
+- [Typer Documentation](https://typer.tiangolo.com/)
+- [Rich Documentation](https://rich.readthedocs.io/)
 - [pytest Documentation](https://docs.pytest.org/)
 - [Ruff Documentation](https://docs.astral.sh/ruff/)
 - [Python Packaging Guide](https://packaging.python.org/)

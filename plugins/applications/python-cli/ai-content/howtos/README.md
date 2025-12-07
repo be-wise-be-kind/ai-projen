@@ -1,6 +1,6 @@
 # Python CLI Application How-To Guides
 
-**Purpose**: Index of how-to guides for Python CLI application development with Click framework
+**Purpose**: Index of how-to guides for Python CLI application development with Typer framework
 
 **Scope**: Common tasks and patterns for CLI development, configuration, and distribution
 
@@ -22,10 +22,11 @@
 **File**: `how-to-add-cli-command.md`
 
 **What You'll Learn**:
-- Add simple commands to the CLI
-- Create command groups and subcommands
-- Add options, arguments, and flags
-- Use Click context for shared state
+- Add simple commands to the CLI with Typer decorators
+- Create command groups with add_typer()
+- Add options, arguments, and flags with Annotated type hints
+- Use State class for shared data between commands
+- Add Rich-styled output (colors, tables, progress bars)
 - Handle command errors gracefully
 - Test new commands
 
@@ -111,8 +112,10 @@
 
 | Task | Guide | Key Concepts |
 |------|-------|--------------|
-| Add new command | how-to-add-cli-command.md | Click decorators, command groups |
-| Add command option | how-to-add-cli-command.md | @click.option, type validation |
+| Add new command | how-to-add-cli-command.md | Typer decorators, Annotated types |
+| Add command option | how-to-add-cli-command.md | typer.Option, type hints |
+| Create command group | how-to-add-cli-command.md | add_typer(), subcommands |
+| Add Rich output | how-to-add-cli-command.md | Colors, tables, progress bars |
 | Load config file | how-to-handle-config-files.md | YAML parsing, defaults |
 | Save config | how-to-handle-config-files.md | Config persistence, paths |
 | Package for pip | how-to-package-cli-tool.md | pyproject.toml, entry points |

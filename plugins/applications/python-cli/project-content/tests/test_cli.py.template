@@ -3,34 +3,47 @@ Purpose: Test suite for CLI commands and interactions
 
 Scope: CLI command testing, option parsing, error handling, and output validation
 
-Overview: Comprehensive test suite for CLI application using Click's CliRunner for isolated
+Overview: Comprehensive test suite for CLI application using Typer's CliRunner for isolated
     testing. Tests all commands including hello, config show/get/set/reset with various option
     combinations. Validates command output, exit codes, error messages, and configuration
     interactions. Includes fixtures for temporary config files and isolated CLI invocation.
 
-Dependencies: pytest for testing framework, click.testing.CliRunner for CLI testing
+Dependencies: pytest for testing framework, typer.testing.CliRunner for CLI testing
 
 Exports: Test functions for pytest discovery
 
-Interfaces: Click CliRunner, pytest fixtures, temporary file paths
+Interfaces: Typer CliRunner, pytest fixtures, temporary file paths
 
 Implementation: Isolated CLI testing with CliRunner, temporary config files, comprehensive assertions
 """
 
 import pytest
-from click.testing import CliRunner
+from typer.testing import CliRunner
 from pathlib import Path
 import yaml
 import json
 
-from src.cli import cli
+from src.cli import app, state
 from src.config import DEFAULT_CONFIG
 
 
 @pytest.fixture
 def runner():
-    """Provide Click test runner for isolated CLI testing."""
+    """Provide Typer test runner for isolated CLI testing."""
     return CliRunner()
+
+
+@pytest.fixture(autouse=True)
+def reset_state():
+    """Reset global state before each test."""
+    state.config = {}
+    state.config_path = None
+    state.verbose = False
+    yield
+    # Clean up after test
+    state.config = {}
+    state.config_path = None
+    state.verbose = False
 
 
 @pytest.fixture
@@ -66,14 +79,14 @@ class TestCLIBasics:
 
     def test_cli_help(self, runner):
         """Test CLI shows help text."""
-        result = runner.invoke(cli, ['--help'])
+        result = runner.invoke(app, ['--help'])
         assert result.exit_code == 0
         assert '{{PROJECT_NAME}}' in result.output
-        assert 'Commands:' in result.output
+        assert 'Commands' in result.output or 'command' in result.output.lower()
 
     def test_cli_version(self, runner):
         """Test CLI shows version."""
-        result = runner.invoke(cli, ['--version'])
+        result = runner.invoke(app, ['--version'])
         assert result.exit_code == 0
         assert 'version' in result.output.lower()
 
@@ -83,37 +96,37 @@ class TestHelloCommand:
 
     def test_hello_default(self, runner):
         """Test hello command with default name."""
-        result = runner.invoke(cli, ['hello'])
+        result = runner.invoke(app, ['hello'])
         assert result.exit_code == 0
         assert 'Hello, World!' in result.output
 
     def test_hello_with_name(self, runner):
         """Test hello command with custom name."""
-        result = runner.invoke(cli, ['hello', '--name', 'Alice'])
+        result = runner.invoke(app, ['hello', '--name', 'Alice'])
         assert result.exit_code == 0
         assert 'Hello, Alice!' in result.output
 
     def test_hello_with_short_name_option(self, runner):
         """Test hello command with short option."""
-        result = runner.invoke(cli, ['hello', '-n', 'Bob'])
+        result = runner.invoke(app, ['hello', '-n', 'Bob'])
         assert result.exit_code == 0
         assert 'Hello, Bob!' in result.output
 
     def test_hello_uppercase(self, runner):
         """Test hello command with uppercase flag."""
-        result = runner.invoke(cli, ['hello', '--name', 'Charlie', '--uppercase'])
+        result = runner.invoke(app, ['hello', '--name', 'Charlie', '--uppercase'])
         assert result.exit_code == 0
         assert 'HELLO, CHARLIE!' in result.output
 
     def test_hello_short_uppercase(self, runner):
         """Test hello command with short uppercase flag."""
-        result = runner.invoke(cli, ['hello', '-n', 'Dave', '-u'])
+        result = runner.invoke(app, ['hello', '-n', 'Dave', '-u'])
         assert result.exit_code == 0
         assert 'HELLO, DAVE!' in result.output
 
     def test_hello_with_custom_config(self, runner, temp_config_yaml):
         """Test hello command with custom greeting from config."""
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(temp_config_yaml),
             'hello', '--name', 'Eve'
         ])
@@ -122,9 +135,9 @@ class TestHelloCommand:
 
     def test_hello_help(self, runner):
         """Test hello command help text."""
-        result = runner.invoke(cli, ['hello', '--help'])
+        result = runner.invoke(app, ['hello', '--help'])
         assert result.exit_code == 0
-        assert 'Print a greeting message' in result.output
+        assert 'greeting message' in result.output.lower()
         assert '--name' in result.output
 
 
@@ -133,20 +146,21 @@ class TestConfigShow:
 
     def test_config_show_default(self, runner):
         """Test showing default configuration."""
-        result = runner.invoke(cli, ['config', 'show'])
+        result = runner.invoke(app, ['config', 'show'])
         assert result.exit_code == 0
         assert 'log_level' in result.output
         assert 'INFO' in result.output
 
     def test_config_show_text_format(self, runner):
         """Test showing config in text format."""
-        result = runner.invoke(cli, ['config', 'show', '--format', 'text'])
+        result = runner.invoke(app, ['config', 'show', '--format', 'text'])
         assert result.exit_code == 0
-        assert ':' in result.output  # Text format uses key : value
+        # Text format uses Rich table
+        assert 'Configuration' in result.output or 'log_level' in result.output
 
     def test_config_show_json_format(self, runner):
         """Test showing config in JSON format."""
-        result = runner.invoke(cli, ['config', 'show', '--format', 'json'])
+        result = runner.invoke(app, ['config', 'show', '--format', 'json'])
         assert result.exit_code == 0
         # Should be valid JSON
         assert '{' in result.output
@@ -154,14 +168,14 @@ class TestConfigShow:
 
     def test_config_show_yaml_format(self, runner):
         """Test showing config in YAML format."""
-        result = runner.invoke(cli, ['config', 'show', '--format', 'yaml'])
+        result = runner.invoke(app, ['config', 'show', '--format', 'yaml'])
         assert result.exit_code == 0
         # YAML format
         assert ':' in result.output
 
     def test_config_show_with_custom_config(self, runner, temp_config_yaml):
         """Test showing custom configuration."""
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(temp_config_yaml),
             'config', 'show'
         ])
@@ -174,19 +188,19 @@ class TestConfigGet:
 
     def test_config_get_existing_key(self, runner):
         """Test getting existing config key."""
-        result = runner.invoke(cli, ['config', 'get', 'log_level'])
+        result = runner.invoke(app, ['config', 'get', 'log_level'])
         assert result.exit_code == 0
         assert 'INFO' in result.output
 
     def test_config_get_nonexistent_key(self, runner):
         """Test getting nonexistent config key."""
-        result = runner.invoke(cli, ['config', 'get', 'nonexistent_key'])
+        result = runner.invoke(app, ['config', 'get', 'nonexistent_key'])
         assert result.exit_code != 0
         assert 'not found' in result.output.lower()
 
     def test_config_get_with_custom_config(self, runner, temp_config_yaml):
         """Test getting value from custom config."""
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(temp_config_yaml),
             'config', 'get', 'greeting'
         ])
@@ -201,7 +215,7 @@ class TestConfigSet:
         """Test setting string config value."""
         config_file = tmp_path / 'config.yaml'
 
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'set', 'greeting', 'Howdy'
         ])
@@ -209,7 +223,7 @@ class TestConfigSet:
         assert 'Set greeting = Howdy' in result.output
 
         # Verify value was saved
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'get', 'greeting'
         ])
@@ -219,14 +233,14 @@ class TestConfigSet:
         """Test setting integer config value."""
         config_file = tmp_path / 'config.yaml'
 
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'set', 'max_retries', '10'
         ])
         assert result.exit_code == 0
 
         # Verify value was saved as integer
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'show', '--format', 'yaml'
         ])
@@ -236,7 +250,7 @@ class TestConfigSet:
         """Test setting boolean config value."""
         config_file = tmp_path / 'config.yaml'
 
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'set', 'test_flag', 'true'
         ])
@@ -246,7 +260,7 @@ class TestConfigSet:
         """Test setting invalid config value."""
         config_file = tmp_path / 'config.yaml'
 
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'set', 'log_level', 'INVALID'
         ])
@@ -262,13 +276,13 @@ class TestConfigReset:
         config_file = tmp_path / 'config.yaml'
 
         # Set custom value
-        runner.invoke(cli, [
+        runner.invoke(app, [
             '--config', str(config_file),
             'config', 'set', 'greeting', 'Custom'
         ])
 
         # Reset config
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'reset', '--yes'
         ])
@@ -276,7 +290,7 @@ class TestConfigReset:
         assert 'reset to defaults' in result.output.lower()
 
         # Verify reset to default
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'get', 'greeting'
         ])
@@ -287,7 +301,7 @@ class TestConfigReset:
         config_file = tmp_path / 'config.yaml'
 
         # Reset without yes flag (simulate 'n' input)
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'reset'
         ], input='n\n')
@@ -299,13 +313,13 @@ class TestVerboseOutput:
 
     def test_verbose_flag(self, runner):
         """Test CLI with verbose flag."""
-        result = runner.invoke(cli, ['--verbose', 'hello'])
+        result = runner.invoke(app, ['--verbose', 'hello'])
         assert result.exit_code == 0
         # Verbose logging should be present (timestamps, etc.)
 
     def test_short_verbose_flag(self, runner):
         """Test CLI with short verbose flag."""
-        result = runner.invoke(cli, ['-v', 'hello'])
+        result = runner.invoke(app, ['-v', 'hello'])
         assert result.exit_code == 0
 
 
@@ -317,7 +331,7 @@ class TestErrorHandling:
         invalid_config = tmp_path / 'invalid.yaml'
         invalid_config.write_text('invalid: yaml: content: [[[')
 
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(invalid_config),
             'hello'
         ])
@@ -328,7 +342,7 @@ class TestErrorHandling:
         """Test with nonexistent config file (should use defaults)."""
         nonexistent = tmp_path / 'does-not-exist.yaml'
 
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(nonexistent),
             'hello'
         ])
@@ -344,21 +358,21 @@ class TestIntegration:
         config_file = tmp_path / 'config.yaml'
 
         # 1. Show default config
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'show'
         ])
         assert result.exit_code == 0
 
         # 2. Set custom greeting
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'set', 'greeting', 'Hey'
         ])
         assert result.exit_code == 0
 
         # 3. Use custom greeting
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'hello', '--name', 'User'
         ])
@@ -366,14 +380,14 @@ class TestIntegration:
         assert 'Hey, User!' in result.output
 
         # 4. Reset to defaults
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'config', 'reset', '--yes'
         ])
         assert result.exit_code == 0
 
         # 5. Verify default greeting restored
-        result = runner.invoke(cli, [
+        result = runner.invoke(app, [
             '--config', str(config_file),
             'hello', '--name', 'User'
         ])

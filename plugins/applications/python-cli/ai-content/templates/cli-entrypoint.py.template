@@ -1,12 +1,12 @@
 """
-Purpose: Template for creating new CLI modules with Click framework
+Purpose: Template for creating new CLI modules with Typer framework
 
 Scope: CLI entrypoint with command structure, options, and error handling
 
-Overview: This template provides a starting point for creating CLI modules with Click decorators.
-    Includes command group setup, common options, context management, logging configuration,
+Overview: This template provides a starting point for creating CLI modules with Typer and type hints.
+    Includes command group setup, common options, state management, logging configuration,
     and error handling patterns. Follow this structure for consistent CLI development with
-    proper help text, type validation, and testing support.
+    proper help text, type validation, Rich output, and testing support.
 
 Placeholders:
   {{MODULE_NAME}}: Python module name in snake_case
@@ -54,41 +54,76 @@ Purpose: {{MODULE_DESCRIPTION}}
 
 Scope: CLI commands for {{MODULE_NAME}} functionality
 
-Overview: This module provides CLI commands for {{MODULE_NAME}} using Click framework.
-    Includes command definitions, option parsing, error handling, and integration with
-    configuration and logging systems. Commands are organized into groups for better
-    organization and support comprehensive help text and validation.
+Overview: This module provides CLI commands for {{MODULE_NAME}} using Typer framework.
+    Includes command definitions, option parsing with type hints, error handling, and
+    integration with configuration and logging systems. Commands are organized into groups
+    for better organization and support comprehensive help text with Rich styling.
 
-Dependencies: click for CLI framework, logging for output, typing for type hints
+Dependencies: typer for CLI framework, rich for styled output, logging for output
 
-Exports: {{MODULE_NAME}}_cli command group, individual commands
+Exports: {{MODULE_NAME}}_app command group, individual commands
 
-Interfaces: Click CLI commands, configuration context, logging integration
+Interfaces: Typer CLI commands, configuration state, logging integration
 """
 
-import click
+import typer
 import logging
 from pathlib import Path
-from typing import Optional
+from typing import Optional, Annotated, Any
+from enum import Enum
+
+from rich import print as rprint
+from rich.console import Console
 
 # Configure logging
 logger = logging.getLogger(__name__)
+console = Console()
 
 
-@click.group()
-@click.option('--verbose', '-v', is_flag=True, help='Enable verbose output')
-@click.option('--config', '-c', type=click.Path(exists=True), help='Config file path')
-@click.pass_context
-def {{MODULE_NAME}}_cli(ctx, verbose: bool, config: Optional[str]):
+class State:
+    """Application state shared across commands."""
+
+    def __init__(self) -> None:
+        self.config_path: Optional[Path] = None
+        self.verbose: bool = False
+
+
+state = State()
+
+
+class OutputFormat(str, Enum):
+    """Output format choices."""
+
+    json = "json"
+    yaml = "yaml"
+    text = "text"
+
+
+# Create main app for this module
+{{MODULE_NAME}}_app = typer.Typer(
+    help="{{MODULE_DESCRIPTION}}",
+    rich_markup_mode="rich",
+)
+
+
+@{{MODULE_NAME}}_app.callback()
+def main(
+    verbose: Annotated[bool, typer.Option(
+        "--verbose", "-v",
+        help="Enable verbose output"
+    )] = False,
+    config: Annotated[Optional[Path], typer.Option(
+        "--config", "-c",
+        help="Config file path",
+        exists=True,
+    )] = None,
+) -> None:
     """
-    {{MODULE_DESCRIPTION}}
+    [bold cyan]{{MODULE_DESCRIPTION}}[/bold cyan]
 
     This command group provides {{MODULE_NAME}} functionality with comprehensive
     configuration and logging support.
     """
-    # Ensure context object exists
-    ctx.ensure_object(dict)
-
     # Configure logging level
     level = logging.DEBUG if verbose else logging.INFO
     logging.basicConfig(
@@ -99,63 +134,53 @@ def {{MODULE_NAME}}_cli(ctx, verbose: bool, config: Optional[str]):
 
     # Load configuration if provided
     if config:
-        # TODO: Load configuration from file
-        ctx.obj['config_path'] = Path(config)
+        state.config_path = config
         logger.debug(f"Using config file: {config}")
 
-    ctx.obj['verbose'] = verbose
+    state.verbose = verbose
 
 
-@{{MODULE_NAME}}_cli.command('{{COMMAND_NAME}}')
-@click.argument('input_file', type=click.Path(exists=True))
-@click.argument('output_file', type=click.Path())
-@click.option('--format', '-f', type=click.Choice(['json', 'yaml', 'text']),
-              default='text', help='Output format')
-@click.option('--overwrite', is_flag=True, help='Overwrite output file if exists')
-@click.pass_context
+@{{MODULE_NAME}}_app.command("{{COMMAND_NAME}}")
 def {{COMMAND_NAME}}_command(
-    ctx,
-    input_file: str,
-    output_file: str,
-    format: str,
-    overwrite: bool
-):
+    input_file: Annotated[Path, typer.Argument(
+        help="Path to input file to process",
+        exists=True,
+    )],
+    output_file: Annotated[Path, typer.Argument(
+        help="Path where output will be written",
+    )],
+    format: Annotated[OutputFormat, typer.Option(
+        "--format", "-f",
+        help="Output format"
+    )] = OutputFormat.text,
+    overwrite: Annotated[bool, typer.Option(
+        "--overwrite",
+        help="Overwrite output file if exists"
+    )] = False,
+) -> None:
     """
     {{COMMAND_DESCRIPTION}}
 
-    INPUT_FILE: Path to input file to process
+    [bold]Examples:[/bold]
 
-    OUTPUT_FILE: Path where output will be written
-
-    Examples:
-
-        \b
-        # Basic usage
+        [dim]# Basic usage[/dim]
         cli {{COMMAND_NAME}} input.txt output.txt
 
-        \b
-        # With JSON format
+        [dim]# With JSON format[/dim]
         cli {{COMMAND_NAME}} input.txt output.json --format json
 
-        \b
-        # Overwrite existing output
+        [dim]# Overwrite existing output[/dim]
         cli {{COMMAND_NAME}} input.txt output.txt --overwrite
     """
-    verbose = ctx.obj.get('verbose', False)
-
     try:
         # Validate inputs
-        input_path = Path(input_file)
-        output_path = Path(output_file)
+        if output_file.exists() and not overwrite:
+            rprint(f"[red]Output file already exists: {output_file}. Use --overwrite to replace.[/red]")
+            raise typer.Exit(code=1)
 
-        if output_path.exists() and not overwrite:
-            raise click.ClickException(
-                f"Output file already exists: {output_path}. Use --overwrite to replace."
-            )
-
-        if verbose:
-            logger.info(f"Processing {input_path} -> {output_path}")
-            logger.info(f"Output format: {format}")
+        if state.verbose:
+            logger.info(f"Processing {input_file} -> {output_file}")
+            logger.info(f"Output format: {format.value}")
 
         # TODO: Implement command logic here
         # Example:
@@ -163,14 +188,14 @@ def {{COMMAND_NAME}}_command(
         # 2. Process data
         # 3. Write output file
 
-        with open(input_path, 'r') as infile:
+        with open(input_file, 'r') as infile:
             content = infile.read()
 
         # Process content based on format
-        if format == 'json':
+        if format == OutputFormat.json:
             # Convert to JSON
             processed = content  # TODO: Actual conversion
-        elif format == 'yaml':
+        elif format == OutputFormat.yaml:
             # Convert to YAML
             processed = content  # TODO: Actual conversion
         else:
@@ -178,73 +203,70 @@ def {{COMMAND_NAME}}_command(
             processed = content
 
         # Write output
-        with open(output_path, 'w') as outfile:
+        with open(output_file, 'w') as outfile:
             outfile.write(processed)
 
-        click.echo(f"✓ Successfully processed {input_path} to {output_path}")
+        rprint(f"[green]✓ Successfully processed {input_file} to {output_file}[/green]")
 
-        if verbose:
+        if state.verbose:
             logger.info("Processing complete")
 
     except FileNotFoundError as e:
-        raise click.ClickException(f"File not found: {e.filename}")
+        rprint(f"[red]File not found: {e.filename}[/red]")
+        raise typer.Exit(code=1)
     except PermissionError as e:
-        raise click.ClickException(f"Permission denied: {e.filename}")
+        rprint(f"[red]Permission denied: {e.filename}[/red]")
+        raise typer.Exit(code=1)
     except Exception as e:
         logger.exception("Unexpected error occurred")
-        raise click.ClickException(f"Processing failed: {str(e)}")
+        rprint(f"[red]Processing failed: {str(e)}[/red]")
+        raise typer.Exit(code=1)
 
 
-@{{MODULE_NAME}}_cli.command('validate')
-@click.argument('file_path', type=click.Path(exists=True))
-@click.pass_context
-def validate_command(ctx, file_path: str):
+@{{MODULE_NAME}}_app.command("validate")
+def validate_command(
+    file_path: Annotated[Path, typer.Argument(
+        help="Path to file to validate",
+        exists=True,
+    )],
+) -> None:
     """
     Validate input file format and content.
-
-    FILE_PATH: Path to file to validate
     """
-    verbose = ctx.obj.get('verbose', False)
-
     try:
-        path = Path(file_path)
-
-        if verbose:
-            logger.info(f"Validating {path}")
+        if state.verbose:
+            logger.info(f"Validating {file_path}")
 
         # TODO: Implement validation logic
         is_valid = True
-        errors = []
+        errors: list[str] = []
 
         if is_valid:
-            click.secho(f"✓ {path} is valid", fg='green')
+            rprint(f"[green]✓ {file_path} is valid[/green]")
         else:
-            click.secho(f"✗ {path} is invalid", fg='red')
+            rprint(f"[red]✗ {file_path} is invalid[/red]")
             for error in errors:
-                click.echo(f"  - {error}")
-            raise click.Abort()
+                rprint(f"  [red]• {error}[/red]")
+            raise typer.Abort()
 
     except Exception as e:
         logger.exception("Validation failed")
-        raise click.ClickException(f"Validation error: {str(e)}")
+        rprint(f"[red]Validation error: {str(e)}[/red]")
+        raise typer.Exit(code=1)
 
 
-@{{MODULE_NAME}}_cli.command('info')
-@click.pass_context
-def info_command(ctx):
+@{{MODULE_NAME}}_app.command("info")
+def info_command() -> None:
     """Display module information and configuration."""
-    verbose = ctx.obj.get('verbose', False)
-    config_path = ctx.obj.get('config_path')
+    rprint(f"[bold cyan]Module:[/bold cyan] {{MODULE_NAME}}")
+    rprint(f"[bold cyan]Description:[/bold cyan] {{MODULE_DESCRIPTION}}")
 
-    click.echo("Module: {{MODULE_NAME}}")
-    click.echo("Description: {{MODULE_DESCRIPTION}}")
+    if state.config_path:
+        rprint(f"[bold cyan]Config:[/bold cyan] {state.config_path}")
 
-    if config_path:
-        click.echo(f"Config: {config_path}")
-
-    if verbose:
-        click.echo("Verbose: enabled")
+    if state.verbose:
+        rprint("[bold cyan]Verbose:[/bold cyan] enabled")
 
 
-if __name__ == '__main__':
-    {{MODULE_NAME}}_cli()
+if __name__ == "__main__":
+    {{MODULE_NAME}}_app()
