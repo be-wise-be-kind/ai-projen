@@ -10,6 +10,7 @@
 # Environment: Poetry-managed virtual environment (Python {{PYTHON_VERSION}})
 # Related: poetry.lock, .ai/howtos/python-cli/how-to-package-cli-tool.md
 # Philosophy: Don't corrupt the user's machine - all deps in isolated Poetry venv
+# CLI Framework: Typer with Rich integration for modern, type-safe CLI development
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
@@ -41,7 +42,7 @@ packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
 python = "^{{PYTHON_VERSION}}"
-click = "^8.1.0"
+typer = {extras = ["all"], version = "^0.12.0"}
 pyyaml = "^6.0"
 
 [tool.poetry.group.dev.dependencies]

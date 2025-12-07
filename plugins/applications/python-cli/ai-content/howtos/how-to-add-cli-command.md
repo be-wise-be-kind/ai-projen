@@ -1,15 +1,15 @@
 # How to Add CLI Commands
 
-**Purpose**: Step-by-step guide for adding new commands to Python CLI applications using Click framework
+**Purpose**: Step-by-step guide for adding new commands to Python CLI applications using Typer framework
 
-**Scope**: Command creation, options, arguments, groups, and testing
+**Scope**: Command creation, options, arguments, groups, Rich output, and testing
 
-**Overview**: This guide demonstrates how to add new commands to your CLI application using Click decorators.
-    It covers simple commands, command groups, options and arguments, error handling, and testing. Examples
-    show Click best practices including type validation, help text, and context management for professional
-    command-line interfaces.
+**Overview**: This guide demonstrates how to add new commands to your CLI application using Typer with
+    type hints and Rich integration. It covers simple commands, command groups, options and arguments,
+    error handling, Rich-styled output, and testing. Examples show Typer best practices including
+    Annotated types, automatic validation, and professional output for command-line interfaces.
 
-**Prerequisites**: Python CLI application installed, basic Python knowledge, familiarity with decorators
+**Prerequisites**: Python CLI application installed, basic Python knowledge, familiarity with type hints
 
 **Related**: .ai/docs/python-cli-architecture.md, .ai/templates/python-cli/cli-entrypoint.py.template
 
@@ -18,12 +18,13 @@
 ## Overview
 
 Adding commands to your CLI involves:
-1. Defining command function with Click decorators
-2. Adding options and arguments
+1. Defining command function with Typer decorators
+2. Adding options and arguments with type hints
 3. Implementing command logic
-4. Adding error handling
-5. Writing tests
-6. Updating documentation
+4. Adding Rich-styled output
+5. Adding error handling
+6. Writing tests
+7. Updating documentation
 
 ## Simple Command
 
@@ -32,11 +33,13 @@ Adding commands to your CLI involves:
 Edit `src/cli.py` and add a new command:
 
 ```python
-@cli.command()
+from rich import print as rprint
+
+@app.command()
 def status():
     """Display application status."""
-    click.echo("Application is running")
-    click.echo("Version: 1.0.0")
+    rprint("[green]Application is running[/green]")
+    rprint(f"[cyan]Version:[/cyan] 1.0.0")
 ```
 
 ### Step 2: Test the Command
@@ -59,20 +62,29 @@ Version: 1.0.0
 
 ### Step 1: Add Options
 
-Options are optional flags that modify command behavior:
+Options are optional flags that modify command behavior. Use `Annotated` for clean type hints:
 
 ```python
-@cli.command()
-@click.option('--name', '-n', default='World', help='Name to greet')
-@click.option('--uppercase', '-u', is_flag=True, help='Convert to uppercase')
-def greet(name, uppercase):
+from typing import Annotated
+
+@app.command()
+def greet(
+    name: Annotated[str, typer.Option(
+        "--name", "-n",
+        help="Name to greet"
+    )] = "World",
+    uppercase: Annotated[bool, typer.Option(
+        "--uppercase", "-u",
+        help="Convert to uppercase"
+    )] = False,
+):
     """Greet someone with optional formatting."""
     greeting = f"Hello, {name}!"
 
     if uppercase:
         greeting = greeting.upper()
 
-    click.echo(greeting)
+    rprint(f"[green]{greeting}[/green]")
 ```
 
 ### Step 2: Test with Options
@@ -106,14 +118,31 @@ python -m src.cli greet -n Dave -u
 Arguments are positional parameters (required by default):
 
 ```python
-@cli.command()
-@click.argument('input_file', type=click.Path(exists=True))
-@click.argument('output_file', type=click.Path())
-@click.option('--format', '-f', type=click.Choice(['json', 'yaml', 'text']), default='text')
-def convert(input_file, output_file, format):
+from pathlib import Path
+from enum import Enum
+
+class OutputFormat(str, Enum):
+    json = "json"
+    yaml = "yaml"
+    text = "text"
+
+@app.command()
+def convert(
+    input_file: Annotated[Path, typer.Argument(
+        help="Path to input file",
+        exists=True,
+    )],
+    output_file: Annotated[Path, typer.Argument(
+        help="Path to output file",
+    )],
+    format: Annotated[OutputFormat, typer.Option(
+        "--format", "-f",
+        help="Output format"
+    )] = OutputFormat.text,
+):
     """Convert INPUT_FILE to OUTPUT_FILE in specified format."""
-    click.echo(f"Converting {input_file} to {output_file}")
-    click.echo(f"Output format: {format}")
+    rprint(f"[cyan]Converting {input_file} to {output_file}[/cyan]")
+    rprint(f"[cyan]Output format: {format.value}[/cyan]")
 
     # Your conversion logic here
     with open(input_file, 'r') as infile:
@@ -125,7 +154,7 @@ def convert(input_file, output_file, format):
     with open(output_file, 'w') as outfile:
         outfile.write(content)
 
-    click.echo("Conversion complete!")
+    rprint("[green]✓ Conversion complete![/green]")
 ```
 
 ### Step 2: Test with Arguments
@@ -140,44 +169,54 @@ python -m src.cli convert input.txt output.txt --format json
 # Output:
 # Converting input.txt to output.txt
 # Output format: json
-# Conversion complete!
+# ✓ Conversion complete!
 ```
 
 ## Command Groups
 
 ### Step 1: Create Command Group
 
-Organize related commands into groups:
+Organize related commands into groups using `add_typer()`:
 
 ```python
-@cli.group()
-def database():
-    """Database management commands."""
-    pass
+# Create database command group
+database_app = typer.Typer(help="Database management commands.")
+app.add_typer(database_app, name="database")
 
-@database.command('init')
-@click.option('--path', type=click.Path(), default='./data.db')
-def database_init(path):
+@database_app.command("init")
+def database_init(
+    path: Annotated[Path, typer.Option(
+        "--path",
+        help="Database file path"
+    )] = Path("./data.db"),
+):
     """Initialize a new database."""
-    click.echo(f"Initializing database at {path}")
+    rprint(f"[cyan]Initializing database at {path}[/cyan]")
     # Database initialization logic
-    click.echo("Database initialized successfully!")
+    rprint("[green]✓ Database initialized successfully![/green]")
 
-@database.command('backup')
-@click.argument('destination', type=click.Path())
-def database_backup(destination):
+@database_app.command("backup")
+def database_backup(
+    destination: Annotated[Path, typer.Argument(
+        help="Backup destination path"
+    )],
+):
     """Backup database to DESTINATION."""
-    click.echo(f"Backing up database to {destination}")
+    rprint(f"[cyan]Backing up database to {destination}[/cyan]")
     # Backup logic
-    click.echo("Backup complete!")
+    rprint("[green]✓ Backup complete![/green]")
 
-@database.command('restore')
-@click.argument('source', type=click.Path(exists=True))
-def database_restore(source):
+@database_app.command("restore")
+def database_restore(
+    source: Annotated[Path, typer.Argument(
+        help="Backup source path",
+        exists=True,
+    )],
+):
     """Restore database from SOURCE."""
-    click.echo(f"Restoring database from {source}")
+    rprint(f"[cyan]Restoring database from {source}[/cyan]")
     # Restore logic
-    click.echo("Restore complete!")
+    rprint("[green]✓ Restore complete![/green]")
 ```
 
 ### Step 2: Test Command Group
@@ -209,12 +248,19 @@ python -m src.cli database restore backup.db
 Accept multiple values for an option:
 
 ```python
-@cli.command()
-@click.option('--tag', '-t', multiple=True, help='Tags to add')
-@click.argument('filename')
-def tag_file(filename, tag):
+@app.command()
+def tag_file(
+    filename: Annotated[str, typer.Argument(help="File to tag")],
+    tag: Annotated[list[str], typer.Option(
+        "--tag", "-t",
+        help="Tags to add"
+    )] = [],
+):
     """Add tags to a file."""
-    click.echo(f"Tagging {filename} with: {', '.join(tag)}")
+    if tag:
+        rprint(f"[cyan]Tagging {filename} with: {', '.join(tag)}[/cyan]")
+    else:
+        rprint(f"[yellow]No tags specified for {filename}[/yellow]")
 ```
 
 **Usage**:
@@ -228,11 +274,18 @@ python -m src.cli tag-file document.txt -t important -t urgent -t review
 Prompt user for input if option not provided:
 
 ```python
-@cli.command()
-@click.option('--password', prompt=True, hide_input=True, confirmation_prompt=True)
-def login(password):
+@app.command()
+def login(
+    password: Annotated[str, typer.Option(
+        "--password",
+        prompt=True,
+        hide_input=True,
+        confirmation_prompt=True,
+        help="Login password"
+    )],
+):
     """Login with password."""
-    click.echo("Login successful!")
+    rprint("[green]✓ Login successful![/green]")
 ```
 
 **Usage**:
@@ -240,7 +293,7 @@ def login(password):
 python -m src.cli login
 # Password:
 # Repeat for confirmation:
-# Login successful!
+# ✓ Login successful!
 ```
 
 ### Environment Variables
@@ -248,11 +301,16 @@ python -m src.cli login
 Read options from environment variables:
 
 ```python
-@cli.command()
-@click.option('--api-key', envvar='API_KEY', required=True, help='API key from env')
-def api_call(api_key):
+@app.command()
+def api_call(
+    api_key: Annotated[str, typer.Option(
+        "--api-key",
+        envvar="API_KEY",
+        help="API key (or set API_KEY env var)"
+    )],
+):
     """Make API call with key."""
-    click.echo(f"Using API key: {api_key[:4]}...")
+    rprint(f"[cyan]Using API key: {api_key[:4]}...[/cyan]")
 ```
 
 **Usage**:
@@ -262,40 +320,128 @@ python -m src.cli api-call
 # Output: Using API key: secr...
 ```
 
-## Using Click Context
+## Using Application State
 
-### Step 1: Set Up Context
+### Step 1: Set Up State Class
 
-Share data between commands using Click context:
+Share data between commands using a State class:
 
 ```python
-@cli.group()
-@click.option('--config', type=click.Path(), default='config.yaml')
-@click.pass_context
-def app(ctx, config):
-    """Main application with shared config."""
-    # Ensure context object exists
-    ctx.ensure_object(dict)
+from typing import Any
 
-    # Load and store config in context
-    ctx.obj['config'] = load_config(config)
-    ctx.obj['started_at'] = datetime.now()
+class State:
+    """Application state shared across commands."""
+    def __init__(self):
+        self.config: dict[str, Any] = {}
+        self.started_at: datetime = None
+        self.verbose: bool = False
+
+state = State()
+
+@app.callback()
+def main(
+    config: Annotated[Optional[Path], typer.Option(
+        "--config", "-c",
+        help="Config file path"
+    )] = None,
+    verbose: Annotated[bool, typer.Option(
+        "--verbose", "-v",
+        help="Enable verbose output"
+    )] = False,
+):
+    """Main application with shared config."""
+    from datetime import datetime
+
+    state.config = load_config(config) if config else {}
+    state.started_at = datetime.now()
+    state.verbose = verbose
 
 @app.command()
-@click.pass_context
-def info(ctx):
+def info():
     """Display application info."""
-    config = ctx.obj['config']
-    started = ctx.obj['started_at']
-
-    click.echo(f"Config loaded from: {config.get('path', 'default')}")
-    click.echo(f"Started at: {started}")
+    rprint(f"[cyan]Config loaded from:[/cyan] {state.config.get('path', 'default')}")
+    rprint(f"[cyan]Started at:[/cyan] {state.started_at}")
+    if state.verbose:
+        rprint("[cyan]Verbose mode:[/cyan] enabled")
 ```
 
-### Step 2: Test Context Passing
+### Step 2: Test State Passing
 
 ```bash
-python -m src.cli app --config myconfig.yaml info
+python -m src.cli --config myconfig.yaml --verbose info
+```
+
+## Rich Output Integration
+
+### Colored Text
+
+```python
+from rich import print as rprint
+
+@app.command()
+def status():
+    """Display colored status messages."""
+    rprint("[green]✓ Success![/green]")
+    rprint("[yellow]⚠ Warning: proceed with caution[/yellow]")
+    rprint("[red]✗ Error occurred[/red]")
+    rprint("[bold cyan]Important information[/bold cyan]")
+```
+
+### Tables
+
+```python
+from rich.console import Console
+from rich.table import Table
+
+console = Console()
+
+@app.command()
+def list_items():
+    """Display items in a table."""
+    table = Table(title="Items", show_header=True, header_style="bold cyan")
+    table.add_column("ID", style="dim")
+    table.add_column("Name", style="green")
+    table.add_column("Status", style="yellow")
+
+    table.add_row("1", "Item One", "Active")
+    table.add_row("2", "Item Two", "Pending")
+    table.add_row("3", "Item Three", "Complete")
+
+    console.print(table)
+```
+
+### Progress Bars
+
+```python
+from rich.progress import track
+import time
+
+@app.command()
+def process_items(
+    count: Annotated[int, typer.Option(help="Number of items")] = 100,
+):
+    """Process multiple items with progress."""
+    for item in track(range(count), description="Processing items..."):
+        # Process item
+        time.sleep(0.01)
+
+    rprint("[green]✓ Processing complete![/green]")
+```
+
+### Panels
+
+```python
+from rich.panel import Panel
+
+@app.command()
+def show_message():
+    """Display a message in a panel."""
+    console.print(Panel(
+        "[bold green]Operation completed successfully![/bold green]\n\n"
+        "All files have been processed.",
+        title="Success",
+        border_style="green"
+    ))
 ```
 
 ## Error Handling
@@ -305,9 +451,13 @@ python -m src.cli app --config myconfig.yaml info
 Handle errors gracefully with informative messages:
 
 ```python
-@cli.command()
-@click.argument('filename', type=click.Path(exists=True))
-def process_file(filename):
+@app.command()
+def process_file(
+    filename: Annotated[Path, typer.Argument(
+        help="File to process",
+        exists=True,
+    )],
+):
     """Process a file."""
     try:
         with open(filename, 'r') as f:
@@ -315,20 +465,24 @@ def process_file(filename):
 
         # Processing logic
         if not content.strip():
-            raise click.ClickException("File is empty")
+            rprint(f"[red]Error: File is empty[/red]")
+            raise typer.Exit(code=1)
 
         # Process content
         result = process_content(content)
 
-        click.echo("File processed successfully!")
-        click.echo(f"Result: {result}")
+        rprint("[green]✓ File processed successfully![/green]")
+        rprint(f"[cyan]Result: {result}[/cyan]")
 
     except PermissionError:
-        raise click.ClickException(f"Permission denied: {filename}")
+        rprint(f"[red]Permission denied: {filename}[/red]")
+        raise typer.Exit(code=1)
     except UnicodeDecodeError:
-        raise click.ClickException(f"Invalid file encoding: {filename}")
+        rprint(f"[red]Invalid file encoding: {filename}[/red]")
+        raise typer.Exit(code=1)
     except Exception as e:
-        raise click.ClickException(f"Processing failed: {str(e)}")
+        rprint(f"[red]Processing failed: {str(e)}[/red]")
+        raise typer.Exit(code=1)
 ```
 
 ### Custom Exit Codes
@@ -336,24 +490,24 @@ def process_file(filename):
 Use different exit codes for different errors:
 
 ```python
-@cli.command()
+@app.command()
 def validate():
     """Validate application state."""
     try:
         # Validation logic
         if not config_valid:
-            click.echo("Configuration is invalid", err=True)
-            raise click.Abort()
+            rprint("[red]Configuration is invalid[/red]")
+            raise typer.Exit(code=2)
 
         if not data_exists:
-            click.echo("Required data not found", err=True)
-            ctx.exit(2)  # Custom exit code
+            rprint("[red]Required data not found[/red]")
+            raise typer.Exit(code=3)
 
-        click.echo("Validation passed!")
+        rprint("[green]✓ Validation passed![/green]")
 
     except Exception as e:
-        click.echo(f"Validation failed: {e}", err=True)
-        ctx.exit(1)
+        rprint(f"[red]Validation failed: {e}[/red]")
+        raise typer.Exit(code=1)
 ```
 
 ## Testing Commands
@@ -363,30 +517,39 @@ def validate():
 Create tests in `tests/test_cli.py`:
 
 ```python
-from click.testing import CliRunner
+from typer.testing import CliRunner
 import pytest
-from src.cli import cli
+from src.cli import app, state
 
 @pytest.fixture
 def runner():
-    """Provide Click test runner."""
+    """Provide Typer test runner."""
     return CliRunner()
+
+@pytest.fixture(autouse=True)
+def reset_state():
+    """Reset state before each test."""
+    state.config = {}
+    state.verbose = False
+    yield
+    state.config = {}
+    state.verbose = False
 
 def test_greet_default(runner):
     """Test greet command with default name."""
-    result = runner.invoke(cli, ['greet'])
+    result = runner.invoke(app, ['greet'])
     assert result.exit_code == 0
     assert 'Hello, World!' in result.output
 
 def test_greet_with_name(runner):
     """Test greet command with custom name."""
-    result = runner.invoke(cli, ['greet', '--name', 'Alice'])
+    result = runner.invoke(app, ['greet', '--name', 'Alice'])
     assert result.exit_code == 0
     assert 'Hello, Alice!' in result.output
 
 def test_greet_uppercase(runner):
     """Test greet command with uppercase flag."""
-    result = runner.invoke(cli, ['greet', '-n', 'Bob', '-u'])
+    result = runner.invoke(app, ['greet', '-n', 'Bob', '-u'])
     assert result.exit_code == 0
     assert 'HELLO, BOB!' in result.output
 
@@ -399,7 +562,7 @@ def test_convert_command(runner, tmp_path):
     output_file = tmp_path / "output.txt"
 
     # Run command
-    result = runner.invoke(cli, [
+    result = runner.invoke(app, [
         'convert',
         str(input_file),
         str(output_file),
@@ -414,7 +577,7 @@ def test_database_init(runner, tmp_path):
     """Test database init command."""
     db_path = tmp_path / "test.db"
 
-    result = runner.invoke(cli, [
+    result = runner.invoke(app, [
         'database', 'init',
         '--path', str(db_path)
     ])
@@ -424,9 +587,8 @@ def test_database_init(runner, tmp_path):
 
 def test_error_handling(runner):
     """Test command error handling."""
-    result = runner.invoke(cli, ['process-file', 'nonexistent.txt'])
+    result = runner.invoke(app, ['process-file', 'nonexistent.txt'])
     assert result.exit_code != 0
-    assert 'Error' in result.output or 'does not exist' in result.output
 ```
 
 ### Step 2: Run Tests
@@ -446,45 +608,52 @@ pytest tests/test_cli.py --cov=src.cli
 
 ### Step 1: Write Good Help Text
 
-Provide comprehensive help for commands:
+Provide comprehensive help for commands with Rich markup:
 
 ```python
-@cli.command()
-@click.argument('source', type=click.Path(exists=True))
-@click.argument('destination', type=click.Path())
-@click.option('--overwrite', is_flag=True, help='Overwrite destination if exists')
-@click.option('--verbose', '-v', is_flag=True, help='Show detailed progress')
-def copy(source, destination, overwrite, verbose):
+@app.command()
+def copy(
+    source: Annotated[Path, typer.Argument(
+        help="Source file path",
+        exists=True,
+    )],
+    destination: Annotated[Path, typer.Argument(
+        help="Destination file path",
+    )],
+    overwrite: Annotated[bool, typer.Option(
+        "--overwrite",
+        help="Overwrite destination if exists"
+    )] = False,
+    verbose: Annotated[bool, typer.Option(
+        "--verbose", "-v",
+        help="Show detailed progress"
+    )] = False,
+):
     """
     Copy SOURCE file to DESTINATION.
 
     This command copies a file from SOURCE to DESTINATION with optional
     overwrite protection. Use --verbose for detailed progress information.
 
-    Examples:
+    [bold]Examples:[/bold]
 
-        \b
-        # Simple copy
+        [dim]# Simple copy[/dim]
         cli copy file.txt backup.txt
 
-        \b
-        # Copy with overwrite
+        [dim]# Copy with overwrite[/dim]
         cli copy file.txt backup.txt --overwrite
 
-        \b
-        # Copy with verbose output
+        [dim]# Copy with verbose output[/dim]
         cli copy file.txt backup.txt -v
     """
     if verbose:
-        click.echo(f"Copying {source} to {destination}...")
+        rprint(f"[cyan]Copying {source} to {destination}...[/cyan]")
 
     # Copy logic here
 
     if verbose:
-        click.echo("Copy complete!")
+        rprint("[green]✓ Copy complete![/green]")
 ```
-
-**Note**: Use `\b` to prevent Click from reformatting code blocks in help text.
 
 ### Step 2: View Help
 
@@ -502,28 +671,38 @@ python -m src.cli copy --help
 
 ### 2. Options and Arguments
 
+- Use `Annotated` for clean type hints
 - Use short forms for common options: `-v` for `--verbose`
 - Make arguments positional and required
 - Make options optional with sensible defaults
-- Use type validation: `type=click.Path()`, `type=click.Choice(['a', 'b'])`
+- Use Enums for choices: `OutputFormat` instead of string choices
+- Use `Path` type for file arguments with `exists=True` for validation
 
 ### 3. Help Text
 
 - Write clear, concise descriptions
-- Include usage examples
+- Include usage examples with Rich markup
 - Document all options and arguments
-- Use `\b` to preserve formatting in examples
+- Use `[bold]`, `[dim]`, `[cyan]` etc. for Rich styling
 
 ### 4. Error Handling
 
 - Validate inputs early
-- Provide informative error messages
+- Provide informative error messages with color
 - Use appropriate exit codes
 - Don't expose stack traces to users (unless --debug)
 
-### 5. Testing
+### 5. Output
+
+- Use Rich for styled output
+- Green for success, red for errors, yellow for warnings
+- Use tables for structured data
+- Use progress bars for long operations
+
+### 6. Testing
 
 - Test all commands
+- Reset state between tests
 - Test with various option combinations
 - Test error conditions
 - Use fixtures for test data
@@ -533,58 +712,81 @@ python -m src.cli copy --help
 ### Confirmation Prompts
 
 ```python
-@cli.command()
-@click.option('--yes', '-y', is_flag=True, help='Skip confirmation')
-def delete_all(yes):
+@app.command()
+def delete_all(
+    yes: Annotated[bool, typer.Option(
+        "--yes", "-y",
+        help="Skip confirmation"
+    )] = False,
+):
     """Delete all data."""
     if not yes:
-        click.confirm('This will delete all data. Continue?', abort=True)
+        confirm = typer.confirm("This will delete all data. Continue?")
+        if not confirm:
+            raise typer.Abort()
 
-    click.echo("Deleting all data...")
+    rprint("[yellow]Deleting all data...[/yellow]")
     # Deletion logic
+    rprint("[green]✓ All data deleted[/green]")
 ```
 
-### Progress Bars
+### Version Callback
 
 ```python
-import time
+def version_callback(value: bool):
+    """Show version and exit."""
+    if value:
+        rprint(f"[cyan]myapp[/cyan] version [green]1.0.0[/green]")
+        raise typer.Exit()
 
-@cli.command()
-@click.option('--count', type=int, default=100)
-def process_items(count):
-    """Process multiple items with progress."""
-    with click.progressbar(range(count), label='Processing items') as bar:
-        for item in bar:
-            # Process item
-            time.sleep(0.01)
-
-    click.echo("Processing complete!")
+@app.callback()
+def main(
+    version: Annotated[bool, typer.Option(
+        "--version",
+        callback=version_callback,
+        is_eager=True,
+        help="Show version and exit"
+    )] = False,
+):
+    """My CLI application."""
+    pass
 ```
 
-### Colored Output
+### Enum Choices
 
 ```python
-@cli.command()
-def status():
-    """Display colored status."""
-    click.secho("Success!", fg='green', bold=True)
-    click.secho("Warning!", fg='yellow')
-    click.secho("Error!", fg='red', bold=True)
+from enum import Enum
+
+class LogLevel(str, Enum):
+    debug = "debug"
+    info = "info"
+    warning = "warning"
+    error = "error"
+
+@app.command()
+def set_log_level(
+    level: Annotated[LogLevel, typer.Argument(help="Log level to set")],
+):
+    """Set the logging level."""
+    rprint(f"[cyan]Log level set to: {level.value}[/cyan]")
 ```
 
 ## Troubleshooting
 
 ### Issue: Command not found
-**Solution**: Ensure command is decorated with `@cli.command()` or added to a group
+**Solution**: Ensure command is decorated with `@app.command()` or added to a group
 
 ### Issue: Options not working
-**Solution**: Check decorator order - options should be above the function definition
+**Solution**: Check that `Annotated` types are properly formatted
 
-### Issue: Tests failing
-**Solution**: Use `CliRunner` and invoke commands in isolated mode
+### Issue: State not shared between commands
+**Solution**: Use module-level State class and reset in test fixtures
 
-### Issue: Help text not formatting correctly
-**Solution**: Use `\b` to preserve formatting in docstrings
+### Issue: Tests failing with state pollution
+**Solution**: Add `autouse=True` fixture to reset state before each test
+
+### Issue: Rich styling not appearing in tests
+**Solution**: Rich colors are stripped in non-TTY environments; check for text content
 
 ## Next Steps
 
@@ -594,7 +796,8 @@ def status():
 
 ## References
 
-- [Click Documentation](https://click.palletsprojects.com/)
-- [Click Testing](https://click.palletsprojects.com/en/8.1.x/testing/)
-- [Click Options](https://click.palletsprojects.com/en/8.1.x/options/)
-- [Click Arguments](https://click.palletsprojects.com/en/8.1.x/arguments/)
+- [Typer Documentation](https://typer.tiangolo.com/)
+- [Typer Tutorial](https://typer.tiangolo.com/tutorial/)
+- [Rich Documentation](https://rich.readthedocs.io/)
+- [Rich Console](https://rich.readthedocs.io/en/latest/console.html)
+- [Rich Tables](https://rich.readthedocs.io/en/latest/tables.html)
