@@ -115,7 +115,7 @@ Before creating a markdown file, determine its correct location:
 ### Markdown Documentation Files (.md)
 
 ```markdown
-# Document Title
+# document-title.md
 
 **Purpose**: Brief description of what this document covers and its primary function
 
@@ -152,6 +152,7 @@ Document content starts here with proper spacing and structure...
 ```html
 <!DOCTYPE html>
 <!--
+filename.html
 Purpose: Brief description of this HTML file's purpose, target users, and primary functionality
 Scope: What this file is used for (UI component, documentation page, landing page, etc.)
 Overview: Comprehensive description of the HTML file's content, user interactions,
@@ -172,6 +173,8 @@ Implementation: Notable accessibility features, responsive design patterns, or p
 
 ```python
 """
+filename.py
+
 Purpose: Brief description of module/script functionality (1-2 lines)
 
 Scope: What this module handles (API endpoints, data models, business logic, etc.)
@@ -195,6 +198,8 @@ Implementation: Notable algorithms, patterns, or architectural decisions
 
 ```typescript
 /**
+ * filename.ts
+ *
  * Purpose: Brief description of component/module functionality (1-2 lines)
  *
  * Scope: What this file handles (React component, utility functions, API service, etc.)
@@ -217,6 +222,7 @@ Implementation: Notable algorithms, patterns, or architectural decisions
 ### Configuration Files (.yml, .yaml, .json, .toml)
 
 ```yaml
+# filename.yaml
 # Purpose: Brief description of configuration file and what it configures in the system
 # Scope: What this configuration applies to (development, production, specific services, global settings)
 # Overview: Comprehensive explanation of the configuration's role in the system,
@@ -235,6 +241,7 @@ Implementation: Notable algorithms, patterns, or architectural decisions
 ### Infrastructure as Code (.tf, .hcl)
 
 ```hcl
+# filename.tf
 # Purpose: Brief description of infrastructure component and its primary function in the architecture
 # Scope: What infrastructure this manages (networking, storage, compute, security, monitoring, etc.)
 # Overview: Comprehensive explanation of the infrastructure component's role in the overall architecture,
@@ -253,6 +260,7 @@ Implementation: Notable algorithms, patterns, or architectural decisions
 ### Docker and Container Files (.dockerfile, docker-compose.yml)
 
 ```yaml
+# docker-compose.yml
 # Purpose: Brief description of container orchestration, build configuration, and deployment setup
 # Scope: What services/containers this manages (backend, frontend, databases, caching, monitoring, etc.)
 # Overview: Comprehensive explanation of the containerization strategy, service dependencies,
@@ -273,6 +281,7 @@ Implementation: Notable algorithms, patterns, or architectural decisions
 
 ```bash
 #!/bin/bash
+# filename.sh
 # Purpose: Brief description of script functionality, primary use cases, and automation purpose
 # Scope: What operations this script performs (deployment, testing, utilities, monitoring, setup, etc.)
 # Overview: Comprehensive explanation of the script's operations, workflow steps, prerequisites,
@@ -292,6 +301,7 @@ Implementation: Notable algorithms, patterns, or architectural decisions
 
 ```css
 /*
+filename.css
 Purpose: Brief description of stylesheet's scope, target components, and styling objectives
 Scope: What UI elements this stylesheet covers (global styles, component-specific, theme, layout, utilities, etc.)
 Overview: Comprehensive explanation of the styling approach, responsive design strategy,
@@ -314,6 +324,7 @@ For JSON files that support comments:
 ```json
 {
   "_header": {
+    "filename": "filename.json",
     "purpose": "Brief description of JSON file's purpose, data structure, and primary use cases",
     "scope": "What this JSON file configures or contains (app settings, data schema, API responses, etc.)",
     "overview": "Comprehensive explanation of the JSON structure, how it's consumed by applications, data validation requirements, update procedures, and integration patterns. Should include information about data types, required vs optional fields, and relationship to other configuration files. This should help developers understand the data structure and usage without examining all properties.",
@@ -336,6 +347,7 @@ Template files require special headers that document placeholders and usage inst
 **For Markdown Templates** (use HTML comments):
 ```markdown
 <!--
+template-name.md.template
 Purpose: Brief description of what this template generates
 Scope: Where/when this template should be used (e.g., "All new Python modules")
 Overview: Detailed explanation of the template's purpose, structure, and what the generated
@@ -378,6 +390,8 @@ Template content with {{PLACEHOLDERS}} starts here...
 **For Code Templates** (Python, TypeScript, etc. - use language comments):
 ```python
 """
+template.py.template
+
 Purpose: Brief description of what this template generates
 Scope: Where/when this template should be used
 Overview: Detailed explanation of the template's purpose and generated file structure.
@@ -407,6 +421,7 @@ Related: FILE_HEADER_STANDARDS.md, Python plugin docs
 
 **For YAML/Config Templates** (use # comments):
 ```yaml
+# template.yaml.template
 # Purpose: Brief description of what this template generates
 # Scope: Where/when this template should be used
 # Overview: Detailed explanation of template purpose and configuration structure.
@@ -508,7 +523,7 @@ See `.ai/templates/TEMPLATE_FILE_TEMPLATE.md` for complete template examples and
 
 #### Example of Proper Line Breaks in Markdown:
 ```markdown
-# Document Title
+# document-title.md
 
 **Purpose**: Clear, concise description of what this document covers
 
@@ -524,6 +539,8 @@ Document content begins here with proper spacing...
 #### Example of Proper Line Breaks in Python:
 ```python
 """
+my_module.py
+
 Purpose: Brief description of module functionality
 
 Scope: What this module handles in the system
@@ -541,6 +558,7 @@ Exports: Main classes, functions, or constants this module provides
 ## Required Header Fields
 
 ### Mandatory Fields (All Files)
+- **Filename**: The first line of every header must be the filename (e.g., `# my-config.yaml`, `"""my_module.py`, `// MyComponent.tsx`). This anchors the header to the file and makes it immediately identifiable when reading file contents out of context.
 - **Purpose**: Brief description of file's functionality (1-2 lines)
   - What does this file do?
   - What is its primary responsibility?
@@ -568,10 +586,11 @@ Exports: Main classes, functions, or constants this module provides
 ## Implementation Guidelines
 
 ### 1. Header Placement
-- **Markdown**: Header immediately after the main title
-- **Code files**: Header as the first comment block (after shebang if present)
-- **HTML**: Header in HTML comment after DOCTYPE
-- **Configuration**: Header as comment at top of file
+- **First line**: The filename must be the first line of every header (see Mandatory Fields)
+- **Markdown**: Filename as H1 title (`# filename.md`), followed by header fields
+- **Code files**: Filename as first line inside comment block (after shebang if present)
+- **HTML**: Filename as first line in HTML comment after DOCTYPE
+- **Configuration**: Filename as first comment line at top of file
 
 ### 2. Content Guidelines
 - Keep Purpose field concise but descriptive (1-3 sentences)
@@ -582,6 +601,7 @@ Exports: Main classes, functions, or constants this module provides
 
 ### 3. Automated Validation
 The header linter tool validates:
+- Presence of filename as the first line of the header
 - Presence of mandatory Purpose field
 - Header structure and placement
 - Field completeness and format
@@ -593,6 +613,8 @@ The header linter tool validates:
 ### Good Header Example (Python Linter)
 ```python
 """
+file_placement_linter.py
+
 Purpose: Validates file placement according to project structure standards
 Scope: Project-wide file organization enforcement across all directories
 Overview: This linter analyzes Python, HTML, TypeScript, and configuration files to ensure
@@ -610,6 +632,8 @@ Implementation: Uses rule-based pattern matching with configurable directory all
 ### Good Header Example (React Component)
 ```typescript
 /**
+ * LoadingSpinner.tsx
+ *
  * Purpose: Reusable loading spinner component with customizable styling
  * Scope: UI components across the application for async state management
  * Overview: Displays animated spinner during async operations and data fetching with full
@@ -627,6 +651,8 @@ Implementation: Uses rule-based pattern matching with configurable directory all
 ### Good Header Example (API Service)
 ```typescript
 /**
+ * ApiService.ts
+ *
  * Purpose: Handles all HTTP requests to the backend API with authentication
  * Scope: Frontend API integration layer, used by all components needing backend data
  * Overview: Provides typed interfaces for user management, data fetching, and file uploads.
@@ -644,7 +670,7 @@ Implementation: Uses rule-based pattern matching with configurable directory all
 
 ### Good Header Example (Markdown)
 ```markdown
-# API Documentation Standards
+# API_DOCUMENTATION_STANDARDS.md
 
 **Purpose**: Define REST API documentation requirements and standards for consistent API docs across all backend services
 **Scope**: All API endpoints in the backend application
