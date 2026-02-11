@@ -5,12 +5,13 @@
 **Scope**: Universal plugin that every AI-ready repository needs
 
 **Overview**: The ai-folder plugin creates a structured .ai directory that enables AI agents to navigate,
-    understand, and work with your codebase effectively. This is the cornerstone of AI-ready repositories,
-    providing organized documentation, templates, and navigation files.
+    understand, and work with your codebase effectively. Provides three core documents (ai-context.md,
+    ai-rules.md, index.yaml), IDE configuration files (AGENTS.md, CLAUDE.md, warp.md, .cursor/rules/agents.mdc),
+    and organized directories for documentation, how-to guides, and templates.
 
 **Dependencies**: Git repository
 
-**Exports**: .ai/ directory with docs/, features/, howto/, templates/, index.yaml, and layout.yaml
+**Exports**: .ai/ directory with core documents, IDE config files, docs/, howto/, templates/
 
 **Related**: Foundation for all other ai-projen plugins
 
@@ -22,256 +23,92 @@
 
 The ai-folder plugin creates a standardized `.ai/` directory structure that:
 
-1. **Helps AI agents navigate** your codebase through structured metadata
-2. **Documents project context** for AI understanding
-3. **Provides templates** for common files and patterns
-4. **Organizes how-to guides** for common tasks
-5. **Tracks features** and their implementation status
+1. **Orients AI agents** through three core documents (ai-context.md, ai-rules.md, index.yaml)
+2. **Configures IDE entry points** (AGENTS.md, CLAUDE.md, warp.md, .cursor/rules/agents.mdc)
+3. **Documents project context** for AI understanding
+4. **Provides templates** for common files and patterns
+5. **Organizes how-to guides** for common tasks
 
 ## Why Every Project Needs This
 
 AI coding assistants work best when they have:
-- Clear project structure and organization
-- Documented context and architecture
+- Clear project context and mandatory rules
+- Structured navigation metadata
+- IDE-specific entry point configuration
 - Templates for common patterns
-- Navigation metadata
-
-The .ai folder provides all of this in a standardized format that any AI agent can understand.
 
 ## Files and Directories Created
 
 ```
-agents.md                   # Primary AI agent entry point (root)
+AGENTS.md                       # Primary AI agent entry point (root)
+CLAUDE.md                       # Claude IDE config (root)
+warp.md                         # Warp IDE config (root)
+.cursor/
+└── rules/
+    └── agents.mdc              # Cursor IDE config
 .ai/
-├── docs/                    # Project documentation
-│   └── PROJECT_CONTEXT.md   # Main project context
-├── features/                # Feature-specific docs
-├── howto/                   # How-to guides
-├── templates/               # Reusable templates
-├── index.yaml              # Navigation index
-└── layout.yaml             # Directory layout map
+├── ai-context.md               # Project context (core document 1)
+├── ai-rules.md                 # Mandatory rules (core document 2)
+├── index.yaml                  # Navigation index (core document 3)
+├── docs/
+│   └── PROJECT_CONTEXT.md      # Deep-dive reference (optional)
+├── howto/                      # How-to guides
+└── templates/                  # Reusable templates
 ```
 
-### What Each File/Directory Contains
+### Three Core Documents
 
-#### `agents.md` (Repository Root)
-**Primary entry point for AI agents**:
-- Project overview and purpose
-- Navigation to .ai/ resources
-- Development guidelines and code style
-- Build, test, and deployment commands
-- Git workflow and commit conventions
-- Security considerations
-- Common tasks and troubleshooting
+Every AI agent reads these first (the "three-document protocol"):
 
-**Extensibility**: Other plugins add their specific instructions to agents.md using extension markers (see `.ai/docs/AGENTS_MD_EXTENSIBILITY.md`)
+1. **ai-context.md** - What the project does, architecture, key patterns
+2. **ai-rules.md** - Quality gates, coding standards, mandatory rules
+3. **index.yaml** - Navigation index with all resources and file locations
 
-#### `.ai/docs/`
-Project documentation for AI understanding:
-- `PROJECT_CONTEXT.md` - Overall project context and architecture
-- Feature-specific documentation
-- Technical design documents
-- API documentation
+### IDE Configuration Files
 
-#### `.ai/features/`
-Feature-specific documentation:
-- Implementation status
-- Dependencies
-- Related files
-- Testing notes
-
-#### `.ai/howtos/`
-How-to guides for common tasks:
-- Setup instructions
-- Development workflows
-- Deployment procedures
-- Troubleshooting guides
-
-#### `.ai/templates/`
-Reusable file templates:
-- Code templates
-- Documentation templates
-- Configuration templates
-- Boilerplate files
-
-#### `index.yaml`
-Navigation index providing:
-- Project metadata
-- Available commands
-- Key files and locations
-- Entry points
-
-#### `layout.yaml`
-Directory layout mapping:
-- Source code location
-- Test location
-- Documentation location
-- Build artifacts location
+All IDE configs contain: "read AGENTS.md" - ensuring AI agents always start at the entry point regardless of which IDE/tool invokes them.
 
 ## Installation
 
 ### Standalone (Without Orchestrator)
 
-An AI agent can install this plugin by following the instructions in [AGENT_INSTRUCTIONS.md](./AGENT_INSTRUCTIONS.md).
+An AI agent can install this plugin by following [AGENT_INSTRUCTIONS.md](./AGENT_INSTRUCTIONS.md).
 
 Quick summary:
 1. Create `.ai/` directory structure
-2. Copy and customize `index.yaml.template`
-3. Copy and customize `layout.yaml.template`
-4. Create initial `PROJECT_CONTEXT.md`
-5. Validate YAML files
+2. Create ai-context.md, ai-rules.md from templates
+3. Create index.yaml from template
+4. Create AGENTS.md, CLAUDE.md, warp.md, .cursor/rules/agents.mdc
+5. Optionally create PROJECT_CONTEXT.md
+6. Validate YAML files
 
 ### With Orchestrator
 
-When using `CREATE-NEW-AI-REPO.md` or `UPGRADE-TO-AI-REPO.md`, this plugin is automatically installed first as the foundation for all other plugins.
-
-## What Gets Installed
-
-After installation, you'll have:
-
-```
-.ai/
-├── docs/
-│   └── PROJECT_CONTEXT.md    # Project overview and architecture
-├── features/                 # Empty initially
-├── howto/                    # Empty initially
-├── templates/                # Empty initially
-├── index.yaml               # Project navigation metadata
-└── layout.yaml              # Directory structure mapping
-```
-
-Other plugins will populate the empty directories with relevant content.
+When using how-to-create-new-ai-repo.md or how-to-upgrade-to-ai-repo.md, this plugin is automatically installed first as the foundation.
 
 ## Integration with Other Plugins
 
 The ai-folder plugin is the foundation. Other plugins integrate by:
 
-1. **Adding Documentation**
-   - Language plugins add their docs to `.ai/docs/`
-   - Infrastructure plugins document their setup
-   - Standards plugins explain their requirements
-
-2. **Adding How-Tos**
-   - "How to run tests"
-   - "How to deploy"
-   - "How to add a new feature"
-
-3. **Adding Templates**
-   - Code file templates
-   - Configuration templates
-   - Documentation templates
-
-4. **Updating Metadata**
-   - Adding commands to `index.yaml`
-   - Updating structure in `layout.yaml`
-   - Registering new resources
-
-## Benefits
-
-### For AI Agents
-- **Clear navigation** through structured metadata
-- **Context understanding** via documentation
-- **Pattern reuse** through templates
-- **Consistent structure** across projects
-
-### For Developers
-- **Onboarding acceleration** with clear documentation
-- **Pattern consistency** through templates
-- **Knowledge retention** in structured docs
-- **AI assistance** works better with clear structure
-
-### For Teams
-- **Standardization** across projects
-- **Knowledge sharing** through documented patterns
-- **Reduced setup time** for new projects
-- **Better AI tooling** integration
-
-## Examples
-
-### Example index.yaml
-
-```yaml
-version: "1.0"
-project:
-  name: my-awesome-app
-  type: full-stack
-  purpose: E-commerce platform
-
-commands:
-  test: make test
-  lint: make lint
-  dev: make dev
-
-key_files:
-  readme: README.md
-  makefile: Makefile
-```
-
-### Example layout.yaml
-
-```yaml
-version: "1.0"
-
-directories:
-  source: src/
-  tests: tests/
-  docs: docs/
-
-ai_navigation:
-  index: .ai/index.yaml
-  docs: .ai/docs/
-```
+1. **Adding Documentation** to `.ai/docs/`
+2. **Adding How-Tos** to `.ai/howto/`
+3. **Adding Templates** to `.ai/templates/`
+4. **Updating index.yaml** with new resources
+5. **Extending AGENTS.md** using plugin extension markers
 
 ## Customization
 
-You can customize the .ai folder by:
-1. Adding more documentation to `.ai/docs/`
-2. Creating how-to guides in `.ai/howtos/`
-3. Adding templates to `.ai/templates/`
-4. Updating `index.yaml` with project-specific metadata
-5. Updating `layout.yaml` with your directory structure
-
-## Best Practices
-
-1. **Keep PROJECT_CONTEXT.md updated** as the project evolves
-2. **Document major features** in `.ai/features/`
-3. **Create how-to guides** for complex tasks
-4. **Use templates** for consistency
-5. **Update index.yaml** when adding new commands
-6. **Update layout.yaml** when restructuring directories
+Customize by:
+1. Adding project-specific sections to ai-context.md
+2. Adding project-specific rules to ai-rules.md
+3. Creating how-to guides in `.ai/howto/`
+4. Adding templates to `.ai/templates/`
+5. Updating index.yaml with new resources
 
 ## Troubleshooting
 
 ### .ai folder already exists
-If a `.ai` folder already exists:
-- Check if it follows this structure
-- Merge if compatible
-- Replace if incompatible (backup first!)
+Check if it follows the three-document pattern. Merge if compatible, replace if incompatible.
 
 ### YAML files not parsing
-Common YAML issues:
-- Use spaces, not tabs for indentation
-- Quote special characters
-- Validate syntax with a YAML linter
-
-### Integration issues
-If other plugins don't see the .ai folder:
-- Ensure it's in the repository root
-- Check file permissions
-- Validate YAML syntax
-
-## Version History
-
-- v1.0 - Initial release with core .ai folder structure
-
-## Contributing
-
-To improve this plugin:
-1. Follow the template structure
-2. Update AGENT_INSTRUCTIONS.md for changes
-3. Test standalone installation
-4. Update this README
-
-## License
-
-Part of ai-projen framework - MIT License
+Use spaces (not tabs), quote special characters, validate with `python3 -c "import yaml; yaml.safe_load(open('.ai/index.yaml'))"`.

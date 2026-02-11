@@ -1,8 +1,7 @@
 # Purpose: Template for generating AI navigation index file (.ai/index.yaml)
 # Scope: Used by ai-folder plugin to create .ai/index.yaml during plugin installation
 # Overview: Generates the main navigation index that provides AI agents with quick reference
-#     to repository structure, key files, available commands, and documentation. The generated
-#     index.yaml serves as a central registry of project resources for AI agent navigation.
+#     to repository structure, key files, available commands, and documentation.
 #
 # Placeholders:
 #   {{PROJECT_NAME}}: Name of the project
@@ -12,7 +11,7 @@
 #
 #   {{PROJECT_TYPE}}: Type/category of the project
 #     - Type: string
-#     - Example: "full-stack", "python", "typescript", "microservices"
+#     - Example: "full-stack", "python", "typescript"
 #     - Required: yes
 #
 #   {{PROJECT_PURPOSE}}: Brief description of project purpose
@@ -22,7 +21,7 @@
 #
 #   {{ARCHITECTURE_PATTERN}}: High-level architecture pattern used
 #     - Type: string
-#     - Example: "monorepo", "microservices", "monolithic", "serverless"
+#     - Example: "monorepo", "microservices", "monolithic"
 #     - Required: yes
 #
 # Usage:
@@ -31,12 +30,12 @@
 #
 #   2. Replace all placeholders with project-specific values
 #
-#   3. Remove this template header (lines 1-XX)
+#   3. Remove this template header
 #
 #   4. Validate YAML syntax:
 #      python -c "import yaml; yaml.safe_load(open('.ai/index.yaml'))"
 #
-# Related: FILE_HEADER_STANDARDS.md, .ai/layout.yaml, agents.md
+# Related: ai-context.md.template, ai-rules.md.template, agents.md.template
 
 version: "1.0"
 project:
@@ -45,6 +44,13 @@ project:
   purpose: {{PROJECT_PURPOSE}}
   status: in-development
   version: "0.1.0"
+
+core_documents:
+  description: Three documents every AI agent reads first (see AGENTS.md)
+  files:
+    - .ai/ai-context.md (project context, architecture, patterns)
+    - .ai/ai-rules.md (quality gates, coding standards, mandatory rules)
+    - .ai/index.yaml (this file - navigation and resource index)
 
 structure:
   source:
@@ -65,8 +71,10 @@ structure:
 
 documentation:
   location: .ai/docs/
+  primary_context: .ai/ai-context.md
+  primary_rules: .ai/ai-rules.md
   files:
-    - PROJECT_CONTEXT.md
+    - PROJECT_CONTEXT.md (deep-dive reference)
 
 howto:
   location: .ai/howto/
@@ -82,19 +90,21 @@ commands:
   # test: make test
   # lint: make lint
   # dev: make dev
-  # build: make build
 
 key_files:
+  agents: AGENTS.md (primary AI agent entry point)
+  ai_context: .ai/ai-context.md (project context)
+  ai_rules: .ai/ai-rules.md (mandatory rules)
   readme: README.md
+  claude_md: CLAUDE.md (Claude IDE config)
+  warp_md: warp.md (Warp IDE config)
+  cursor_rules: .cursor/rules/agents.mdc (Cursor IDE config)
   gitignore: .gitignore
-  # Add other important files here
 
 architecture:
   pattern: {{ARCHITECTURE_PATTERN}}
-  # Examples: monorepo, microservices, monolithic, serverless, etc.
 
 notes_for_agents:
   - Update this file as the project structure evolves
+  - Read ai-context.md, ai-rules.md, and this file as your first action
   - Add commands as they become available
-  - Document key files and their purposes
-  - Keep architecture information current

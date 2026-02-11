@@ -1,0 +1,45 @@
+# {{INITIATIVE_NAME}} - Feature Breakdown
+
+**Purpose**: Feature inventory and dependency map for the {{INITIATIVE_NAME}} initiative
+
+**Scope**: All features that comprise this initiative
+
+**Overview**: Catalogs all features within the {{INITIATIVE_NAME}} initiative, their dependencies,
+    ordering, and relationships. Serves as the master feature list for the initiative.
+
+**Dependencies**: {{DEPENDENCIES}}
+
+**Exports**: Feature inventory, dependency graph, ordering recommendations
+
+**Related**: INITIATIVE_TRACKER.md for rollup progress, AI_CONTEXT.md for strategic context
+
+---
+
+## Feature Inventory
+
+| # | Feature | Description | Dependencies | Priority | Status |
+|---|---------|-------------|--------------|----------|--------|
+{{FEATURE_INVENTORY_TABLE}}
+
+## Dependency Graph
+
+```
+{{DEPENDENCY_GRAPH}}
+```
+
+## Feature Details
+
+{{FEATURE_DETAIL_SECTIONS}}
+
+## Ordering Recommendations
+
+{{ORDERING_RATIONALE}}
+
+## Adding New Features
+
+When a new feature is identified for this initiative:
+1. Add it to the Feature Inventory table above
+2. Create feature directory at `.roadmap/features/planning/{{FEATURE_NAME}}/`
+3. Use feature templates (PROGRESS_TRACKER.md, MILESTONE_BREAKDOWN.md, AI_CONTEXT.md)
+4. Update dependency graph
+5. Reference this initiative in the feature's AI_CONTEXT.md

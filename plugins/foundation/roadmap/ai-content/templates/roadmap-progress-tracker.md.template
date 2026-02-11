@@ -1,3 +1,6 @@
+# DEPRECATED: Use feature-progress-tracker.md.template instead
+# This template is retained for backward compatibility.
+
 # {{FEATURE_NAME}} - Progress Tracker & AI Agent Handoff Document
 
 **Purpose**: Primary AI agent handoff document for {{FEATURE_NAME}} with current progress tracking and implementation guidance

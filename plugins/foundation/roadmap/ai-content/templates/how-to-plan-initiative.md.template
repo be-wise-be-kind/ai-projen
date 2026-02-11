@@ -1,0 +1,178 @@
+<!--
+Purpose: Template for generating the initiative planning how-to guide
+
+Scope: Used by roadmap plugin to create how-to-plan-initiative.md in .ai/howto/ directory during installation
+
+Overview: Generates a concise guide for AI agents to plan strategic initiatives that group multiple features.
+    Creates an initiative directory with INITIATIVE_TRACKER.md, FEATURE_BREAKDOWN.md, and AI_CONTEXT.md.
+    Covers strategic decomposition, feature identification, stub creation, and validation.
+
+Placeholders:
+  {{PROJECT_NAME}}: Name of the project
+    - Type: string
+    - Example: "my-awesome-app"
+    - Required: yes
+
+Usage:
+  1. Copy template to repository's .ai/howto/ directory:
+     cp plugins/foundation/roadmap/ai-content/templates/how-to-plan-initiative.md.template .ai/howto/how-to-plan-initiative.md
+
+  2. Replace all placeholders with project-specific values
+
+  3. Remove this template header (HTML comment block)
+
+Related: how-to-plan-feature.md, how-to-continue-initiative.md, initiative templates
+-->
+
+# How-To: Plan an Initiative in {{PROJECT_NAME}}
+
+**Purpose**: Guide AI agents through planning a strategic initiative that groups multiple features
+
+**Scope**: Initiative planning from strategy through feature identification; does not cover feature-level planning
+
+**Overview**: Walks through the process of planning an initiative - a strategic grouping of related features. Creates an initiative directory with INITIATIVE_TRACKER.md, FEATURE_BREAKDOWN.md, and AI_CONTEXT.md. Identifies constituent features and creates feature stub directories.
+
+**Dependencies**: .ai/ directory with templates, .roadmap/ directory structure
+
+**Exports**: Complete initiative directory with three documents plus stub feature directories
+
+**Related**: how-to-plan-feature.md, how-to-continue-initiative.md, how-to-update-progress.md
+
+**Implementation**: Template-based planning with strategic decomposition
+
+**Difficulty**: advanced
+
+**Estimated Time**: 1hr
+
+---
+
+## Prerequisites
+
+- **Repository**: Has .ai/ directory with templates
+- **Roadmap directories**: `.roadmap/initiatives/` and `.roadmap/features/` exist with `planning/`, `active/`, `completed/` subdirectories
+- **Templates**: Initiative and feature templates exist in `.ai/templates/`
+  - `initiative-tracker.md.template`
+  - `initiative-feature-breakdown.md.template`
+  - `initiative-ai-context.md.template`
+
+## Steps
+
+### Step 1: Gather Strategic Information
+
+Ask the user:
+
+1. **Initiative Name**: What is this initiative called? (use kebab-case)
+2. **Strategic Vision**: What is the high-level goal this initiative achieves?
+3. **Constituent Features**: What features make up this initiative?
+4. **Dependencies**: What external dependencies exist? (other initiatives, infrastructure, third-party services)
+5. **Success Criteria**: How do you know the initiative is done?
+
+### Step 2: Create Initiative Directory
+
+```bash
+mkdir -p .roadmap/initiatives/planning/<initiative-name>/
+```
+
+### Step 3: Create AI_CONTEXT.md
+
+Copy `.ai/templates/initiative-ai-context.md.template` to the initiative directory.
+
+```bash
+cp .ai/templates/initiative-ai-context.md.template .roadmap/initiatives/planning/<initiative-name>/AI_CONTEXT.md
+```
+
+Fill in:
+- Strategic vision and rationale
+- Cross-feature architectural patterns
+- Key decisions and constraints
+- AI agent guidance for the initiative
+
+### Step 4: Identify Constituent Features
+
+Work with the user to decompose the initiative into features:
+
+- Each feature should be independently deliverable
+- Identify dependencies between features
+- Determine priority ordering
+- Estimate relative complexity (low / medium / high)
+
+### Step 5: Create FEATURE_BREAKDOWN.md
+
+Copy `.ai/templates/initiative-feature-breakdown.md.template` to the initiative directory.
+
+```bash
+cp .ai/templates/initiative-feature-breakdown.md.template .roadmap/initiatives/planning/<initiative-name>/FEATURE_BREAKDOWN.md
+```
+
+Fill in:
+- Feature inventory table (name, scope, complexity, priority, dependencies)
+- Dependency graph between features
+- Detailed feature descriptions
+- Recommended implementation order
+
+### Step 6: Create INITIATIVE_TRACKER.md
+
+Copy `.ai/templates/initiative-tracker.md.template` to the initiative directory.
+
+```bash
+cp .ai/templates/initiative-tracker.md.template .roadmap/initiatives/planning/<initiative-name>/INITIATIVE_TRACKER.md
+```
+
+Fill in:
+- Feature progress rollup table (all features, initial status: Not Started)
+- Strategic goals
+- Next action routing (which feature to start first)
+- Definition of done
+
+### Step 7: Create Feature Stubs
+
+For each feature identified in Step 4, create a planning directory:
+
+```bash
+mkdir -p .roadmap/features/planning/<feature-name>/
+```
+
+At minimum, create a stub AI_CONTEXT.md in each feature directory that references the parent initiative:
+
+```markdown
+# <Feature Name> - AI Context
+
+**Parent Initiative**: <initiative-name>
+
+This feature is part of the <initiative-name> initiative. See `.roadmap/initiatives/planning/<initiative-name>/` for strategic context.
+
+## Scope
+<Brief feature scope from Step 4>
+```
+
+Optionally, run `how-to-plan-feature.md` for each feature to create full planning documents.
+
+### Step 8: Validate
+
+- [ ] Initiative directory exists at `.roadmap/initiatives/planning/<initiative-name>/`
+- [ ] INITIATIVE_TRACKER.md exists with feature rollup table
+- [ ] FEATURE_BREAKDOWN.md exists with feature inventory and dependencies
+- [ ] AI_CONTEXT.md exists with strategic context
+- [ ] Feature stub directories created under `.roadmap/features/planning/`
+- [ ] All `{{PLACEHOLDERS}}` replaced with actual values
+
+### Step 9: Inform User
+
+Present the initiative plan:
+- Features identified and their recommended order
+- Dependencies between features
+- Recommended starting feature
+- Ask if they want to begin planning individual features in detail
+
+## Next Steps
+
+1. Plan individual features using `.ai/howto/how-to-plan-feature.md`
+2. When ready to implement, move initiative to `active/`
+3. Begin with the highest-priority feature
+
+## Success Criteria
+
+- [ ] Initiative documents created with strategic content
+- [ ] Features identified and cataloged with dependencies
+- [ ] Feature stub directories created
+- [ ] User has reviewed and approved the plan

@@ -1,0 +1,51 @@
+# {{INITIATIVE_NAME}} - AI Context
+
+**Purpose**: Strategic context for the {{INITIATIVE_NAME}} initiative
+
+**Scope**: {{INITIATIVE_SCOPE}}
+
+**Overview**: Provides strategic context for AI agents working on features within the
+    {{INITIATIVE_NAME}} initiative. Describes the strategic vision, how features relate,
+    and architectural decisions that span multiple features.
+
+**Dependencies**: {{DEPENDENCIES}}
+
+**Exports**: Strategic context, cross-feature patterns, architectural guidance
+
+**Related**: INITIATIVE_TRACKER.md for progress, FEATURE_BREAKDOWN.md for feature inventory
+
+---
+
+## Strategic Vision
+
+{{STRATEGIC_VISION}}
+
+## Why This Initiative
+
+{{INITIATIVE_RATIONALE}}
+
+## Cross-Feature Patterns
+
+{{CROSS_FEATURE_PATTERNS}}
+
+## Architectural Decisions
+
+{{ARCHITECTURAL_DECISIONS}}
+
+## Success Metrics
+
+{{SUCCESS_METRICS}}
+
+## AI Agent Guidance
+
+### When Working on Features in This Initiative
+
+{{AGENT_GUIDANCE}}
+
+### Cross-Feature Considerations
+
+{{CROSS_FEATURE_CONSIDERATIONS}}
+
+## Risk Mitigation
+
+{{RISK_MITIGATION}}

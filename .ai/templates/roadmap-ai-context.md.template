@@ -1,3 +1,6 @@
+# DEPRECATED: Use feature-ai-context.md.template instead
+# This template is retained for backward compatibility.
+
 # {{FEATURE_NAME}} - AI Context
 
 **Purpose**: AI agent context document for implementing {{FEATURE_NAME}}

@@ -37,7 +37,7 @@ Your AI agent will read `AGENTS.md`, understand your intent, route to the approp
 
 An AI-ready repository includes:
 
-- **Structured documentation** - Clear `.ai/` folder with how-to guides, standards, and templates that AI agents can navigate
+- **Structured documentation** - Clear `.ai/` folder with context, rules, how-to guides, standards, and templates that AI agents can navigate
 - **Language tooling** - Linting, formatting, type checking, and testing frameworks properly configured
 - **Immediate feedback loops** - Quick validation through logging, errors, monitoring, and near-instant quality gate execution
 - **Development consistency** - Containerization for reproducible environments across machines
@@ -211,9 +211,13 @@ Your AI agent will read the relevant files and explain them conversationally, ta
 
 ### Documentation Reference (for AI Agents and Direct Access)
 
-**Essential Guides:**
+**Essential Guides (Three Core Documents):**
+- **[.ai/ai-context.md](.ai/ai-context.md)** - Project context, architecture, and key patterns
+- **[.ai/ai-rules.md](.ai/ai-rules.md)** - Quality gates and mandatory rules
 - **[.ai/index.yaml](.ai/index.yaml)** - Complete repository navigation map
-- **[.ai/docs/PROJECT_CONTEXT.md](.ai/docs/PROJECT_CONTEXT.md)** - Framework architecture and philosophy
+
+**Deep-Dive Reference:**
+- **[.ai/docs/PROJECT_CONTEXT.md](.ai/docs/PROJECT_CONTEXT.md)** - Comprehensive framework architecture and philosophy
 - **[.ai/docs/PLUGIN_ARCHITECTURE.md](.ai/docs/PLUGIN_ARCHITECTURE.md)** - Technical plugin specifications
 
 **How-To Guides:**

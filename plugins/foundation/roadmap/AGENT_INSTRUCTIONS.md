@@ -2,191 +2,207 @@
 
 **Purpose**: Instructions for AI agents to install the roadmap-based development workflow plugin
 
-**Scope**: Creation and configuration of .roadmap directory structure and roadmap workflow templates
+**Scope**: Creation of .roadmap directory with features and initiatives, templates, howto guides, and AGENTS.md integration
 
-**Overview**: Step-by-step instructions for AI agents to install the roadmap plugin that enables structured,
-    multi-PR feature planning and execution. This plugin provides templates and workflows for breaking down
-    complex features into manageable, trackable roadmaps with planning, in-progress, and completion phases.
+**Overview**: Step-by-step instructions for AI agents to install the roadmap plugin that enables structured
+    feature and initiative planning. Creates a two-tier roadmap system (features for individual deliverables,
+    initiatives for strategic groupings) with planning, active, and completed lifecycle phases.
 
 **Dependencies**: foundation/ai-folder plugin (AGENTS.md and .ai/ directory must exist)
 
-**Exports**: .roadmap/ directory with planning/, in-progress/, complete/ subdirectories, how-to-roadmap.md guide,
-    roadmap templates in .ai/templates/, and AGENTS.md integration
+**Exports**: .roadmap/ directory with features/ and initiatives/, howto guides, templates, AGENTS.md integration
 
 **Related**: Foundation plugin for roadmap-driven development workflows
 
-**Implementation**: Template-based installation with AGENTS.md integration for roadmap detection and routing
+**Implementation**: Template-based installation with AGENTS.md integration for feature/initiative detection and routing
 
 ---
 
 ## Prerequisites
 
 Before installing this plugin, ensure:
-- ✅ Git repository is initialized (`git init` has been run)
-- ✅ foundation/ai-folder plugin is installed (AGENTS.md and .ai/ directory exist)
-- ✅ Project has complex features requiring multi-PR planning
+- Git repository is initialized
+- foundation/ai-folder plugin is installed (AGENTS.md and .ai/ directory exist)
+- Project has features or initiatives requiring structured planning
 
 ## Installation Steps
 
 ### Step 1: Create .roadmap Directory Structure
 
-Create the roadmaps directory structure in the repository root:
+Create the roadmap directory structure with features and initiatives:
 
 ```bash
-mkdir -p .roadmap/{planning,in-progress,complete}
+mkdir -p .roadmap/features/{planning,active,completed}
+mkdir -p .roadmap/initiatives/{planning,active,completed}
 ```
 
 This creates:
-- `.roadmap/` - Root directory for all roadmaps
-- `.roadmap/planning/` - Roadmaps being planned (not yet started)
-- `.roadmap/in-progress/` - Currently active roadmaps
-- `.roadmap/complete/` - Completed roadmaps (archived for reference)
+- `.roadmap/features/planning/` - Features being planned
+- `.roadmap/features/active/` - Features in progress
+- `.roadmap/features/completed/` - Completed features (archived)
+- `.roadmap/initiatives/planning/` - Initiatives being planned
+- `.roadmap/initiatives/active/` - Initiatives in progress
+- `.roadmap/initiatives/completed/` - Completed initiatives (archived)
 
-### Step 2: Copy Roadmap Templates to .ai/templates/
+### Step 2: Copy Feature Templates to .ai/templates/
 
-Copy the three core roadmap templates from the plugin to the target repository:
-
-```bash
-# Copy from plugin location to target repo
-cp plugins/foundation/roadmap/ai-content/templates/roadmap-progress-tracker.md.template .ai/templates/
-cp plugins/foundation/roadmap/ai-content/templates/roadmap-pr-breakdown.md.template .ai/templates/
-cp plugins/foundation/roadmap/ai-content/templates/roadmap-ai-context.md.template .ai/templates/
-```
-
-These templates are:
-1. **roadmap-progress-tracker.md.template** - Primary handoff document for tracking current progress
-2. **roadmap-pr-breakdown.md.template** - Detailed PR breakdown with implementation steps
-3. **roadmap-ai-context.md.template** - Comprehensive feature context for AI agents
-
-### Step 3: Create how-to-roadmap.md Guide
-
-Copy the roadmap workflow guide to .ai/howtos/ (following convention that all how-tos go in .ai/howtos/):
+Copy the three feature templates:
 
 ```bash
-mkdir -p .ai/howtos
-cp plugins/foundation/roadmap/ai-content/templates/how-to-roadmap.md.template .ai/howtos/how-to-roadmap.md
+cp plugins/foundation/roadmap/ai-content/templates/feature-progress-tracker.md.template .ai/templates/
+cp plugins/foundation/roadmap/ai-content/templates/feature-milestone-breakdown.md.template .ai/templates/
+cp plugins/foundation/roadmap/ai-content/templates/feature-ai-context.md.template .ai/templates/
 ```
 
-Then replace these variables in `.ai/howtos/how-to-roadmap.md`:
-- `{{PROJECT_NAME}}` → Actual project name
-- Any other project-specific placeholders
+### Step 3: Copy Initiative Templates to .ai/templates/
 
-### Step 4: Add Roadmap Workflow Documentation
+Copy the three initiative templates:
 
-Copy the roadmap workflow documentation to .ai/docs/:
+```bash
+cp plugins/foundation/roadmap/ai-content/templates/initiative-tracker.md.template .ai/templates/
+cp plugins/foundation/roadmap/ai-content/templates/initiative-feature-breakdown.md.template .ai/templates/
+cp plugins/foundation/roadmap/ai-content/templates/initiative-ai-context.md.template .ai/templates/
+```
+
+### Step 4: Create How-To Guides
+
+Copy the howto guides to .ai/howto/:
+
+```bash
+cp plugins/foundation/roadmap/ai-content/templates/how-to-plan-feature.md.template .ai/howto/how-to-plan-a-feature.md
+cp plugins/foundation/roadmap/ai-content/templates/how-to-plan-initiative.md.template .ai/howto/how-to-plan-an-initiative.md
+cp plugins/foundation/roadmap/ai-content/templates/how-to-continue-feature.md.template .ai/howto/how-to-continue-feature-work.md
+cp plugins/foundation/roadmap/ai-content/templates/how-to-continue-initiative.md.template .ai/howto/how-to-continue-initiative-work.md
+cp plugins/foundation/roadmap/ai-content/templates/how-to-update-progress.md.template .ai/howto/how-to-update-progress.md
+```
+
+Replace `{{PROJECT_NAME}}` with actual project name in all howto files.
+
+### Step 5: Copy Roadmap Workflow Documentation
 
 ```bash
 cp plugins/foundation/roadmap/ai-content/docs/ROADMAP_WORKFLOW.md .ai/docs/
 ```
 
-### Step 5: Update AGENTS.md with Roadmap Guidance
+### Step 6: Update AGENTS.md with Roadmap Guidance
 
-Add roadmap-specific instructions to AGENTS.md. Insert the following section after the "Navigation" section:
+Add a "Roadmap-Driven Development" section to AGENTS.md. Insert after the main workflow sections:
 
 ```markdown
 ## Roadmap-Driven Development
 
-### When User Requests Planning
+### Feature vs Initiative
 
-If the user says any of the following:
-- "I want to plan out..."
-- "I want to roadmap..."
-- "Create a roadmap for..."
-- "Plan the implementation of..."
-- "Break down the feature..."
+| Concept | Scope | Location |
+|---------|-------|----------|
+| **Feature** | Single deliverable, 1+ milestones | `.roadmap/features/` |
+| **Initiative** | Strategic grouping of features | `.roadmap/initiatives/` |
 
-**Your Actions**:
-1. **Read** `.ai/howtos/how-to-roadmap.md` for roadmap workflow guidance
-2. **Use templates** from `.ai/templates/roadmap-*.md.template`
-3. **Create roadmap** in `.roadmap/planning/[feature-name]/`
-4. **Follow** the three-document structure:
-   - PROGRESS_TRACKER.md (required - primary handoff document)
-   - PR_BREAKDOWN.md (required for multi-PR features)
-   - AI_CONTEXT.md (optional - architectural context)
-
-### When User Requests Continuation
-
-If the user says any of the following:
-- "I want to continue with..."
-- "Continue the roadmap for..."
-- "What's next in..."
-- "Resume work on..."
-
-**Your Actions**:
-1. **Check** `.roadmap/in-progress/` for active roadmaps
-2. **Read** the roadmap's `PROGRESS_TRACKER.md` FIRST
-3. **Follow** the "Next PR to Implement" section
-4. **Update** PROGRESS_TRACKER.md after completing each PR
-
-### Roadmap Lifecycle
+### Lifecycle
 
 ```
-planning/ → in-progress/ → complete/
-   ↓             ↓              ↓
-Created      Implementing    Archived
+planning/ -> active/ -> completed/
 ```
 
-See `.ai/howtos/how-to-roadmap.md` for detailed workflow instructions.
+### Detection Patterns
+
+**Plan a feature** - User says "plan feature X", "roadmap X", "break down X":
+- Route to: `.ai/howto/how-to-plan-a-feature.md`
+
+**Plan an initiative** - User says "plan initiative X", "strategic plan for X":
+- Route to: `.ai/howto/how-to-plan-an-initiative.md`
+
+**Continue feature work** - User says "continue with X", "resume X", "next milestone":
+- Route to: `.ai/howto/how-to-continue-feature-work.md`
+
+**Continue initiative work** - User says "continue initiative X":
+- Route to: `.ai/howto/how-to-continue-initiative-work.md`
+
+**Update progress** - User says "update progress", "mark complete":
+- Route to: `.ai/howto/how-to-update-progress.md`
+
+### Templates
+
+Feature: `.ai/templates/feature-*.md.template`
+Initiative: `.ai/templates/initiative-*.md.template`
 ```
 
-### Step 6: Update .ai/index.yaml
+### Step 7: Update .ai/index.yaml
 
-Add roadmap resources to the project's `.ai/index.yaml`:
+Add roadmap resources to index.yaml:
 
 ```yaml
-roadmaps:
+roadmap:
   location: .roadmap/
-  guide: .ai/howtos/how-to-roadmap.md
-  workflow_docs: .ai/docs/ROADMAP_WORKFLOW.md
-
   structure:
-    planning: .roadmap/planning/
-    in_progress: .roadmap/in-progress/
-    complete: .roadmap/complete/
+    features:
+      planning: .roadmap/features/planning/
+      active: .roadmap/features/active/
+      completed: .roadmap/features/completed/
+    initiatives:
+      planning: .roadmap/initiatives/planning/
+      active: .roadmap/initiatives/active/
+      completed: .roadmap/initiatives/completed/
 
-  templates:
-    progress_tracker: .ai/templates/roadmap-progress-tracker.md.template
-    pr_breakdown: .ai/templates/roadmap-pr-breakdown.md.template
-    ai_context: .ai/templates/roadmap-ai-context.md.template
+  feature_templates:
+    progress_tracker: .ai/templates/feature-progress-tracker.md.template
+    milestone_breakdown: .ai/templates/feature-milestone-breakdown.md.template
+    ai_context: .ai/templates/feature-ai-context.md.template
 
-  three_document_structure:
-    - PROGRESS_TRACKER.md (required - primary handoff)
-    - PR_BREAKDOWN.md (required for multi-PR)
-    - AI_CONTEXT.md (optional - architecture)
+  initiative_templates:
+    tracker: .ai/templates/initiative-tracker.md.template
+    feature_breakdown: .ai/templates/initiative-feature-breakdown.md.template
+    ai_context: .ai/templates/initiative-ai-context.md.template
+
+  guides:
+    plan_feature: .ai/howto/how-to-plan-a-feature.md
+    plan_initiative: .ai/howto/how-to-plan-an-initiative.md
+    continue_feature: .ai/howto/how-to-continue-feature-work.md
+    continue_initiative: .ai/howto/how-to-continue-initiative-work.md
+    update_progress: .ai/howto/how-to-update-progress.md
+    workflow_docs: .ai/docs/ROADMAP_WORKFLOW.md
 ```
 
-Add this section under the existing structure in index.yaml.
-
-### Step 7: Create .gitkeep Files
-
-Ensure empty directories are tracked by git:
+### Step 8: Create .gitkeep Files
 
 ```bash
-touch .roadmap/planning/.gitkeep
-touch .roadmap/in-progress/.gitkeep
-touch .roadmap/complete/.gitkeep
+touch .roadmap/features/planning/.gitkeep
+touch .roadmap/features/active/.gitkeep
+touch .roadmap/features/completed/.gitkeep
+touch .roadmap/initiatives/planning/.gitkeep
+touch .roadmap/initiatives/active/.gitkeep
+touch .roadmap/initiatives/completed/.gitkeep
 ```
 
-### Step 8: Validate Installation
+### Step 9: Validate Installation
 
 Verify the following structure exists:
 
 ```
 .roadmap/
-├── planning/
-│   └── .gitkeep
-├── in-progress/
-│   └── .gitkeep
-└── complete/
-    └── .gitkeep
+├── features/
+│   ├── planning/
+│   ├── active/
+│   └── completed/
+└── initiatives/
+    ├── planning/
+    ├── active/
+    └── completed/
 
 .ai/
-├── howtos/
-│   └── how-to-roadmap.md
+├── howto/
+│   ├── how-to-plan-a-feature.md
+│   ├── how-to-plan-an-initiative.md
+│   ├── how-to-continue-feature-work.md
+│   ├── how-to-continue-initiative-work.md
+│   └── how-to-update-progress.md
 ├── templates/
-│   ├── roadmap-progress-tracker.md.template
-│   ├── roadmap-pr-breakdown.md.template
-│   └── roadmap-ai-context.md.template
+│   ├── feature-progress-tracker.md.template
+│   ├── feature-milestone-breakdown.md.template
+│   ├── feature-ai-context.md.template
+│   ├── initiative-tracker.md.template
+│   ├── initiative-feature-breakdown.md.template
+│   └── initiative-ai-context.md.template
 ├── docs/
 │   └── ROADMAP_WORKFLOW.md
 └── index.yaml (updated)
@@ -198,57 +214,26 @@ AGENTS.md (updated with roadmap section)
 
 After successful installation:
 
-1. **Inform the user** that roadmap-driven development is now available
-2. **Explain the roadmap lifecycle**: planning → in-progress → complete
-3. **Highlight** the how-to guide at `.ai/howtos/how-to-roadmap.md`
-4. **Suggest** creating their first roadmap if they have a complex feature to plan
+1. **Inform the user** that roadmap-driven development is available
+2. **Explain the two-tier system**: features for individual deliverables, initiatives for strategic groupings
+3. **Explain the lifecycle**: planning -> active -> completed
+4. **Highlight howto guides** for planning and continuing work
+5. **Suggest** creating their first feature or initiative if they have complex work to plan
 
 ## Integration with Other Plugins
 
-The roadmap plugin integrates with:
-
 1. **ai-folder plugin** (required) - Uses .ai/ directory for templates and docs
 2. **Application plugins** - Provides workflow for complex app feature planning
-3. **Standards plugins** - Roadmaps can enforce standards through PR checklists
-
-## Use Cases
-
-This plugin is essential for:
-- **Multi-PR features** requiring coordinated implementation
-- **Large repository upgrades** needing phased rollout
-- **Complex features** with multiple dependencies
-- **Team coordination** across AI agent sessions
-- **Progress tracking** for long-running development efforts
-
-## Troubleshooting
-
-### Issue: .roadmap directory already exists
-**Solution**: Check if it follows this structure. If different, ask user how to proceed (merge, replace, or skip).
-
-### Issue: AGENTS.md doesn't have clear insertion point
-**Solution**: Add the roadmap section after "Navigation" or at the end before any closing remarks.
-
-### Issue: Templates not copying correctly
-**Solution**: Verify source templates exist in plugin directory. Check file permissions.
-
-## Standalone Usage
-
-This plugin works standalone without the orchestrator:
-
-```bash
-# Manual installation
-1. Copy this plugin to your project
-2. Follow steps 1-8 above
-3. Validate with step 8
-```
+3. **Standards plugins** - Roadmaps can enforce standards through milestone checklists
 
 ## Success Criteria
 
 Installation is successful when:
-- ✅ `.roadmap/` directory exists with three subdirectories
-- ✅ `.ai/howtos/how-to-roadmap.md` guide exists and is populated
-- ✅ Three roadmap templates in `.ai/templates/`
-- ✅ `AGENTS.md` updated with roadmap detection and routing
-- ✅ `.ai/docs/ROADMAP_WORKFLOW.md` exists
-- ✅ `.ai/index.yaml` includes roadmap resources
-- ✅ User understands roadmap workflow and lifecycle
+- `.roadmap/features/` exists with planning/, active/, completed/ subdirectories
+- `.roadmap/initiatives/` exists with planning/, active/, completed/ subdirectories
+- 5 howto guides exist in `.ai/howto/`
+- 6 templates (3 feature + 3 initiative) exist in `.ai/templates/`
+- `AGENTS.md` updated with feature and initiative detection patterns
+- `.ai/docs/ROADMAP_WORKFLOW.md` exists
+- `.ai/index.yaml` includes roadmap resources
+- User understands the two-tier roadmap system

@@ -1,0 +1,72 @@
+# {{INITIATIVE_NAME}} - Initiative Tracker
+
+**Purpose**: Primary handoff document for the {{INITIATIVE_NAME}} initiative
+
+**Scope**: {{INITIATIVE_SCOPE}}
+
+**Overview**: Tracks the {{INITIATIVE_NAME}} initiative which groups multiple related features into
+    a strategic program. Provides rollup progress across all constituent features, coordination
+    guidance, and strategic context for AI agents.
+
+**Dependencies**: {{DEPENDENCIES}}
+
+**Exports**: Initiative progress, feature coordination, strategic guidance
+
+**Related**: FEATURE_BREAKDOWN.md for feature inventory, AI_CONTEXT.md for strategic context
+
+---
+
+## Document Purpose
+
+This is the **PRIMARY HANDOFF DOCUMENT** for the {{INITIATIVE_NAME}} initiative.
+
+When starting work:
+1. **Read this document FIRST** to understand initiative scope and progress
+2. **Check FEATURE_BREAKDOWN.md** for the feature inventory
+3. **Route to the active feature** that needs work next
+4. **Update this document** when feature milestones complete
+
+## Current Status
+
+**Phase**: {{CURRENT_PHASE}} (planning | active | completed)
+**Active Features**: {{ACTIVE_FEATURE_COUNT}}/{{TOTAL_FEATURE_COUNT}}
+**Overall Progress**: {{OVERALL_PROGRESS}}%
+
+## Documents Location
+
+```
+.roadmap/initiatives/{{PHASE}}/{{INITIATIVE_FOLDER}}/
+├── AI_CONTEXT.md                  # Strategic context
+├── FEATURE_BREAKDOWN.md           # Feature inventory and dependencies
+└── INITIATIVE_TRACKER.md          # THIS FILE - Rollup progress
+```
+
+## Feature Progress Rollup
+
+| Feature | Phase | Progress | Status | Location |
+|---------|-------|----------|--------|----------|
+{{FEATURE_ROLLUP_TABLE}}
+
+## Next Action
+
+**Route to**: `.roadmap/features/{{NEXT_FEATURE_PHASE}}/{{NEXT_FEATURE_NAME}}/PROGRESS_TRACKER.md`
+
+**Rationale**: {{NEXT_ACTION_RATIONALE}}
+
+## Strategic Goals
+
+{{STRATEGIC_GOALS}}
+
+## Update Protocol
+
+After completing a feature milestone:
+1. Update the feature's own PROGRESS_TRACKER.md
+2. Update the Feature Progress Rollup table above
+3. Recalculate overall progress percentage
+4. When a feature completes, move it from active/ to completed/
+5. When all features complete, move initiative from active/ to completed/
+
+## Definition of Done
+
+The initiative is considered complete when:
+{{DEFINITION_OF_DONE}}

@@ -1,0 +1,49 @@
+# {{FEATURE_NAME}} - AI Context
+
+**Purpose**: AI agent context document for implementing {{FEATURE_NAME}}
+
+**Scope**: {{FEATURE_SCOPE}}
+
+**Overview**: Comprehensive context document for AI agents working on the {{FEATURE_NAME}} feature.
+    {{FEATURE_OVERVIEW}}
+
+**Dependencies**: {{DEPENDENCIES_LIST}}
+
+**Exports**: {{EXPORTS_DESCRIPTION}}
+
+**Related**: MILESTONE_BREAKDOWN.md for implementation tasks, PROGRESS_TRACKER.md for current status
+
+**Implementation**: {{IMPLEMENTATION_APPROACH}}
+
+---
+
+## Overview
+{{DETAILED_OVERVIEW}}
+
+## Feature Vision
+{{FEATURE_VISION_POINTS}}
+
+## Target Architecture
+
+### Core Components
+{{CORE_COMPONENTS}}
+
+### Integration Points
+{{INTEGRATION_POINTS}}
+
+## Key Decisions
+{{KEY_DECISIONS}}
+
+## Technical Constraints
+{{TECHNICAL_CONSTRAINTS}}
+
+## AI Agent Guidance
+
+### When Implementing
+{{IMPLEMENTATION_GUIDANCE}}
+
+### Common Patterns
+{{COMMON_PATTERNS}}
+
+## Success Metrics
+{{SUCCESS_METRICS}}
