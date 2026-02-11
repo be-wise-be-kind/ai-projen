@@ -1,0 +1,90 @@
+<!--
+Purpose: Template for generating the project context document (.ai/ai-context.md)
+
+Scope: Used by ai-folder plugin to create ai-context.md during plugin installation
+
+Overview: Generates the primary project context document that AI agents read first.
+    Provides mission, architecture, key patterns, and directory structure.
+
+Placeholders:
+  {{PROJECT_NAME}}: Name of the project
+    - Type: string
+    - Example: "my-awesome-app"
+    - Required: yes
+
+  {{PROJECT_PURPOSE}}: Brief description of what the project does
+    - Type: string (1-2 sentences)
+    - Example: "E-commerce platform with React frontend and Python backend"
+    - Required: yes
+
+  {{PROJECT_TYPE}}: Type/category of the project
+    - Type: string
+    - Example: "full-stack", "python", "typescript"
+    - Required: yes
+
+  {{PROJECT_STATUS}}: Current development status
+    - Type: string
+    - Example: "in-development", "stable", "experimental"
+    - Required: yes
+
+Usage:
+  1. Copy to .ai/ directory:
+     cp plugins/foundation/ai-folder/ai-content/templates/ai-context.md.template .ai/ai-context.md
+
+  2. Replace all placeholders with project-specific values
+
+  3. Remove this template header
+
+Related: ai-rules.md.template, index.yaml.template, agents.md.template
+-->
+
+# {{PROJECT_NAME}} - Project Context
+
+**Purpose**: Project development context for AI agents working on {{PROJECT_NAME}}
+
+**Scope**: Mission, architecture, key patterns, and directory structure
+
+**Overview**: Primary context document for AI agents. Describes what {{PROJECT_NAME}} does, how it works,
+    and key patterns to follow. Peer document to ai-rules.md; together with index.yaml they form
+    the three core documents every agent reads first.
+
+**Dependencies**: AGENTS.md (entry point), ai-rules.md (mandatory rules), index.yaml (navigation)
+
+**Exports**: Project context, architectural patterns, development guidelines
+
+**Related**: ai-rules.md for mandatory rules, index.yaml for navigation
+
+---
+
+## Mission
+
+{{PROJECT_PURPOSE}}
+
+**Type**: {{PROJECT_TYPE}}
+**Status**: {{PROJECT_STATUS}}
+
+## Architecture
+
+<!-- Describe the high-level architecture here -->
+
+## Key Patterns
+
+<!-- Describe important patterns and conventions -->
+
+## Directory Structure
+
+```
+{{PROJECT_NAME}}/
+├── AGENTS.md                   # Primary AI agent entry point
+├── CLAUDE.md                   # Claude IDE config
+├── warp.md                     # Warp IDE config
+├── .cursor/rules/agents.mdc   # Cursor IDE config
+├── .ai/
+│   ├── ai-context.md           # Project context (this file)
+│   ├── ai-rules.md             # Mandatory rules
+│   ├── index.yaml              # Navigation index
+│   ├── docs/                   # Conceptual documentation
+│   ├── howto/                  # Procedural how-to guides
+│   └── templates/              # Reusable templates
+└── <!-- Add project-specific directories -->
+```

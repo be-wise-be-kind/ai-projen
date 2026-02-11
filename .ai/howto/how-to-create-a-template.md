@@ -587,7 +587,7 @@ Use this checklist to ensure template completeness:
 - [ ] Syntax validation passes for generated files
 - [ ] Template placed in correct directory
 - [ ] Plugin manifest updated (if plugin template)
-- [ ] Related documentation updated (index.yaml, layout.yaml)
+- [ ] Related documentation updated (index.yaml)
 
 ## Related Documentation
 

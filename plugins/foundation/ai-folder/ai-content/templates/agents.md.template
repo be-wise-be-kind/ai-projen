@@ -1,12 +1,10 @@
 <!--
-Purpose: Template for generating the primary AI agent entry point file (agents.md)
+Purpose: Template for generating the primary AI agent entry point file (AGENTS.md)
 
-Scope: Used by ai-folder plugin to create agents.md in repository root during plugin installation
+Scope: Used by ai-folder plugin to create AGENTS.md in repository root during plugin installation
 
-Overview: Generates the main agents.md file that serves as the primary entry point for AI agents
-    working on a project. The generated file provides project overview, navigation guidance,
-    development guidelines, build commands, and best practices. This template ensures consistent
-    AI agent onboarding across all ai-projen managed repositories.
+Overview: Generates the main AGENTS.md file that serves as the primary entry point for AI agents.
+    Uses the three-document reading protocol (ai-context, ai-rules, index.yaml) to orient agents.
 
 Placeholders:
   {{PROJECT_NAME}}: Name of the project
@@ -21,7 +19,7 @@ Placeholders:
 
   {{PROJECT_TYPE}}: Type/category of the project
     - Type: string
-    - Example: "full-stack", "python", "typescript", "microservices"
+    - Example: "full-stack", "python", "typescript"
     - Required: yes
 
   {{PROJECT_STATUS}}: Current development status
@@ -29,46 +27,33 @@ Placeholders:
     - Example: "in-development", "stable", "experimental"
     - Required: yes
 
-  {{SOURCE_DIR}}: Directory containing source code
-    - Type: string (path)
-    - Example: "src/", "app/", "lib/"
-    - Required: yes
-
-  {{TEST_DIR}}: Directory containing tests
-    - Type: string (path)
-    - Example: "tests/", "test/", "specs/"
-    - Required: yes
-
-  {{DOCS_DIR}}: Directory containing documentation
-    - Type: string (path)
-    - Example: "docs/", "documentation/"
-    - Required: yes
-
-  {{LOG_DIR}}: Directory for log files (optional)
-    - Type: string (path)
-    - Example: "logs/", "var/log/"
-    - Required: no
-    - Default: Leave as "{{LOG_DIR}}" placeholder for user to fill in
-
 Usage:
   1. Copy template to repository root:
-     cp plugins/foundation/ai-folder/ai-content/templates/agents.md.template agents.md
+     cp plugins/foundation/ai-folder/ai-content/templates/agents.md.template AGENTS.md
 
   2. Replace all placeholders with project-specific values
 
   3. Remove this template header (HTML comment block)
 
-  4. Verify markdown syntax:
-     markdownlint agents.md
-
-Related: FILE_HEADER_STANDARDS.md, ai-folder plugin documentation, .ai/index.yaml
+Related: ai-context.md.template, ai-rules.md.template, index.yaml.template
 -->
 
-# AI Agent Guide for {{PROJECT_NAME}}
+# AI Agent Instructions for {{PROJECT_NAME}}
 
-**Purpose**: Primary entry point for AI agents working on this project
+---
 
-**Quick Start**: Read `.ai/docs/PROJECT_CONTEXT.md` for full context, then check `.ai/index.yaml` for navigation.
+## MANDATORY: First Action for Every Task
+
+**BEFORE working on ANY task, you MUST:**
+
+1. **READ** `.ai/ai-context.md` - Project context and patterns
+2. **READ** `.ai/ai-rules.md` - Quality gates and mandatory rules
+3. **READ** `.ai/index.yaml` - Navigation and resource index
+4. **IDENTIFY** relevant howtos, docs, and templates for your task
+5. **INFORM** the user which documents you will use
+6. **PROCEED** with the task
+
+**This is NOT optional.** Skipping this step leads to incomplete work.
 
 ---
 
@@ -81,146 +66,42 @@ Related: FILE_HEADER_STANDARDS.md, ai-folder plugin documentation, .ai/index.yam
 
 ## Navigation
 
-### Critical Documents
-- **Project Context**: `.ai/docs/PROJECT_CONTEXT.md` - Architecture and philosophy
-- **Index**: `.ai/index.yaml` - Repository structure and navigation
-- **Layout**: `.ai/layout.yaml` - Directory organization
+### Three Core Documents
+- **`.ai/ai-context.md`** - Project context, architecture, patterns
+- **`.ai/ai-rules.md`** - Quality gates, mandatory rules
+- **`.ai/index.yaml`** - Complete repository map
 
 ### How-To Guides
 See `.ai/howto/` for step-by-step guides on common tasks.
 
 ### Templates
-See `.ai/templates/` for reusable file templates and boilerplate.
+See `.ai/templates/` for reusable file templates.
 
 ## Development Guidelines
 
-### Code Style
-<!-- Add language-specific style guidelines here -->
-<!-- Example: PEP 8 for Python, ESLint rules for TypeScript -->
+### Git Workflow
 
-### File Organization
-See `.ai/layout.yaml` for the canonical directory structure.
-
-**Key Directories**:
-- Source code: `{{SOURCE_DIR}}`
-- Tests: `{{TEST_DIR}}`
-- Documentation: `{{DOCS_DIR}}`
-
-### Documentation Standards
-<!-- Add documentation requirements here -->
-<!-- Example: File headers, README sections, inline comments -->
-
-## Build and Test Commands
-
-### Development
-```bash
-# Add development commands here
-# Example:
-# npm run dev
-# make dev
-```
-
-### Testing
-```bash
-# Add test commands here
-# Example:
-# npm test
-# make test
-# pytest
-```
-
-### Linting
-```bash
-# Add linting commands here
-# Example:
-# npm run lint
-# make lint
-```
-
-### Building
-```bash
-# Add build commands here
-# Example:
-# npm run build
-# make build
-```
-
-## Git Workflow
-
-### Commit Messages
-Follow conventional commits format:
-```
-type(scope): Brief description
-
-Detailed description if needed.
-```
-
-Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
-
-### Branch Strategy
-<!-- Add branch strategy here -->
-<!-- Example: main, develop, feature/*, bugfix/* -->
+- Create feature branches before making changes
+- Use conventional commits: `feat:`, `fix:`, `docs:`
+- Never work directly on main branch
 
 ### Before Committing
+
 - [ ] All tests pass
 - [ ] Code is linted
 - [ ] Documentation updated
 - [ ] No secrets committed
 
-## Security Considerations
-
-- Never commit secrets or credentials
-- Secrets should be in `.env` (gitignored)
-- Validate user input
-- Follow security best practices for {{PROJECT_TYPE}}
-
-## Common Tasks
-
-### Adding a New Feature
-1. Check `.ai/features/` for existing feature documentation
-2. Create feature branch
-3. Implement feature following code style guidelines
-4. Add tests
-5. Update documentation
-6. Submit PR
-
-### Debugging
-1. Check logs in `{{LOG_DIR}}`
-2. Run tests with verbose output
-3. Use debugger (see `.ai/howto/debugging.md` if available)
-
-### Deployment
-<!-- Add deployment instructions here -->
-<!-- Example: CI/CD pipeline, manual deployment steps -->
-
-## Resources
-
-### Documentation
-<!-- Add links to relevant documentation -->
-<!-- Example: API docs, framework docs, design docs -->
-
-### External Dependencies
-<!-- List key dependencies and their documentation -->
-<!-- IMPORTANT: Never list dependencies inline - they change over time -->
-<!-- For Python: Reference pyproject.toml (Poetry) or requirements.txt -->
-<!-- For Node.js: Reference package.json -->
-<!-- For Rust: Reference Cargo.toml -->
-<!-- Example: "See pyproject.toml for Python dependencies managed by Poetry" -->
-
 ## Getting Help
 
-### When Stuck
-1. Check `.ai/docs/` for context and architecture
-2. Review `.ai/howto/` for guides
-3. Check existing code for patterns
-4. Review git history for similar changes
-
-### Contact
-<!-- Add contact information or issue reporting process -->
+1. Check `.ai/ai-context.md` for project context
+2. Check `.ai/ai-rules.md` for rules and standards
+3. Review `.ai/howto/` for guides
+4. Check existing code for patterns
 
 ---
 
-**Note**: This file is generated by ai-projen's ai-folder plugin. Customize sections based on your project's specific needs.
+**Note**: This file is generated by ai-projen's ai-folder plugin.
 
 <!--
 PLUGIN EXTENSION MARKERS
@@ -237,4 +118,8 @@ Infrastructure plugins add deployment/ops commands here.
 ### STANDARDS_CHECKLIST
 Standards plugins add compliance checklists here.
 ### END_STANDARDS_CHECKLIST
+
+### ROADMAP_SECTION
+Roadmap plugin adds roadmap-driven development section here.
+### END_ROADMAP_SECTION
 -->

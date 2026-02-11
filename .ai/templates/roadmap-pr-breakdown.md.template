@@ -1,3 +1,6 @@
+# DEPRECATED: Use feature-milestone-breakdown.md.template instead
+# This template is retained for backward compatibility.
+
 # {{FEATURE_NAME}} - PR Breakdown
 
 **Purpose**: Detailed implementation breakdown of {{FEATURE_NAME}} into manageable, atomic pull requests

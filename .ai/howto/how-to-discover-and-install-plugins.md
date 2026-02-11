@@ -347,8 +347,9 @@ Repository Root/
     ├── features/
     ├── howto/
     ├── templates/
-    ├── index.yaml
-    └── layout.yaml
+    ├── ai-context.md
+    ├── ai-rules.md
+    └── index.yaml
 ```
 
 #### Language Plugins (python, typescript)

@@ -12,6 +12,13 @@ project:
   status: in-development
   version: "0.1.0"
 
+core_documents:
+  description: Three documents every AI agent reads first (see AGENTS.md)
+  files:
+    - .ai/ai-context.md (project context, architecture, patterns)
+    - .ai/ai-rules.md (quality gates, coding standards, mandatory rules)
+    - .ai/index.yaml (this file - navigation and resource index)
+
 structure:
   orchestrators:
     location: .ai/howto/
@@ -25,7 +32,7 @@ structure:
   plugins:
     location: plugins/
     categories:
-      foundation: Universal plugins (ai-folder)
+      foundation: Universal plugins (ai-folder, roadmap)
       languages: Language-specific tooling (Python, TypeScript)
       infrastructure: Deployment tools (Docker, CI/CD, IaC)
       standards: Quality enforcement (Security, Documentation)
@@ -35,8 +42,10 @@ structure:
 
   documentation:
     location: .ai/docs/
+    primary_context: .ai/ai-context.md
+    primary_rules: .ai/ai-rules.md
     files:
-      - PROJECT_CONTEXT.md
+      - PROJECT_CONTEXT.md (deep-dive reference - see ai-context.md for primary context)
       - PLUGIN_ARCHITECTURE.md
       - PLUGIN_DISCOVERY.md
       - PLUGIN_GIT_WORKFLOW_STANDARD.md
@@ -91,6 +100,16 @@ structure:
       files:
         - how-to-discover-and-install-plugins.md
 
+    roadmap_guides:
+      description: Guides for roadmap-driven development
+      files:
+        - how-to-plan-a-feature.md
+        - how-to-plan-an-initiative.md
+        - how-to-continue-feature-work.md
+        - how-to-continue-initiative-work.md
+        - how-to-update-progress.md
+        - how-to-convert-feature-to-initiative.md
+
     framework:
       standards: .ai/docs/HOWTO_STANDARDS.md
       integration: .ai/docs/HOWTO_INTEGRATION.md
@@ -141,9 +160,12 @@ structure:
     files:
       - HOW_TO_TEMPLATE.md (template for creating how-to guides)
       - TEMPLATE_FILE_TEMPLATE.md (meta-template for creating template files)
-      - roadmap-progress-tracker.md.template (roadmap progress tracking and AI agent handoff)
-      - roadmap-pr-breakdown.md.template (feature breakdown into atomic PRs)
-      - roadmap-ai-context.md.template (comprehensive feature context for AI agents)
+      - feature-progress-tracker.md.template (feature progress tracking and AI agent handoff)
+      - feature-milestone-breakdown.md.template (feature breakdown into milestones)
+      - feature-ai-context.md.template (feature context for AI agents)
+      - initiative-tracker.md.template (initiative tracking and handoff)
+      - initiative-feature-breakdown.md.template (initiative feature inventory)
+      - initiative-ai-context.md.template (initiative context for AI agents)
       - hero-card.tsx.template (template for adding hero cards to HomePage)
       - tab-component.tsx.template (template for creating new tab components)
       - principle-card.ts.template (template for adding principle cards to PrinciplesBanner)
@@ -153,10 +175,21 @@ structure:
     template_types:
       how_to_guides: HOW_TO_TEMPLATE.md
       template_creation: TEMPLATE_FILE_TEMPLATE.md
-      roadmap_planning:
-        - roadmap-progress-tracker.md.template (required - tracks current state)
-        - roadmap-pr-breakdown.md.template (required for multi-PR features)
-        - roadmap-ai-context.md.template (optional - architectural context)
+      feature_planning:
+        - feature-progress-tracker.md.template (required - tracks current state)
+        - feature-milestone-breakdown.md.template (required for multi-milestone features)
+        - feature-ai-context.md.template (optional - architectural context)
+      initiative_planning:
+        - initiative-tracker.md.template (required - tracks initiative state)
+        - initiative-feature-breakdown.md.template (required - feature inventory)
+        - initiative-ai-context.md.template (optional - strategic context)
+
+    legacy_templates:
+      description: Deprecated templates - use feature/initiative templates instead
+      files:
+        - roadmap-progress-tracker.md.template (use feature-progress-tracker.md.template)
+        - roadmap-pr-breakdown.md.template (use feature-milestone-breakdown.md.template)
+        - roadmap-ai-context.md.template (use feature-ai-context.md.template)
 
     plugin_templates:
       foundation: plugins/foundation/ai-folder/ai-content/templates/
@@ -177,11 +210,44 @@ structure:
       kebab-case: "{{file-name}} - for URLs/CSS/file paths"
 
   roadmap:
-    location: roadmap/ai_projen_implementation/
-    files:
-      - PROGRESS_TRACKER.md
-      - AI_CONTEXT.md
-      - PR_BREAKDOWN.md
+    location: .roadmap/
+    structure:
+      features:
+        planning: .roadmap/features/planning/
+        active: .roadmap/features/active/
+        completed: .roadmap/features/completed/
+      initiatives:
+        planning: .roadmap/initiatives/planning/
+        active: .roadmap/initiatives/active/
+        completed: .roadmap/initiatives/completed/
+
+    feature_templates:
+      progress_tracker: .ai/templates/feature-progress-tracker.md.template
+      milestone_breakdown: .ai/templates/feature-milestone-breakdown.md.template
+      ai_context: .ai/templates/feature-ai-context.md.template
+
+    initiative_templates:
+      tracker: .ai/templates/initiative-tracker.md.template
+      feature_breakdown: .ai/templates/initiative-feature-breakdown.md.template
+      ai_context: .ai/templates/initiative-ai-context.md.template
+
+    guides:
+      plan_feature: .ai/howto/how-to-plan-a-feature.md
+      plan_initiative: .ai/howto/how-to-plan-an-initiative.md
+      continue_feature: .ai/howto/how-to-continue-feature-work.md
+      continue_initiative: .ai/howto/how-to-continue-initiative-work.md
+      update_progress: .ai/howto/how-to-update-progress.md
+      convert_to_initiative: .ai/howto/how-to-convert-feature-to-initiative.md
+
+    three_document_structure:
+      feature:
+        - PROGRESS_TRACKER.md (required - primary handoff)
+        - MILESTONE_BREAKDOWN.md (required for multi-milestone)
+        - AI_CONTEXT.md (optional - architecture)
+      initiative:
+        - INITIATIVE_TRACKER.md (required - primary handoff)
+        - FEATURE_BREAKDOWN.md (required - feature inventory)
+        - AI_CONTEXT.md (optional - strategic context)
 
 commands:
   # Development commands (when plugins are built)
@@ -197,8 +263,13 @@ entry_points:
 
 key_files:
   agents: AGENTS.md (primary AI agent entry point)
+  ai_context: .ai/ai-context.md (project context)
+  ai_rules: .ai/ai-rules.md (mandatory rules)
   manifest: plugins/PLUGIN_MANIFEST.yaml
   readme: README.md
+  claude_md: CLAUDE.md (Claude IDE config)
+  warp_md: warp.md (Warp IDE config)
+  cursor_rules: .cursor/rules/agents.mdc (Cursor IDE config)
   gitignore: .gitignore
   env: .env (local only, gitignored)
 
@@ -263,6 +334,6 @@ contributing:
 notes_for_agents:
   - This is a self-referential repository (it uses the patterns it teaches)
   - All plugins should work standalone (without orchestrator)
-  - State is tracked via roadmap/ai_projen_implementation/PROGRESS_TRACKER.md
   - Patterns extracted from durable-code-test (production-proven)
   - Framework grows through community contributions
+  - Read ai-context.md, ai-rules.md, and this file as your first action

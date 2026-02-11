@@ -1,0 +1,150 @@
+<!--
+Purpose: Template for generating the update-progress how-to guide
+
+Scope: Used by roadmap plugin to create how-to-update-progress.md in .ai/howto/ directory during installation
+
+Overview: Generates a concise guide for AI agents to update progress tracking documents after completing
+    milestones or features. Covers updating milestone status, adding commit hashes, recalculating progress
+    percentages, updating next-milestone sections, and handling phase transitions (planning -> active -> completed).
+
+Placeholders:
+  {{PROJECT_NAME}}: Name of the project
+    - Type: string
+    - Example: "my-awesome-app"
+    - Required: yes
+
+Usage:
+  1. Copy template to repository's .ai/howto/ directory:
+     cp plugins/foundation/roadmap/ai-content/templates/how-to-update-progress.md.template .ai/howto/how-to-update-progress.md
+
+  2. Replace all placeholders with project-specific values
+
+  3. Remove this template header (HTML comment block)
+
+Related: how-to-continue-feature.md, how-to-continue-initiative.md
+-->
+
+# How-To: Update Progress in {{PROJECT_NAME}}
+
+**Purpose**: Guide AI agents through updating progress on features and initiatives
+
+**Scope**: Updating PROGRESS_TRACKER.md and INITIATIVE_TRACKER.md after completing work
+
+**Overview**: Covers the standard process for recording progress after completing milestones, features, or initiative phases. Ensures consistent tracking with commit hashes, status updates, progress recalculation, and phase transitions.
+
+**Dependencies**: Active feature or initiative with tracking documents
+
+**Exports**: Updated progress tracking documents
+
+**Related**: how-to-continue-feature.md, how-to-continue-initiative.md
+
+**Implementation**: Systematic progress recording with commit hash tracking
+
+**Difficulty**: beginner
+
+**Estimated Time**: 5min
+
+---
+
+## Prerequisites
+
+- **Tracking document**: PROGRESS_TRACKER.md (feature) or INITIATIVE_TRACKER.md (initiative) exists
+- **Completed work**: A milestone or feature has been completed
+
+## Updating Feature Progress
+
+### Step 1: Update Milestone Status
+
+Open `.roadmap/features/<phase>/<feature-name>/PROGRESS_TRACKER.md`.
+
+In the Milestone Dashboard table:
+1. Change the completed milestone's Status to Complete
+2. Add commit hash to Notes column:
+   ```bash
+   git log --oneline -1
+   ```
+3. Format: "Description (commit abc1234)"
+
+### Step 2: Update Next Milestone Section
+
+Update the "Next Milestone" section in PROGRESS_TRACKER.md:
+- Point to the next incomplete milestone
+- Update the pre-flight checklist for that milestone
+- If all milestones are complete, note "Feature Complete"
+
+### Step 3: Recalculate Progress Percentage
+
+Calculate: `(completed milestones / total milestones) * 100`
+
+Update both the progress bar and the percentage display.
+
+### Step 4: Commit Progress Update
+
+```bash
+git add .roadmap/features/<phase>/<feature-name>/PROGRESS_TRACKER.md
+git commit -m "docs: Update progress for <feature-name> milestone <N>"
+```
+
+## Updating Initiative Progress
+
+### Step 1: Update Feature Rollup
+
+Open `.roadmap/initiatives/<phase>/<initiative-name>/INITIATIVE_TRACKER.md`.
+
+In the Feature Progress Rollup table:
+1. Update the feature's Progress percentage
+2. Update the feature's Status
+3. If a feature completed, update its Phase to "completed"
+
+### Step 2: Recalculate Overall Progress
+
+Average the progress of all constituent features to get the initiative's overall progress percentage.
+
+### Step 3: Update Next Action
+
+If the active feature completed, update the "Next Action" section to route to the next feature.
+
+### Step 4: Commit Progress Update
+
+```bash
+git add .roadmap/initiatives/<phase>/<initiative-name>/INITIATIVE_TRACKER.md
+git commit -m "docs: Update initiative progress for <initiative-name>"
+```
+
+## Handling Phase Transitions
+
+### Feature: planning -> active
+
+When implementation begins:
+```bash
+mv .roadmap/features/planning/<feature-name> .roadmap/features/active/<feature-name>
+```
+Update PROGRESS_TRACKER.md Phase field to "active".
+
+### Feature: active -> completed
+
+When all milestones are done:
+```bash
+mv .roadmap/features/active/<feature-name> .roadmap/features/completed/<feature-name>
+```
+Update PROGRESS_TRACKER.md Phase field to "completed".
+
+### Initiative: Same Pattern
+
+```bash
+# When starting implementation
+mv .roadmap/initiatives/planning/<name> .roadmap/initiatives/active/<name>
+
+# When all features are done
+mv .roadmap/initiatives/active/<name> .roadmap/initiatives/completed/<name>
+```
+
+Update INITIATIVE_TRACKER.md Phase field accordingly.
+
+## Success Criteria
+
+- [ ] Progress tracking document updated with current status
+- [ ] Commit hash recorded for completed work
+- [ ] Next action/milestone correctly identified
+- [ ] Progress percentage accurately calculated
+- [ ] Phase transitions handled when applicable

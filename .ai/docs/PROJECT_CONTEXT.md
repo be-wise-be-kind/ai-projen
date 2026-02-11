@@ -192,7 +192,7 @@ The framework supports two distinct modes of operation, defined in AGENTS.md:
 - User wants to create, upgrade, or add capabilities to THEIR repository
 
 **Workflow**:
-1. Read core ai-projen documents (index.yaml, PROJECT_CONTEXT.md, layout.yaml)
+1. Read three core documents (ai-context.md, ai-rules.md, index.yaml)
 2. Classify user intent (create new / upgrade existing / add capability)
 3. Confirm understanding with user
 4. Route to appropriate how-to guide
@@ -257,39 +257,19 @@ Based on agent type and user intent, AGENTS.md routes to specific guides:
 
 ## Core Documents
 
-Three essential documents provide complete framework navigation:
+Three core documents provide the primary framework context (read first by all agents):
 
-### 1. `.ai/index.yaml`
+### 1. `.ai/ai-context.md` (Primary Context)
+**Purpose**: Project development context - mission, architecture, key patterns, directory structure
+
+### 2. `.ai/ai-rules.md` (Mandatory Rules)
+**Purpose**: Quality gates, coding standards, git rules, documentation rules
+
+### 3. `.ai/index.yaml` (Navigation)
 **Purpose**: Complete repository structure and navigation map
 
-**Contents**:
-- Project metadata and status
-- Directory structure organization
-- Plugin categories and locations
-- Documentation index
-- Available commands
-- Entry points for common tasks
-
-### 2. `.ai/docs/PROJECT_CONTEXT.md` (This Document)
-**Purpose**: Framework architecture and philosophy
-
-**Contents**:
-- What ai-projen does
-- AI-ready definition
-- Plugin architecture
-- Design philosophies
-- Development guidelines
-- Success criteria
-
-### 3. `.ai/layout.yaml`
-**Purpose**: File placement rules and validation
-
-**Contents**:
-- Directory organization rules
-- File type placement standards
-- Template structure guidelines
-- Linter validation rules
-- Plugin-specific placement
+### Deep-Dive Reference: `.ai/docs/PROJECT_CONTEXT.md` (This Document)
+**Purpose**: Comprehensive framework architecture, philosophy, and detailed development guidelines. Use this for in-depth understanding beyond what ai-context.md provides.
 
 ---
 
@@ -852,8 +832,9 @@ Orchestrators (`how-to-create-new-ai-repo.md`, `how-to-upgrade-to-ai-repo.md`) a
 
 ### Essential Reading (Start Here)
 - **AGENTS.md** - Primary entry point for all AI agents
+- **ai-context.md** - Project context and patterns
+- **ai-rules.md** - Quality gates and mandatory rules
 - **index.yaml** - Complete repository structure map
-- **layout.yaml** - File placement rules
 
 ### Architecture and Standards
 - **PLUGIN_ARCHITECTURE.md** - Technical plugin specifications

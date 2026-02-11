@@ -1,0 +1,90 @@
+<!--
+Purpose: Template for generating the mandatory rules document (.ai/ai-rules.md)
+
+Scope: Used by ai-folder plugin to create ai-rules.md during plugin installation
+
+Overview: Generates the mandatory rules document that defines quality gates, coding standards,
+    and rules all AI agents must follow. Includes file header standards, git rules,
+    and documentation rules.
+
+Placeholders:
+  {{PROJECT_TYPE}}: Type/category of the project
+    - Type: string
+    - Example: "full-stack", "python", "typescript"
+    - Required: yes
+
+Usage:
+  1. Copy to .ai/ directory:
+     cp plugins/foundation/ai-folder/ai-content/templates/ai-rules.md.template .ai/ai-rules.md
+
+  2. Replace placeholders and customize rules for your project
+
+  3. Remove this template header
+
+Related: ai-context.md.template, index.yaml.template, agents.md.template
+-->
+
+# Mandatory Rules
+
+**Purpose**: Quality gates, coding standards, and mandatory rules for all AI agents
+
+**Scope**: Rules that apply to all work done in this repository
+
+**Overview**: Defines the mandatory rules and standards that every AI agent must follow.
+    Peer document to ai-context.md; together with index.yaml they form the three core
+    documents every agent reads first.
+
+**Dependencies**: AGENTS.md (entry point), ai-context.md (project context), index.yaml (navigation)
+
+**Exports**: Quality gates, coding standards, git rules, documentation rules
+
+---
+
+## Quality Gates
+
+### File Header Standard
+
+All files require headers with these mandatory fields:
+- **Purpose** - Brief description
+- **Scope** - What this covers
+- **Overview** - Comprehensive explanation
+
+Additional fields for code files:
+- **Dependencies**, **Exports**, **Interfaces**, **Implementation**
+
+## Git Rules
+
+### Branch Requirements
+
+- **NEVER** work directly on main/master branch
+- Create feature branches BEFORE making changes
+- Branch naming: `feature/<name>`, `fix/<issue>`, `docs/<update>`
+
+### Commit Standards
+
+- Use conventional commits: `feat:`, `fix:`, `docs:`
+- Include descriptive messages
+- Update documentation with code changes
+
+## Documentation Rules
+
+### Atemporal Language
+
+Avoid temporal language in documentation:
+- No timestamps, no "currently", no "now"
+- No "recently added", no "will be added"
+- State facts, not history
+
+### File Placement
+
+| File Type | Location |
+|-----------|----------|
+| How-to guides | `.ai/howto/` |
+| Conceptual docs | `.ai/docs/` |
+| Templates | `.ai/templates/` |
+
+## Security Rules
+
+- Never commit secrets or credentials
+- Use `.env` files (gitignored) for sensitive values
+- Validate user input at system boundaries

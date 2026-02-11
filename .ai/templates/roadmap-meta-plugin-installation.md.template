@@ -156,14 +156,15 @@ grep "DOCKER_CHOICE" .roadmap/{{PLUGIN_NAME}}-install/PROGRESS_TRACKER.md && ech
    Follow: plugins/foundation/ai-folder/AGENT_INSTRUCTIONS.md
      with INSTALL_PATH={{FOUNDATION_INSTALL_PATH}}
    ```
-4. Validate .ai/ folder exists with index.yaml, layout.yaml
+4. Validate .ai/ folder exists with ai-context.md, ai-rules.md, index.yaml
 5. Update this PROGRESS_TRACKER.md: mark PR1 as ✅ Complete
 
 **Validation**:
 ```bash
 test -d {{FOUNDATION_INSTALL_PATH}}.ai && echo "✅ .ai folder created"
+test -f {{FOUNDATION_INSTALL_PATH}}.ai/ai-context.md && echo "✅ ai-context.md exists"
+test -f {{FOUNDATION_INSTALL_PATH}}.ai/ai-rules.md && echo "✅ ai-rules.md exists"
 test -f {{FOUNDATION_INSTALL_PATH}}.ai/index.yaml && echo "✅ index.yaml exists"
-test -f {{FOUNDATION_INSTALL_PATH}}.ai/layout.yaml && echo "✅ layout.yaml exists"
 ```
 
 **Mark complete when**: All validation passes, PROGRESS_TRACKER updated

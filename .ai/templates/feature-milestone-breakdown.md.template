@@ -1,0 +1,53 @@
+# {{FEATURE_NAME}} - Milestone Breakdown
+
+**Purpose**: Detailed implementation breakdown of {{FEATURE_NAME}} into milestones
+
+**Scope**: Complete feature implementation from {{START_POINT}} through {{END_POINT}}
+
+**Overview**: Comprehensive breakdown of the {{FEATURE_NAME}} feature into {{NUM_MILESTONES}} manageable
+    milestones. Each milestone is self-contained, testable, and maintains functionality while
+    incrementally building toward the complete feature.
+
+**Dependencies**: {{DEPENDENCIES}}
+
+**Exports**: Milestone implementation plans, file structures, testing strategies, success criteria
+
+**Related**: AI_CONTEXT.md for feature overview, PROGRESS_TRACKER.md for status tracking
+
+---
+
+## Overview
+
+This document breaks down the {{FEATURE_NAME}} feature into milestones. Each milestone is:
+- Self-contained and testable
+- Maintains working functionality
+- Incrementally builds toward the complete feature
+- Revertible if needed
+
+---
+
+{{MILESTONE_SECTIONS}}
+
+---
+
+## Implementation Guidelines
+
+### Code Standards
+{{CODE_STANDARDS}}
+
+### Testing Requirements
+{{TESTING_REQUIREMENTS}}
+
+### Documentation Standards
+{{DOCUMENTATION_STANDARDS}}
+
+### Progress Tracking
+
+After completing each milestone:
+1. Record commit hash in PROGRESS_TRACKER.md
+2. Update milestone status
+3. Verify all success criteria met
+
+## Success Metrics
+
+{{SUCCESS_METRICS}}

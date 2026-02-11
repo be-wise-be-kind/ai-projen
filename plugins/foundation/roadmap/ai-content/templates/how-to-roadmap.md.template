@@ -1,4 +1,12 @@
 <!--
+DEPRECATED: Use individual howto templates instead:
+  - how-to-plan-feature.md.template
+  - how-to-plan-initiative.md.template
+  - how-to-continue-feature.md.template
+  - how-to-continue-initiative.md.template
+  - how-to-update-progress.md.template
+This template is retained for backward compatibility.
+
 Purpose: Template for generating the roadmap workflow guide (how-to-roadmap.md)
 
 Scope: Used by roadmap plugin to create how-to-roadmap.md in .roadmap/ directory during installation

@@ -1,0 +1,116 @@
+<!--
+Purpose: Template for generating the continue-initiative-work how-to guide
+
+Scope: Used by roadmap plugin to create how-to-continue-initiative.md in .ai/howto/ directory during installation
+
+Overview: Generates a concise guide for AI agents to resume work on an active initiative. The key insight is
+    that initiative work happens through features - this guide routes the agent to the correct feature and
+    ensures initiative-level tracking stays current after feature progress.
+
+Placeholders:
+  {{PROJECT_NAME}}: Name of the project
+    - Type: string
+    - Example: "my-awesome-app"
+    - Required: yes
+
+Usage:
+  1. Copy template to repository's .ai/howto/ directory:
+     cp plugins/foundation/roadmap/ai-content/templates/how-to-continue-initiative.md.template .ai/howto/how-to-continue-initiative.md
+
+  2. Replace all placeholders with project-specific values
+
+  3. Remove this template header (HTML comment block)
+
+Related: how-to-continue-feature.md, how-to-plan-initiative.md, how-to-update-progress.md
+-->
+
+# How-To: Continue Initiative Work in {{PROJECT_NAME}}
+
+**Purpose**: Guide AI agents through resuming work on an active initiative
+
+**Scope**: Reading initiative state, routing to the appropriate active feature, updating initiative progress
+
+**Overview**: Provides the workflow for continuing work on an active initiative. Initiative work happens through features - this guide reads initiative state, identifies the next feature to work on, routes to the feature workflow, and updates initiative-level tracking after progress is made.
+
+**Dependencies**: Active initiative with INITIATIVE_TRACKER.md, constituent feature directories under .roadmap/features/
+
+**Exports**: Routed to correct feature with initiative context; updated initiative tracking
+
+**Related**: how-to-continue-feature.md, how-to-plan-initiative.md, how-to-update-progress.md
+
+**Implementation**: Initiative-level routing to feature-level implementation
+
+**Difficulty**: intermediate
+
+**Estimated Time**: 5min (routing) + feature work time
+
+---
+
+## Prerequisites
+
+- **Initiative directory**: Exists under `.roadmap/initiatives/active/<initiative-name>/`
+- **INITIATIVE_TRACKER.md**: Exists with feature progress rollup
+- **Feature directories**: Constituent features exist under `.roadmap/features/`
+
+## Steps
+
+### Step 1: Read Initiative State
+
+Read these documents:
+
+1. `.roadmap/initiatives/active/<initiative-name>/INITIATIVE_TRACKER.md` - feature rollup and next action
+2. `.roadmap/initiatives/active/<initiative-name>/FEATURE_BREAKDOWN.md` - feature details and dependencies
+
+### Step 2: Identify Next Feature
+
+From INITIATIVE_TRACKER.md, find:
+- Feature Progress Rollup table
+- "Next Action" section
+- Which feature to route to
+
+Inform the user:
+```
+Initiative: <initiative-name>
+Overall progress: X%
+Active features: A/B complete
+Next action: Work on <feature-name>
+Rationale: <why this feature is next>
+```
+
+### Step 3: Route to Feature Workflow
+
+Follow `.ai/howto/how-to-continue-feature.md` for the identified feature.
+
+The feature's PROGRESS_TRACKER.md drives implementation from here.
+
+### Step 4: Update Initiative After Feature Progress
+
+After completing work on the feature (milestone or full feature):
+
+1. Update the feature's PROGRESS_TRACKER.md (handled by feature workflow)
+2. Return to INITIATIVE_TRACKER.md
+3. Update the Feature Progress Rollup table:
+   - Update the feature's progress percentage
+   - Update the feature's status
+4. Recalculate overall initiative progress (average of all feature progress values)
+
+### Step 5: Handle Status Transitions
+
+**If a feature completes**:
+1. Move feature from `active/` to `completed/`
+2. Update initiative's rollup table to mark feature as completed
+3. Identify next feature to activate (from FEATURE_BREAKDOWN.md priority order)
+
+**If all features complete**:
+1. Move initiative from `active/` to `completed/`:
+   ```bash
+   mv .roadmap/initiatives/active/<initiative-name> .roadmap/initiatives/completed/<initiative-name>
+   ```
+2. Update INITIATIVE_TRACKER.md Phase field to "completed"
+
+## Success Criteria
+
+- [ ] Correct feature identified for work
+- [ ] User informed of initiative context and next action
+- [ ] Routed to feature-level workflow (how-to-continue-feature.md)
+- [ ] Initiative tracker updated after feature progress
